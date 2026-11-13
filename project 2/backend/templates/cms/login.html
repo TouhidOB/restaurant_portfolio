@@ -1,0 +1,158 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Administrator Sign In | ENSO 圓相 Zen Studio{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        align-items: center;
+        justify-content: center;
+        background: radial-gradient(circle at 50% 30%, #F5F2EB 0%, #EBE6DA 60%, #DDD6C6 100%);
+        min-height: 100vh;
+        padding: 24px;
+    }
+
+    .zen-login-box {
+        width: 100%;
+        max-width: 460px;
+        background: #FFFFFF;
+        border: 1px solid var(--border-subtle);
+        box-shadow: 0 20px 50px rgba(32, 35, 33, 0.08);
+        padding: 44px 38px;
+        position: relative;
+    }
+
+    .zen-login-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--bamboo), var(--moss), var(--bamboo));
+    }
+
+    .enso-circle-mark {
+        width: 58px;
+        height: 58px;
+        margin: 0 auto 16px;
+        border: 2.5px solid var(--charcoal);
+        border-top-color: transparent;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: rotate(25deg);
+    }
+
+    .enso-inner-char {
+        transform: rotate(-25deg);
+        font-family: 'Noto Serif JP', serif;
+        font-size: 20px;
+        color: var(--vermilion);
+        font-weight: 600;
+    }
+
+    .brand-title {
+        text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .brand-title h1 {
+        font-size: 34px;
+        font-weight: 500;
+        color: var(--charcoal);
+        letter-spacing: 0.14em;
+        margin-bottom: 4px;
+    }
+
+    .brand-title p {
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: var(--moss);
+    }
+
+    .creds-note {
+        margin-top: 28px;
+        padding: 16px;
+        background: #F9F7F2;
+        border: 1px dashed var(--bamboo);
+        font-size: 12px;
+        border-radius: 2px;
+    }
+
+    .creds-row {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 4px;
+    }
+
+    .creds-val {
+        font-family: monospace;
+        background: #EFECE3;
+        padding: 2px 6px;
+        border-radius: 2px;
+        color: var(--charcoal);
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="zen-login-box">
+    <div class="enso-circle-mark">
+        <span class="enso-inner-char">相</span>
+    </div>
+
+    <div class="brand-title">
+        <h1>ENSO 圓相</h1>
+        <p>Japanese Zen CMS Studio</p>
+    </div>
+
+    {% if error_msg %}
+    <div class="alert alert-error" style="margin-bottom: 20px;">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <div>{{ error_msg }}</div>
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'cms_login' %}?next={{ next_url }}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="username">Administrator Username</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Enter admin username" required autofocus autocomplete="username">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Administrator Password</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn btn-charcoal" style="width: 100%; padding: 14px; margin-top: 10px;">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            Sign In To Zen Studio
+        </button>
+    </form>
+
+    <div class="creds-note">
+        <div style="font-weight: 600; color: var(--charcoal); margin-bottom: 6px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;">
+            <i class="fa-solid fa-key" style="color: var(--bamboo); margin-right: 4px;"></i> Default Admin Credentials
+        </div>
+        <div class="creds-row">
+            <span>Username:</span>
+            <span class="creds-val">admin</span>
+        </div>
+        <div class="creds-row">
+            <span>Password:</span>
+            <span class="creds-val">adminpassword123</span>
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 24px; font-size: 12px;">
+        <a href="http://127.0.0.1:3000" target="_blank" style="color: var(--moss);">
+            Open Public Guest Experience (Port 3000) &rarr;
+        </a>
+    </div>
+</div>
+{% endblock %}

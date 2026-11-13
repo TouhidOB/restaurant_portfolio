@@ -1,0 +1,1519 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Zen CMS Studio | {{ site_config.restaurant_name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .cms-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    /* Zen Header */
+    .cms-header {
+        background: #FFFFFF;
+        border-bottom: 1px solid var(--border-subtle);
+        padding: 14px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    .cms-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .cms-brand-logo {
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        color: var(--charcoal);
+    }
+
+    .cms-badge-mode {
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        padding: 4px 10px;
+        background: #F4F1EA;
+        border: 1px solid var(--border-subtle);
+        color: var(--moss);
+        border-radius: 2px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .live-dot {
+        width: 6px;
+        height: 6px;
+        background: var(--moss);
+        border-radius: 50%;
+        box-shadow: 0 0 6px var(--moss);
+    }
+
+    .cms-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .admin-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--charcoal);
+        background: #F5F2EB;
+        padding: 6px 14px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 2px;
+    }
+
+    /* Main Body */
+    .cms-body {
+        display: flex;
+        flex: 1;
+        min-height: calc(100vh - 65px);
+    }
+
+    /* Sidebar Navigation */
+    .cms-sidebar {
+        width: 280px;
+        background: #FFFFFF;
+        border-right: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+
+    .sidebar-section-title {
+        font-size: 10px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--bamboo);
+        padding: 18px 20px 8px;
+        font-weight: 700;
+    }
+
+    .sidebar-nav {
+        list-style: none;
+        padding: 0 10px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .nav-item-btn {
+        width: 100%;
+        text-align: left;
+        background: transparent;
+        border: none;
+        color: #555A55;
+        padding: 10px 14px;
+        font-size: 13px;
+        font-family: 'Noto Sans', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 2px;
+        transition: all 0.2s ease;
+    }
+
+    .nav-item-btn:hover {
+        background: #F5F2EB;
+        color: var(--charcoal);
+    }
+
+    .nav-item-btn.active {
+        background: #EFECE3;
+        color: var(--charcoal);
+        border-left: 3px solid var(--vermilion);
+        font-weight: 600;
+    }
+
+    .nav-btn-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .nav-badge-pill {
+        font-size: 10px;
+        padding: 2px 7px;
+        border-radius: 10px;
+        font-weight: 700;
+        background: rgba(185, 75, 61, 0.15);
+        color: var(--vermilion);
+        border: 1px solid rgba(185, 75, 61, 0.4);
+    }
+
+    /* Content Area */
+    .cms-content {
+        flex: 1;
+        padding: 32px 40px 60px;
+        background: var(--rice-paper);
+        overflow-y: auto;
+    }
+
+    /* Stat Cards */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 18px;
+        margin-bottom: 28px;
+    }
+
+    .stat-card {
+        background: #FFFFFF;
+        border: 1px solid var(--border-subtle);
+        padding: 18px 22px;
+        border-radius: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--bamboo), transparent);
+    }
+
+    .stat-info h4 {
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+    }
+
+    .stat-info .stat-number {
+        font-size: 28px;
+        font-weight: 600;
+        font-family: 'Cormorant Garamond', serif;
+        color: var(--charcoal);
+    }
+
+    .stat-icon {
+        font-size: 26px;
+        color: var(--stone);
+        opacity: 0.5;
+    }
+
+    /* Panels */
+    .tab-panel {
+        display: none;
+        animation: fadeIn 0.2s ease-in-out;
+    }
+
+    .tab-panel.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-header {
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border-subtle);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .panel-header h2 {
+        font-size: 26px;
+        color: var(--charcoal);
+        font-weight: 500;
+    }
+
+    .panel-header p {
+        font-size: 13px;
+        color: var(--moss);
+        margin-top: 4px;
+    }
+
+    .cms-card {
+        background: #FFFFFF;
+        border: 1px solid var(--border-subtle);
+        padding: 28px;
+        margin-bottom: 24px;
+        border-radius: 2px;
+    }
+
+    .cms-card-header {
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        color: var(--charcoal);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 12px;
+        border-bottom: 1px dashed var(--border-subtle);
+    }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .color-picker-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #F8F6F0;
+        padding: 10px 14px;
+        border: 1px solid var(--border-subtle);
+        border-radius: 2px;
+    }
+
+    .color-swatch {
+        width: 36px;
+        height: 36px;
+        border-radius: 2px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        padding: 0;
+        background: none;
+    }
+
+    .preview-thumb {
+        width: 64px;
+        height: 48px;
+        object-fit: cover;
+        border: 1px solid var(--bamboo);
+        border-radius: 2px;
+        background: #EEE;
+    }
+
+    /* Reservations Table */
+    .table-container {
+        overflow-x: auto;
+        background: #FFFFFF;
+        border: 1px solid var(--border-subtle);
+        border-radius: 2px;
+    }
+
+    .cms-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        text-align: left;
+    }
+
+    .cms-table th {
+        background: #F5F2EB;
+        color: var(--charcoal);
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .cms-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid #F0ECE4;
+        color: var(--charcoal);
+    }
+
+    .cms-table tr:hover td {
+        background: #FAF8F4;
+    }
+
+    .repeater-card {
+        background: #F9F7F2;
+        border: 1px solid var(--border-subtle);
+        padding: 18px;
+        margin-bottom: 16px;
+        border-radius: 2px;
+    }
+
+    .repeater-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--charcoal);
+    }
+
+    .sticky-actions-bar {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 255, 255, 0.95);
+        border-top: 1px solid var(--border-subtle);
+        padding: 14px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        backdrop-filter: blur(8px);
+        margin: 32px -40px -60px -40px;
+        z-index: 99;
+        box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.04);
+    }
+
+    .code-textarea {
+        font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        background: #202321;
+        color: #F2EFE6;
+        border: 1px solid var(--border-subtle);
+        padding: 16px;
+        min-height: 520px;
+        width: 100%;
+        border-radius: 2px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cms-layout">
+    <!-- Header -->
+    <header class="cms-header">
+        <div class="cms-brand">
+            <span class="vermilion-seal">相</span>
+            <span class="cms-brand-logo">{{ site_config.restaurant_name }}</span>
+            <span class="cms-badge-mode">
+                <span class="live-dot"></span>
+                Zen Studio (Port 8001)
+            </span>
+        </div>
+
+        <div class="cms-header-actions">
+            <a href="http://127.0.0.1:3000" target="_blank" class="btn btn-outline-charcoal btn-sm" title="View visitor experience">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                Open Public Website (Port 3000)
+            </a>
+
+            <button type="button" class="btn btn-charcoal btn-sm" onclick="saveActiveForm()">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                Save All Changes
+            </button>
+
+            <div class="admin-pill">
+                <i class="fa-solid fa-user-shield" style="color: var(--moss);"></i>
+                <span>{{ request.user.username }}</span>
+            </div>
+
+            <a href="{% url 'cms_logout' %}" class="btn btn-danger btn-sm" title="Log out">
+                <i class="fa-solid fa-power-off"></i>
+                Logout
+            </a>
+        </div>
+    </header>
+
+    <div class="cms-body">
+        <!-- Sidebar Navigation -->
+        <aside class="cms-sidebar">
+            <div class="sidebar-section-title">Core Management</div>
+            <ul class="sidebar-nav">
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'overview' %}active{% endif %}" onclick="switchTab('overview')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-gauge-high"></i> Overview</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'reservations' %}active{% endif %}" onclick="switchTab('reservations')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-envelope-open-text"></i> Reservations</span>
+                        {% if stats.pending_reservations > 0 %}
+                        <span class="nav-badge-pill">{{ stats.pending_reservations }} new</span>
+                        {% endif %}
+                    </button>
+                </li>
+            </ul>
+
+            <div class="sidebar-section-title">Zen Aesthetics &amp; Theme</div>
+            <ul class="sidebar-nav">
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'theme' %}active{% endif %}" onclick="switchTab('theme')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-palette"></i> Theme &amp; Colors</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'typography' %}active{% endif %}" onclick="switchTab('typography')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-font"></i> Typography &amp; Fonts</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'general' %}active{% endif %}" onclick="switchTab('general')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-torii-gate"></i> General &amp; Contact</span>
+                    </button>
+                </li>
+            </ul>
+
+            <div class="sidebar-section-title">15 Homepage Sections</div>
+            <ul class="sidebar-nav">
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-hero' %}active{% endif %}" onclick="switchTab('sec-hero')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-mountain-sun"></i> 02. 3D Zen Hero</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-philosophy' %}active{% endif %}" onclick="switchTab('sec-philosophy')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-circle-notch"></i> 03. Brand Philosophy</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-tour' %}active{% endif %}" onclick="switchTab('sec-tour')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-compass"></i> 04. 3D Virtual Tour</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-pillars' %}active{% endif %}" onclick="switchTab('sec-pillars')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-seedling"></i> 05. Dining Pillars</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-dishes' %}active{% endif %}" onclick="switchTab('sec-dishes')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-utensils"></i> 06. Signature Dishes</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-menu' %}active{% endif %}" onclick="switchTab('sec-menu')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-book-open"></i> 07. Complete Menu</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-arch' %}active{% endif %}" onclick="switchTab('sec-arch')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-archway"></i> 08. Architecture &amp; Wood</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-chef' %}active{% endif %}" onclick="switchTab('sec-chef')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-user-ninja"></i> 09. Meet The Chef</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-experiences' %}active{% endif %}" onclick="switchTab('sec-experiences')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-mug-hot"></i> 10. Special Experiences</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-gallery' %}active{% endif %}" onclick="switchTab('sec-gallery')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-images"></i> 11. Culinary Gallery</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-reviews' %}active{% endif %}" onclick="switchTab('sec-reviews')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-star"></i> 12. Guest Stories</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-reservation' %}active{% endif %}" onclick="switchTab('sec-reservation')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-calendar-check"></i> 13. Reservation Copy</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-footer' %}active{% endif %}" onclick="switchTab('sec-footer')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-feather-pointed"></i> 15. Footer Statement</span>
+                    </button>
+                </li>
+            </ul>
+
+            <div class="sidebar-section-title">Developer &amp; Power Tools</div>
+            <ul class="sidebar-nav">
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'rawjson' %}active{% endif %}" onclick="switchTab('rawjson')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-code"></i> Direct JSON Editor</span>
+                    </button>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Body -->
+        <main class="cms-content">
+            <form id="cms-master-form" method="POST" action="{% url 'cms_dashboard' %}">
+                {% csrf_token %}
+                <input type="hidden" name="active_tab" id="form-active-tab" value="{{ active_tab }}">
+
+                <!-- TAB: OVERVIEW -->
+                <div class="tab-panel {% if active_tab == 'overview' %}active{% endif %}" id="tab-overview">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Zen Studio Overview</h2>
+                            <p>Real-time booking inquiries, publication state, and quick navigation.</p>
+                        </div>
+                        <a href="http://127.0.0.1:3000" target="_blank" class="btn btn-charcoal btn-sm">
+                            <i class="fa-solid fa-eye"></i> View Live Customer Experience
+                        </a>
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Total Inquiries</h4>
+                                <div class="stat-number">{{ stats.total_reservations }}</div>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Pending Confirmation</h4>
+                                <div class="stat-number" style="color: var(--vermilion);">{{ stats.pending_reservations }}</div>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Confirmed Guests</h4>
+                                <div class="stat-number" style="color: var(--moss);">{{ stats.confirmed_reservations }}</div>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Last Published</h4>
+                                <div class="stat-number" style="font-size: 16px; margin-top: 8px;">{{ site_config.updated_at|date:"M d, H:i" }}</div>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header">
+                            <i class="fa-solid fa-bolt"></i> Fast Access Actions
+                        </div>
+                        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-charcoal" onclick="switchTab('reservations')">
+                                <i class="fa-solid fa-envelope"></i> Manage Guest Reservations ({{ stats.pending_reservations }} pending)
+                            </button>
+                            <button type="button" class="btn btn-outline-charcoal" onclick="switchTab('theme')">
+                                <i class="fa-solid fa-palette"></i> Edit Zen Color Palette
+                            </button>
+                            <button type="button" class="btn btn-outline-charcoal" onclick="switchTab('sec-dishes')">
+                                <i class="fa-solid fa-utensils"></i> Update Signature Dishes
+                            </button>
+                            <button type="button" class="btn btn-outline-charcoal" onclick="switchTab('rawjson')">
+                                <i class="fa-solid fa-code"></i> Direct JSON Editor
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header">
+                            <i class="fa-solid fa-circle-info"></i> Decoupled Architecture
+                        </div>
+                        <p style="font-size: 14px; line-height: 1.7; color: var(--charcoal);">
+                            <strong>Django 5 Backend (Port 8001):</strong> Dedicated Japanese Zen CMS Studio, SQLite database, and REST API.
+                            <br><strong>React 18 + Vite Frontend (Port 3000):</strong> 3D WebGL exterior canvas, 5-viewpoint architectural tour, and responsive public dining presentation.
+                            <br><strong>Security:</strong> CMS routes are restricted to authenticated administrators with <code>is_staff</code> status.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- TAB: RESERVATIONS -->
+                <div class="tab-panel {% if active_tab == 'reservations' %}active{% endif %}" id="tab-reservations">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Guest Reservations Inbox</h2>
+                            <p>Review and confirm customer dining inquiries.</p>
+                        </div>
+                        <span class="badge badge-pending">{{ reservations.count }} Total Inquiries</span>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="cms-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Guest Details</th>
+                                    <th>Date &amp; Time</th>
+                                    <th>Party Size</th>
+                                    <th>Experience &amp; Notes</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in reservations %}
+                                <tr>
+                                    <td><strong>ZEN-{{ res.id|stringformat:"04d" }}</strong></td>
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--charcoal);">{{ res.full_name }}</div>
+                                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                                            <i class="fa-solid fa-phone"></i> {{ res.phone }}
+                                            {% if res.email %} | <i class="fa-solid fa-envelope"></i> {{ res.email }}{% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>{{ res.date|date:"l, M d, Y" }}</div>
+                                        <div style="font-size: 11px; color: var(--bamboo); font-weight: 600;">{{ res.time }}</div>
+                                    </td>
+                                    <td>{{ res.guests }}</td>
+                                    <td>
+                                        <div style="font-weight: 500;">{{ res.experience|default:res.occasion }}</div>
+                                        {% if res.special_requests %}
+                                        <div style="font-size: 11px; color: var(--moss); font-style: italic; max-width: 220px;">
+                                            "{{ res.special_requests }}"
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-{{ res.status }}">{{ res.status|title }}</span>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <div style="display: inline-flex; gap: 6px;">
+                                            {% if res.status != 'confirmed' %}
+                                            <a href="{% url 'cms_reservation_status' res.id 'confirmed' %}" class="btn btn-sm btn-charcoal" title="Confirm Booking">
+                                                <i class="fa-solid fa-check"></i>
+                                            </a>
+                                            {% endif %}
+                                            {% if res.status != 'cancelled' %}
+                                            <a href="{% url 'cms_reservation_status' res.id 'cancelled' %}" class="btn btn-sm btn-danger" title="Cancel Booking">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </a>
+                                            {% endif %}
+                                            {% if res.status != 'pending' %}
+                                            <a href="{% url 'cms_reservation_status' res.id 'pending' %}" class="btn btn-sm btn-outline-charcoal" title="Mark Pending">
+                                                <i class="fa-solid fa-rotate-left"></i>
+                                            </a>
+                                            {% endif %}
+                                            <a href="{% url 'cms_reservation_delete' res.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Remove reservation record?');" title="Delete">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                        No customer reservations submitted yet.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB: THEME & COLORS -->
+                <div class="tab-panel {% if active_tab == 'theme' %}active{% endif %}" id="tab-theme">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Japanese Zen Color Palette</h2>
+                            <p>Authentic natural tones: Charcoal Ink, Rice Paper White, Natural Bamboo, Moss Green, Vermilion Red, Stone Gray.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header"><i class="fa-solid fa-palette"></i> Natural Architectural Palette</div>
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label>Charcoal Ink (Dark Foundation)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_charcoal" class="color-swatch" value="{{ content.theme.colors.charcoal|default:'#202321' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.charcoal|default:'#202321' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Rice Paper White (Primary Light)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_rice_paper" class="color-swatch" value="{{ content.theme.colors.ricePaper|default:'#F2EFE6' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.ricePaper|default:'#F2EFE6' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Natural Bamboo (Warm Accent)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_bamboo" class="color-swatch" value="{{ content.theme.colors.bamboo|default:'#B6A17B' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.bamboo|default:'#B6A17B' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Moss Green (Botanical Accent)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_moss" class="color-swatch" value="{{ content.theme.colors.moss|default:'#69745B' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.moss|default:'#69745B' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Vermilion Red (Traditional Seal)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_vermilion" class="color-swatch" value="{{ content.theme.colors.vermilion|default:'#B94B3D' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.vermilion|default:'#B94B3D' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Stone Gray (Muted Dividers)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_stone" class="color-swatch" value="{{ content.theme.colors.stone|default:'#A6A39A' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.stone|default:'#A6A39A' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header"><i class="fa-solid fa-square-check"></i> Button Styling</div>
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label>Primary Button Background</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_btn_bg" class="color-swatch" value="{{ content.theme.colors.primaryButtonBg|default:'#202321' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.primaryButtonBg|default:'#202321' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Primary Button Text Color</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_btn_text" class="color-swatch" value="{{ content.theme.colors.primaryButtonText|default:'#F2EFE6' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.primaryButtonText|default:'#F2EFE6' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Primary Button Border</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_btn_border" class="color-swatch" value="{{ content.theme.colors.primaryButtonBorder|default:'#B6A17B' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.primaryButtonBorder|default:'#B6A17B' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: TYPOGRAPHY -->
+                <div class="tab-panel {% if active_tab == 'typography' %}active{% endif %}" id="tab-typography">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Typography &amp; Editorial Font Matrix</h2>
+                            <p>Refined serif headings paired with clean modern sans-serif and traditional Japanese accents.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label>Display Serif Font</label>
+                                <input type="text" name="font_display" class="form-control" value="{{ content.theme.typography.fontDisplay|default:'Cormorant Garamond' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Body Sans-Serif Font</label>
+                                <input type="text" name="font_body" class="form-control" value="{{ content.theme.typography.fontBody|default:'Noto Sans' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Japanese Accent Font</label>
+                                <input type="text" name="font_japanese" class="form-control" value="{{ content.theme.typography.fontJapanese|default:'Noto Serif JP' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-grid-3" style="margin-top: 14px;">
+                            <div class="form-group">
+                                <label>Hero Heading Size (px)</label>
+                                <input type="number" name="hero_heading_size" class="form-control" value="{{ content.theme.typography.heroHeadingSize|default:96 }}" min="48" max="130">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Section Heading Size (px)</label>
+                                <input type="number" name="section_heading_size" class="form-control" value="{{ content.theme.typography.sectionHeadingSize|default:64 }}" min="32" max="90">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Body Text Size (px)</label>
+                                <input type="number" name="body_size" class="form-control" value="{{ content.theme.typography.bodySize|default:16 }}" min="13" max="22">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: GENERAL INFO -->
+                <div class="tab-panel {% if active_tab == 'general' %}active{% endif %}" id="tab-general">
+                    <div class="panel-header">
+                        <div>
+                            <h2>General Restaurant Information</h2>
+                            <p>Brand identity, location lines, concierge contact, and Google Maps embed.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Restaurant Name</label>
+                                <input type="text" name="restaurant_name" class="form-control" value="{{ content.name|default:'ENSO 圓相' }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Subname</label>
+                                <input type="text" name="restaurant_subname" class="form-control" value="{{ content.subname|default:'Japanese Zen Dining & Tea Sanctuary' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Brand Tagline</label>
+                            <input type="text" name="restaurant_tagline" class="form-control" value="{{ content.tagline|default:'An Experience of Mindful Dining' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Short Brand Story</label>
+                            <textarea name="restaurant_story" class="form-control">{{ content.shortStory|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" name="city" class="form-control" value="{{ content.city|default:'Dhaka' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Country</label>
+                                <input type="text" name="country" class="form-control" value="{{ content.country|default:'Bangladesh' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Currency Symbol</label>
+                                <input type="text" name="currency" class="form-control" value="{{ content.currency|default:'৳' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header"><i class="fa-solid fa-address-book"></i> Concierge Contact</div>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Concierge Phone</label>
+                                <input type="text" name="contact_phone" class="form-control" value="{{ content.contact.phone|default:'+880 1711-556677' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" name="contact_email" class="form-control" value="{{ content.contact.email|default:'omotenashi@enso-zen.com' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>WhatsApp Concierge Number</label>
+                                <input type="text" name="contact_whatsapp" class="form-control" value="{{ content.contact.whatsapp|default:'+8801711556677' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Short Address</label>
+                                <input type="text" name="contact_address" class="form-control" value="{{ content.contact.address|default:'Bonsai Pavilion, Road 55, Gulshan 2' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Full Physical Address</label>
+                            <input type="text" name="contact_full_address" class="form-control" value="{{ content.contact.fullAddress|default:'Bonsai Pavilion, Road 55, Gulshan 2, Dhaka 1212, Bangladesh' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Google Maps Embed URL</label>
+                            <input type="text" name="google_maps_embed" class="form-control" value="{{ content.contact.googleMapsEmbedUrl|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 02 HERO -->
+                <div class="tab-panel {% if active_tab == 'sec-hero' %}active{% endif %}" id="tab-sec-hero">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 02 — Hero: The Art of Japanese Dining</h2>
+                            <p>Cinematic 3D exterior arrival with traditional cedar entrance and stone pathway.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Eyebrow</label>
+                            <input type="text" name="hero_eyebrow" class="form-control" value="{{ content.hero.eyebrow|default:'AN EXPERIENCE OF MINDFUL DINING' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Hero Headline</label>
+                            <input type="text" name="hero_title" class="form-control" value="{{ content.hero.title|default:'Where Every Detail Finds Its Purpose.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Japanese Subtitle</label>
+                            <input type="text" name="hero_japanese" class="form-control jp-font" value="{{ content.hero.japaneseSubtitle|default:'静寂と美食の調和' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Hero Description</label>
+                            <textarea name="hero_description" class="form-control">{{ content.hero.description|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Primary CTA</label>
+                                <input type="text" name="hero_primary_cta" class="form-control" value="{{ content.hero.primaryCta|default:'RESERVE YOUR TABLE' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Secondary CTA</label>
+                                <input type="text" name="hero_secondary_cta" class="form-control" value="{{ content.hero.secondaryCta|default:'EXPLORE THE RESTAURANT' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Location Badge</label>
+                            <input type="text" name="hero_location_badge" class="form-control" value="{{ content.hero.locationBadge|default:'GULSHAN 2, DHAKA' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>WebGL Fallback Photography URL</label>
+                            <input type="text" name="hero_fallback_image" class="form-control" value="{{ content.hero.fallbackImage|default:'' }}">
+                            <div class="img-preview-box" style="margin-top: 8px;">
+                                <img src="{{ content.hero.fallbackImage }}" class="preview-thumb" onerror="this.style.display='none'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 03 PHILOSOPHY -->
+                <div class="tab-panel {% if active_tab == 'sec-philosophy' %}active{% endif %}" id="tab-sec-philosophy">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 03 — Our Philosophy: The Meaning of Simplicity</h2>
+                            <p>The foundational principles of Ma (Negative space) and Shibui (Understated beauty).</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Eyebrow</label>
+                            <input type="text" name="philo_eyebrow" class="form-control" value="{{ content.philosophy.eyebrow|default:'OUR PHILOSOPHY' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Section Heading</label>
+                            <input type="text" name="philo_title" class="form-control" value="{{ content.philosophy.title|default:'Beauty in Simplicity. Excellence in Every Detail.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Lead Paragraph</label>
+                            <textarea name="philo_lead" class="form-control">{{ content.philosophy.lead|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Full Story Description</label>
+                            <textarea name="philo_description" class="form-control">{{ content.philosophy.description|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Secondary Statement</label>
+                            <input type="text" name="philo_secondary" class="form-control" value="{{ content.philosophy.secondaryStatement|default:'Less distraction. More meaning. A deeper appreciation of every moment.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Philosophy Image URL</label>
+                            <input type="text" name="philo_image" class="form-control" value="{{ content.philosophy.image|default:'' }}">
+                            <div class="img-preview-box" style="margin-top: 8px;">
+                                <img src="{{ content.philosophy.image }}" class="preview-thumb" onerror="this.style.display='none'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 04 3D VIRTUAL TOUR -->
+                <div class="tab-panel {% if active_tab == 'sec-tour' %}active{% endif %}" id="tab-sec-tour">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 04 — Japanese Restaurant Virtual Tour</h2>
+                            <p>All 5 viewpoints: Exterior Garden, Entrance & Welcome, Main Dining, Reception, Kitchen & Preparation.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        {% for vp in content.tourViewpoints %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span>{{ vp.number }}. {{ vp.name }}</span>
+                                <span class="badge badge-confirmed">{{ vp.sceneMood }}</span>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label>Viewpoint Name</label>
+                                    <input type="text" class="form-control" value="{{ vp.name }}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Caption</label>
+                                    <input type="text" class="form-control" value="{{ vp.caption }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea class="form-control" readonly style="min-height: 60px;">{{ vp.description }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Photography URL</label>
+                                <input type="text" class="form-control" value="{{ vp.image }}" readonly>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="form-text">To reorder viewpoints or customize 3D camera coordinates, use the Direct JSON Editor tab.</div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 05 PILLARS -->
+                <div class="tab-panel {% if active_tab == 'sec-pillars' %}active{% endif %}" id="tab-sec-pillars">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 05 — The Art of Dining: Three Core Principles</h2>
+                            <p>01 Ingredient Integrity, 02 Culinary Craftsmanship, 03 Thoughtful Hospitality (Omotenashi).</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        {% for pillar in content.diningPillars %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span>Pillar {{ pillar.number }}: {{ pillar.title }}</span>
+                                <span class="jp-font" style="color: var(--moss);">{{ pillar.japaneseSubtitle }}</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Lead Statement</label>
+                                <input type="text" class="form-control" value="{{ pillar.lead }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea class="form-control" readonly>{{ pillar.description }}</textarea>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 06 SIGNATURE DISHES -->
+                <div class="tab-panel {% if active_tab == 'sec-dishes' %}active{% endif %}" id="tab-sec-dishes">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 06 — Signature Japanese Creations</h2>
+                            <p>Celebrated dishes with culinary descriptions, prices, and tasting notes.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        {% for dish in content.signatureDishes %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span>{{ dish.name }} <span class="jp-font" style="font-weight: 400; color: var(--moss); margin-left: 6px;">({{ dish.japaneseName }})</span></span>
+                                <span class="badge badge-pending">{{ dish.price }}</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Culinary Description</label>
+                                <textarea class="form-control" readonly style="min-height: 50px;">{{ dish.description }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Tasting Note</label>
+                                <input type="text" class="form-control" value="{{ dish.tastingNote }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Image URL</label>
+                                <input type="text" class="form-control" value="{{ dish.image }}" readonly>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="form-text">To add or modify signature dishes, open the Direct JSON Editor tab.</div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 07 MENU -->
+                <div class="tab-panel {% if active_tab == 'sec-menu' %}active{% endif %}" id="tab-sec-menu">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 07 — Complete Menu Experience</h2>
+                            <p>Sushi &amp; Sashimi, Small Plates, Ramen, Robata Mains, and Tea Sanctuary.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        {% for cat in content.menuCategories %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span>{{ cat.name }} <span class="jp-font" style="color: var(--moss); font-weight: 400;">({{ cat.japaneseName }})</span></span>
+                                <span class="badge badge-pending">{{ cat.items|length }} Items</span>
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px;">{{ cat.description }}</p>
+                            <div style="font-size: 12px;">
+                                {% for item in cat.items %}
+                                <span style="display: inline-block; background: #FFFFFF; border: 1px solid var(--border-subtle); padding: 3px 8px; margin: 3px; border-radius: 2px;">
+                                    {{ item.name }} ({{ item.price }})
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 08 ARCHITECTURE -->
+                <div class="tab-panel {% if active_tab == 'sec-arch' %}active{% endif %}" id="tab-sec-arch">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 08 — Architecture &amp; Interior Design</h2>
+                            <p>Natural cedar wood, dark granite stone, and washi paper screens.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Eyebrow</label>
+                            <input type="text" name="arch_eyebrow" class="form-control" value="{{ content.architecture.eyebrow|default:'ARCHITECTURAL PHILOSOPHY' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Main Section Title</label>
+                            <input type="text" name="arch_title" class="form-control" value="{{ content.architecture.title|default:'A Sanctuary of Natural Cedar, Stone & Gentle Light.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Architecture Narrative</label>
+                            <textarea name="arch_description" class="form-control">{{ content.architecture.description|default:'' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 09 CHEF -->
+                <div class="tab-panel {% if active_tab == 'sec-chef' %}active{% endif %}" id="tab-sec-chef">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 09 — Meet the Executive Master Chef</h2>
+                            <p>Chef Kenji Takahashi's culinary journey, philosophy, and personal quote.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label>Chef Full Name</label>
+                                <input type="text" name="chef_name" class="form-control" value="{{ content.chef.name|default:'Chef Kenji Takahashi' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Japanese Kanji Name</label>
+                                <input type="text" name="chef_japanese" class="form-control jp-font" value="{{ content.chef.japaneseName|default:'高橋 健司' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Position / Title</label>
+                                <input type="text" name="chef_position" class="form-control" value="{{ content.chef.position|default:'Executive Master Chef' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Chef's Personal Quote</label>
+                            <textarea name="chef_quote" class="form-control" style="font-style: italic;">{{ content.chef.quote|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Biography Paragraph 1</label>
+                            <textarea name="chef_bio1" class="form-control">{{ content.chef.bio1|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Biography Paragraph 2</label>
+                            <textarea name="chef_bio2" class="form-control">{{ content.chef.bio2|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Chef Portrait URL</label>
+                            <input type="text" name="chef_image" class="form-control" value="{{ content.chef.image|default:'' }}">
+                            <div class="img-preview-box" style="margin-top: 8px;">
+                                <img src="{{ content.chef.image }}" class="preview-thumb" onerror="this.style.display='none'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 10 EXPERIENCES -->
+                <div class="tab-panel {% if active_tab == 'sec-experiences' %}active{% endif %}" id="tab-sec-experiences">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 10 — Private Dining &amp; Special Experiences</h2>
+                            <p>The Chef's Omakase Counter, Private Tatami Salon, and Zen Tea Ceremony.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        {% for exp in content.specialExperiences %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span>{{ exp.title }} <span class="jp-font" style="color: var(--moss); font-weight: 400;">({{ exp.japaneseSubtitle }})</span></span>
+                                <span class="badge badge-pending">{{ exp.price }}</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Tagline</label>
+                                <input type="text" class="form-control" value="{{ exp.tagline }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea class="form-control" readonly style="min-height: 50px;">{{ exp.description }}</textarea>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 11 GALLERY -->
+                <div class="tab-panel {% if active_tab == 'sec-gallery' %}active{% endif %}" id="tab-sec-gallery">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 11 — Restaurant &amp; Culinary Gallery</h2>
+                            <p>Categorized photography with full-screen lightbox preview.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-grid-3">
+                            {% for photo in content.gallery %}
+                            <div style="background: #F9F7F2; border: 1px solid var(--border-subtle); padding: 10px; border-radius: 2px;">
+                                <img src="{{ photo.url }}" style="width: 100%; height: 140px; object-fit: cover; border-radius: 2px; margin-bottom: 8px;">
+                                <div style="font-size: 12px; font-weight: 600; color: var(--charcoal);">{{ photo.title }}</div>
+                                <span class="badge badge-confirmed" style="margin-top: 4px;">{{ photo.category }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 12 REVIEWS -->
+                <div class="tab-panel {% if active_tab == 'sec-reviews' %}active{% endif %}" id="tab-sec-reviews">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 12 — Guest Stories &amp; Testimonials</h2>
+                            <p>Verified patron dining reflections.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        {% for rev in content.testimonials %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span>{{ rev.name }} &bull; {{ rev.role }}</span>
+                                <span style="color: var(--bamboo);"><i class="fa-solid fa-star"></i> {{ rev.rating }}.0</span>
+                            </div>
+                            <blockquote style="font-style: italic; font-size: 14px; color: var(--charcoal);">
+                                "{{ rev.quote }}"
+                            </blockquote>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 13 RESERVATION -->
+                <div class="tab-panel {% if active_tab == 'sec-reservation' %}active{% endif %}" id="tab-sec-reservation">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 13 — Table Reservation Copy</h2>
+                            <p>Headlines, description, and omotenashi concierge notice.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Eyebrow</label>
+                            <input type="text" name="res_eyebrow" class="form-control" value="{{ content.reservationSection.eyebrow|default:'TABLE INQUIRY & RESERVATION' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Headline</label>
+                            <input type="text" name="res_title" class="form-control" value="{{ content.reservationSection.title|default:'Your Table Awaits.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="res_description" class="form-control">{{ content.reservationSection.description|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Concierge Reassurance Note</label>
+                            <textarea name="res_note" class="form-control">{{ content.reservationSection.note|default:'' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 15 FOOTER -->
+                <div class="tab-panel {% if active_tab == 'sec-footer' %}active{% endif %}" id="tab-sec-footer">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 15 — Footer &amp; Closing Statement</h2>
+                            <p>Closing brand invitation and copyright statement.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Closing Statement</label>
+                            <input type="text" name="footer_closing" class="form-control" value="{{ content.footer.closingStatement|default:'An Invitation to Experience Dining Differently.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tagline</label>
+                            <input type="text" name="footer_tagline" class="form-control" value="{{ content.footer.tagline|default:'Beauty in Simplicity. Excellence in Every Detail.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Copyright</label>
+                            <input type="text" name="footer_copyright" class="form-control" value="{{ content.footer.copyright|default:'© 2026 ENSO 圓相 Japanese Zen Dining. All Rights Reserved.' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: RAW JSON EDITOR -->
+                <div class="tab-panel {% if active_tab == 'rawjson' %}active{% endif %}" id="tab-rawjson">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Direct Configuration JSON Editor</h2>
+                            <p>Full read/write JSON editor providing absolute control over every single parameter, coordinate, and dish.</p>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn btn-outline-charcoal btn-sm" onclick="copyJsonToClipboard()">
+                                <i class="fa-solid fa-copy"></i> Copy JSON
+                            </button>
+                            <button type="button" class="btn btn-outline-charcoal btn-sm" onclick="formatJsonEditor()">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Beautify Format
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Live Structured JSON Configuration</label>
+                            <textarea name="raw_content_json" id="raw_content_json" class="code-textarea" spellcheck="false">{{ content_json_str }}</textarea>
+                            <div class="form-text">
+                                <i class="fa-solid fa-triangle-exclamation" style="color: var(--vermilion);"></i>
+                                Saving directly updates the database and immediately propagates to the visitor website.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sticky Bottom Actions Bar -->
+                <div class="sticky-actions-bar">
+                    <div style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-muted);">
+                        <span class="vermilion-seal" style="width: 18px; height: 18px; font-size: 9px;">相</span>
+                        <span>Changes will instantly update the SQLite database and visitor website.</span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button type="reset" class="btn btn-outline-charcoal">
+                            <i class="fa-solid fa-rotate-left"></i> Reset Form
+                        </button>
+                        <button type="submit" class="btn btn-charcoal">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Save &amp; Publish To Website
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function switchTab(tabId) {
+        document.querySelectorAll('.nav-item-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        const clickedBtn = event ? event.currentTarget : null;
+        if (clickedBtn && clickedBtn.classList.contains('nav-item-btn')) {
+            clickedBtn.classList.add('active');
+        } else {
+            const btn = document.querySelector(`.nav-item-btn[onclick*="'${tabId}'"]`);
+            if (btn) btn.classList.add('active');
+        }
+
+        document.querySelectorAll('.tab-panel').forEach(panel => {
+            panel.classList.remove('active');
+        });
+
+        const target = document.getElementById(`tab-${tabId}`);
+        if (target) {
+            target.classList.add('active');
+        }
+
+        document.getElementById('form-active-tab').value = tabId;
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('tab', tabId);
+        window.history.replaceState({}, '', newUrl);
+
+        document.querySelector('.cms-content').scrollTop = 0;
+    }
+
+    function syncColor(textInput) {
+        const picker = textInput.parentElement.querySelector('input[type="color"]');
+        if (picker) {
+            picker.value = textInput.value;
+        }
+    }
+
+    document.querySelectorAll('.color-swatch').forEach(swatch => {
+        swatch.addEventListener('input', function() {
+            const textInput = this.parentElement.querySelector('input[type="text"]');
+            if (textInput) textInput.value = this.value;
+        });
+    });
+
+    function saveActiveForm() {
+        document.getElementById('cms-master-form').submit();
+    }
+
+    function copyJsonToClipboard() {
+        const textarea = document.getElementById('raw_content_json');
+        navigator.clipboard.writeText(textarea.value).then(() => {
+            alert('JSON copied to clipboard!');
+        });
+    }
+
+    function formatJsonEditor() {
+        const textarea = document.getElementById('raw_content_json');
+        try {
+            const parsed = JSON.parse(textarea.value);
+            textarea.value = JSON.stringify(parsed, null, 2);
+        } catch (e) {
+            alert('Cannot format invalid JSON: ' + e.message);
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab && document.getElementById(`tab-${tab}`)) {
+            switchTab(tab);
+        }
+    });
+</script>
+{% endblock %}
