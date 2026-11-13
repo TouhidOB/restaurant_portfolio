@@ -82,6 +82,14 @@ export default function CMSPanel() {
     }
   };
 
+  // Check if admin mode is explicitly requested via query param or logged in
+  const isExplicitAdmin = typeof window !== 'undefined' && (window.location.search.includes('admin') || window.location.search.includes('cms'));
+
+  // Normal visitors see pure customer-facing restaurant experience
+  if (!adminUser && !isExplicitAdmin && !isLoginModalOpen) {
+    return null;
+  }
+
   // If CMS is closed, render the floating Admin toggle button
   if (!isCMSOpen && !isLoginModalOpen) {
     return (

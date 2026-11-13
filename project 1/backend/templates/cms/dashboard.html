@@ -1,0 +1,1583 @@
+{% extends "cms/base.html" %}
+
+{% block title %}CMS Studio | {{ site_config.restaurant_name }} Administration{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* CMS Studio Layout */
+    .cms-layout {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    /* Top Navigation Header */
+    .cms-header {
+        background: rgba(18, 59, 53, 0.95);
+        border-bottom: 1px solid rgba(214, 184, 121, 0.4);
+        padding: 14px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        backdrop-filter: blur(12px);
+    }
+
+    .cms-brand {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .cms-brand-logo {
+        font-family: 'Bodoni Moda', serif;
+        font-size: 24px;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        color: var(--gold-bright);
+        text-shadow: 0 0 12px rgba(214, 184, 121, 0.3);
+    }
+
+    .cms-badge-mode {
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        padding: 4px 10px;
+        background: rgba(23, 25, 26, 0.6);
+        border: 1px solid rgba(214, 184, 121, 0.3);
+        color: var(--gold);
+        border-radius: 2px;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .live-dot {
+        width: 6px;
+        height: 6px;
+        background: #2ECC71;
+        border-radius: 50%;
+        box-shadow: 0 0 8px #2ECC71;
+    }
+
+    .cms-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .admin-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--pearl);
+        background: rgba(0, 0, 0, 0.25);
+        padding: 6px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+    }
+
+    /* Main Container with Sidebar & Content */
+    .cms-body {
+        display: flex;
+        flex: 1;
+        min-height: calc(100vh - 65px);
+    }
+
+    /* Sidebar Navigation */
+    .cms-sidebar {
+        width: 280px;
+        background: #141719;
+        border-right: 1px solid rgba(214, 184, 121, 0.2);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+    }
+
+    .sidebar-section-title {
+        font-size: 10px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--gold);
+        padding: 16px 20px 8px;
+        opacity: 0.7;
+    }
+
+    .sidebar-nav {
+        list-style: none;
+        padding: 0 10px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .nav-item-btn {
+        width: 100%;
+        text-align: left;
+        background: transparent;
+        border: none;
+        color: #A0ABA6;
+        padding: 11px 16px;
+        font-size: 13px;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 2px;
+        transition: all 0.2s ease;
+    }
+
+    .nav-item-btn:hover {
+        background: rgba(18, 59, 53, 0.4);
+        color: var(--pearl);
+    }
+
+    .nav-item-btn.active {
+        background: linear-gradient(90deg, rgba(18, 59, 53, 0.8) 0%, rgba(18, 59, 53, 0.3) 100%);
+        color: var(--gold-bright);
+        border-left: 3px solid var(--gold);
+        font-weight: 600;
+    }
+
+    .nav-btn-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .nav-badge-pill {
+        font-size: 10px;
+        padding: 2px 7px;
+        border-radius: 10px;
+        font-weight: 700;
+        background: rgba(243, 156, 18, 0.25);
+        color: #F39C12;
+        border: 1px solid rgba(243, 156, 18, 0.5);
+    }
+
+    /* Content Area */
+    .cms-content {
+        flex: 1;
+        padding: 32px 40px 60px;
+        background: #17191A;
+        overflow-y: auto;
+    }
+
+    /* Stat Cards */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 18px;
+        margin-bottom: 28px;
+    }
+
+    .stat-card {
+        background: #1D2124;
+        border: 1px solid rgba(214, 184, 121, 0.2);
+        padding: 18px 22px;
+        border-radius: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--gold), transparent);
+    }
+
+    .stat-info h4 {
+        font-size: 10px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 6px;
+    }
+
+    .stat-info .stat-number {
+        font-size: 28px;
+        font-weight: 600;
+        font-family: 'Bodoni Moda', serif;
+        color: var(--gold-bright);
+    }
+
+    .stat-icon {
+        font-size: 26px;
+        color: rgba(214, 184, 121, 0.35);
+    }
+
+    /* CMS Panels / Tabs */
+    .tab-panel {
+        display: none;
+        animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .tab-panel.active {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-header {
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid rgba(214, 184, 121, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .panel-header h2 {
+        font-size: 26px;
+        color: var(--gold-bright);
+        font-weight: 500;
+    }
+
+    .panel-header p {
+        font-size: 13px;
+        color: var(--jade);
+        margin-top: 4px;
+    }
+
+    /* Section Cards */
+    .cms-card {
+        background: #1E2226;
+        border: 1px solid rgba(214, 184, 121, 0.25);
+        padding: 28px;
+        margin-bottom: 24px;
+        border-radius: 2px;
+        position: relative;
+    }
+
+    .cms-card-header {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        color: var(--gold);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 12px;
+        border-bottom: 1px dashed rgba(214, 184, 121, 0.2);
+    }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .form-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    /* Color picker item */
+    .color-picker-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 10px 14px;
+        border: 1px solid var(--obsidian-border);
+        border-radius: 2px;
+    }
+
+    .color-swatch {
+        width: 36px;
+        height: 36px;
+        border-radius: 2px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        cursor: pointer;
+        padding: 0;
+        background: none;
+    }
+
+    /* Image Preview helper */
+    .img-preview-box {
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .preview-thumb {
+        width: 64px;
+        height: 48px;
+        object-fit: cover;
+        border: 1px solid var(--gold);
+        border-radius: 2px;
+        background: #000;
+    }
+
+    /* Reservations Table */
+    .table-container {
+        overflow-x: auto;
+        background: #1C2023;
+        border: 1px solid rgba(214, 184, 121, 0.25);
+        border-radius: 2px;
+    }
+
+    .cms-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        text-align: left;
+    }
+
+    .cms-table th {
+        background: #123B35;
+        color: var(--gold-bright);
+        font-family: 'Bodoni Moda', serif;
+        font-size: 13px;
+        letter-spacing: 0.1em;
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--gold);
+    }
+
+    .cms-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        color: var(--pearl);
+    }
+
+    .cms-table tr:hover td {
+        background: rgba(18, 59, 53, 0.2);
+    }
+
+    /* Dynamic Repeater Items (Dishes, Menu, etc.) */
+    .repeater-card {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(214, 184, 121, 0.2);
+        padding: 18px;
+        margin-bottom: 16px;
+        border-radius: 2px;
+        position: relative;
+    }
+
+    .repeater-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        font-weight: 600;
+        font-size: 13px;
+        color: var(--gold-bright);
+    }
+
+    /* Sticky Bottom Actions */
+    .sticky-actions-bar {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(20, 23, 25, 0.95);
+        border-top: 1px solid rgba(214, 184, 121, 0.3);
+        padding: 14px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        backdrop-filter: blur(10px);
+        margin: 32px -40px -60px -40px;
+        z-index: 99;
+    }
+
+    /* Code area for Direct JSON */
+    .code-textarea {
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        font-size: 13px;
+        line-height: 1.5;
+        background: #0E1012;
+        color: #E2E8F0;
+        border: 1px solid rgba(214, 184, 121, 0.3);
+        padding: 16px;
+        min-height: 520px;
+        width: 100%;
+        border-radius: 2px;
+        tab-size: 2;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cms-layout">
+    <!-- Header -->
+    <header class="cms-header">
+        <div class="cms-brand">
+            <span class="cms-brand-logo">{{ site_config.restaurant_name }}</span>
+            <span class="cms-badge-mode">
+                <span class="live-dot"></span>
+                Admin CMS Studio (Port 8001)
+            </span>
+        </div>
+
+        <div class="cms-header-actions">
+            <a href="http://127.0.0.1:3000" target="_blank" class="btn btn-outline-gold btn-sm" title="View visitor experience">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                Open Public Website (Port 3000)
+            </a>
+
+            <button type="button" class="btn btn-gold btn-sm" onclick="saveActiveForm()">
+                <i class="fa-solid fa-floppy-disk"></i>
+                Save All Changes
+            </button>
+
+            <div class="admin-pill">
+                <i class="fa-solid fa-user-shield" style="color: var(--gold);"></i>
+                <span>{{ request.user.username }}</span>
+            </div>
+
+            <a href="{% url 'cms_logout' %}" class="btn btn-danger btn-sm" title="Log out of CMS">
+                <i class="fa-solid fa-power-off"></i>
+                Logout
+            </a>
+        </div>
+    </header>
+
+    <div class="cms-body">
+        <!-- Sidebar Navigation -->
+        <aside class="cms-sidebar">
+            <div class="sidebar-section-title">Core Management</div>
+            <ul class="sidebar-nav">
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'overview' %}active{% endif %}" onclick="switchTab('overview')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-gauge-high"></i> Overview</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'reservations' %}active{% endif %}" onclick="switchTab('reservations')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-envelope-open-text"></i> Reservations</span>
+                        {% if stats.pending_reservations > 0 %}
+                        <span class="nav-badge-pill">{{ stats.pending_reservations }} new</span>
+                        {% endif %}
+                    </button>
+                </li>
+            </ul>
+
+            <div class="sidebar-section-title">Design &amp; Atmosphere</div>
+            <ul class="sidebar-nav">
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'theme' %}active{% endif %}" onclick="switchTab('theme')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-palette"></i> Theme &amp; Colors</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'typography' %}active{% endif %}" onclick="switchTab('typography')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-font"></i> Typography &amp; Fonts</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'general' %}active{% endif %}" onclick="switchTab('general')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-hotel"></i> General &amp; Contact</span>
+                    </button>
+                </li>
+            </ul>
+
+            <div class="sidebar-section-title">Website Sections</div>
+            <ul class="sidebar-nav">
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-hero' %}active{% endif %}" onclick="switchTab('sec-hero')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-gem"></i> 02. 3D Hero Arrival</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-story' %}active{% endif %}" onclick="switchTab('sec-story')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-scroll"></i> 03. Brand Story</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-tour' %}active{% endif %}" onclick="switchTab('sec-tour')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-compass"></i> 04. 3D Virtual Tour</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-pillars' %}active{% endif %}" onclick="switchTab('sec-pillars')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-crown"></i> 05. Dining Pillars</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-dishes' %}active{% endif %}" onclick="switchTab('sec-dishes')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-utensils"></i> 06. Signature Dishes</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-menu' %}active{% endif %}" onclick="switchTab('sec-menu')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-book-open"></i> 07. Full Menu Preview</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-arch' %}active{% endif %}" onclick="switchTab('sec-arch')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-archway"></i> 08. Architecture</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-chef' %}active{% endif %}" onclick="switchTab('sec-chef')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-user-tie"></i> 09. Meet The Chef</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-experiences' %}active{% endif %}" onclick="switchTab('sec-experiences')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-champagne-glasses"></i> 10. Experiences</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-gallery' %}active{% endif %}" onclick="switchTab('sec-gallery')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-images"></i> 11. Atmosphere Gallery</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-reviews' %}active{% endif %}" onclick="switchTab('sec-reviews')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-star"></i> 12. Reviews &amp; Press</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-reservation' %}active{% endif %}" onclick="switchTab('sec-reservation')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-calendar-check"></i> 13. Reservation Copy</span>
+                    </button>
+                </li>
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'sec-footer' %}active{% endif %}" onclick="switchTab('sec-footer')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-shoe-prints"></i> 15. Footer Settings</span>
+                    </button>
+                </li>
+            </ul>
+
+            <div class="sidebar-section-title">Developer &amp; Power Tools</div>
+            <ul class="sidebar-nav">
+                <li>
+                    <button class="nav-item-btn {% if active_tab == 'rawjson' %}active{% endif %}" onclick="switchTab('rawjson')">
+                        <span class="nav-btn-content"><i class="fa-solid fa-code"></i> Direct JSON Editor</span>
+                    </button>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Body -->
+        <main class="cms-content">
+            <!-- Form covering all sections -->
+            <form id="cms-master-form" method="POST" action="{% url 'cms_dashboard' %}">
+                {% csrf_token %}
+                <input type="hidden" name="active_tab" id="form-active-tab" value="{{ active_tab }}">
+
+                <!-- TAB: OVERVIEW -->
+                <div class="tab-panel {% if active_tab == 'overview' %}active{% endif %}" id="tab-overview">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Control Studio Overview</h2>
+                            <p>Real-time performance, active inquiries, and website publishing state.</p>
+                        </div>
+                        <a href="http://127.0.0.1:3000" target="_blank" class="btn btn-gold btn-sm">
+                            <i class="fa-solid fa-eye"></i> View Live Customer Experience
+                        </a>
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Total Reservations</h4>
+                                <div class="stat-number">{{ stats.total_reservations }}</div>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Pending Confirmation</h4>
+                                <div class="stat-number" style="color: #F39C12;">{{ stats.pending_reservations }}</div>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Confirmed Guests</h4>
+                                <div class="stat-number" style="color: #2ECC71;">{{ stats.confirmed_reservations }}</div>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-info">
+                                <h4>Last Published</h4>
+                                <div class="stat-number" style="font-size: 16px; margin-top: 8px;">{{ site_config.updated_at|date:"M d, H:i" }}</div>
+                            </div>
+                            <div class="stat-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header">
+                            <i class="fa-solid fa-bolt"></i> Fast Access Actions
+                        </div>
+                        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-emerald" onclick="switchTab('reservations')">
+                                <i class="fa-solid fa-envelope"></i> Manage Guest Reservations ({{ stats.pending_reservations }} pending)
+                            </button>
+                            <button type="button" class="btn btn-outline-gold" onclick="switchTab('theme')">
+                                <i class="fa-solid fa-palette"></i> Edit Brand Colors &amp; Buttons
+                            </button>
+                            <button type="button" class="btn btn-outline-gold" onclick="switchTab('sec-dishes')">
+                                <i class="fa-solid fa-utensils"></i> Update Signature Dishes
+                            </button>
+                            <button type="button" class="btn btn-outline-gold" onclick="switchTab('rawjson')">
+                                <i class="fa-solid fa-code"></i> Open Raw JSON Config
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header">
+                            <i class="fa-solid fa-circle-info"></i> System Architecture Notice
+                        </div>
+                        <p style="font-size: 14px; line-height: 1.6; color: var(--pearl);">
+                            The website operates with a decoupled architecture:
+                            <br>&bull; <strong>Django Backend (Port 8001):</strong> Dedicated admin CMS management, SQLite persistent storage, and REST APIs.
+                            <br>&bull; <strong>React + Vite + Three.js Frontend (Port 3000):</strong> High performance 3D cinematic visitor experience with real-time CMS sync.
+                            <br>&bull; <strong>Security:</strong> Public visitors cannot access this CMS studio. Only authenticated administrators with staff privileges can view or modify content.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- TAB: RESERVATIONS -->
+                <div class="tab-panel {% if active_tab == 'reservations' %}active{% endif %}" id="tab-reservations">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Guest Reservations Inbox</h2>
+                            <p>Review customer booking inquiries submitted directly through the public website.</p>
+                        </div>
+                        <span class="badge badge-gold">{{ reservations.count }} Total Inquiries</span>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="cms-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Guest Details</th>
+                                    <th>Date &amp; Time</th>
+                                    <th>Party Size</th>
+                                    <th>Occasion &amp; Notes</th>
+                                    <th>Status</th>
+                                    <th style="text-align: right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in reservations %}
+                                <tr>
+                                    <td><strong>AUR-{{ res.id|stringformat:"04d" }}</strong></td>
+                                    <td>
+                                        <div style="font-weight: 600; color: var(--gold-bright);">{{ res.full_name }}</div>
+                                        <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                                            <i class="fa-solid fa-phone"></i> {{ res.phone }}
+                                            {% if res.email %} | <i class="fa-solid fa-envelope"></i> {{ res.email }}{% endif %}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>{{ res.date|date:"l, M d, Y" }}</div>
+                                        <div style="font-size: 11px; color: var(--gold);">{{ res.time }}</div>
+                                    </td>
+                                    <td>{{ res.guests }}</td>
+                                    <td>
+                                        <div style="font-weight: 500;">{{ res.occasion }}</div>
+                                        {% if res.special_requests %}
+                                        <div style="font-size: 11px; color: var(--jade); font-style: italic; max-width: 200px;">
+                                            "{{ res.special_requests }}"
+                                        </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-{{ res.status }}">{{ res.status|title }}</span>
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <div style="display: inline-flex; gap: 6px;">
+                                            {% if res.status != 'confirmed' %}
+                                            <a href="{% url 'cms_reservation_status' res.id 'confirmed' %}" class="btn btn-sm btn-emerald" title="Confirm Booking">
+                                                <i class="fa-solid fa-check"></i>
+                                            </a>
+                                            {% endif %}
+                                            {% if res.status != 'cancelled' %}
+                                            <a href="{% url 'cms_reservation_status' res.id 'cancelled' %}" class="btn btn-sm btn-danger" title="Cancel Booking">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </a>
+                                            {% endif %}
+                                            {% if res.status != 'pending' %}
+                                            <a href="{% url 'cms_reservation_status' res.id 'pending' %}" class="btn btn-sm btn-outline-gold" title="Mark as Pending">
+                                                <i class="fa-solid fa-rotate-left"></i>
+                                            </a>
+                                            {% endif %}
+                                            <a href="{% url 'cms_reservation_delete' res.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Delete reservation inquiry permanently?');" title="Delete record">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                        <i class="fa-solid fa-calendar-xmark" style="font-size: 32px; margin-bottom: 12px; display: block; opacity: 0.4;"></i>
+                                        No customer reservations submitted yet. New submissions from the public website will appear here in real-time.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB: THEME & COLORS -->
+                <div class="tab-panel {% if active_tab == 'theme' %}active{% endif %}" id="tab-theme">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Art Deco Brand Colors &amp; Button Styling</h2>
+                            <p>Adjust primary palette, button backgrounds, text colors, and gold metallic accents.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header"><i class="fa-solid fa-palette"></i> Architectural Palette</div>
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label>Emerald Green (Brand Core)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_emerald" class="color-swatch" value="{{ content.theme.colors.emerald|default:'#123B35' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.emerald|default:'#123B35' }}" onchange="syncColor(this)">
+                                </div>
+                                <div class="form-text">Used for navigation, luxury card backgrounds, and footer.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Champagne Gold (Accents)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_gold" class="color-swatch" value="{{ content.theme.colors.gold|default:'#D6B879' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.gold|default:'#D6B879' }}" onchange="syncColor(this)">
+                                </div>
+                                <div class="form-text">Used for thin frames, section labels, badges, and CTA borders.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Obsidian Black (Dark Surfaces)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_obsidian" class="color-swatch" value="{{ content.theme.colors.obsidian|default:'#17191A' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.obsidian|default:'#17191A' }}" onchange="syncColor(this)">
+                                </div>
+                                <div class="form-text">Cinematic hero backdrop, menu backdrop, and gallery overlay.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Pearl White (Text / Light)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_pearl" class="color-swatch" value="{{ content.theme.colors.pearl|default:'#F3EDE1' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.pearl|default:'#F3EDE1' }}" onchange="syncColor(this)">
+                                </div>
+                                <div class="form-text">Main text color and elegant light accents.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Dusty Jade (Secondary Green)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_jade" class="color-swatch" value="{{ content.theme.colors.jade|default:'#718C7D' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.jade|default:'#718C7D' }}" onchange="syncColor(this)">
+                                </div>
+                                <div class="form-text">Subtle captions, borders, and secondary descriptions.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Bronze (Metallic Borders)</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_bronze" class="color-swatch" value="{{ content.theme.colors.bronze|default:'#99764B' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.bronze|default:'#99764B' }}" onchange="syncColor(this)">
+                                </div>
+                                <div class="form-text">Thin framing lines and architectural accents.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header"><i class="fa-solid fa-square-check"></i> Button Styles</div>
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label>Primary Button Background</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_btn_bg" class="color-swatch" value="{{ content.theme.colors.primaryButtonBg|default:'#123B35' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.primaryButtonBg|default:'#123B35' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Primary Button Text Color</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_btn_text" class="color-swatch" value="{{ content.theme.colors.primaryButtonText|default:'#E8D3A2' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.primaryButtonText|default:'#E8D3A2' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Primary Button Border Color</label>
+                                <div class="color-picker-box">
+                                    <input type="color" name="color_btn_border" class="color-swatch" value="{{ content.theme.colors.primaryButtonBorder|default:'#D6B879' }}">
+                                    <input type="text" class="form-control" value="{{ content.theme.colors.primaryButtonBorder|default:'#D6B879' }}" onchange="syncColor(this)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: TYPOGRAPHY -->
+                <div class="tab-panel {% if active_tab == 'typography' %}active{% endif %}" id="tab-typography">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Typography &amp; Editorial Font System</h2>
+                            <p>Configure fonts and font sizes according to PRD section 2.3.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header"><i class="fa-solid fa-font"></i> Font Families</div>
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label>Display Serif Font (Headings)</label>
+                                <input type="text" name="font_display" class="form-control" value="{{ content.theme.typography.fontDisplay|default:'Bodoni Moda' }}">
+                                <div class="form-text">Primary display font for Hero, section titles, and signature dishes.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Body Font (Navigation &amp; Text)</label>
+                                <input type="text" name="font_body" class="form-control" value="{{ content.theme.typography.fontBody|default:'Montserrat' }}">
+                                <div class="form-text">Clean sans-serif for body paragraphs, buttons, and form labels.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Accent Font (Quotes &amp; Italics)</label>
+                                <input type="text" name="font_accent" class="form-control" value="{{ content.theme.typography.fontAccent|default:'Cormorant Garamond' }}">
+                                <div class="form-text">Used for editorial quotes, chef statements, and tasting notes.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header"><i class="fa-solid fa-text-height"></i> Font Sizing Scale (Desktop)</div>
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label>Hero Heading Size (px)</label>
+                                <input type="number" name="hero_heading_size" class="form-control" value="{{ content.theme.typography.heroHeadingSize|default:84 }}" min="32" max="120">
+                                <div class="form-text">PRD recommendation: 84px – 88px.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Main Section Heading Size (px)</label>
+                                <input type="number" name="section_heading_size" class="form-control" value="{{ content.theme.typography.sectionHeadingSize|default:56 }}" min="24" max="80">
+                                <div class="form-text">PRD recommendation: 56px – 64px.</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Standard Body Size (px)</label>
+                                <input type="number" name="body_size" class="form-control" value="{{ content.theme.typography.bodySize|default:16 }}" min="12" max="24">
+                                <div class="form-text">PRD recommendation: 16px.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: GENERAL INFO -->
+                <div class="tab-panel {% if active_tab == 'general' %}active{% endif %}" id="tab-general">
+                    <div class="panel-header">
+                        <div>
+                            <h2>General Restaurant Information</h2>
+                            <p>Brand identity, location, contact lines, currency, and map links.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header"><i class="fa-solid fa-store"></i> Restaurant Identity</div>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Restaurant Name</label>
+                                <input type="text" name="restaurant_name" class="form-control" value="{{ content.name|default:'AURELIA' }}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Subname / Category</label>
+                                <input type="text" name="restaurant_subname" class="form-control" value="{{ content.subname|default:'Grand Dining Salon & Champagne Parlour' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Brand Tagline</label>
+                            <input type="text" name="restaurant_tagline" class="form-control" value="{{ content.tagline|default:'Where Elegance Meets Exceptional Taste' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Short Brand Story</label>
+                            <textarea name="restaurant_story" class="form-control">{{ content.shortStory|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-grid-3">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" name="city" class="form-control" value="{{ content.city|default:'Dhaka' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Country</label>
+                                <input type="text" name="country" class="form-control" value="{{ content.country|default:'Bangladesh' }}">
+                            </div>
+                            <div class="form-group">
+                                <label>Currency Symbol</label>
+                                <input type="text" name="currency" class="form-control" value="{{ content.currency|default:'৳' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header"><i class="fa-solid fa-address-book"></i> Contact &amp; Concierge Details</div>
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Concierge Phone</label>
+                                <input type="text" name="contact_phone" class="form-control" value="{{ content.contact.phone|default:'+880 1711-889900' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Concierge Email</label>
+                                <input type="email" name="contact_email" class="form-control" value="{{ content.contact.email|default:'concierge@aurelia-dining.com' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>WhatsApp Concierge Number</label>
+                                <input type="text" name="contact_whatsapp" class="form-control" value="{{ content.contact.whatsapp|default:'+8801711889900' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Short Address (Navigation)</label>
+                                <input type="text" name="contact_address" class="form-control" value="{{ content.contact.address|default:'Grand Promenade, Road 71, Gulshan 2' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Full Physical Address</label>
+                            <input type="text" name="contact_full_address" class="form-control" value="{{ content.contact.fullAddress|default:'Grand Promenade, Road 71, Gulshan 2, Dhaka 1212, Bangladesh' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Google Maps Embed URL (Iframe)</label>
+                            <input type="text" name="google_maps_embed" class="form-control" value="{{ content.contact.googleMapsEmbedUrl|default:'' }}">
+                            <div class="form-text">Paste the embed URL for the Location section interactive map.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 02 HERO -->
+                <div class="tab-panel {% if active_tab == 'sec-hero' %}active{% endif %}" id="tab-sec-hero">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 02 — Hero: The Grand Arrival</h2>
+                            <p>Primary conversion and branding entry point with 3D cinematic scene.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Eyebrow Tagline</label>
+                            <input type="text" name="hero_eyebrow" class="form-control" value="{{ content.hero.eyebrow|default:'AN EXTRAORDINARY DINING DESTINATION' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Main Hero Headline</label>
+                            <input type="text" name="hero_title" class="form-control" value="{{ content.hero.title|default:'Where Elegance Meets Exceptional Taste.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Hero Description</label>
+                            <textarea name="hero_description" class="form-control">{{ content.hero.description|default:'Discover an unforgettable dining experience where exceptional cuisine, timeless architecture and thoughtful hospitality come together in perfect harmony.' }}</textarea>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Primary CTA Button Text</label>
+                                <input type="text" name="hero_primary_cta" class="form-control" value="{{ content.hero.primaryCta|default:'RESERVE YOUR TABLE' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Secondary CTA Button Text</label>
+                                <input type="text" name="hero_secondary_cta" class="form-control" value="{{ content.hero.secondaryCta|default:'EXPLORE OUR RESTAURANT' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Location Badge</label>
+                            <input type="text" name="hero_location_badge" class="form-control" value="{{ content.hero.locationBadge|default:'GULSHAN 2, DHAKA, BANGLADESH' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>WebGL Fallback Hero Image URL</label>
+                            <input type="text" name="hero_fallback_image" class="form-control" value="{{ content.hero.fallbackImage|default:'' }}">
+                            <div class="img-preview-box">
+                                <img src="{{ content.hero.fallbackImage }}" class="preview-thumb" onerror="this.style.display='none'">
+                                <span class="form-text">Displayed on low-end devices or when WebGL hardware acceleration is unavailable.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 03 BRAND STORY -->
+                <div class="tab-panel {% if active_tab == 'sec-story' %}active{% endif %}" id="tab-sec-story">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 03 — Brand Introduction: Our Story</h2>
+                            <p>Art Deco heritage, culinary philosophy, and dedication to excellence.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Eyebrow Label</label>
+                            <input type="text" name="intro_eyebrow" class="form-control" value="{{ content.brandIntro.eyebrow|default:'THE ART OF FINE DINING' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Section Heading</label>
+                            <input type="text" name="intro_title" class="form-control" value="{{ content.brandIntro.title|default:'A Place Where Every Detail Tells a Story.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Lead Paragraph</label>
+                            <textarea name="intro_lead" class="form-control">{{ content.brandIntro.lead|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Full Story Description</label>
+                            <textarea name="intro_description" class="form-control">{{ content.brandIntro.description|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Secondary Editorial Statement</label>
+                                <input type="text" name="intro_secondary" class="form-control" value="{{ content.brandIntro.secondaryStatement|default:'Crafted with Passion. Served with Distinction.' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Call To Action Text</label>
+                                <input type="text" name="intro_cta" class="form-control" value="{{ content.brandIntro.cta|default:'DISCOVER OUR STORY' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Story Feature Image URL</label>
+                            <input type="text" name="intro_image" class="form-control" value="{{ content.brandIntro.image|default:'' }}">
+                            <div class="img-preview-box">
+                                <img src="{{ content.brandIntro.image }}" class="preview-thumb" onerror="this.style.display='none'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 04 3D VIRTUAL TOUR -->
+                <div class="tab-panel {% if active_tab == 'sec-tour' %}active{% endif %}" id="tab-sec-tour">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 04 — Restaurant Experience: Virtual Tour</h2>
+                            <p>5 cinematic viewpoints: Exterior, Main Entrance, Dining Salon, Champagne Bar, Private Vault.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header"><i class="fa-solid fa-camera"></i> 5 Viewpoint Presets</div>
+                        {% for vp in content.tourViewpoints %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span><i class="fa-solid fa-location-dot" style="color: var(--gold);"></i> Viewpoint {{ vp.number }}: {{ vp.name }}</span>
+                                <span class="badge badge-gold">{{ vp.sceneMood }}</span>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label>Viewpoint Name</label>
+                                    <input type="text" class="form-control" value="{{ vp.name }}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Caption / Tagline</label>
+                                    <input type="text" class="form-control" value="{{ vp.caption }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Architectural Description</label>
+                                <textarea class="form-control" readonly style="min-height: 60px;">{{ vp.description }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>High-Res Photography URL</label>
+                                <input type="text" class="form-control" value="{{ vp.image }}" readonly>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="form-text">To customize camera coordinates or add new viewpoints, use the Direct JSON Editor tab.</div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 05 DINING PILLARS -->
+                <div class="tab-panel {% if active_tab == 'sec-pillars' %}active{% endif %}" id="tab-sec-pillars">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 05 — Signature Dining Experience</h2>
+                            <p>Three foundational pillars: Culinary Excellence, Architectural Atmosphere, Uncompromising Hospitality.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        {% for pillar in content.diningPillars %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span><i class="fa-solid fa-shield-halved" style="color: var(--gold);"></i> Pillar {{ pillar.number }}: {{ pillar.title }}</span>
+                                <span class="badge badge-gold">{{ pillar.badge }}</span>
+                            </div>
+                            <div class="form-grid-2">
+                                <div class="form-group">
+                                    <label>Pillar Title</label>
+                                    <input type="text" class="form-control" value="{{ pillar.title }}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Pillar Lead</label>
+                                    <input type="text" class="form-control" value="{{ pillar.lead }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea class="form-control" readonly>{{ pillar.description }}</textarea>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 06 SIGNATURE DISHES -->
+                <div class="tab-panel {% if active_tab == 'sec-dishes' %}active{% endif %}" id="tab-sec-dishes">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 06 — Signature Dishes</h2>
+                            <p>Showcase the restaurant's most celebrated creations with tasting notes and imagery.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="cms-card-header"><i class="fa-solid fa-plate-wheat"></i> Chef's Signature Masterpieces</div>
+                        {% for dish in content.signatureDishes %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span>{{ dish.name }}</span>
+                                <span class="badge badge-gold">{{ dish.category }} &bull; {{ dish.price }}</span>
+                            </div>
+                            <div class="form-grid-3">
+                                <div class="form-group">
+                                    <label>Dish Name</label>
+                                    <input type="text" class="form-control" value="{{ dish.name }}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Category</label>
+                                    <input type="text" class="form-control" value="{{ dish.category }}" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Price</label>
+                                    <input type="text" class="form-control" value="{{ dish.price }}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Culinary Description</label>
+                                <textarea class="form-control" readonly style="min-height: 60px;">{{ dish.description }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Tasting Note</label>
+                                <input type="text" class="form-control" value="{{ dish.tastingNote }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Image URL</label>
+                                <input type="text" class="form-control" value="{{ dish.image }}" readonly>
+                                <div class="img-preview-box">
+                                    <img src="{{ dish.image }}" class="preview-thumb" onerror="this.style.display='none'">
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="form-text">To add or reorder signature dishes, open the Direct JSON Editor tab.</div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 07 MENU PREVIEW -->
+                <div class="tab-panel {% if active_tab == 'sec-menu' %}active{% endif %}" id="tab-sec-menu">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 07 — Full Menu Preview &amp; Categories</h2>
+                            <p>Starters, Artisanal Mains, Charcoal Grills, Decadent Desserts, Signature Mixology.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        {% for cat in content.menuCategories %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span><i class="fa-solid fa-list-check" style="color: var(--gold);"></i> {{ cat.name }}</span>
+                                <span class="badge badge-gold">{{ cat.items|length }} Items</span>
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">{{ cat.description }}</p>
+                            <div style="font-size: 12px; color: var(--pearl);">
+                                <strong>Featured Items:</strong>
+                                {% for item in cat.items %}
+                                    <span style="display: inline-block; background: rgba(0,0,0,0.4); padding: 2px 8px; margin: 4px; border: 1px solid rgba(214,184,121,0.2);">
+                                        {{ item.name }} ({{ item.price }})
+                                    </span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        <div class="form-text">Add custom dishes, dietary tags, and prices easily via the Direct JSON Editor tab.</div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 08 ARCHITECTURE -->
+                <div class="tab-panel {% if active_tab == 'sec-arch' %}active{% endif %}" id="tab-sec-arch">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 08 — Interior &amp; Architecture</h2>
+                            <p>Atmosphere storytelling, materials, emerald marble, and architectural stats.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Eyebrow Label</label>
+                            <input type="text" name="arch_eyebrow" class="form-control" value="{{ content.architecture.eyebrow|default:'TIMELESS SPACES' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Main Section Title</label>
+                            <input type="text" name="arch_title" class="form-control" value="{{ content.architecture.title|default:'The Symphony of Stone, Brass & Emerald Velvet.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Architecture Narrative</label>
+                            <textarea name="arch_description" class="form-control">{{ content.architecture.description|default:'' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 09 MEET THE CHEF -->
+                <div class="tab-panel {% if active_tab == 'sec-chef' %}active{% endif %}" id="tab-sec-chef">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 09 — Meet the Executive Chef</h2>
+                            <p>Chef biography, personal philosophy, accolades, and portrait.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-grid-2">
+                            <div class="form-group">
+                                <label>Chef Full Name</label>
+                                <input type="text" name="chef_name" class="form-control" value="{{ content.chef.name|default:'Chef Alexandre Moreau' }}">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Professional Title</label>
+                                <input type="text" name="chef_title" class="form-control" value="{{ content.chef.title|default:'Executive Culinary Director' }}">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Chef's Personal Quote</label>
+                            <textarea name="chef_quote" class="form-control" style="font-style: italic;">{{ content.chef.quote|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Biography Paragraph 1</label>
+                            <textarea name="chef_bio1" class="form-control">{{ content.chef.bio1|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Biography Paragraph 2</label>
+                            <textarea name="chef_bio2" class="form-control">{{ content.chef.bio2|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Chef Portrait Image URL</label>
+                            <input type="text" name="chef_image" class="form-control" value="{{ content.chef.image|default:'' }}">
+                            <div class="img-preview-box">
+                                <img src="{{ content.chef.image }}" class="preview-thumb" onerror="this.style.display='none'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 10 EXPERIENCES -->
+                <div class="tab-panel {% if active_tab == 'sec-experiences' %}active{% endif %}" id="tab-sec-experiences">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 10 — Special Dining Experiences</h2>
+                            <p>Private dining suites, chef tasting counter, champagne masterclasses.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        {% for exp in content.specialExperiences %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span>{{ exp.title }}</span>
+                                <span class="badge badge-gold">{{ exp.price }}</span>
+                            </div>
+                            <div class="form-group">
+                                <label>Tagline</label>
+                                <input type="text" class="form-control" value="{{ exp.tagline }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Experience Description</label>
+                                <textarea class="form-control" readonly style="min-height: 60px;">{{ exp.description }}</textarea>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 11 GALLERY -->
+                <div class="tab-panel {% if active_tab == 'sec-gallery' %}active{% endif %}" id="tab-sec-gallery">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 11 — Food &amp; Atmosphere Gallery</h2>
+                            <p>Curated photography with lightbox preview and category filtering.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-grid-3">
+                            {% for photo in content.gallery %}
+                            <div style="background: rgba(0,0,0,0.3); border: 1px solid rgba(214,184,121,0.2); padding: 10px; border-radius: 2px;">
+                                <img src="{{ photo.url }}" style="width: 100%; height: 140px; object-fit: cover; border-radius: 2px; margin-bottom: 8px;">
+                                <div style="font-size: 12px; font-weight: 600; color: var(--gold-bright);">{{ photo.title }}</div>
+                                <span class="badge badge-gold" style="margin-top: 4px;">{{ photo.category }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="form-text" style="margin-top: 16px;">Add high-resolution photography links directly in the Direct JSON Editor tab.</div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 12 REVIEWS -->
+                <div class="tab-panel {% if active_tab == 'sec-reviews' %}active{% endif %}" id="tab-sec-reviews">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 12 — Guest Reviews &amp; Accolades</h2>
+                            <p>Testimonials, verified patron feedback, and culinary critique quotes.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        {% for review in content.testimonials %}
+                        <div class="repeater-card">
+                            <div class="repeater-card-header">
+                                <span>{{ review.name }} &bull; {{ review.role }}</span>
+                                <span style="color: var(--gold);"><i class="fa-solid fa-star"></i> {{ review.rating }}.0</span>
+                            </div>
+                            <blockquote style="font-style: italic; font-size: 14px; color: var(--pearl);">
+                                "{{ review.quote }}"
+                            </blockquote>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 13 RESERVATION COPY -->
+                <div class="tab-panel {% if active_tab == 'sec-reservation' %}active{% endif %}" id="tab-sec-reservation">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 13 — Reservation Form Copy</h2>
+                            <p>Customize the headline, subtext, and concierge reassurance note.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Eyebrow Label</label>
+                            <input type="text" name="res_eyebrow" class="form-control" value="{{ content.reservationSection.eyebrow|default:'RESERVE YOUR TABLE' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Section Heading</label>
+                            <input type="text" name="res_title" class="form-control" value="{{ content.reservationSection.title|default:'Begin an Extraordinary Evening.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Concierge Reassurance / Notice</label>
+                            <textarea name="res_note" class="form-control">{{ content.reservationSection.note|default:'For parties larger than 8 guests or private dining salon inquiries, please contact our concierge team directly.' }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: SECTION 15 FOOTER -->
+                <div class="tab-panel {% if active_tab == 'sec-footer' %}active{% endif %}" id="tab-sec-footer">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Section 15 — Footer &amp; Copyright</h2>
+                            <p>Editorial sign-off, copyright, and closing remarks.</p>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Copyright Statement</label>
+                            <input type="text" name="footer_copyright" class="form-control" value="{{ content.footer.copyright|default:'© 2026 AURELIA Dining Salon. All Rights Reserved.' }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Footer Closing Tagline</label>
+                            <input type="text" name="footer_tagline" class="form-control" value="{{ content.footer.tagline|default:'An Experience Beyond Dining.' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB: RAW JSON EDITOR -->
+                <div class="tab-panel {% if active_tab == 'rawjson' %}active{% endif %}" id="tab-rawjson">
+                    <div class="panel-header">
+                        <div>
+                            <h2>Direct Configuration JSON Editor</h2>
+                            <p>Full read/write JSON editor providing absolute control over every single parameter, section, dish, and coordinate.</p>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn btn-outline-gold btn-sm" onclick="copyJsonToClipboard()">
+                                <i class="fa-solid fa-copy"></i> Copy JSON
+                            </button>
+                            <button type="button" class="btn btn-outline-gold btn-sm" onclick="formatJsonEditor()">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Beautify Format
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="cms-card">
+                        <div class="form-group">
+                            <label>Live Structured JSON Configuration</label>
+                            <textarea name="raw_content_json" id="raw_content_json" class="code-textarea" spellcheck="false">{{ content_json_str }}</textarea>
+                            <div class="form-text">
+                                <i class="fa-solid fa-triangle-exclamation" style="color: var(--gold);"></i>
+                                Saving from this editor directly overrides the database JSON configuration and propagates immediately to the public frontend.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sticky Bottom Actions Bar -->
+                <div class="sticky-actions-bar">
+                    <div style="display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--text-muted);">
+                        <i class="fa-solid fa-shield-halved" style="color: var(--gold);"></i>
+                        <span>Changes will instantly update the SQLite database and visitor frontend.</span>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <button type="reset" class="btn btn-outline-gold">
+                            <i class="fa-solid fa-rotate-left"></i> Reset Form
+                        </button>
+                        <button type="submit" class="btn btn-gold">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Save &amp; Publish To Website
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Tab switching controller
+    function switchTab(tabId) {
+        // Update sidebar buttons
+        document.querySelectorAll('.nav-item-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        const clickedBtn = event ? event.currentTarget : null;
+        if (clickedBtn && clickedBtn.classList.contains('nav-item-btn')) {
+            clickedBtn.classList.add('active');
+        } else {
+            // Find button matching tabId
+            const btn = document.querySelector(`.nav-item-btn[onclick*="'${tabId}'"]`);
+            if (btn) btn.classList.add('active');
+        }
+
+        // Hide all panels
+        document.querySelectorAll('.tab-panel').forEach(panel => {
+            panel.classList.remove('active');
+        });
+
+        // Show target panel
+        const target = document.getElementById(`tab-${tabId}`);
+        if (target) {
+            target.classList.add('active');
+        }
+
+        // Update hidden field & URL state
+        document.getElementById('form-active-tab').value = tabId;
+        const newUrl = new URL(window.location);
+        newUrl.searchParams.set('tab', tabId);
+        window.history.replaceState({}, '', newUrl);
+
+        // Scroll to top of content
+        document.querySelector('.cms-content').scrollTop = 0;
+    }
+
+    // Color Swatch <-> Text input sync
+    function syncColor(textInput) {
+        const picker = textInput.parentElement.querySelector('input[type="color"]');
+        if (picker) {
+            picker.value = textInput.value;
+        }
+    }
+
+    document.querySelectorAll('.color-swatch').forEach(swatch => {
+        swatch.addEventListener('input', function() {
+            const textInput = this.parentElement.querySelector('input[type="text"]');
+            if (textInput) textInput.value = this.value;
+        });
+    });
+
+    // Save Active Form button in header
+    function saveActiveForm() {
+        document.getElementById('cms-master-form').submit();
+    }
+
+    // JSON Editor helpers
+    function copyJsonToClipboard() {
+        const textarea = document.getElementById('raw_content_json');
+        navigator.clipboard.writeText(textarea.value).then(() => {
+            alert('JSON copied to clipboard!');
+        });
+    }
+
+    function formatJsonEditor() {
+        const textarea = document.getElementById('raw_content_json');
+        try {
+            const parsed = JSON.parse(textarea.value);
+            textarea.value = JSON.stringify(parsed, null, 2);
+        } catch (e) {
+            alert('Cannot format invalid JSON: ' + e.message);
+        }
+    }
+
+    // Handle deep linking via URL params on load
+    window.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab && document.getElementById(`tab-${tab}`)) {
+            switchTab(tab);
+        }
+    });
+</script>
+{% endblock %}

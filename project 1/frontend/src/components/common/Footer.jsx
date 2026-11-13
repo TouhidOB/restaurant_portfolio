@@ -284,12 +284,31 @@ export default function Footer({ restaurant }) {
             © {new Date().getFullYear()} {restaurant.name} Salon. All Rights Reserved.
           </div>
 
-          <div style={{ display: 'flex', gap: '20px' }}>
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
             <span style={{ cursor: 'pointer' }}>Privacy Policy</span>
             <span>•</span>
             <span style={{ cursor: 'pointer' }}>Terms of Service</span>
             <span>•</span>
             <span style={{ cursor: 'pointer' }}>Reservation Policy</span>
+            <span>•</span>
+            <a
+              href="http://127.0.0.1:8001/cms/"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                color: 'var(--color-gold)',
+                textDecoration: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '11px',
+                letterSpacing: '0.08em',
+              }}
+              title="Site Admin CMS Studio (Django Backend)"
+            >
+              <span>Admin Studio</span>
+              <span style={{ fontSize: '10px' }}>↗</span>
+            </a>
           </div>
 
           <button

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AURELIA | Art Deco CMS Studio{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --emerald: #123B35;
+            --emerald-dark: #0A221F;
+            --emerald-light: #1A4F47;
+            --gold: #D6B879;
+            --gold-bright: #F5E5BE;
+            --gold-dark: #A68748;
+            --obsidian: #17191A;
+            --obsidian-surface: #1E2124;
+            --obsidian-card: #23272B;
+            --obsidian-border: #33393F;
+            --pearl: #F3EDE1;
+            --jade: #718C7D;
+            --bronze: #99764B;
+            --text-muted: #8E9995;
+            --success: #2ECC71;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--obsidian);
+            color: var(--pearl);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, .serif-font {
+            font-family: 'Bodoni Moda', serif;
+            letter-spacing: 0.05em;
+        }
+
+        a {
+            color: var(--gold);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--gold-bright);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            border: 1px solid transparent;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: #0F1412;
+            border-color: var(--gold-bright);
+            box-shadow: 0 4px 15px rgba(214, 184, 121, 0.2);
+        }
+
+        .btn-gold:hover {
+            background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+            box-shadow: 0 6px 20px rgba(214, 184, 121, 0.35);
+            color: #000;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline-gold {
+            background: transparent;
+            color: var(--gold);
+            border-color: rgba(214, 184, 121, 0.5);
+        }
+
+        .btn-outline-gold:hover {
+            background: rgba(214, 184, 121, 0.1);
+            border-color: var(--gold);
+            color: var(--gold-bright);
+        }
+
+        .btn-emerald {
+            background: var(--emerald);
+            color: var(--pearl);
+            border-color: rgba(214, 184, 121, 0.4);
+        }
+
+        .btn-emerald:hover {
+            background: var(--emerald-light);
+            border-color: var(--gold);
+        }
+
+        .btn-danger {
+            background: rgba(231, 76, 60, 0.15);
+            color: #FF7675;
+            border-color: rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-danger:hover {
+            background: rgba(231, 76, 60, 0.3);
+            color: #FFF;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(23, 25, 26, 0.7);
+            border: 1px solid var(--obsidian-border);
+            color: var(--pearl);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            border-radius: 2px;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(214, 184, 121, 0.2);
+            background: rgba(18, 59, 53, 0.25);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 9999;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .alert {
+            padding: 14px 18px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+            border-left: 4px solid;
+            animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .alert-success {
+            background: #112F24;
+            color: #A3E4D7;
+            border-color: #2ECC71;
+        }
+
+        .alert-error {
+            background: #3B1818;
+            color: #FADBD8;
+            border-color: #E74C3C;
+        }
+
+        .alert-info {
+            background: #13273E;
+            color: #AED6F1;
+            border-color: #3498DB;
+        }
+
+        /* Art Deco ornamental divider */
+        .deco-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .deco-divider::before, .deco-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(214, 184, 121, 0.3), transparent);
+        }
+
+        .deco-diamond {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            transform: rotate(45deg);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border-radius: 2px;
+        }
+
+        .badge-pending {
+            background: rgba(243, 156, 18, 0.15);
+            color: #F39C12;
+            border: 1px solid rgba(243, 156, 18, 0.4);
+        }
+
+        .badge-confirmed {
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ECC71;
+            border: 1px solid rgba(46, 204, 113, 0.4);
+        }
+
+        .badge-cancelled {
+            background: rgba(231, 76, 60, 0.15);
+            color: #E74C3C;
+            border: 1px solid rgba(231, 76, 60, 0.4);
+        }
+
+        .badge-gold {
+            background: rgba(214, 184, 121, 0.15);
+            color: var(--gold);
+            border: 1px solid rgba(214, 184, 121, 0.4);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if messages %}
+    <div class="flash-messages" id="flash-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            <i class="fa-solid {% if message.tags == 'success' %}fa-circle-check{% elif message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-info{% endif %}"></i>
+            <div>{{ message }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+        setTimeout(() => {
+            const el = document.getElementById('flash-container');
+            if (el) {
+                el.style.transition = 'opacity 0.6s ease';
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 600);
+            }
+        }, 5000);
+    </script>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
