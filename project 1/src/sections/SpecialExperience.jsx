@@ -1,7 +1,13 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 
-export default function SpecialExperience({ experiences, onSelectExperience }) {
+export default function SpecialExperience({ experiences, onSelectExperience, sectionData = {} }) {
+  const eyebrow = sectionData.eyebrow || 'TAILORED HOSPITALITY';
+  const title = sectionData.title || 'Make Every Occasion Extraordinary.';
+  const description =
+    sectionData.description ||
+    'Whether planning an intimate private degustation, celebrating a milestone anniversary, or hosting executive clientele, our salon provides an exquisite backdrop.';
+
   return (
     <section
       id="experiences"
@@ -16,7 +22,7 @@ export default function SpecialExperience({ experiences, onSelectExperience }) {
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '64px' }}>
           <div className="eyebrow" style={{ justifyContent: 'center' }}>
-            TAILORED HOSPITALITY
+            {eyebrow}
           </div>
           <h2
             style={{
@@ -25,7 +31,7 @@ export default function SpecialExperience({ experiences, onSelectExperience }) {
               marginBottom: '16px',
             }}
           >
-            Make Every Occasion Extraordinary.
+            {title}
           </h2>
           <p
             style={{
@@ -36,7 +42,7 @@ export default function SpecialExperience({ experiences, onSelectExperience }) {
               lineHeight: 1.6,
             }}
           >
-            Whether planning an intimate private degustation, celebrating a milestone anniversary, or hosting executive clientele, our salon provides an exquisite backdrop.
+            {description}
           </p>
           <div className="gold-divider">
             <span className="deco-diamond" />

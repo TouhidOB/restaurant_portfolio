@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import { ArrowRight, Sparkles, X, Plus } from 'lucide-react';
 
-export default function SignatureDishes({ dishes, currency = "৳", onOpenReservation }) {
+export default function SignatureDishes({ dishes, currency = '৳', onOpenReservation, sectionData = {} }) {
   const [selectedDish, setSelectedDish] = useState(null);
+
+  const eyebrow = sectionData.eyebrow || 'A TASTE OF DISTINCTION';
+  const title = sectionData.title || 'Our Signature Creations.';
+  const description =
+    sectionData.description ||
+    'Discover a selection of carefully prepared dishes that represent the character, culinary technique, and soul of Aurelia.';
+  const ctaText = sectionData.ctaText || 'EXPLORE FULL MENU';
 
   const featuredDish = dishes[0];
   const supportingDishes = dishes.slice(1);
@@ -34,7 +41,7 @@ export default function SignatureDishes({ dishes, currency = "৳", onOpenReserv
         {/* Section Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '24px', marginBottom: '56px' }}>
           <div>
-            <div className="eyebrow">A TASTE OF DISTINCTION</div>
+            <div className="eyebrow">{eyebrow}</div>
             <h2
               style={{
                 fontSize: 'clamp(32px, 4.5vw, 56px)',
@@ -42,10 +49,10 @@ export default function SignatureDishes({ dishes, currency = "৳", onOpenReserv
                 marginBottom: '12px',
               }}
             >
-              Our Signature Creations.
+              {title}
             </h2>
             <p style={{ maxWidth: '560px', fontSize: '15px', color: 'var(--color-pearl-muted)', lineHeight: 1.6 }}>
-              Discover a selection of carefully prepared dishes that represent the character, culinary technique, and soul of Aurelia.
+              {description}
             </p>
           </div>
 
@@ -54,12 +61,12 @@ export default function SignatureDishes({ dishes, currency = "৳", onOpenReserv
             className="btn-secondary"
             style={{ padding: '14px 28px' }}
           >
-            <span>EXPLORE FULL MENU</span>
+            <span>{ctaText}</span>
             <ArrowRight size={14} />
           </button>
         </div>
 
-        {/* Editorial Layout: Large Featured Dish Left, 3 Supporting Dishes Right */}
+        {/* Editorial Layout: Large Featured Dish Left, Supporting Dishes Right */}
         <div
           style={{
             display: 'grid',
@@ -121,7 +128,7 @@ export default function SignatureDishes({ dishes, currency = "৳", onOpenReserv
                       {featuredDish.name}
                     </h3>
                     <span style={{ fontFamily: 'var(--font-display)', fontSize: '24px', color: 'var(--color-gold)', fontWeight: 600 }}>
-                      {currency}{featuredDish.price.toLocaleString()}
+                      {currency}{Number(featuredDish.price).toLocaleString()}
                     </span>
                   </div>
                   <p style={{ fontSize: '14px', color: 'var(--color-pearl-muted)', lineHeight: 1.6, marginBottom: '20px' }}>
@@ -141,7 +148,7 @@ export default function SignatureDishes({ dishes, currency = "৳", onOpenReserv
             </div>
           )}
 
-          {/* Right Column: 3 Supporting Dish Cards */}
+          {/* Right Column: Supporting Dish Cards */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {supportingDishes.map((dish) => (
               <div
@@ -174,7 +181,7 @@ export default function SignatureDishes({ dishes, currency = "৳", onOpenReserv
                         {dish.name}
                       </h4>
                       <span style={{ fontFamily: 'var(--font-display)', fontSize: '18px', color: 'var(--color-gold)', fontWeight: 600 }}>
-                        {currency}{dish.price.toLocaleString()}
+                        {currency}{Number(dish.price).toLocaleString()}
                       </span>
                     </div>
                     <p style={{ fontSize: '12px', color: 'var(--color-pearl-muted)', lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
@@ -197,7 +204,7 @@ export default function SignatureDishes({ dishes, currency = "৳", onOpenReserv
         </div>
       </div>
 
-      {/* Accessible Dish Detail Modal (Native HTML dialog styled per modern-web-guidance) */}
+      {/* Accessible Dish Detail Modal */}
       {selectedDish && (
         <dialog
           open
@@ -279,7 +286,7 @@ export default function SignatureDishes({ dishes, currency = "৳", onOpenReserv
                   {selectedDish.name}
                 </h3>
                 <span style={{ fontFamily: 'var(--font-display)', fontSize: '26px', color: 'var(--color-gold)' }}>
-                  {currency}{selectedDish.price.toLocaleString()}
+                  {currency}{Number(selectedDish.price).toLocaleString()}
                 </span>
               </div>
 

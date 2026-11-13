@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, Users, MessageSquare, Phone, User, Mail, Send, CheckCircle2, Sparkles, ExternalLink } from 'lucide-react';
 
-export default function ReservationSection({ restaurant, preselectedOccasion }) {
+export default function ReservationSection({ restaurant, preselectedOccasion, sectionData = {} }) {
+  const eyebrow = sectionData.eyebrow || 'YOUR TABLE AWAITS';
+  const title = sectionData.title || 'Make Time for Something Exceptional.';
+  const description =
+    sectionData.description ||
+    'Reserve your table and let us curate every detail. Our concierge attends to all reservations with personal care and discretion.';
+
   // Form State
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     date: '',
-    time: restaurant.reservationSettings.timeSlots[4] || '07:30 PM',
+    time: restaurant.reservationSettings?.timeSlots?.[4] || '07:30 PM',
     guests: '2 Guests',
     email: '',
     occasion: preselectedOccasion || 'Casual Fine Dining',
@@ -15,7 +21,7 @@ export default function ReservationSection({ restaurant, preselectedOccasion }) 
   });
 
   const [errors, setErrors] = useState({});
-  const [submissionState, setSubmissionState] = useState(null); // 'submitted' | null
+  const [submissionState, setSubmissionState] = useState(null);
 
   // Ensure minimum date is today
   const todayStr = new Date().toISOString().split('T')[0];
@@ -33,14 +39,12 @@ export default function ReservationSection({ restaurant, preselectedOccasion }) 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
-
-    // Set submitted state
     setSubmissionState('submitted');
   };
 
   const handleWhatsAppInquiry = () => {
     const msg = `Hello, I would like to request a table reservation at ${restaurant.name}.\n\nName: ${formData.name}\nPhone: ${formData.phone}\nDate: ${formData.date}\nTime: ${formData.time}\nGuests: ${formData.guests}\nOccasion: ${formData.occasion}\nSpecial Requests: ${formData.specialRequests || 'None'}`;
-    const url = `https://wa.me/${restaurant.contact.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msg)}`;
+    const url = `https://wa.me/${(restaurant.contact?.whatsapp || '').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
   };
 
@@ -58,7 +62,7 @@ export default function ReservationSection({ restaurant, preselectedOccasion }) 
         {/* Section Header */}
         <div style={{ textAlign: 'center', marginBottom: '56px' }}>
           <div className="eyebrow" style={{ justifyContent: 'center' }}>
-            YOUR TABLE AWAITS
+            {eyebrow}
           </div>
           <h2
             style={{
@@ -67,7 +71,7 @@ export default function ReservationSection({ restaurant, preselectedOccasion }) 
               marginBottom: '16px',
             }}
           >
-            Make Time for Something Exceptional.
+            {title}
           </h2>
           <p
             style={{
@@ -78,7 +82,7 @@ export default function ReservationSection({ restaurant, preselectedOccasion }) 
               lineHeight: 1.6,
             }}
           >
-            Reserve your table and let us curate every detail. Our concierge attends to all reservations with personal care and discretion.
+            {description}
           </p>
           <div className="gold-divider">
             <span className="deco-diamond" />
@@ -151,7 +155,7 @@ export default function ReservationSection({ restaurant, preselectedOccasion }) 
                         name: '',
                         phone: '',
                         date: '',
-                        time: restaurant.reservationSettings.timeSlots[4] || '07:30 PM',
+                        time: restaurant.reservationSettings?.timeSlots?.[4] || '07:30 PM',
                         guests: '2 Guests',
                         email: '',
                         occasion: 'Casual Fine Dining',
@@ -284,7 +288,7 @@ export default function ReservationSection({ restaurant, preselectedOccasion }) 
                           outline: 'none',
                         }}
                       >
-                        {restaurant.reservationSettings.timeSlots.map((slot) => (
+                        {(restaurant.reservationSettings?.timeSlots || []).map((slot) => (
                           <option key={slot} value={slot}>
                             {slot}
                           </option>
@@ -343,7 +347,7 @@ export default function ReservationSection({ restaurant, preselectedOccasion }) 
                         outline: 'none',
                       }}
                     >
-                      {restaurant.reservationSettings.occasions.map((occ) => (
+                      {(restaurant.reservationSettings?.occasions || []).map((occ) => (
                         <option key={occ} value={occ}>
                           {occ}
                         </option>
@@ -448,7 +452,7 @@ export default function ReservationSection({ restaurant, preselectedOccasion }) 
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <a
-                  href={`tel:${restaurant.contact.phone}`}
+                  href={`tel:${restaurant.contact?.phone || ''}`}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -459,7 +463,7 @@ export default function ReservationSection({ restaurant, preselectedOccasion }) 
                   }}
                 >
                   <Phone size={14} />
-                  <span>{restaurant.contact.phoneDisplay}</span>
+                  <span>{restaurant.contact?.phoneDisplay}</span>
                 </a>
 
                 <button
@@ -478,7 +482,7 @@ export default function ReservationSection({ restaurant, preselectedOccasion }) 
                   }}
                 >
                   <MessageSquare size={14} />
-                  <span>Direct WhatsApp Inquiries: {restaurant.contact.whatsappDisplay}</span>
+                  <span>Direct WhatsApp Inquiries: {restaurant.contact?.whatsappDisplay}</span>
                 </button>
               </div>
             </div>

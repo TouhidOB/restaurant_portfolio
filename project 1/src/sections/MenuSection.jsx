@@ -1,13 +1,20 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Sparkles, Calendar, Filter } from 'lucide-react';
 
-export default function MenuSection({ categories, menuItems, currency = "৳", onOpenReservation }) {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+export default function MenuSection({ categories, menuItems, currency = '৳', onOpenReservation, sectionData = {} }) {
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const eyebrow = sectionData.eyebrow || 'CULINARY REPERTOIRE';
+  const title = sectionData.title || 'A Menu Worth Discovering.';
+  const description =
+    sectionData.description ||
+    'Explore our curated culinary collection, balancing classical gastronomic traditions, rare ingredients, and signature wood-fired mastery.';
+  const ctaText = sectionData.ctaText || 'RESERVE A TABLE TO EXPERIENCE OUR MENU';
 
   const filteredItems = useMemo(() => {
     return menuItems.filter((item) => {
-      const matchesCategory = activeCategory === "All" || item.category === activeCategory;
+      const matchesCategory = activeCategory === 'All' || item.category === activeCategory;
       const matchesSearch =
         item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -37,7 +44,7 @@ export default function MenuSection({ categories, menuItems, currency = "৳", o
               justifyContent: 'center',
             }}
           >
-            CULINARY REPERTOIRE
+            {eyebrow}
           </div>
 
           <h2
@@ -47,7 +54,7 @@ export default function MenuSection({ categories, menuItems, currency = "৳", o
               marginBottom: '16px',
             }}
           >
-            A Menu Worth Discovering.
+            {title}
           </h2>
 
           <p
@@ -59,7 +66,7 @@ export default function MenuSection({ categories, menuItems, currency = "৳", o
               lineHeight: 1.6,
             }}
           >
-            Explore our curated culinary collection, balancing classical gastronomic traditions, rare ingredients, and signature wood-fired mastery.
+            {description}
           </p>
 
           <div className="gold-divider" style={{ maxWidth: '200px' }}>
@@ -116,7 +123,7 @@ export default function MenuSection({ categories, menuItems, currency = "৳", o
             />
             {searchQuery && (
               <button
-                onClick={() => setSearchQuery("")}
+                onClick={() => setSearchQuery('')}
                 style={{
                   position: 'absolute',
                   right: '14px',
@@ -225,7 +232,7 @@ export default function MenuSection({ categories, menuItems, currency = "৳", o
                       marginLeft: '12px',
                     }}
                   >
-                    {currency}{item.price.toLocaleString()}
+                    {currency}{Number(item.price).toLocaleString()}
                   </span>
                 </div>
 
@@ -286,8 +293,8 @@ export default function MenuSection({ categories, menuItems, currency = "৳", o
             </p>
             <button
               onClick={() => {
-                setSearchQuery("");
-                setActiveCategory("All");
+                setSearchQuery('');
+                setActiveCategory('All');
               }}
               style={{
                 background: 'none',
@@ -315,7 +322,7 @@ export default function MenuSection({ categories, menuItems, currency = "৳", o
             }}
           >
             <Calendar size={16} />
-            <span>RESERVE A TABLE TO EXPERIENCE OUR MENU</span>
+            <span>{ctaText}</span>
           </button>
         </div>
       </div>

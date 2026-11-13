@@ -1,7 +1,13 @@
 import React from 'react';
-import { MapPin, Phone, Mail, Clock, MessageSquare, ExternalLink, Navigation as NavIcon } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock, MessageSquare, ExternalLink } from 'lucide-react';
 
-export default function ContactSection({ restaurant }) {
+export default function ContactSection({ restaurant, sectionData = {} }) {
+  const eyebrow = sectionData.eyebrow || 'FIND & CONNECT';
+  const title = sectionData.title || 'We Look Forward to Welcoming You.';
+  const description =
+    sectionData.description ||
+    'Located at the prestigious Grand Promenade in Gulshan 2. Complimentary valet parking is available for all reserved patrons.';
+
   return (
     <section
       id="contact"
@@ -16,7 +22,7 @@ export default function ContactSection({ restaurant }) {
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '56px' }}>
           <div className="eyebrow" style={{ justifyContent: 'center' }}>
-            FIND &amp; CONNECT
+            {eyebrow}
           </div>
           <h2
             style={{
@@ -25,7 +31,7 @@ export default function ContactSection({ restaurant }) {
               marginBottom: '16px',
             }}
           >
-            We Look Forward to Welcoming You.
+            {title}
           </h2>
           <p
             style={{
@@ -36,7 +42,7 @@ export default function ContactSection({ restaurant }) {
               lineHeight: 1.6,
             }}
           >
-            Located at the prestigious Grand Promenade in Gulshan 2. Complimentary valet parking is available for all reserved patrons.
+            {description}
           </p>
           <div className="gold-divider">
             <span className="deco-diamond" />
@@ -72,27 +78,29 @@ export default function ContactSection({ restaurant }) {
                   Visit Our Salon
                 </h4>
                 <p style={{ fontSize: '14px', color: 'var(--color-pearl-muted)', lineHeight: 1.6 }}>
-                  {restaurant.contact.fullAddress}
+                  {restaurant.contact?.fullAddress}
                 </p>
-                <a
-                  href={restaurant.contact.googleMapsDirectionsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    fontSize: '11px',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    color: 'var(--color-gold)',
-                    marginTop: '12px',
-                    textDecoration: 'none',
-                  }}
-                >
-                  <span>GET DIRECTIONS IN GOOGLE MAPS</span>
-                  <ExternalLink size={12} />
-                </a>
+                {restaurant.contact?.googleMapsDirectionsUrl && (
+                  <a
+                    href={restaurant.contact.googleMapsDirectionsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      fontSize: '11px',
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      color: 'var(--color-gold)',
+                      marginTop: '12px',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span>GET DIRECTIONS IN GOOGLE MAPS</span>
+                    <ExternalLink size={12} />
+                  </a>
+                )}
               </div>
             </div>
 
@@ -114,7 +122,7 @@ export default function ContactSection({ restaurant }) {
                   Salon Hours
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
-                  {restaurant.hours.map((h, idx) => (
+                  {(restaurant.hours || []).map((h, idx) => (
                     <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--color-border-gold-subtle)', paddingBottom: '6px' }}>
                       <span style={{ color: 'var(--color-pearl-muted)' }}>{h.days}:</span>
                       <span style={{ color: 'var(--color-gold)', fontWeight: 500 }}>{h.time}</span>
@@ -143,25 +151,27 @@ export default function ContactSection({ restaurant }) {
                 </h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
                   <a
-                    href={`tel:${restaurant.contact.phone}`}
+                    href={`tel:${restaurant.contact?.phone || ''}`}
                     style={{ color: 'var(--color-pearl)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}
                   >
-                    <span style={{ color: 'var(--color-gold)' }}>Telephone:</span> {restaurant.contact.phoneDisplay}
+                    <span style={{ color: 'var(--color-gold)' }}>Telephone:</span> {restaurant.contact?.phoneDisplay}
                   </a>
                   <a
-                    href={`mailto:${restaurant.contact.email}`}
+                    href={`mailto:${restaurant.contact?.email || ''}`}
                     style={{ color: 'var(--color-pearl)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}
                   >
-                    <span style={{ color: 'var(--color-gold)' }}>Email:</span> {restaurant.contact.email}
+                    <span style={{ color: 'var(--color-gold)' }}>Email:</span> {restaurant.contact?.email}
                   </a>
-                  <a
-                    href={`https://wa.me/${restaurant.contact.whatsapp.replace(/[^0-9]/g, '')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: '#25D366', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}
-                  >
-                    <MessageSquare size={14} /> WhatsApp: {restaurant.contact.whatsappDisplay}
-                  </a>
+                  {restaurant.contact?.whatsapp && (
+                    <a
+                      href={`https://wa.me/${restaurant.contact.whatsapp.replace(/[^0-9]/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#25D366', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}
+                    >
+                      <MessageSquare size={14} /> WhatsApp: {restaurant.contact?.whatsappDisplay}
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -169,16 +179,18 @@ export default function ContactSection({ restaurant }) {
 
           {/* Right: Interactive Google Map */}
           <div className="deco-frame" style={{ minHeight: '440px', overflow: 'hidden', position: 'relative' }}>
-            <iframe
-              title="Aurelia Restaurant Location Map"
-              src={restaurant.contact.googleMapsEmbedUrl}
-              width="100%"
-              height="100%"
-              style={{ border: 0, minHeight: '440px', filter: 'invert(90%) hue-rotate(180deg) contrast(1.15) brightness(0.85)' }}
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+            {restaurant.contact?.googleMapsEmbedUrl && (
+              <iframe
+                title="Aurelia Restaurant Location Map"
+                src={restaurant.contact.googleMapsEmbedUrl}
+                width="100%"
+                height="100%"
+                style={{ border: 0, minHeight: '440px', filter: 'invert(90%) hue-rotate(180deg) contrast(1.15) brightness(0.85)' }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            )}
             {/* Map Overlay Badge */}
             <div
               style={{

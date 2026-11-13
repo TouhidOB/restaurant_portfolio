@@ -1,12 +1,15 @@
 import React from 'react';
 import { Award, Flame, Gem, HeartHandshake } from 'lucide-react';
 
-export default function ExperienceSection({ pillars }) {
+export default function ExperienceSection({ pillars, sectionData = {} }) {
+  const eyebrow = sectionData.eyebrow || 'WHY DINE WITH US';
+  const title = sectionData.title || 'An Experience Beyond the Ordinary.';
+
   const icons = [
     <Gem size={26} color="var(--color-gold)" />,
     <Flame size={26} color="var(--color-gold)" />,
     <Award size={26} color="var(--color-gold)" />,
-    <HeartHandshake size={26} color="var(--color-gold)" />
+    <HeartHandshake size={26} color="var(--color-gold)" />,
   ];
 
   return (
@@ -21,7 +24,7 @@ export default function ExperienceSection({ pillars }) {
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '64px' }}>
           <div className="eyebrow" style={{ justifyContent: 'center' }}>
-            WHY DINE WITH US
+            {eyebrow}
           </div>
           <h2
             style={{
@@ -30,7 +33,7 @@ export default function ExperienceSection({ pillars }) {
               marginBottom: '16px',
             }}
           >
-            An Experience Beyond the Ordinary.
+            {title}
           </h2>
           <div className="gold-divider">
             <span className="deco-diamond" />
@@ -67,7 +70,7 @@ export default function ExperienceSection({ pillars }) {
                 }}
               >
                 <div style={{ padding: '12px', background: 'rgba(214, 184, 121, 0.1)', border: '1px solid var(--color-gold)' }}>
-                  {icons[idx]}
+                  {icons[idx % icons.length]}
                 </div>
                 <span
                   style={{

@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Eye, X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function GallerySection({ categories, images }) {
-  const [activeCategory, setActiveCategory] = useState("All");
+export default function GallerySection({ categories, images, sectionData = {} }) {
+  const [activeCategory, setActiveCategory] = useState('All');
   const [lightboxIndex, setLightboxIndex] = useState(null);
 
+  const eyebrow = sectionData.eyebrow || 'VISUAL PORTFOLIO';
+  const title = sectionData.title || 'A Closer Look at Our World.';
+  const description =
+    sectionData.description ||
+    'Explore the culinary artistry, hand-cut stone masonry, and unforgettable celebratory moments that define our salon.';
+
   const filteredImages = useMemo(() => {
-    if (activeCategory === "All") return images;
+    if (activeCategory === 'All') return images;
     return images.filter((img) => img.category === activeCategory);
   }, [images, activeCategory]);
 
@@ -50,7 +56,7 @@ export default function GallerySection({ categories, images }) {
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '48px' }}>
           <div className="eyebrow" style={{ justifyContent: 'center' }}>
-            VISUAL PORTFOLIO
+            {eyebrow}
           </div>
           <h2
             style={{
@@ -59,7 +65,7 @@ export default function GallerySection({ categories, images }) {
               marginBottom: '16px',
             }}
           >
-            A Closer Look at Our World.
+            {title}
           </h2>
           <p
             style={{
@@ -70,7 +76,7 @@ export default function GallerySection({ categories, images }) {
               lineHeight: 1.6,
             }}
           >
-            Explore the culinary artistry, hand-cut stone masonry, and unforgettable celebratory moments that define our salon.
+            {description}
           </p>
 
           <div className="gold-divider">
@@ -181,7 +187,7 @@ export default function GallerySection({ categories, images }) {
         </div>
       </div>
 
-      {/* Accessible Lightbox Modal (HTML5 <dialog> with modern-web-guidance) */}
+      {/* Accessible Lightbox Modal */}
       {currentLightboxImg && (
         <dialog
           open

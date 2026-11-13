@@ -1,7 +1,13 @@
 import React from 'react';
 import RestaurantTour from '../components/three/RestaurantTour';
 
-export default function TourSection({ viewpoints }) {
+export default function TourSection({ viewpoints, sectionData = {} }) {
+  const eyebrow = sectionData.eyebrow || 'ARCHITECTURAL EXPLORATION';
+  const title = sectionData.title || 'A Cinematic Virtual Tour.';
+  const description =
+    sectionData.description ||
+    'Step inside Aurelia before you visit. Navigate our five curated architectural vantage points, from the exterior promenade to the bustling open kitchen pass.';
+
   return (
     <section
       id="tour"
@@ -15,7 +21,7 @@ export default function TourSection({ viewpoints }) {
     >
       <div className="container" style={{ marginBottom: '40px', textAlign: 'center' }}>
         <div className="eyebrow" style={{ justifyContent: 'center' }}>
-          ARCHITECTURAL EXPLORATION
+          {eyebrow}
         </div>
         <h2
           style={{
@@ -24,7 +30,7 @@ export default function TourSection({ viewpoints }) {
             marginBottom: '16px',
           }}
         >
-          A Cinematic Virtual Tour.
+          {title}
         </h2>
         <p
           style={{
@@ -35,7 +41,7 @@ export default function TourSection({ viewpoints }) {
             lineHeight: 1.6,
           }}
         >
-          Step inside Aurelia before you visit. Navigate our five curated architectural vantage points, from the exterior promenade to the bustling open kitchen pass.
+          {description}
         </p>
       </div>
 
