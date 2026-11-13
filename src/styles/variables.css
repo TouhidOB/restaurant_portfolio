@@ -1,0 +1,47 @@
+:root {
+  /* Art Deco Glamour Color Palette */
+  --color-emerald: #123B35;
+  --color-emerald-deep: #0B2521;
+  --color-emerald-light: #1A4E46;
+  --color-gold: #D6B879;
+  --color-gold-light: #E8D3A2;
+  --color-gold-dark: #B89650;
+  --color-obsidian: #17191A;
+  --color-obsidian-soft: #202325;
+  --color-obsidian-card: rgba(23, 25, 26, 0.85);
+  --color-pearl: #F3EDE1;
+  --color-pearl-muted: #D8D0C0;
+  --color-pearl-dim: rgba(243, 237, 225, 0.7);
+  --color-jade: #718C7D;
+  --color-jade-muted: #536A5D;
+  --color-bronze: #99764B;
+  --color-border-gold: rgba(214, 184, 121, 0.28);
+  --color-border-gold-subtle: rgba(214, 184, 121, 0.15);
+  --color-gold-glow: rgba(214, 184, 121, 0.2);
+
+  /* Typography */
+  --font-display: 'Bodoni Moda', 'Playfair Display', Georgia, serif;
+  --font-body: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-accent: 'Cormorant Garamond', Garamond, 'Times New Roman', serif;
+
+  /* Layout Spacing */
+  --container-max: 1440px;
+  --container-standard: 1200px;
+  --pad-desktop: 80px;
+  --pad-tablet: 40px;
+  --pad-mobile: 20px;
+
+  /* Section Spacing */
+  --section-pad-desktop: 120px;
+  --section-pad-tablet: 80px;
+  --section-pad-mobile: 60px;
+
+  /* Radii (Art Deco uses architectural clean edges: 0-4px) */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.2, 0, 0, 1);
+  --transition-smooth: 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  --transition-slow: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
