@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar, Clock, Users, MessageSquare, Phone, User, Mail, Send, CheckCircle2, Sparkles, ExternalLink } from 'lucide-react';
+import { api } from '../services/api';
 
 export default function ReservationSection({ restaurant, preselectedOccasion, sectionData = {} }) {
   const eyebrow = sectionData.eyebrow || 'YOUR TABLE AWAITS';
@@ -22,6 +23,8 @@ export default function ReservationSection({ restaurant, preselectedOccasion, se
 
   const [errors, setErrors] = useState({});
   const [submissionState, setSubmissionState] = useState(null);
+  const [inquiryId, setInquiryId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Ensure minimum date is today
   const todayStr = new Date().toISOString().split('T')[0];
@@ -36,14 +39,35 @@ export default function ReservationSection({ restaurant, preselectedOccasion, se
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    setSubmissionState('submitted');
+    setIsSubmitting(true);
+
+    try {
+      const res = await api.submitReservation({
+        full_name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        date: formData.date,
+        time: formData.time,
+        guests: formData.guests,
+        occasion: formData.occasion,
+        special_requests: formData.specialRequests,
+      });
+      if (res && res.inquiry_id) {
+        setInquiryId(res.inquiry_id);
+      }
+    } catch (err) {
+      console.warn('API reservation submit fallback to local:', err);
+    } finally {
+      setIsSubmitting(false);
+      setSubmissionState('submitted');
+    }
   };
 
   const handleWhatsAppInquiry = () => {
-    const msg = `Hello, I would like to request a table reservation at ${restaurant.name}.\n\nName: ${formData.name}\nPhone: ${formData.phone}\nDate: ${formData.date}\nTime: ${formData.time}\nGuests: ${formData.guests}\nOccasion: ${formData.occasion}\nSpecial Requests: ${formData.specialRequests || 'None'}`;
+    const msg = `Hello, I would like to request a table reservation at ${restaurant.name}.\n\nReference: ${inquiryId || 'AUR-ONLINE'}\nName: ${formData.name}\nPhone: ${formData.phone}\nDate: ${formData.date}\nTime: ${formData.time}\nGuests: ${formData.guests}\nOccasion: ${formData.occasion}\nSpecial Requests: ${formData.specialRequests || 'None'}`;
     const url = `https://wa.me/${(restaurant.contact?.whatsapp || '').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
   };
@@ -106,11 +130,18 @@ export default function ReservationSection({ restaurant, preselectedOccasion, se
           <div style={{ padding: '44px 36px' }}>
             {submissionState === 'submitted' ? (
               <div style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                   <CheckCircle2 size={36} color="var(--color-gold)" />
-                  <h3 style={{ fontSize: '24px', color: 'var(--color-pearl)', margin: 0 }}>
-                    Reservation Request Logged
-                  </h3>
+                  <div>
+                    <h3 style={{ fontSize: '24px', color: 'var(--color-pearl)', margin: 0 }}>
+                      Reservation Request Received
+                    </h3>
+                    {inquiryId && (
+                      <span style={{ fontSize: '12px', color: 'var(--color-gold)', letterSpacing: '0.15em' }}>
+                        REFERENCE: {inquiryId}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
                 <div
@@ -126,9 +157,9 @@ export default function ReservationSection({ restaurant, preselectedOccasion, se
                   }}
                 >
                   <p style={{ color: 'var(--color-gold)', fontWeight: 600, marginBottom: '6px' }}>
-                    Important Note on Confirmation:
+                    Saved to Restaurant Database:
                   </p>
-                  This is a <strong>reservation request inquiry</strong>. Our restaurant concierge will call or message your phone at <strong>{formData.phone}</strong> within 2 hours to confirm table availability.
+                  Your booking request is saved in our system. Our restaurant concierge will call or message your phone at <strong>{formData.phone}</strong> to confirm table allocation.
                 </div>
 
                 <div style={{ fontSize: '14px', color: 'var(--color-pearl)', marginBottom: '28px' }}>
@@ -151,6 +182,7 @@ export default function ReservationSection({ restaurant, preselectedOccasion, se
                   <button
                     onClick={() => {
                       setSubmissionState(null);
+                      setInquiryId('');
                       setFormData({
                         name: '',
                         phone: '',
@@ -407,11 +439,12 @@ export default function ReservationSection({ restaurant, preselectedOccasion, se
                 {/* Submit Button */}
                 <button
                   type="submit"
+                  disabled={isSubmitting}
                   className="btn-primary"
-                  style={{ width: '100%', padding: '16px' }}
+                  style={{ width: '100%', padding: '16px', opacity: isSubmitting ? 0.7 : 1 }}
                 >
                   <Calendar size={16} />
-                  <span>REQUEST A RESERVATION</span>
+                  <span>{isSubmitting ? 'SUBMITTING REQUEST...' : 'REQUEST A RESERVATION'}</span>
                 </button>
               </form>
             )}

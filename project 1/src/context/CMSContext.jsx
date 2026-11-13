@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { restaurantConfig } from '../data/restaurant';
+import { api } from '../services/api';
 
 const CMS_STORAGE_KEY = 'aurelia_restaurant_cms_data_v1';
+const CMS_TOKEN_KEY = 'aurelia_admin_token_v1';
 
 const defaultTheme = {
   colors: {
@@ -49,17 +51,58 @@ export function CMSProvider({ children }) {
           },
         };
       }
-    } catch (e) {
-      console.warn('Could not read CMS config from localStorage', e);
-    }
+    } catch (e) {}
     return initialFullConfig;
   });
 
+  // Admin Auth State
+  const [adminToken, setAdminToken] = useState(() => localStorage.getItem(CMS_TOKEN_KEY) || '');
+  const [adminUser, setAdminUser] = useState(null);
   const [isCMSOpen, setIsCMSOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [activeCMSTab, setActiveCMSTab] = useState('theme');
   const [saveStatus, setSaveStatus] = useState('');
+  const [reservations, setReservations] = useState([]);
+  const [isLoadingBackend, setIsLoadingBackend] = useState(false);
 
-  // Dynamically inject CSS variables into document root whenever theme changes
+  // 1. Fetch live published content from Django Backend on initial load
+  useEffect(() => {
+    async function loadBackendData() {
+      const res = await api.getPublicContent();
+      if (res && res.exists && res.content) {
+        setConfig((prev) => ({
+          ...prev,
+          ...res.content,
+          theme: {
+            ...defaultTheme,
+            ...(res.content.theme || {}),
+            colors: { ...defaultTheme.colors, ...(res.content.theme?.colors || {}) },
+            typography: { ...defaultTheme.typography, ...(res.content.theme?.typography || {}) },
+          },
+        }));
+      }
+    }
+    loadBackendData();
+  }, []);
+
+  // 2. Verify stored admin token on mount
+  useEffect(() => {
+    if (!adminToken) {
+      setAdminUser(null);
+      return;
+    }
+    api.getMe(adminToken)
+      .then((user) => {
+        setAdminUser(user);
+      })
+      .catch(() => {
+        setAdminToken('');
+        setAdminUser(null);
+        localStorage.removeItem(CMS_TOKEN_KEY);
+      });
+  }, [adminToken]);
+
+  // 3. Inject CSS Variables whenever theme changes
   useEffect(() => {
     if (!config?.theme) return;
     const { colors, typography } = config.theme;
@@ -90,17 +133,84 @@ export function CMSProvider({ children }) {
     }
   }, [config.theme]);
 
-  // Persist to localStorage on change
+  // 4. Save to localStorage for instant client fallback
   useEffect(() => {
     try {
       localStorage.setItem(CMS_STORAGE_KEY, JSON.stringify(config));
-      setSaveStatus('All changes saved locally');
-      const timer = setTimeout(() => setSaveStatus(''), 2500);
-      return () => clearTimeout(timer);
-    } catch (e) {
-      console.warn('Failed to save CMS config', e);
-    }
+    } catch (e) {}
   }, [config]);
+
+  // Admin Actions
+  const loginAdmin = async (username, password) => {
+    setIsLoadingBackend(true);
+    try {
+      const res = await api.loginAdmin(username, password);
+      setAdminToken(res.token);
+      setAdminUser(res.user);
+      localStorage.setItem(CMS_TOKEN_KEY, res.token);
+      setIsLoginModalOpen(false);
+      setIsCMSOpen(true);
+      setSaveStatus(`Logged in as ${res.user.username}`);
+      // Load reservations for admin
+      loadReservations(res.token);
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.message };
+    } finally {
+      setIsLoadingBackend(false);
+    }
+  };
+
+  const logoutAdmin = async () => {
+    if (adminToken) {
+      await api.logoutAdmin(adminToken);
+    }
+    setAdminToken('');
+    setAdminUser(null);
+    localStorage.removeItem(CMS_TOKEN_KEY);
+    setIsCMSOpen(false);
+    setSaveStatus('Logged out of Admin Portal');
+  };
+
+  const saveToDjangoBackend = async () => {
+    if (!adminToken) {
+      setIsLoginModalOpen(true);
+      return;
+    }
+    setIsLoadingBackend(true);
+    try {
+      const res = await api.saveContent(config, adminToken);
+      setSaveStatus('Saved & Published to Django Backend');
+      setTimeout(() => setSaveStatus(''), 3000);
+      alert('Content successfully saved & published to the Django backend database!');
+    } catch (err) {
+      alert(`Error saving to backend: ${err.message}`);
+    } finally {
+      setIsLoadingBackend(false);
+    }
+  };
+
+  const loadReservations = async (token = adminToken) => {
+    if (!token) return;
+    try {
+      const data = await api.getReservations(token);
+      setReservations(data);
+    } catch (err) {
+      console.warn('Failed to load reservations:', err);
+    }
+  };
+
+  const updateReservationStatus = async (id, status) => {
+    if (!adminToken) return;
+    try {
+      await api.updateReservationStatus(id, status, adminToken);
+      setReservations((prev) =>
+        prev.map((r) => (r.id === id ? { ...r, status } : r))
+      );
+    } catch (err) {
+      alert(`Failed to update status: ${err.message}`);
+    }
+  };
 
   const updateSection = (sectionKey, updatedData) => {
     setConfig((prev) => ({
@@ -132,23 +242,11 @@ export function CMSProvider({ children }) {
   };
 
   const resetToDefaults = () => {
-    if (window.confirm('Reset all website content, images, colors, and typography back to the original template defaults?')) {
+    if (window.confirm('Reset all website content and styles back to original template defaults?')) {
       try {
         localStorage.removeItem(CMS_STORAGE_KEY);
       } catch (e) {}
       setConfig(initialFullConfig);
-      // Reset root CSS variables
-      const root = document.documentElement;
-      root.style.removeProperty('--color-emerald');
-      root.style.removeProperty('--color-gold');
-      root.style.removeProperty('--color-obsidian');
-      root.style.removeProperty('--color-pearl');
-      root.style.removeProperty('--color-jade');
-      root.style.removeProperty('--color-bronze');
-      root.style.removeProperty('--font-display');
-      root.style.removeProperty('--font-body');
-      root.style.removeProperty('--font-accent');
-      root.style.fontSize = '16px';
       setSaveStatus('Reset to default template');
     }
   };
@@ -185,9 +283,20 @@ export function CMSProvider({ children }) {
         importConfigJson,
         isCMSOpen,
         setIsCMSOpen,
+        isLoginModalOpen,
+        setIsLoginModalOpen,
         activeCMSTab,
         setActiveCMSTab,
         saveStatus,
+        adminToken,
+        adminUser,
+        loginAdmin,
+        logoutAdmin,
+        saveToDjangoBackend,
+        reservations,
+        loadReservations,
+        updateReservationStatus,
+        isLoadingBackend,
       }}
     >
       {children}

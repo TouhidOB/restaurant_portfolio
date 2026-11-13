@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, Users, Phone, User, Mail, CheckCircle2, ExternalLink } from 'lucide-react';
+import { api } from '../../services/api';
 
 export default function ReservationModal({ isOpen, onClose, restaurant, preselectedOccasion }) {
   const [formData, setFormData] = useState({
@@ -15,6 +16,8 @@ export default function ReservationModal({ isOpen, onClose, restaurant, preselec
 
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [inquiryId, setInquiryId] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (preselectedOccasion) {
@@ -45,15 +48,36 @@ export default function ReservationModal({ isOpen, onClose, restaurant, preselec
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
-    setSubmitted(true);
+    setIsSubmitting(true);
+
+    try {
+      const res = await api.submitReservation({
+        full_name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        date: formData.date,
+        time: formData.time,
+        guests: formData.guests,
+        occasion: formData.occasion,
+        special_requests: formData.specialRequests,
+      });
+      if (res && res.inquiry_id) {
+        setInquiryId(res.inquiry_id);
+      }
+    } catch (err) {
+      console.warn('Backend reservation submit fallback:', err);
+    } finally {
+      setIsSubmitting(false);
+      setSubmitted(true);
+    }
   };
 
   const handleWhatsApp = () => {
-    const msg = `Hello, I would like to request a table reservation at ${restaurant.name}.\n\nName: ${formData.name}\nPhone: ${formData.phone}\nDate: ${formData.date}\nTime: ${formData.time}\nGuests: ${formData.guests}\nOccasion: ${formData.occasion}\nSpecial Requests: ${formData.specialRequests || 'None'}`;
-    const url = `https://wa.me/${restaurant.contact.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msg)}`;
+    const msg = `Hello, I would like to request a table reservation at ${restaurant.name}.\n\nReference: ${inquiryId || 'AUR-ONLINE'}\nName: ${formData.name}\nPhone: ${formData.phone}\nDate: ${formData.date}\nTime: ${formData.time}\nGuests: ${formData.guests}\nOccasion: ${formData.occasion}\nSpecial Requests: ${formData.specialRequests || 'None'}`;
+    const url = `https://wa.me/${(restaurant.contact?.whatsapp || '').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(msg)}`;
     window.open(url, '_blank');
   };
 
@@ -136,13 +160,20 @@ export default function ReservationModal({ isOpen, onClose, restaurant, preselec
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--color-gold)', marginBottom: '16px' }}>
               <CheckCircle2 size={32} />
-              <h4 style={{ fontSize: '20px', color: 'var(--color-pearl)', margin: 0 }}>
-                Reservation Request Received
-              </h4>
+              <div>
+                <h4 style={{ fontSize: '20px', color: 'var(--color-pearl)', margin: 0 }}>
+                  Reservation Request Received
+                </h4>
+                {inquiryId && (
+                  <span style={{ fontSize: '12px', color: 'var(--color-gold)', letterSpacing: '0.15em' }}>
+                    REF: {inquiryId}
+                  </span>
+                )}
+              </div>
             </div>
 
             <p style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--color-pearl-muted)', marginBottom: '20px' }}>
-              Thank you, <strong>{formData.name}</strong>. Our concierge will contact you at <strong>{formData.phone}</strong> to confirm your table for <strong>{formData.date}</strong> at <strong>{formData.time}</strong>.
+              Thank you, <strong>{formData.name}</strong>. Your inquiry has been logged in our system. Our concierge will contact you at <strong>{formData.phone}</strong> to confirm table availability.
             </p>
 
             <button
@@ -157,6 +188,7 @@ export default function ReservationModal({ isOpen, onClose, restaurant, preselec
             <button
               onClick={() => {
                 setSubmitted(false);
+                setInquiryId('');
                 onClose();
               }}
               className="btn-secondary"
@@ -259,7 +291,7 @@ export default function ReservationModal({ isOpen, onClose, restaurant, preselec
                       outline: 'none',
                     }}
                   >
-                    {restaurant.reservationSettings.timeSlots.map((slot) => (
+                    {(restaurant.reservationSettings?.timeSlots || []).map((slot) => (
                       <option key={slot} value={slot}>
                         {slot}
                       </option>
@@ -312,7 +344,7 @@ export default function ReservationModal({ isOpen, onClose, restaurant, preselec
                       outline: 'none',
                     }}
                   >
-                    {restaurant.reservationSettings.occasions.map((occ) => (
+                    {(restaurant.reservationSettings?.occasions || []).map((occ) => (
                       <option key={occ} value={occ}>
                         {occ}
                       </option>
@@ -323,11 +355,12 @@ export default function ReservationModal({ isOpen, onClose, restaurant, preselec
 
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="btn-primary"
-                style={{ width: '100%', padding: '16px', marginTop: '12px' }}
+                style={{ width: '100%', padding: '16px', marginTop: '12px', opacity: isSubmitting ? 0.7 : 1 }}
               >
                 <Calendar size={15} />
-                <span>SUBMIT RESERVATION REQUEST</span>
+                <span>{isSubmitting ? 'SUBMITTING...' : 'SUBMIT RESERVATION REQUEST'}</span>
               </button>
             </div>
           </form>

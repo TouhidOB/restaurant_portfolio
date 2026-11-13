@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCMS } from '../../context/CMSContext';
 import {
   Settings,
@@ -20,9 +20,16 @@ import {
   RotateCcw,
   Plus,
   Trash2,
-  Check,
   Sliders,
-  ExternalLink,
+  Lock,
+  LogOut,
+  CloudUpload,
+  Inbox,
+  Clock,
+  Phone,
+  Mail,
+  CheckCircle,
+  XCircle,
 } from 'lucide-react';
 
 export default function CMSPanel() {
@@ -36,19 +43,57 @@ export default function CMSPanel() {
     importConfigJson,
     isCMSOpen,
     setIsCMSOpen,
+    isLoginModalOpen,
+    setIsLoginModalOpen,
     activeCMSTab,
     setActiveCMSTab,
     saveStatus,
+    adminUser,
+    loginAdmin,
+    logoutAdmin,
+    saveToDjangoBackend,
+    reservations,
+    loadReservations,
+    updateReservationStatus,
+    isLoadingBackend,
   } = useCMS();
+
+  // Login Form Local State
+  const [loginUsername, setLoginUsername] = useState('admin');
+  const [loginPassword, setLoginPassword] = useState('adminpassword123');
+  const [loginError, setLoginError] = useState('');
 
   const [importText, setImportText] = useState('');
   const [showImportModal, setShowImportModal] = useState(false);
 
-  if (!isCMSOpen) {
+  // Load reservations when the reservations tab is opened
+  useEffect(() => {
+    if (activeCMSTab === 'inbox' && adminUser) {
+      loadReservations();
+    }
+  }, [activeCMSTab, adminUser]);
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    const res = await loginAdmin(loginUsername, loginPassword);
+    if (!res.success) {
+      setLoginError(res.error || 'Invalid credentials');
+    }
+  };
+
+  // If CMS is closed, render the floating Admin toggle button
+  if (!isCMSOpen && !isLoginModalOpen) {
     return (
       <button
-        onClick={() => setIsCMSOpen(true)}
-        aria-label="Open Website CMS Editor"
+        onClick={() => {
+          if (adminUser) {
+            setIsCMSOpen(true);
+          } else {
+            setIsLoginModalOpen(true);
+          }
+        }}
+        aria-label="Open Site Admin & CMS Portal"
         style={{
           position: 'fixed',
           bottom: '24px',
@@ -82,13 +127,165 @@ export default function CMSPanel() {
           e.currentTarget.style.transform = 'scale(1)';
         }}
       >
-        <Sliders size={18} />
-        <span>LIVE CMS EDITOR</span>
+        <Lock size={16} />
+        <span>{adminUser ? 'ADMIN CMS STUDIO' : 'ADMIN PORTAL'}</span>
       </button>
     );
   }
 
+  // Admin Login Modal (When unauthenticated)
+  if (isLoginModalOpen && !adminUser) {
+    return (
+      <dialog
+        open
+        aria-labelledby="admin-login-title"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 999999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'transparent',
+          border: 'none',
+          width: '100vw',
+          height: '100vh',
+          maxWidth: '100vw',
+          maxHeight: '100vh',
+        }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) setIsLoginModalOpen(false);
+        }}
+      >
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(10, 22, 19, 0.94)',
+            backdropFilter: 'blur(12px)',
+          }}
+          onClick={() => setIsLoginModalOpen(false)}
+        />
+
+        <div
+          className="deco-frame"
+          style={{
+            position: 'relative',
+            zIndex: 1000000,
+            maxWidth: '440px',
+            width: '90%',
+            backgroundColor: '#17191A',
+            border: '1px solid #D6B879',
+            padding: '36px',
+            boxShadow: '0 25px 60px rgba(0,0,0,0.85)',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div
+                style={{
+                  width: '28px',
+                  height: '28px',
+                  border: '1px solid #D6B879',
+                  transform: 'rotate(45deg)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: '#123B35',
+                }}
+              >
+                <Lock size={14} color="#D6B879" style={{ transform: 'rotate(-45deg)' }} />
+              </div>
+              <h3 id="admin-login-title" style={{ fontSize: '20px', color: '#F3EDE1', margin: 0, fontFamily: 'var(--font-display)' }}>
+                Site Admin Sign-In
+              </h3>
+            </div>
+
+            <button
+              onClick={() => setIsLoginModalOpen(false)}
+              aria-label="Close Admin Login"
+              style={{ background: 'none', border: 'none', color: '#A3ABA6', cursor: 'pointer' }}
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          <p style={{ fontSize: '13px', color: '#A3ABA6', lineHeight: 1.5, marginBottom: '20px' }}>
+            Only site administrators can edit the live CMS, theme, and view customer reservations.
+          </p>
+
+          {loginError && (
+            <div style={{ padding: '10px 14px', backgroundColor: 'rgba(255, 107, 107, 0.15)', border: '1px solid #FF6B6B', color: '#FF8787', fontSize: '12px', marginBottom: '16px' }}>
+              {loginError}
+            </div>
+          )}
+
+          <form onSubmit={handleLoginSubmit}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '20px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', color: '#D6B879', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>
+                  Admin Username
+                </label>
+                <input
+                  type="text"
+                  value={loginUsername}
+                  onChange={(e) => setLoginUsername(e.target.value)}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    backgroundColor: '#0D1110',
+                    border: '1px solid rgba(214, 184, 121, 0.3)',
+                    color: '#F3EDE1',
+                    fontSize: '13px',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '11px', color: '#D6B879', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>
+                  Admin Password
+                </label>
+                <input
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    backgroundColor: '#0D1110',
+                    border: '1px solid rgba(214, 184, 121, 0.3)',
+                    color: '#F3EDE1',
+                    fontSize: '13px',
+                    outline: 'none',
+                  }}
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoadingBackend}
+              className="btn-primary"
+              style={{ width: '100%', padding: '14px', opacity: isLoadingBackend ? 0.7 : 1 }}
+            >
+              <span>{isLoadingBackend ? 'AUTHENTICATING...' : 'SIGN IN TO CMS STUDIO'}</span>
+            </button>
+          </form>
+
+          <div style={{ marginTop: '20px', borderTop: '1px solid rgba(214, 184, 121, 0.15)', paddingTop: '14px', fontSize: '11px', color: '#718C7D' }}>
+            Django Superuser Credentials: <code>admin</code> / <code>adminpassword123</code>
+          </div>
+        </div>
+      </dialog>
+    );
+  }
+
+  // When Authenticated as Admin: Full Studio Drawer
   const tabs = [
+    { id: 'inbox', label: 'Reservations Inbox', icon: <Inbox size={16} /> },
     { id: 'theme', label: 'Theme & Colors', icon: <Palette size={16} /> },
     { id: 'typography', label: 'Typography', icon: <Type size={16} /> },
     { id: 'hero', label: 'Hero Section', icon: <Sparkles size={16} /> },
@@ -127,19 +324,19 @@ export default function CMSPanel() {
 
   return (
     <aside
-      aria-label="CMS Management Panel"
+      aria-label="Admin CMS Management Studio"
       style={{
         position: 'fixed',
         top: 0,
         right: 0,
         bottom: 0,
-        width: 'clamp(360px, 45vw, 680px)',
+        width: 'clamp(360px, 48vw, 720px)',
         backgroundColor: '#17191A',
         color: '#F3EDE1',
         zIndex: 999999,
         display: 'flex',
         flexDirection: 'column',
-        boxShadow: '-10px 0 40px rgba(0,0,0,0.85)',
+        boxShadow: '-12px 0 50px rgba(0,0,0,0.9)',
         borderLeft: '1px solid #D6B879',
         fontFamily: 'var(--font-body)',
       }}
@@ -147,7 +344,7 @@ export default function CMSPanel() {
       {/* Top Header */}
       <header
         style={{
-          padding: '20px 24px',
+          padding: '18px 24px',
           borderBottom: '1px solid rgba(214, 184, 121, 0.3)',
           display: 'flex',
           justifyContent: 'space-between',
@@ -176,77 +373,69 @@ export default function CMSPanel() {
             <h2 style={{ fontSize: '16px', margin: 0, color: '#F3EDE1', letterSpacing: '0.08em', fontWeight: 600 }}>
               ART DECO CMS STUDIO
             </h2>
-            <span style={{ fontSize: '11px', color: '#D6B879', letterSpacing: '0.12em' }}>
-              {saveStatus || 'Live Editing Enabled'}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '11px', color: '#D6B879', letterSpacing: '0.1em' }}>
+                Admin: {adminUser?.username}
+              </span>
+              <span style={{ color: '#718C7D', fontSize: '10px' }}>•</span>
+              <span style={{ fontSize: '10px', color: '#A3ABA6' }}>
+                {saveStatus || 'Live Connected to Django'}
+              </span>
+            </div>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Publish to Django Backend Button */}
           <button
-            onClick={exportConfigJson}
-            title="Export Configuration JSON"
+            onClick={saveToDjangoBackend}
+            title="Publish changes to Django Database"
+            disabled={isLoadingBackend}
             style={{
-              background: 'transparent',
-              border: '1px solid rgba(214, 184, 121, 0.4)',
-              color: '#D6B879',
-              padding: '6px 10px',
+              backgroundColor: '#D6B879',
+              border: 'none',
+              color: '#17191A',
+              padding: '8px 14px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
               fontSize: '11px',
+              fontWeight: 700,
+              borderRadius: '2px',
             }}
           >
-            <Download size={13} /> Export
+            <CloudUpload size={14} />
+            <span>{isLoadingBackend ? 'SAVING...' : 'PUBLISH TO BACKEND'}</span>
           </button>
 
           <button
-            onClick={() => setShowImportModal(true)}
-            title="Import Configuration JSON"
-            style={{
-              background: 'transparent',
-              border: '1px solid rgba(214, 184, 121, 0.4)',
-              color: '#D6B879',
-              padding: '6px 10px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              fontSize: '11px',
-            }}
-          >
-            <Upload size={13} /> Import
-          </button>
-
-          <button
-            onClick={resetToDefaults}
-            title="Reset to Template Defaults"
+            onClick={logoutAdmin}
+            title="Sign out of Admin Portal"
             style={{
               background: 'transparent',
               border: '1px solid rgba(255, 107, 107, 0.4)',
               color: '#FF8787',
-              padding: '6px 10px',
+              padding: '7px 10px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '4px',
               fontSize: '11px',
             }}
           >
-            <RotateCcw size={13} /> Reset
+            <LogOut size={13} /> Logout
           </button>
 
           <button
             onClick={() => setIsCMSOpen(false)}
-            aria-label="Close CMS"
+            aria-label="Close CMS Studio"
             style={{
               background: 'transparent',
               border: 'none',
               color: '#F3EDE1',
               cursor: 'pointer',
               padding: '6px',
-              marginLeft: '4px',
             }}
           >
             <X size={22} />
@@ -254,7 +443,7 @@ export default function CMSPanel() {
         </div>
       </header>
 
-      {/* Tabs Navigation Bar */}
+      {/* Tabs Bar */}
       <div
         style={{
           display: 'flex',
@@ -290,12 +479,17 @@ export default function CMSPanel() {
             >
               {tab.icon}
               <span>{tab.label}</span>
+              {tab.id === 'inbox' && reservations.length > 0 && (
+                <span style={{ backgroundColor: '#D6B879', color: '#17191A', borderRadius: '10px', padding: '1px 6px', fontSize: '9px', fontWeight: 700 }}>
+                  {reservations.length}
+                </span>
+              )}
             </button>
           );
         })}
       </div>
 
-      {/* Main Form Body */}
+      {/* Main CMS Editor Area */}
       <div
         style={{
           flex: 1,
@@ -306,6 +500,138 @@ export default function CMSPanel() {
           gap: '24px',
         }}
       >
+        {/* TAB 0: RESERVATIONS INBOX */}
+        {activeCMSTab === 'inbox' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(214, 184, 121, 0.3)', paddingBottom: '8px' }}>
+              <div>
+                <h3 style={{ fontSize: '18px', color: '#D6B879', margin: 0 }}>
+                  Customer Reservation Requests ({reservations.length})
+                </h3>
+                <span style={{ fontSize: '11px', color: '#A3ABA6' }}>
+                  Live inquiries stored in Django backend database
+                </span>
+              </div>
+              <button
+                onClick={() => loadReservations()}
+                style={addBtnStyle}
+              >
+                Refresh List
+              </button>
+            </div>
+
+            {reservations.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '48px 20px', color: '#718C7D', backgroundColor: '#0F2521', border: '1px dashed rgba(214, 184, 121, 0.2)' }}>
+                <Inbox size={40} style={{ opacity: 0.4, marginBottom: '12px' }} />
+                <p style={{ fontSize: '14px', color: '#F3EDE1' }}>No reservations logged yet.</p>
+                <p style={{ fontSize: '12px' }}>Customer submissions from the website will appear here in real time.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {reservations.map((res) => {
+                  const isPending = res.status === 'pending';
+                  const isConfirmed = res.status === 'confirmed';
+                  return (
+                    <div
+                      key={res.id}
+                      style={{
+                        backgroundColor: '#0F2521',
+                        border: `1px solid ${isConfirmed ? '#25D366' : isPending ? '#D6B879' : 'rgba(255, 107, 107, 0.4)'}`,
+                        padding: '18px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                        borderRadius: '2px',
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '16px', fontWeight: 600, color: '#F3EDE1' }}>
+                              {res.full_name}
+                            </span>
+                            <span
+                              style={{
+                                fontSize: '10px',
+                                textTransform: 'uppercase',
+                                padding: '2px 8px',
+                                borderRadius: '2px',
+                                fontWeight: 700,
+                                backgroundColor: isConfirmed ? 'rgba(37, 211, 102, 0.2)' : isPending ? 'rgba(214, 184, 121, 0.2)' : 'rgba(255, 107, 107, 0.2)',
+                                color: isConfirmed ? '#25D366' : isPending ? '#D6B879' : '#FF6B6B',
+                              }}
+                            >
+                              {res.status}
+                            </span>
+                          </div>
+                          <span style={{ fontSize: '12px', color: '#D6B879' }}>
+                            {res.date} at {res.time} • {res.guests} ({res.occasion})
+                          </span>
+                        </div>
+
+                        {/* Status Change Buttons */}
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          {res.status !== 'confirmed' && (
+                            <button
+                              onClick={() => updateReservationStatus(res.id, 'confirmed')}
+                              title="Confirm Reservation"
+                              style={{
+                                background: '#123B35',
+                                border: '1px solid #25D366',
+                                color: '#25D366',
+                                padding: '4px 8px',
+                                fontSize: '11px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                              }}
+                            >
+                              <CheckCircle size={12} /> Confirm
+                            </button>
+                          )}
+                          {res.status !== 'cancelled' && (
+                            <button
+                              onClick={() => updateReservationStatus(res.id, 'cancelled')}
+                              title="Cancel Reservation"
+                              style={{
+                                background: 'transparent',
+                                border: '1px solid #FF6B6B',
+                                color: '#FF6B6B',
+                                padding: '4px 8px',
+                                fontSize: '11px',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Cancel
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', fontSize: '12px', color: '#A3ABA6', borderTop: '1px solid rgba(214, 184, 121, 0.15)', paddingTop: '10px' }}>
+                        <a href={`tel:${res.phone}`} style={{ color: '#D6B879', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Phone size={12} /> {res.phone}
+                        </a>
+                        {res.email && (
+                          <a href={`mailto:${res.email}`} style={{ color: '#A3ABA6', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Mail size={12} /> {res.email}
+                          </a>
+                        )}
+                        {res.special_requests && (
+                          <span style={{ color: '#F3EDE1' }}>
+                            Note: "{res.special_requests}"
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* 1. THEME & COLORS */}
         {activeCMSTab === 'theme' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -577,11 +903,9 @@ export default function CMSPanel() {
                   gap: '12px',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: '#D6B879', fontWeight: 700, fontSize: '13px' }}>
-                    Viewpoint {vp.number}: {vp.name}
-                  </span>
-                </div>
+                <span style={{ color: '#D6B879', fontWeight: 700, fontSize: '13px' }}>
+                  Viewpoint {vp.number}: {vp.name}
+                </span>
 
                 <InputField
                   label="Location Name"
@@ -709,7 +1033,6 @@ export default function CMSPanel() {
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '12px',
-                  position: 'relative',
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -948,30 +1271,6 @@ export default function CMSPanel() {
               value={config.interior.subImage2}
               onChange={(v) => updateSection('interior', { subImage2: v })}
             />
-
-            <h4 style={{ fontSize: '14px', color: '#D6B879', marginTop: '12px' }}>Material Highlights</h4>
-            {config.interior.highlights.map((hl, idx) => (
-              <div key={idx} style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '10px' }}>
-                <InputField
-                  label={`Material ${idx + 1}`}
-                  value={hl.label}
-                  onChange={(v) => {
-                    const next = [...config.interior.highlights];
-                    next[idx] = { ...next[idx], label: v };
-                    updateSection('interior', { highlights: next });
-                  }}
-                />
-                <InputField
-                  label="Description"
-                  value={hl.desc}
-                  onChange={(v) => {
-                    const next = [...config.interior.highlights];
-                    next[idx] = { ...next[idx], desc: v };
-                    updateSection('interior', { highlights: next });
-                  }}
-                />
-              </div>
-            ))}
           </div>
         )}
 
@@ -1348,76 +1647,6 @@ export default function CMSPanel() {
           </div>
         )}
       </div>
-
-      {/* Import JSON Modal */}
-      {showImportModal && (
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundColor: 'rgba(0,0,0,0.92)',
-            zIndex: 1000000,
-            padding: '30px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-          }}
-        >
-          <h3 style={{ fontSize: '18px', color: '#D6B879', marginBottom: '12px' }}>
-            Import CMS Configuration JSON
-          </h3>
-          <p style={{ fontSize: '13px', color: '#A3ABA6', marginBottom: '14px' }}>
-            Paste raw configuration JSON below to restore or migrate all content and styles instantly.
-          </p>
-          <textarea
-            rows={10}
-            value={importText}
-            onChange={(e) => setImportText(e.target.value)}
-            placeholder='{ "name": "AURELIA", ... }'
-            style={{
-              width: '100%',
-              backgroundColor: '#17191A',
-              border: '1px solid #D6B879',
-              color: '#F3EDE1',
-              padding: '12px',
-              fontFamily: 'monospace',
-              fontSize: '12px',
-              marginBottom: '16px',
-            }}
-          />
-          <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-            <button
-              onClick={() => setShowImportModal(false)}
-              style={{
-                background: 'transparent',
-                border: '1px solid #A3ABA6',
-                color: '#A3ABA6',
-                padding: '8px 16px',
-                cursor: 'pointer',
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                importConfigJson(importText);
-                setShowImportModal(false);
-                setImportText('');
-              }}
-              style={{
-                backgroundColor: '#D6B879',
-                border: 'none',
-                color: '#17191A',
-                fontWeight: 600,
-                padding: '8px 20px',
-                cursor: 'pointer',
-              }}
-            >
-              Apply JSON
-            </button>
-          </div>
-        </div>
-      )}
     </aside>
   );
 }
