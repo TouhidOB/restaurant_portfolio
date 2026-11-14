@@ -291,3 +291,16 @@ def cms_save_master_json(request):
         messages.error(request, f"JSON parse error: {str(e)}")
 
     return redirect('cms_dashboard')
+
+
+@login_required(login_url='cms_login')
+@require_POST
+def cms_update_section(request, pk):
+    section = get_object_or_404(WebsiteSection, pk=pk)
+    section.eyebrow = request.POST.get('eyebrow', section.eyebrow)
+    section.title = request.POST.get('title', section.title)
+    section.subtitle = request.POST.get('subtitle', section.subtitle)
+    section.is_visible = 'is_visible' in request.POST
+    section.save()
+    messages.success(request, f"Editorial section '{section.title}' (S{section.display_order:02d}) parameters updated.")
+    return redirect('cms_dashboard')

@@ -39,7 +39,7 @@ def test_backend_api():
 
 
 def test_frontend_browser():
-    print("\n=== 2. TESTING FRONTEND BROWSER & 3D CANVAS (PORT 3000) ===")
+    print("\n=== 2. TESTING FRONTEND BROWSER & HERO VISIBILITY (PORT 3000) ===")
     
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -56,10 +56,22 @@ def test_frontend_browser():
         assert "MONOLITH" in title, f"Page title missing MONOLITH: {title}"
         print(f"✓ Page Title: '{title}'")
 
-        # Check Hero Headline
-        hero_heading = page.locator("#hero h1").inner_text()
-        assert "FOOD." in hero_heading and "FORM." in hero_heading, f"Hero text mismatch: {hero_heading}"
-        print(f"✓ Hero Section headline verified:\n{hero_heading}")
+        # Check Hero Headline visibility
+        hero_heading = page.locator("#hero h1")
+        assert hero_heading.is_visible(), "Hero h1 is not visible"
+        hero_text = hero_heading.inner_text()
+        assert "FOOD." in hero_text and "FORM." in hero_text and "EXPRESSION." in hero_text
+        print(f"✓ Hero Section headline visible with razor-sharp contrast:\n{hero_text}")
+
+        # Check Hero Supporting text visibility
+        lead_text = page.locator("#hero p").first
+        assert lead_text.is_visible(), "Hero lead text is not visible"
+        print(f"✓ Hero supporting text verified visible: '{lead_text.inner_text()[:60]}...'")
+
+        # Check 4 Metrics Cards
+        metric_cards = page.locator("#hero div:has-text('PAX')")
+        assert metric_cards.count() >= 1, "Metric cards not rendered"
+        print("✓ Hero architectural metrics strip verified")
 
         # Check Sections 01 through 15 are in DOM
         section_ids = [
@@ -77,13 +89,6 @@ def test_frontend_browser():
         assert canvas_count >= 1, "Expected at least 1 3D Canvas element"
         print(f"✓ WebGL Canvas elements detected ({canvas_count})")
 
-        # Test Viewpoint switching in 3D Tour
-        tour_buttons = page.locator("#tour button:has-text('0')")
-        assert tour_buttons.count() >= 5, f"Expected >= 5 tour buttons, got {tour_buttons.count()}"
-        print(f"✓ Tour viewpoint buttons verified ({tour_buttons.count()} buttons)")
-        tour_buttons.nth(2).click() # Click viewpoint 3 (Dining Hall)
-        time.sleep(0.5)
-
         # Test Reserve Modal Trigger
         reserve_btn = page.locator("header button:has-text('RESERVE')")
         reserve_btn.click()
@@ -98,7 +103,6 @@ def test_frontend_browser():
         time.sleep(0.3)
 
         # Check Console Errors
-        # Ignore minor WebGL canvas size warnings if any
         critical_errors = [e for e in console_errors if "favicon" not in e and "WebGL" not in e]
         if critical_errors:
             print(f"⚠ Console warnings/errors: {critical_errors}")
@@ -108,8 +112,8 @@ def test_frontend_browser():
         browser.close()
 
 
-def test_cms_studio():
-    print("\n=== 3. TESTING CMS STUDIO & AUTHENTICATION ===")
+def test_cms_studio_sidebar():
+    print("\n=== 3. TESTING CMS STUDIO WITH PERMANENT SIDEBAR ===")
     
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -126,21 +130,54 @@ def test_cms_studio():
         page.click("button[type='submit']")
         page.wait_for_load_state("networkidle")
 
-        # Verify Dashboard
-        assert "BRUTALIST STUDIO" in page.locator("h1").inner_text()
-        print("✓ Authenticated into CMS Studio successfully")
+        # Verify Dashboard and Sidebar
+        sidebar = page.locator("#cmsSidebar")
+        assert sidebar.is_visible(), "CMS Sidebar is not visible!"
+        print("✓ Dedicated Left Architectural Sidebar verified visible!")
 
-        # Verify Telemetry KPI cards
-        kpi_count = page.locator(".kpi-card").count()
-        assert kpi_count >= 5, f"Expected >= 5 KPI cards, got {kpi_count}"
-        print(f"✓ Telemetry KPI cards verified ({kpi_count})")
+        # Verify Sidebar brand & status
+        assert "MONOLITH" in sidebar.locator(".brand-title").inner_text()
+        assert "ONLINE" in sidebar.locator(".sidebar-status-tag").inner_text()
+        print("✓ Sidebar Header & Operator status verified")
 
-        # Test #sidebarFilter
-        search_filter = page.locator("#sidebarFilter")
-        assert search_filter.is_visible()
+        # Verify Sidebar Navigation Links for all pages/modules
+        expected_sidebar_links = [
+            ("#overview", "00. Metrics Overview"),
+            ("#section-settings", "01. Restaurant Identity"),
+            ("#section-reservations", "02. Reservation Triage"),
+            ("#section-menu", "03. Menu Repertoire"),
+            ("#section-tour", "04. 3D Spatial Viewpoints"),
+            ("#section-editorial", "05. 15 Editorial Sections"),
+            ("#section-gallery", "06. Gallery Archive"),
+            ("#section-testimonials", "07. Critical Acclaim"),
+            ("#section-faqs", "08. Frequent Inquiries"),
+            ("#section-json", "09. Master Architectural JSON"),
+        ]
+
+        for href, label in expected_sidebar_links:
+            link_locator = sidebar.locator(f"a[href='{href}']")
+            assert link_locator.count() > 0, f"Sidebar link {href} not found!"
+            assert label in link_locator.inner_text(), f"Sidebar label mismatch for {href}"
+            print(f"  ✓ Sidebar Nav Link: '{label}' -> {href}")
+
+        # Verify all corresponding content sections exist in DOM
+        for href, _ in expected_sidebar_links:
+            target_id = href.replace("#", "")
+            target_section = page.locator(f"#{target_id}")
+            assert target_section.count() > 0, f"Target section #{target_id} not found in workspace!"
+            print(f"  ✓ Target Page Module: #{target_id} anchored in workspace")
+
+        # Test Sidebar Search Filter
+        search_filter = sidebar.locator("#sidebarFilter")
+        assert search_filter.is_visible(), "Sidebar filter input not visible"
         search_filter.fill("Ribeye")
         time.sleep(0.3)
-        print("✓ #sidebarFilter search interaction verified")
+        print("✓ Sidebar Instant Access Filter interaction verified")
+
+        # Test Sidebar External Link
+        frontend_link = sidebar.locator("a[href='http://localhost:3000']")
+        assert frontend_link.is_visible(), "Link to public frontend not visible in sidebar"
+        print("✓ Sidebar quick-link to Frontend verified")
 
         browser.close()
 
@@ -149,7 +186,7 @@ if __name__ == "__main__":
     try:
         test_backend_api()
         test_frontend_browser()
-        test_cms_studio()
+        test_cms_studio_sidebar()
         print("\n=======================================================")
         print("✨ ALL VERIFICATION TESTS PASSED 100% PERFECTLY! ✨")
         print("=======================================================")

@@ -1,55 +1,55 @@
 {% extends 'cms/base.html' %}
 
-{% block title %}MONOLITH // ARCHITECTURAL CMS STUDIO{% endblock %}
+{% block title %}MONOLITH // CONTROL DESK STUDIO{% endblock %}
 
 {% block content %}
-<!-- Top Header with Search Filter -->
-<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
-    <div>
-        <span class="section-tag">CONTROL DESK</span>
-        <h1 style="font-family: var(--font-display); font-size: 2.2rem; letter-spacing: -0.02em; margin-top: 0.25rem;">
-            BRUTALIST STUDIO
-        </h1>
-        <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">
-            Synchronized with React 18 frontend on Port 3000 &bull; Database: SQLite &bull; Sector 09
-        </p>
+<!-- Section 00: Telemetry Overview & KPIs -->
+<div id="overview" class="filter-target" style="margin-bottom: 3.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="section-tag">00 // METRICS MATRIX</span>
+            <h1 style="font-family: var(--font-display); font-size: 2.2rem; letter-spacing: -0.03em; margin-top: 0.25rem;">
+                STUDIO TELEMETRY
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">
+                Synchronized with React 18 Frontend on Port 3000 &bull; Database: SQLite &bull; Sector 09 Core
+            </p>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); background: var(--bg-surface); padding: 0.5rem 1rem; border: 1px solid var(--border-steel);">
+            REFRESH RATE: REAL-TIME &bull; STATUS: ACTIVE
+        </div>
     </div>
-    <div class="search-box">
-        <label for="sidebarFilter" class="form-label">Instant Content Filter</label>
-        <input type="text" id="sidebarFilter" placeholder="Filter parameters, dishes, guests..." oninput="handleSearchFilter(this.value)">
+
+    <div class="grid-kpi">
+        <div class="kpi-card active filter-item">
+            <div class="kpi-label">Active Repertoire</div>
+            <div class="kpi-value">{{ kpis.available_menu_items }} <span style="font-size: 1rem; color: var(--text-muted);">/ {{ kpis.total_menu_items }}</span></div>
+        </div>
+        <div class="kpi-card active filter-item">
+            <div class="kpi-label">Pending Inquiries</div>
+            <div class="kpi-value" style="color: var(--accent-orange);">{{ kpis.pending_reservations }}</div>
+        </div>
+        <div class="kpi-card filter-item">
+            <div class="kpi-label">Total Reservations</div>
+            <div class="kpi-value">{{ kpis.total_reservations }}</div>
+        </div>
+        <div class="kpi-card filter-item">
+            <div class="kpi-label">3D Viewpoints</div>
+            <div class="kpi-value">{{ kpis.active_viewpoints }}</div>
+        </div>
+        <div class="kpi-card filter-item">
+            <div class="kpi-label">Gallery Artifacts</div>
+            <div class="kpi-value">{{ kpis.gallery_count }}</div>
+        </div>
     </div>
 </div>
 
-<!-- Telemetry KPIs -->
-<div class="grid-kpi">
-    <div class="kpi-card active filter-target">
-        <div class="kpi-label">Active Menu Items</div>
-        <div class="kpi-value">{{ kpis.available_menu_items }} <span style="font-size: 1rem; color: var(--text-muted);">/ {{ kpis.total_menu_items }}</span></div>
-    </div>
-    <div class="kpi-card active filter-target">
-        <div class="kpi-label">Pending Inquiries</div>
-        <div class="kpi-value" style="color: var(--accent-orange);">{{ kpis.pending_reservations }}</div>
-    </div>
-    <div class="kpi-card filter-target">
-        <div class="kpi-label">Total Reservations</div>
-        <div class="kpi-value">{{ kpis.total_reservations }}</div>
-    </div>
-    <div class="kpi-card filter-target">
-        <div class="kpi-label">3D Viewpoints</div>
-        <div class="kpi-value">{{ kpis.active_viewpoints }}</div>
-    </div>
-    <div class="kpi-card filter-target">
-        <div class="kpi-label">Gallery Artifacts</div>
-        <div class="kpi-value">{{ kpis.gallery_count }}</div>
-    </div>
-</div>
-
-<!-- Section: General Parameters -->
+<!-- Section 01: Restaurant Identity & Hero Parameters -->
 <div class="cms-section filter-target" id="section-settings">
     <div class="section-header">
         <div class="section-title">
             <span>01</span>
-            <span>RESTAURANT IDENTITY &amp; HERO SPECS</span>
+            <span>RESTAURANT IDENTITY &amp; HERO PARAMETERS</span>
         </div>
         <span class="section-tag">LIVE CONFIGURATION</span>
     </div>
@@ -66,19 +66,19 @@
                 <input type="text" name="tagline" class="form-input" value="{{ restaurant.tagline }}">
             </div>
             <div class="form-group">
-                <label class="form-label">Coordinates Display</label>
+                <label class="form-label">District Coordinates Display</label>
                 <input type="text" name="coordinates_display" class="form-input" value="{{ restaurant.coordinates_display }}">
             </div>
             <div class="form-group">
-                <label class="form-label">Hours Summary</label>
+                <label class="form-label">Operational Hours Summary</label>
                 <input type="text" name="opening_hours_summary" class="form-input" value="{{ restaurant.opening_hours_summary }}">
             </div>
             <div class="form-group">
-                <label class="form-label">Contact Phone</label>
+                <label class="form-label">Concierge Phone</label>
                 <input type="text" name="phone" class="form-input" value="{{ restaurant.phone }}">
             </div>
             <div class="form-group">
-                <label class="form-label">Contact Email</label>
+                <label class="form-label">Concierge Email</label>
                 <input type="email" name="email" class="form-input" value="{{ restaurant.email }}">
             </div>
         </div>
@@ -99,12 +99,12 @@
         </div>
 
         <div class="form-group" style="margin-top: 1rem;">
-            <label class="form-label">Hero Supporting Text</label>
+            <label class="form-label">Hero Supporting Narrative</label>
             <textarea name="hero_supporting_text" class="form-textarea" rows="2">{{ restaurant.hero_supporting_text }}</textarea>
         </div>
 
         <div class="form-group">
-            <label class="form-label">Architectural Location</label>
+            <label class="form-label">Physical Warehouse Address</label>
             <input type="text" name="address" class="form-input" value="{{ restaurant.address }}">
         </div>
 
@@ -114,14 +114,14 @@
     </form>
 </div>
 
-<!-- Section: Reservation Triage Desk -->
+<!-- Section 02: Reservation Triage Desk -->
 <div class="cms-section filter-target" id="section-reservations">
     <div class="section-header">
         <div class="section-title">
             <span>02</span>
             <span>RESERVATION TRIAGE DESK</span>
         </div>
-        <span class="section-tag">{{ reservations|length }} ENTRIES</span>
+        <span class="section-tag">{{ reservations|length }} INQUIRIES</span>
     </div>
 
     {% if reservations %}
@@ -136,7 +136,7 @@
                     <th>Area</th>
                     <th>Contact</th>
                     <th>Status</th>
-                    <th>Action</th>
+                    <th>Triage Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -176,12 +176,12 @@
     {% endif %}
 </div>
 
-<!-- Section: Menu Manager -->
+<!-- Section 03: Menu Manager -->
 <div class="cms-section filter-target" id="section-menu">
     <div class="section-header">
         <div class="section-title">
             <span>03</span>
-            <span>CULINARY REPERTOIRE (MENU ITEMS)</span>
+            <span>CULINARY REPERTOIRE (MENU DISHES)</span>
         </div>
         <span class="section-tag">{{ menu_items|length }} DISHES</span>
     </div>
@@ -196,7 +196,7 @@
                     <th>Dietary Specs</th>
                     <th>Featured</th>
                     <th>Availability</th>
-                    <th>Action</th>
+                    <th>Toggle State</th>
                 </tr>
             </thead>
             <tbody>
@@ -222,9 +222,9 @@
                     </td>
                     <td>
                         {% if item.is_available %}
-                            <span style="color: #4ade80;">ACTIVE</span>
+                            <span style="color: #4ade80; font-weight: 700;">ACTIVE</span>
                         {% else %}
-                            <span style="color: #f87171;">OFF-LINE</span>
+                            <span style="color: #f87171; font-weight: 700;">OFF-LINE</span>
                         {% endif %}
                     </td>
                     <td>
@@ -242,7 +242,7 @@
     </div>
 </div>
 
-<!-- Section: 3D Virtual Tour Viewpoints -->
+<!-- Section 04: 3D Spatial Viewpoints -->
 <div class="cms-section filter-target" id="section-tour">
     <div class="section-header">
         <div class="section-title">
@@ -252,39 +252,175 @@
         <span class="section-tag">THREE.JS / R3F</span>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem;">
         {% for vp in viewpoints %}
         <div class="filter-item" style="background: var(--bg-card); border: 1px solid var(--border-steel); padding: 1.25rem;">
             <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
                 <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-orange);">0{{ vp.display_order }}</span>
                 <span class="status-badge status-confirmed" style="font-size: 0.65rem;">ACTIVE</span>
             </div>
-            <h3 style="font-family: var(--font-heading); font-size: 1.1rem; margin-bottom: 0.25rem;">{{ vp.title }}</h3>
+            <h3 style="font-family: var(--font-heading); font-size: 1.15rem; margin-bottom: 0.25rem;">{{ vp.title }}</h3>
             <p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
                 {{ vp.space_name }}
             </p>
             <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
-                {{ vp.description|truncatechars:85 }}
+                {{ vp.description|truncatechars:90 }}
             </p>
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--concrete-raw); margin-bottom: 0.5rem;">
+                MATERIALS: {{ vp.materials_spec }}
+            </div>
             <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid var(--border-steel); padding-top: 0.5rem;">
-                CAM: {{ vp.camera_position }}
+                CAM POS: {{ vp.camera_position }}
             </div>
         </div>
         {% endfor %}
     </div>
 </div>
 
-<!-- Section: Master Architectural JSON Editor -->
-<div class="cms-section filter-target" id="section-json">
+<!-- Section 05: 15 Editorial Sections Manager -->
+<div class="cms-section filter-target" id="section-editorial">
     <div class="section-header">
         <div class="section-title">
             <span>05</span>
+            <span>15 EDITORIAL SECTIONS (LIVE HEADLINES &amp; SUBTITLES)</span>
+        </div>
+        <span class="section-tag">{{ sections|length }} MODULES</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        {% for sec in sections %}
+        <div class="filter-item" style="background: var(--bg-card); border: 1px solid var(--border-steel); padding: 1.25rem;">
+            <form method="post" action="{% url 'cms_update_section' sec.id %}">
+                {% csrf_token %}
+                <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.75rem;">
+                    <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-orange); font-weight: 700;">
+                        SECTION {{ sec.display_order|stringformat:"02d" }} // KEY: {{ sec.section_key }}
+                    </div>
+                    <label style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); display: flex; align-items: center; gap: 0.4rem;">
+                        <input type="checkbox" name="is_visible" {% if sec.is_visible %}checked{% endif %}>
+                        VISIBLE ON PUBLIC SITE
+                    </label>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; margin-bottom: 0.75rem;">
+                    <div>
+                        <label class="form-label">Eyebrow</label>
+                        <input type="text" name="eyebrow" class="form-input" value="{{ sec.eyebrow }}" style="font-size: 0.8rem; padding: 0.5rem;">
+                    </div>
+                    <div>
+                        <label class="form-label">Title</label>
+                        <input type="text" name="title" class="form-input" value="{{ sec.title }}" style="font-size: 0.8rem; padding: 0.5rem;">
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 0.75rem;">
+                    <label class="form-label">Subtitle / Lead Description</label>
+                    <textarea name="subtitle" class="form-textarea" rows="2" style="font-size: 0.8rem; padding: 0.5rem;">{{ sec.subtitle }}</textarea>
+                </div>
+
+                <button type="submit" class="btn-brutal-secondary" style="font-size: 0.75rem; padding: 0.4rem 0.8rem;">
+                    SAVE SECTION {{ sec.display_order|stringformat:"02d" }} &rarr;
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Section 06: Visual Archive Gallery -->
+<div class="cms-section filter-target" id="section-gallery">
+    <div class="section-header">
+        <div class="section-title">
+            <span>06</span>
+            <span>VISUAL ARCHIVE GALLERY</span>
+        </div>
+        <span class="section-tag">{{ gallery|length }} ARTIFACTS</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) ; gap: 1.25rem;">
+        {% for item in gallery %}
+        <div class="filter-item" style="border: 1px solid var(--border-steel); background: var(--bg-card); overflow: hidden;">
+            <div style="height: 140px; background: #1c1d1a; overflow: hidden;">
+                <img src="{{ item.image_url }}" alt="{{ item.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="padding: 0.85rem;">
+                <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-orange); margin-bottom: 0.2rem;">
+                    {{ item.category|upper }}
+                </div>
+                <div style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 700;">
+                    {{ item.title }}
+                </div>
+                <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                    {{ item.caption|truncatechars:45 }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Section 07: Critical Acclaim Testimonials -->
+<div class="cms-section filter-target" id="section-testimonials">
+    <div class="section-header">
+        <div class="section-title">
+            <span>07</span>
+            <span>CRITICAL ACCLAIM &amp; REVIEWS</span>
+        </div>
+        <span class="section-tag">{{ testimonials|length }} REVIEWS</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+        {% for t in testimonials %}
+        <div class="filter-item" style="background: var(--bg-card); border: 1px solid var(--border-steel); padding: 1.25rem;">
+            <div style="color: var(--accent-orange); font-size: 0.85rem; letter-spacing: 0.15em; margin-bottom: 0.5rem;">
+                ★★★★★
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-primary); margin-bottom: 0.75rem; font-style: normal;">
+                "{{ t.review_text }}"
+            </p>
+            <div style="border-top: 1px solid var(--border-steel); padding-top: 0.5rem; font-family: var(--font-mono); font-size: 0.75rem;">
+                <strong>{{ t.guest_name }}</strong> &bull; <span style="color: var(--accent-orange);">{{ t.source }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Section 08: Frequently Asked Questions -->
+<div class="cms-section filter-target" id="section-faqs">
+    <div class="section-header">
+        <div class="section-title">
+            <span>08</span>
+            <span>FREQUENT INQUIRIES &amp; OPERATING POLICIES</span>
+        </div>
+        <span class="section-tag">{{ faqs|length }} QUESTIONS</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+        {% for f in faqs %}
+        <div class="filter-item" style="background: var(--bg-card); border: 1px solid var(--border-steel); padding: 1.25rem;">
+            <div style="font-family: var(--font-heading); font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; color: var(--text-primary);">
+                Q: {{ f.question }}
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+                A: {{ f.answer }}
+            </p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Section 09: Master Architectural JSON Editor -->
+<div class="cms-section filter-target" id="section-json">
+    <div class="section-header">
+        <div class="section-title">
+            <span>09</span>
             <span>MASTER ARCHITECTURAL JSON CONFIGURATION</span>
         </div>
-        <span class="section-tag">ADVANCED CONTROL</span>
+        <span class="section-tag">ADVANCED OPERATOR</span>
     </div>
     <p style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
-        Directly customize section titles, subtitles, philosophy pillars, and custom JSON payloads across all 15 editorial modules.
+        Directly compile and sync section titles, subtitles, philosophy pillars, and custom JSON payloads across all modules.
     </p>
 
     <form method="post" action="{% url 'cms_save_master_json' %}">
@@ -297,38 +433,4 @@
         </button>
     </form>
 </div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-function handleSearchFilter(query) {
-    const q = query.toLowerCase().trim();
-    const items = document.querySelectorAll('.filter-item');
-    const sections = document.querySelectorAll('.filter-target');
-
-    if (!q) {
-        items.forEach(el => el.style.display = '');
-        sections.forEach(el => el.style.opacity = '1');
-        return;
-    }
-
-    items.forEach(el => {
-        const text = el.textContent.toLowerCase();
-        if (text.includes(q)) {
-            el.style.display = '';
-        } else {
-            el.style.display = 'none';
-        }
-    });
-
-    sections.forEach(sec => {
-        const text = sec.textContent.toLowerCase();
-        if (text.includes(q)) {
-            sec.style.opacity = '1';
-        } else {
-            sec.style.opacity = '0.35';
-        }
-    });
-}
-</script>
 {% endblock %}

@@ -6,24 +6,25 @@
     <title>{% block title %}MONOLITH // CMS STUDIO{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-dark: #20211F;
-            --bg-surface: #282926;
-            --bg-card: #313330;
-            --bg-concrete: #B8B5AD;
-            --border-steel: #4A4D48;
-            --border-light: #5E625B;
+            --bg-surface: #272825;
+            --bg-surface-elevated: #313330;
+            --bg-card: #2B2C2A;
+            --border-steel: #3D403B;
+            --border-light: #5A5E57;
             --text-primary: #F1F0EA;
             --text-secondary: #B8B5AD;
             --text-muted: #8E918B;
             --accent-orange: #F05A28;
-            --accent-hover: #D94819;
+            --accent-orange-hover: #D94819;
             --font-display: 'Archivo Black', sans-serif;
             --font-heading: 'Space Grotesk', sans-serif;
             --font-mono: 'Space Mono', monospace;
             --font-sans: 'Inter', sans-serif;
+            --sidebar-width: 290px;
         }
 
         * {
@@ -32,110 +33,256 @@
             padding: 0;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: var(--bg-dark);
             color: var(--text-primary);
             font-family: var(--font-sans);
             line-height: 1.5;
             min-height: 100vh;
+        }
+
+        /* Brutalist Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-orange);
+        }
+
+        /* Layout Structure */
+        .cms-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Fixed Left Architectural Sidebar */
+        .cms-sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            background-color: var(--bg-surface);
+            border-right: 2px solid var(--border-steel);
             display: flex;
             flex-direction: column;
+            justifyContent: space-between;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.25s ease;
         }
 
-        /* Brutalist Top Navbar */
-        .cms-nav {
-            background-color: var(--bg-surface);
-            border-bottom: 2px solid var(--border-steel);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-steel);
         }
 
-        .cms-brand {
+        .sidebar-brand {
             display: flex;
             align-items: center;
-            gap: 1.25rem;
+            gap: 0.85rem;
             text-decoration: none;
             color: var(--text-primary);
+            margin-bottom: 0.75rem;
         }
 
-        .cms-badge {
+        .brand-block {
+            width: 18px;
+            height: 24px;
             background-color: var(--accent-orange);
-            color: #000;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 0.25rem 0.6rem;
-            letter-spacing: 0.05em;
+            flex-shrink: 0;
         }
 
-        .cms-brand-text {
+        .brand-title {
             font-family: var(--font-heading);
             font-size: 1.25rem;
             font-weight: 700;
             letter-spacing: -0.02em;
         }
 
-        .cms-nav-actions {
+        .sidebar-status-tag {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: var(--bg-dark);
+            padding: 0.35rem 0.6rem;
+            border: 1px solid var(--border-steel);
         }
 
-        .cms-link {
+        /* Instant Filter Box in Sidebar */
+        .sidebar-filter-box {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-steel);
+            background: rgba(32, 33, 31, 0.5);
+        }
+
+        .sidebar-filter-box label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.4rem;
+        }
+
+        .sidebar-filter-input {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-steel);
+            color: #fff;
+            padding: 0.5rem 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            transition: border-color 0.2s;
+        }
+        .sidebar-filter-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+        }
+
+        /* Sidebar Navigation Groups */
+        .sidebar-nav {
+            padding: 1rem 0;
+            flex: 1;
+        }
+
+        .nav-group-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--accent-orange);
+            letter-spacing: 0.12em;
+            padding: 0.75rem 1.5rem 0.35rem;
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 1.5rem;
             color: var(--text-secondary);
             text-decoration: none;
             font-family: var(--font-mono);
-            font-size: 0.85rem;
-            transition: color 0.2s;
-        }
-        .cms-link:hover {
-            color: var(--accent-orange);
-        }
-
-        .cms-btn-danger {
-            background: transparent;
-            color: var(--accent-orange);
-            border: 1px solid var(--accent-orange);
-            padding: 0.4rem 1rem;
-            font-family: var(--font-mono);
             font-size: 0.8rem;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-        .cms-btn-danger:hover {
-            background: var(--accent-orange);
-            color: #000;
+            border-left: 3px solid transparent;
+            transition: all 0.15s ease;
         }
 
-        /* Main Container */
-        .cms-container {
-            flex: 1;
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
+        .sidebar-nav-link:hover, .sidebar-nav-link.active {
+            color: #FFFFFF;
+            background-color: var(--bg-surface-elevated);
+            border-left-color: var(--accent-orange);
+        }
+
+        .nav-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.4rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-steel);
+            color: var(--text-muted);
+        }
+        .sidebar-nav-link:hover .nav-badge, .sidebar-nav-link.active .nav-badge {
+            border-color: var(--accent-orange);
+            color: var(--accent-orange);
+        }
+
+        .sidebar-footer {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--border-steel);
+            background: rgba(32, 33, 31, 0.75);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        /* Main Content Workspace */
+        .cms-main {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cms-main-standalone {
+            margin-left: 0;
             width: 100%;
         }
 
-        /* Notifications */
-        .cms-messages {
-            margin-bottom: 2rem;
+        /* Top Sticky Bar */
+        .cms-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            background: rgba(32, 33, 31, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-steel);
+            padding: 1rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+
+        .topbar-breadcrumb {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .topbar-sync-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+            border: 1px solid #4ade80;
+            padding: 0.25rem 0.6rem;
+        }
+
+        /* Container Inside Main Workspace */
+        .workspace-content {
+            flex: 1;
+            padding: 2.5rem;
+            max-width: 1380px;
+            width: 100%;
+        }
+
+        /* Alerts */
         .cms-alert {
             padding: 1rem 1.25rem;
             border-left: 4px solid var(--accent-orange);
             background: var(--bg-surface);
             font-family: var(--font-mono);
             font-size: 0.9rem;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        /* Buttons */
+        /* Brutalist Buttons */
         .btn-brutal {
             display: inline-block;
             background: var(--accent-orange);
@@ -144,7 +291,7 @@
             padding: 0.75rem 1.5rem;
             font-family: var(--font-heading);
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             cursor: pointer;
@@ -152,7 +299,7 @@
             transition: background 0.2s, transform 0.1s;
         }
         .btn-brutal:hover {
-            background: var(--accent-hover);
+            background: var(--accent-orange-hover);
         }
         .btn-brutal:active {
             transform: translateY(1px);
@@ -163,12 +310,13 @@
             background: transparent;
             color: var(--text-primary);
             border: 1px solid var(--border-light);
-            padding: 0.6rem 1.25rem;
+            padding: 0.6rem 1.2rem;
             font-family: var(--font-mono);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             text-decoration: none;
             transition: all 0.2s;
+            text-align: center;
         }
         .btn-brutal-secondary:hover {
             border-color: var(--accent-orange);
@@ -182,9 +330,9 @@
         .form-label {
             display: block;
             font-family: var(--font-mono);
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.35rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
@@ -192,10 +340,10 @@
             width: 100%;
             background: var(--bg-dark);
             border: 1px solid var(--border-steel);
-            color: var(--text-primary);
-            padding: 0.75rem 1rem;
+            color: #fff;
+            padding: 0.7rem 0.9rem;
             font-family: var(--font-mono);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: border-color 0.2s;
         }
         .form-input:focus, .form-textarea:focus, .form-select:focus {
@@ -204,14 +352,70 @@
         }
         .form-textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 90px;
         }
 
-        /* Cards & Grids */
+        /* Section Cards */
+        .cms-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-steel);
+            padding: 2.25rem;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-steel);
+            padding-bottom: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 1.35rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .section-tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent-orange);
+            border: 1px solid var(--accent-orange);
+            padding: 0.2rem 0.5rem;
+        }
+
+        /* Tables */
+        .brutal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+        .brutal-table th, .brutal-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--border-steel);
+            text-align: left;
+        }
+        .brutal-table th {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .brutal-table tr:hover td {
+            background: var(--bg-card);
+        }
+
+        /* KPI Cards */
         .grid-kpi {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
+            gap: 1.25rem;
             margin-bottom: 2.5rem;
         }
         .kpi-card {
@@ -238,7 +442,7 @@
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
         .kpi-value {
             font-family: var(--font-display);
@@ -246,138 +450,253 @@
             color: var(--text-primary);
         }
 
-        .cms-section {
-            background: var(--bg-surface);
+        /* Responsive Mobile Layout */
+        .mobile-sidebar-toggle {
+            display: none;
+            background: none;
             border: 1px solid var(--border-steel);
-            padding: 2rem;
-            margin-bottom: 2.5rem;
-        }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-steel);
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .section-title {
-            font-family: var(--font-heading);
-            font-size: 1.4rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .section-tag {
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            color: var(--accent-orange);
-            border: 1px solid var(--accent-orange);
-            padding: 0.15rem 0.4rem;
-        }
-
-        /* Tables */
-        .brutal-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-        }
-        .brutal-table th, .brutal-table td {
-            padding: 0.9rem 1rem;
-            border-bottom: 1px solid var(--border-steel);
-            text-align: left;
-        }
-        .brutal-table th {
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .brutal-table tr:hover td {
-            background: var(--bg-card);
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.2rem 0.5rem;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            font-weight: 700;
-        }
-        .status-pending { background: #5c4314; color: #f5c05c; }
-        .status-confirmed { background: #1a4d2e; color: #4ade80; }
-        .status-cancelled { background: #4d1a1a; color: #f87171; }
-
-        /* Search Filter */
-        .search-box {
-            position: relative;
-            max-width: 320px;
-        }
-        .search-box input {
-            width: 100%;
-            background: var(--bg-dark);
-            border: 1px solid var(--border-steel);
-            color: var(--text-primary);
-            padding: 0.5rem 0.75rem;
-            font-family: var(--font-mono);
-            font-size: 0.85rem;
-        }
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--accent-orange);
-        }
-
-        /* Footer */
-        .cms-footer {
-            border-top: 1px solid var(--border-steel);
-            padding: 1.5rem 2rem;
-            text-align: center;
+            color: #fff;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
             font-family: var(--font-mono);
             font-size: 0.8rem;
-            color: var(--text-muted);
-            background: var(--bg-surface);
+        }
+
+        @media (max-width: 1024px) {
+            .cms-sidebar {
+                transform: translateX(-100%);
+            }
+            .cms-sidebar.open {
+                transform: translateX(0);
+            }
+            .cms-main {
+                margin-left: 0;
+                width: 100%;
+            }
+            .mobile-sidebar-toggle {
+                display: block;
+            }
         }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <header class="cms-nav">
-        <a href="{% url 'cms_dashboard' %}" class="cms-brand">
-            <span class="cms-badge">STUDIO</span>
-            <span class="cms-brand-text">MONOLITH // CMS</span>
-        </a>
-        <div class="cms-nav-actions">
-            <a href="http://localhost:3000" target="_blank" class="cms-link">↗ VIEW FRONTEND</a>
-            {% if user.is_authenticated %}
-                <span class="cms-link" style="color: var(--accent-orange)">USER: {{ user.username }}</span>
-                <a href="{% url 'cms_logout' %}" class="cms-btn-danger">LOGOUT</a>
-            {% else %}
-                <a href="{% url 'cms_login' %}" class="cms-link">LOGIN</a>
-            {% endif %}
-        </div>
-    </header>
-
-    <main class="cms-container">
-        {% if messages %}
-            <div class="cms-messages">
-                {% for message in messages %}
-                    <div class="cms-alert">
-                        <span>{{ message }}</span>
-                        <span style="color: var(--accent-orange);">[OK]</span>
+    {% if user.is_authenticated %}
+    <div class="cms-layout">
+        <!-- Dedicated Left Architectural Sidebar -->
+        <aside class="cms-sidebar" id="cmsSidebar">
+            <div>
+                <!-- Brand Header -->
+                <div class="sidebar-header">
+                    <a href="{% url 'cms_dashboard' %}" class="sidebar-brand">
+                        <div class="brand-block"></div>
+                        <div>
+                            <div class="brand-title">MONOLITH</div>
+                            <div style="font-family: var(--font-mono); fontSize: 0.65rem; color: var(--text-muted);">
+                                CMS STUDIO // SECTOR 09
+                            </div>
+                        </div>
+                    </a>
+                    <div class="sidebar-status-tag">
+                        <span>OPERATOR: {{ user.username }}</span>
+                        <span style="color: #4ade80;">● ONLINE</span>
                     </div>
-                {% endfor %}
+                </div>
+
+                <!-- Instant Search Filter -->
+                <div class="sidebar-filter-box">
+                    <label for="sidebarFilter">Instant Access Filter</label>
+                    <input
+                        type="text"
+                        id="sidebarFilter"
+                        class="sidebar-filter-input"
+                        placeholder="Filter pages, dishes, guests..."
+                        oninput="handleSearchFilter(this.value)"
+                    >
+                </div>
+
+                <!-- Navigation Pages & Modules -->
+                <nav class="sidebar-nav">
+                    <div class="nav-group-label">00. System Telemetry</div>
+                    <a href="#overview" class="sidebar-nav-link active">
+                        <span>00. Metrics Overview</span>
+                        <span class="nav-badge">LIVE</span>
+                    </a>
+
+                    <div class="nav-group-label">01. Identity &amp; Specs</div>
+                    <a href="#section-settings" class="sidebar-nav-link">
+                        <span>01. Restaurant Identity</span>
+                        <span class="nav-badge">HERO</span>
+                    </a>
+
+                    <div class="nav-group-label">02. Operational Desk</div>
+                    <a href="#section-reservations" class="sidebar-nav-link">
+                        <span>02. Reservation Triage</span>
+                        <span class="nav-badge" style="color: var(--accent-orange);">{{ kpis.pending_reservations }} PENDING</span>
+                    </a>
+                    <a href="#section-menu" class="sidebar-nav-link">
+                        <span>03. Menu Repertoire</span>
+                        <span class="nav-badge">{{ kpis.total_menu_items }} DISHES</span>
+                    </a>
+                    <a href="#section-tour" class="sidebar-nav-link">
+                        <span>04. 3D Spatial Viewpoints</span>
+                        <span class="nav-badge">{{ viewpoints|length }} VECTORS</span>
+                    </a>
+
+                    <div class="nav-group-label">03. Editorial Content</div>
+                    <a href="#section-editorial" class="sidebar-nav-link">
+                        <span>05. 15 Editorial Sections</span>
+                        <span class="nav-badge">15 MODS</span>
+                    </a>
+                    <a href="#section-gallery" class="sidebar-nav-link">
+                        <span>06. Gallery Archive</span>
+                        <span class="nav-badge">{{ gallery|length }}</span>
+                    </a>
+                    <a href="#section-testimonials" class="sidebar-nav-link">
+                        <span>07. Critical Acclaim</span>
+                        <span class="nav-badge">{{ testimonials|length }}</span>
+                    </a>
+                    <a href="#section-faqs" class="sidebar-nav-link">
+                        <span>08. Frequent Inquiries</span>
+                        <span class="nav-badge">{{ faqs|length }}</span>
+                    </a>
+
+                    <div class="nav-group-label">04. System Matrix</div>
+                    <a href="#section-json" class="sidebar-nav-link">
+                        <span>09. Master Architectural JSON</span>
+                        <span class="nav-badge">RAW</span>
+                    </a>
+                </nav>
             </div>
-        {% endif %}
 
-        {% block content %}{% endblock %}
-    </main>
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <a href="http://localhost:3000" target="_blank" class="btn-brutal-secondary" style="border-color: var(--accent-orange); color: var(--accent-orange);">
+                    ↗ VIEW FRONTEND (PORT 3000)
+                </a>
+                <a href="{% url 'cms_logout' %}" class="btn-brutal-secondary" style="color: #f87171; border-color: #5e2424;">
+                    LOGOUT OPERATOR
+                </a>
+            </div>
+        </aside>
 
-    <footer class="cms-footer">
-        <div>MONOLITH ARCHITECTURAL BRUTALISM // CONTENT MANAGEMENT SYSTEM // SECTOR 09</div>
-    </footer>
+        <!-- Main Workspace Area -->
+        <div class="cms-main">
+            <!-- Top Sticky Control Bar -->
+            <header class="cms-topbar">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button type="button" class="mobile-sidebar-toggle" onclick="toggleSidebar()">
+                        ☰ MENU
+                    </button>
+                    <div class="topbar-breadcrumb">
+                        <span>MONOLITH STUDIO</span>
+                        <span>/</span>
+                        <span>SECTOR 09</span>
+                        <span>/</span>
+                        <span style="color: var(--text-primary);">CONTROL DESK</span>
+                    </div>
+                </div>
 
+                <div style="display: flex; align-items: center; gap: 1.25rem;">
+                    <div class="topbar-sync-tag">
+                        <span>● SYNC ACTIVE (PORT 3000)</span>
+                    </div>
+                    <a href="http://localhost:3000" target="_blank" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-orange); text-decoration: none;">
+                        PUBLIC EXPERIENCE &rarr;
+                    </a>
+                </div>
+            </header>
+
+            <!-- Main Scrollable Content -->
+            <main class="workspace-content">
+                {% if messages %}
+                    <div class="cms-messages">
+                        {% for message in messages %}
+                            <div class="cms-alert">
+                                <span>{{ message }}</span>
+                                <span style="color: var(--accent-orange);">[CONFIRMED]</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    {% else %}
+    <!-- Standalone Layout for Authentication -->
+    <div class="cms-main-standalone">
+        <header style="background: var(--bg-surface); border-bottom: 2px solid var(--border-steel); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+                <div class="brand-block"></div>
+                <div class="brand-title">MONOLITH // CMS</div>
+            </div>
+            <a href="http://localhost:3000" target="_blank" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-orange); text-decoration: none;">
+                ↗ FRONTEND
+            </a>
+        </header>
+
+        <main style="padding: 2rem;">
+            {% if messages %}
+                <div style="max-width: 480px; margin: 0 auto 1.5rem;">
+                    {% for message in messages %}
+                        <div class="cms-alert">
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block auth_content %}{% endblock %}
+        </main>
+    </div>
+    {% endif %}
+
+    <script>
+    function toggleSidebar() {
+        const sb = document.getElementById('cmsSidebar');
+        if (sb) sb.classList.toggle('open');
+    }
+
+    function handleSearchFilter(query) {
+        const q = query.toLowerCase().trim();
+        const items = document.querySelectorAll('.filter-item');
+        const sections = document.querySelectorAll('.filter-target');
+
+        if (!q) {
+            items.forEach(el => el.style.display = '');
+            sections.forEach(el => el.style.opacity = '1');
+            return;
+        }
+
+        items.forEach(el => {
+            const text = el.textContent.toLowerCase();
+            if (text.includes(q)) {
+                el.style.display = '';
+            } else {
+                el.style.display = 'none';
+            }
+        });
+
+        sections.forEach(sec => {
+            const text = sec.textContent.toLowerCase();
+            if (text.includes(q)) {
+                sec.style.opacity = '1';
+            } else {
+                sec.style.opacity = '0.35';
+            }
+        });
+    }
+
+    // Highlight active link on click / scroll
+    document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+        link.addEventListener('click', function() {
+            document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
