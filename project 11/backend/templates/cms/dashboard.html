@@ -1,0 +1,592 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}Dashboard | Botanical Glasshouse CMS Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+    .cms-layout {
+        display: flex;
+        flex: 1;
+        max-width: 1540px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 24px;
+        gap: 28px;
+    }
+
+    /* Fixed Left Sidebar */
+    .cms-sidebar {
+        width: 310px;
+        flex-shrink: 0;
+        background-color: var(--pure-white);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 20px;
+        align-self: flex-start;
+        position: sticky;
+        top: 86px;
+        max-height: calc(100vh - 110px);
+        overflow-y: auto;
+        box-shadow: 0 6px 20px rgba(38, 63, 53, 0.05);
+    }
+
+    .cms-sidebar-header {
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .cms-sidebar-title {
+        font-family: var(--font-display);
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--forest-green);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .cms-search-box {
+        margin-bottom: 16px;
+    }
+
+    .cms-search-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 3px;
+        font-size: 12.5px;
+        background-color: var(--cream-light);
+        color: var(--charcoal);
+        outline: none;
+    }
+
+    .cms-search-input:focus {
+        border-color: var(--forest-green);
+    }
+
+    .cms-nav-group {
+        margin-bottom: 18px;
+    }
+
+    .cms-nav-group-title {
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--olive-leaf);
+        font-weight: 700;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .cms-nav-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 10px;
+        color: var(--charcoal);
+        text-decoration: none;
+        font-size: 13px;
+        border-radius: 3px;
+        transition: all 0.15s ease;
+        margin-bottom: 3px;
+    }
+
+    .cms-nav-link:hover {
+        background-color: var(--cream-light);
+        color: var(--forest-green);
+        transform: translateX(3px);
+    }
+
+    .badge-count {
+        font-size: 11px;
+        padding: 2px 7px;
+        border-radius: 10px;
+        background-color: var(--botanical-sage);
+        color: var(--forest-green);
+        font-weight: 700;
+    }
+
+    .badge-count-pending {
+        background-color: #E28C72;
+        color: #FFFFFF;
+    }
+
+    /* Main Content */
+    .cms-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .cms-section-card {
+        background-color: var(--pure-white);
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        padding: 28px;
+        margin-bottom: 28px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        scroll-margin-top: 100px;
+    }
+
+    .cms-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .cms-card-title {
+        font-family: var(--font-display);
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--forest-green);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .cms-form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+        margin-bottom: 18px;
+    }
+
+    .cms-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .cms-label {
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--forest-green);
+        font-weight: 600;
+    }
+
+    .cms-input, .cms-textarea, .cms-select {
+        padding: 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 3px;
+        font-size: 13.5px;
+        background-color: var(--cream-light);
+        color: var(--charcoal);
+        font-family: var(--font-body);
+        outline: none;
+    }
+
+    .cms-input:focus, .cms-textarea:focus {
+        border-color: var(--forest-green);
+        background-color: var(--pure-white);
+    }
+
+    .btn-save {
+        padding: 10px 20px;
+        background-color: var(--forest-green);
+        color: var(--warm-cream);
+        border: none;
+        border-radius: 3px;
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .btn-save:hover {
+        background-color: #1A2B24;
+    }
+
+    /* Table */
+    .cms-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+    .cms-table th {
+        background-color: var(--cream-light);
+        color: var(--forest-green);
+        text-align: left;
+        padding: 12px 14px;
+        font-weight: 600;
+        border-bottom: 2px solid var(--border-color);
+        font-size: 11.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .cms-table td {
+        padding: 12px 14px;
+        border-bottom: 1px solid rgba(38, 63, 53, 0.1);
+        vertical-align: middle;
+    }
+
+    .cms-status-badge {
+        padding: 4px 8px;
+        border-radius: 3px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .status-pending { background-color: #FFE6D9; color: #8C391B; }
+    .status-confirmed { background-color: #E2ECE4; color: #1A3826; }
+    .status-contacted { background-color: #E1EFF5; color: #1B4556; }
+    .status-cancelled { background-color: #F8DFDC; color: #5C1D18; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cms-layout">
+    <!-- Fixed Sidebar -->
+    <aside class="cms-sidebar">
+        <div class="cms-sidebar-header">
+            <div class="cms-sidebar-title">
+                <span>🌱</span> Navigation & Sections
+            </div>
+        </div>
+
+        <!-- Live Search Filter -->
+        <div class="cms-search-box">
+            <input type="text" id="sectionSearchInput" class="cms-search-input" placeholder="🔍 Search sections or tools..." onkeyup="filterNavSections()">
+        </div>
+
+        <!-- Quick Overviews -->
+        <div class="cms-nav-group">
+            <span class="cms-nav-group-title">Operations</span>
+            <a href="#section-reservations" class="cms-nav-link" onclick="jumpToCard('section-reservations')">
+                <span>📋 Table Inquiries</span>
+                {% if stats.pending_reservations > 0 %}
+                    <span class="badge-count badge-count-pending">{{ stats.pending_reservations }} new</span>
+                {% else %}
+                    <span class="badge-count">{{ stats.total_reservations }}</span>
+                {% endif %}
+            </a>
+            <a href="#section-menu-items" class="cms-nav-link" onclick="jumpToCard('section-menu-items')">
+                <span>☕ Botanical Menu</span>
+                <span class="badge-count">{{ stats.menu_count }} items</span>
+            </a>
+            <a href="#section-json-editor" class="cms-nav-link" onclick="jumpToCard('section-json-editor')">
+                <span>⚡ Master JSON Editor</span>
+            </a>
+        </div>
+
+        <!-- 15 Homepage Editorial Sections -->
+        <div class="cms-nav-group">
+            <span class="cms-nav-group-title">15 Homepage Sections</span>
+            <div id="navSectionsList">
+                <a href="#sec-01" class="cms-nav-link" onclick="jumpToCard('sec-01')"><span>01. Botanical Preloader</span></a>
+                <a href="#sec-02" class="cms-nav-link" onclick="jumpToCard('sec-02')"><span>02. 3D Glasshouse Hero</span></a>
+                <a href="#sec-03" class="cms-nav-link" onclick="jumpToCard('sec-03')"><span>03. Greenhouse Ethos / Story</span></a>
+                <a href="#sec-04" class="cms-nav-link" onclick="jumpToCard('sec-04')"><span>04. 3D Virtual Tour (5 Spaces)</span></a>
+                <a href="#sec-05" class="cms-nav-link" onclick="jumpToCard('sec-05')"><span>05. Daylight & Foliage Atmosphere</span></a>
+                <a href="#sec-06" class="cms-nav-link" onclick="jumpToCard('sec-06')"><span>06. Signature Drinks Rituals</span></a>
+                <a href="#sec-07" class="cms-nav-link" onclick="jumpToCard('sec-07')"><span>07. Dynamic Menu Explorer</span></a>
+                <a href="#sec-08" class="cms-nav-link" onclick="jumpToCard('sec-08')"><span>08. Glass Conservatory Architecture</span></a>
+                <a href="#sec-09" class="cms-nav-link" onclick="jumpToCard('sec-09')"><span>09. Barista & Culinary Directors</span></a>
+                <a href="#sec-10" class="cms-nav-link" onclick="jumpToCard('sec-10')"><span>10. Seasonal Workshops & Jazz</span></a>
+                <a href="#sec-11" class="cms-nav-link" onclick="jumpToCard('sec-11')"><span>11. Visual Chronicles Gallery</span></a>
+                <a href="#sec-12" class="cms-nav-link" onclick="jumpToCard('sec-12')"><span>12. Community Reflections</span></a>
+                <a href="#sec-13" class="cms-nav-link" onclick="jumpToCard('sec-13')"><span>13. Table & Visit Reservations</span></a>
+                <a href="#sec-14" class="cms-nav-link" onclick="jumpToCard('sec-14')"><span>14. Location, Hours & Transit</span></a>
+                <a href="#sec-15" class="cms-nav-link" onclick="jumpToCard('sec-15')"><span>15. Editorial Botanical Footer</span></a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="cms-main">
+        <!-- Overview Stats Ribbon -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+            <div style="background-color: var(--pure-white); padding: 20px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--olive-leaf); font-weight: 600;">Active Café Name</div>
+                <div style="font-family: var(--font-display); font-size: 20px; font-weight: 700; color: var(--forest-green); margin-top: 4px;">{{ config.cafe_name }}</div>
+            </div>
+            <div style="background-color: var(--pure-white); padding: 20px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--olive-leaf); font-weight: 600;">Pending Inquiries</div>
+                <div style="font-family: var(--font-display); font-size: 26px; font-weight: 700; color: #E28C72; margin-top: 4px;">{{ stats.pending_reservations }}</div>
+            </div>
+            <div style="background-color: var(--pure-white); padding: 20px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--olive-leaf); font-weight: 600;">Artisanal Menu Items</div>
+                <div style="font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--forest-green); margin-top: 4px;">{{ stats.menu_count }}</div>
+            </div>
+            <div style="background-color: var(--pure-white); padding: 20px; border-radius: 4px; border: 1px solid var(--border-color);">
+                <div style="font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--olive-leaf); font-weight: 600;">Categories</div>
+                <div style="font-family: var(--font-display); font-size: 26px; font-weight: 700; color: var(--forest-green); margin-top: 4px;">{{ stats.categories_count }}</div>
+            </div>
+        </div>
+
+        <!-- Section: Reservations Management -->
+        <section class="cms-section-card" id="section-reservations">
+            <div class="cms-card-header">
+                <div class="cms-card-title">
+                    <span>📋</span> Table & Visit Reservation Inquiries ({{ reservations|length }})
+                </div>
+            </div>
+
+            {% if reservations %}
+                <div style="overflow-x: auto;">
+                    <table class="cms-table">
+                        <thead>
+                            <tr>
+                                <th>Guest Name</th>
+                                <th>Date & Time</th>
+                                <th>Party</th>
+                                <th>Seating Zone</th>
+                                <th>Occasion & Notes</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for res in reservations %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ res.full_name }}</strong><br>
+                                        <small style="color: #666;">{{ res.phone }} | {{ res.email }}</small>
+                                    </td>
+                                    <td>
+                                        {{ res.reservation_date }}<br>
+                                        <span style="color: var(--forest-green); font-weight: 600;">{{ res.reservation_time }}</span>
+                                    </td>
+                                    <td>{{ res.guests }} Guests</td>
+                                    <td><span style="background-color: var(--cream-light); padding: 3px 8px; border-radius: 2px;">{{ res.seating_zone }}</span></td>
+                                    <td>
+                                        <small>{{ res.occasion }}</small>
+                                        {% if res.special_requests %}
+                                            <br><small style="color: #888; font-style: italic;">"{{ res.special_requests }}"</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="cms-status-badge status-{{ res.status }}">{{ res.get_status_display }}</span>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 6px;">
+                                            {% if res.status != 'confirmed' %}
+                                                <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display:inline;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="status" value="confirmed">
+                                                    <button type="submit" style="padding: 4px 8px; font-size: 11px; background: #263F35; color:#fff; border:none; border-radius:2px; cursor:pointer;">Confirm</button>
+                                                </form>
+                                            {% endif %}
+                                            {% if res.status != 'contacted' %}
+                                                <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display:inline;">
+                                                    {% csrf_token %}
+                                                    <input type="hidden" name="status" value="contacted">
+                                                    <button type="submit" style="padding: 4px 8px; font-size: 11px; background: #A87958; color:#fff; border:none; border-radius:2px; cursor:pointer;">Contact</button>
+                                                </form>
+                                            {% endif %}
+                                            <form method="POST" action="{% url 'cms_reservation_delete' res.id %}" style="display:inline;" onsubmit="return confirm('Delete this inquiry?');">
+                                                {% csrf_token %}
+                                                <button type="submit" style="padding: 4px 8px; font-size: 11px; background: transparent; color:#B02A37; border:1px solid #B02A37; border-radius:2px; cursor:pointer;">✕</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p style="color: #888; font-style: italic;">No reservation inquiries currently in database.</p>
+            {% endif %}
+        </section>
+
+        <!-- S01: Botanical Preloader -->
+        <section class="cms-section-card" id="sec-01">
+            <div class="cms-card-header">
+                <div class="cms-card-title"><span>🌿</span> Section 01: Botanical Preloader</div>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_section">
+                <input type="hidden" name="section_key" value="preloader">
+                <div class="cms-form-grid">
+                    <div class="cms-form-group">
+                        <label class="cms-label">Botanical Symbol / Emoji</label>
+                        <input type="text" name="field_value" value="{{ config.content_json.preloader.symbol|default:'🌿' }}" class="cms-input">
+                        <input type="hidden" name="field_name" value="symbol">
+                    </div>
+                </div>
+                <button type="submit" class="btn-save">Save Preloader Symbol</button>
+            </form>
+        </section>
+
+        <!-- S02: Hero Section -->
+        <section class="cms-section-card" id="sec-02">
+            <div class="cms-card-header">
+                <div class="cms-card-title"><span>🏛️</span> Section 02: 3D Glasshouse Hero</div>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_general">
+                <div class="cms-form-grid">
+                    <div class="cms-form-group">
+                        <label class="cms-label">Café Brand Name</label>
+                        <input type="text" name="cafe_name" value="{{ config.cafe_name }}" class="cms-input">
+                    </div>
+                    <div class="cms-form-group">
+                        <label class="cms-label">Hero Eyebrow Label</label>
+                        <input type="text" name="hero_eyebrow" value="{{ config.content_json.hero.eyebrow }}" class="cms-input">
+                    </div>
+                    <div class="cms-form-group" style="grid-column: span 2;">
+                        <label class="cms-label">Hero Headline</label>
+                        <input type="text" name="hero_title" value="{{ config.content_json.hero.title }}" class="cms-input">
+                    </div>
+                    <div class="cms-form-group" style="grid-column: span 2;">
+                        <label class="cms-label">Hero Description</label>
+                        <textarea name="hero_description" rows="3" class="cms-textarea">{{ config.content_json.hero.description }}</textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn-save">Save Hero Section</button>
+            </form>
+        </section>
+
+        <!-- S03: Greenhouse Story -->
+        <section class="cms-section-card" id="sec-03">
+            <div class="cms-card-header">
+                <div class="cms-card-title"><span>📖</span> Section 03: Greenhouse Ethos & Story</div>
+            </div>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_section">
+                <input type="hidden" name="section_key" value="story">
+                <div class="cms-form-grid">
+                    <div class="cms-form-group" style="grid-column: span 2;">
+                        <label class="cms-label">Architectural Quote</label>
+                        <textarea name="field_value" rows="2" class="cms-textarea">{{ config.content_json.story.quote }}</textarea>
+                        <input type="hidden" name="field_name" value="quote">
+                    </div>
+                </div>
+                <button type="submit" class="btn-save">Save Story Quote</button>
+            </form>
+        </section>
+
+        <!-- S04: Virtual Tour (5 Spaces) -->
+        <section class="cms-section-card" id="sec-04">
+            <div class="cms-card-header">
+                <div class="cms-card-title"><span>🔭</span> Section 04: 3D Interactive Virtual Tour (5 Spaces)</div>
+            </div>
+            <p style="font-size: 13.5px; color: #555; margin-bottom: 16px;">
+                5 Configured Architectural Viewpoints: <em>01. Exterior Approach, 02. Botanical Brew Bar, 03. Central Palm Atrium, 04. Orangerie Mezzanine, 05. Sunlit Garden Terrace</em>.
+            </p>
+            <div style="background-color: var(--cream-light); padding: 14px; border-radius: 3px; font-size: 12.5px; color: var(--forest-green);">
+                Camera vectors and target coordinates are fine-tuned for smooth real-time 3D interpolation in <code>virtual_tour.viewpoints</code>.
+            </div>
+        </section>
+
+        <!-- S06: Signature Drinks -->
+        <section class="cms-section-card" id="sec-06">
+            <div class="cms-card-header">
+                <div class="cms-card-title"><span>🍵</span> Section 06: Signature Botanical Drinks</div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;">
+                {% for drink in config.content_json.signature_drinks.drinks %}
+                    <div style="background: var(--cream-light); padding: 14px; border-radius: 3px; border: 1px solid var(--border-color);">
+                        <div style="font-weight: 700; color: var(--forest-green);">{{ drink.name }}</div>
+                        <div style="color: var(--muted-copper); font-size: 13px; font-weight: 600;">{{ drink.price }}</div>
+                        <p style="font-size: 12px; color: #666; margin-top: 6px;">{{ drink.description|truncatewords:15 }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- S07: Menu Items Database -->
+        <section class="cms-section-card" id="section-menu-items">
+            <div class="cms-card-header">
+                <div class="cms-card-title"><span>☕</span> Section 07: Live Menu Items ({{ menu_items|length }})</div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="cms-table">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Botanical Notes</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in menu_items %}
+                            <tr>
+                                <td>
+                                    <strong>{{ item.name }}</strong>
+                                    {% if item.is_signature %}<span style="background: var(--muted-copper); color:#fff; font-size:9.5px; padding:2px 5px; border-radius:2px; margin-left:4px;">Signature</span>{% endif %}
+                                </td>
+                                <td>{{ item.category.name }}</td>
+                                <td>{{ item.currency }}{{ item.price }}</td>
+                                <td><small style="color: var(--forest-green);">{{ item.botanical_notes }}</small></td>
+                                <td>
+                                    {% if item.is_available %}
+                                        <span style="color: #263F35; font-weight: 700;">✓ Available</span>
+                                    {% else %}
+                                        <span style="color: #999;">Unavailable</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Master JSON Power Editor -->
+        <section class="cms-section-card" id="section-json-editor">
+            <div class="cms-card-header">
+                <div class="cms-card-title"><span>⚡</span> Master JSON Schema Power Editor</div>
+            </div>
+            <p style="font-size: 13px; color: #666; margin-bottom: 14px;">
+                Directly modify all 15 sections, 3D viewpoints, colors, hours, and typography in clean structured JSON.
+            </p>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_raw_json">
+                <textarea name="raw_json" id="masterJsonTextarea" rows="22" style="width: 100%; font-family: monospace; font-size: 12.5px; padding: 16px; border: 1px solid var(--border-color); border-radius: 4px; background-color: #1A2B24; color: #E7EDE7; line-height: 1.5; outline: none;">{{ content_json_pretty }}</textarea>
+                <div style="display: flex; gap: 12px; margin-top: 14px;">
+                    <button type="submit" class="btn-save">Save Master JSON</button>
+                    <button type="button" onclick="formatMasterJSON()" style="padding: 10px 18px; background: transparent; border: 1px solid var(--border-color); border-radius: 3px; font-size: 12px; text-transform: uppercase; cursor: pointer;">Format / Validate JSON</button>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+
+<script>
+    function jumpToCard(id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            el.classList.remove('flash-card-target');
+            void el.offsetWidth; // Trigger reflow
+            el.classList.add('flash-card-target');
+        }
+    }
+
+    function filterNavSections() {
+        const query = document.getElementById('sectionSearchInput').value.toLowerCase();
+        const links = document.querySelectorAll('#navSectionsList a');
+        links.forEach(link => {
+            const text = link.innerText.toLowerCase();
+            link.style.display = text.includes(query) ? 'flex' : 'none';
+        });
+    }
+
+    function formatMasterJSON() {
+        const area = document.getElementById('masterJsonTextarea');
+        try {
+            const parsed = JSON.parse(area.value);
+            area.value = JSON.stringify(parsed, null, 2);
+            alert("✓ JSON is valid and formatted successfully!");
+        } catch (e) {
+            alert("✕ Invalid JSON Syntax: " + e.message);
+        }
+    }
+</script>
+{% endblock %}

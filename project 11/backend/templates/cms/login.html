@@ -1,0 +1,44 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}Sign In | Botanical Glasshouse CMS Studio{% endblock %}
+
+{% block content %}
+<div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px;">
+    <div style="background-color: var(--pure-white); max-width: 440px; width: 100%; padding: 40px 36px; border-radius: 4px; border: 1px solid var(--border-color); box-shadow: 0 15px 45px rgba(38, 63, 53, 0.1);">
+        <div style="text-align: center; margin-bottom: 28px;">
+            <div style="font-size: 38px; margin-bottom: 10px;">🌿</div>
+            <h2 style="font-family: var(--font-display); font-size: 28px; color: var(--forest-green); font-weight: 600; margin-bottom: 6px;">
+                Botanical CMS Studio
+            </h2>
+            <p style="font-size: 13px; color: var(--charcoal); opacity: 0.75;">
+                Authorized Staff Access Only
+            </p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div style="margin-bottom: 18px;">
+                <label style="display: block; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--forest-green); font-weight: 600; margin-bottom: 6px;">
+                    Staff Username
+                </label>
+                <input type="text" name="username" required value="admin" style="width: 100%; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 3px; font-size: 14px; outline: none; background-color: var(--cream-light); color: var(--charcoal);">
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--forest-green); font-weight: 600; margin-bottom: 6px;">
+                    Password
+                </label>
+                <input type="password" name="password" required value="adminpassword123" style="width: 100%; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 3px; font-size: 14px; outline: none; background-color: var(--cream-light); color: var(--charcoal);">
+            </div>
+
+            <button type="submit" style="width: 100%; padding: 13px; background-color: var(--forest-green); color: var(--warm-cream); border: none; border-radius: 3px; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease;">
+                Enter Botanical Studio
+            </button>
+        </form>
+
+        <div style="margin-top: 24px; padding: 12px; background-color: var(--cream-light); border-radius: 3px; border: 1px dashed var(--botanical-sage); text-align: center; font-size: 12px; color: var(--forest-green);">
+            Default Credentials: <strong>admin</strong> / <strong>adminpassword123</strong>
+        </div>
+    </div>
+</div>
+{% endblock %}

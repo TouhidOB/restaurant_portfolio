@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Botanical CMS Studio | Verdant Atrium{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --forest-green: #263F35;
+            --forest-dark: #1A2B24;
+            --botanical-sage: #A6B5A0;
+            --warm-cream: #F4F0E6;
+            --cream-light: #FAF7F0;
+            --soft-stone: #D8D2C5;
+            --olive-leaf: #727C52;
+            --muted-copper: #A87958;
+            --charcoal: #292D29;
+            --glass-mist: #E7EDE7;
+            --pure-white: #FFFFFF;
+            --border-color: rgba(38, 63, 53, 0.2);
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--warm-cream);
+            color: var(--charcoal);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation Bar */
+        .cms-navbar {
+            background-color: var(--forest-green);
+            color: var(--warm-cream);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--muted-copper);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(26, 43, 36, 0.25);
+        }
+
+        .cms-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--warm-cream);
+        }
+
+        .cms-brand-leaf {
+            font-size: 24px;
+            color: var(--botanical-sage);
+        }
+
+        .cms-brand-text h1 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .cms-brand-text span {
+            font-size: 11px;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--botanical-sage);
+            display: block;
+        }
+
+        .cms-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-live-site {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background-color: rgba(166, 181, 160, 0.2);
+            border: 1px solid var(--botanical-sage);
+            color: var(--warm-cream);
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 600;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-live-site:hover {
+            background-color: var(--botanical-sage);
+            color: var(--forest-green);
+        }
+
+        .btn-cms-logout {
+            padding: 8px 16px;
+            background-color: rgba(168, 121, 88, 0.25);
+            border: 1px solid var(--muted-copper);
+            color: #FFD2B8;
+            text-decoration: none;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 600;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-cms-logout:hover {
+            background-color: var(--muted-copper);
+            color: #FFFFFF;
+        }
+
+        /* Flash Highlight Effect on Target Card */
+        @keyframes flashHighlight {
+            0% {
+                outline: 3px solid var(--muted-copper);
+                box-shadow: 0 0 25px rgba(168, 121, 88, 0.6);
+            }
+            100% {
+                outline: 1px solid var(--border-color);
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            }
+        }
+
+        .flash-card-target {
+            animation: flashHighlight 1.8s ease-out;
+        }
+
+        /* Messages */
+        .messages-container {
+            padding: 12px 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .alert {
+            padding: 12px 18px;
+            border-radius: 3px;
+            font-size: 13.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .alert-success {
+            background-color: #E2ECE4;
+            color: #1A3826;
+            border: 1px solid #9BC4A7;
+        }
+
+        .alert-error {
+            background-color: #F8DFDC;
+            color: #5C1D18;
+            border: 1px solid #E4A29B;
+        }
+
+        .alert-info {
+            background-color: #E1EFF5;
+            color: #1B4556;
+            border: 1px solid #9CC2D4;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <nav class="cms-navbar">
+        <a href="{% url 'cms_dashboard' %}" class="cms-brand">
+            <span class="cms-brand-leaf">🌿</span>
+            <div class="cms-brand-text">
+                <h1>Verdant Atrium</h1>
+                <span>Botanical Glasshouse CMS Studio</span>
+            </div>
+        </a>
+
+        <div class="cms-nav-actions">
+            <a href="http://127.0.0.1:3000/" target="_blank" class="btn-live-site">
+                ↗ View Live Website (Port 3000)
+            </a>
+            {% if user.is_authenticated %}
+                <span style="font-size: 12px; color: var(--botanical-sage);">
+                    Staff: <strong>{{ user.username }}</strong>
+                </span>
+                <a href="{% url 'cms_logout' %}" class="btn-cms-logout">Sign Out</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for msg in messages %}
+                <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+</body>
+</html>
