@@ -1,9 +1,121 @@
 {% extends "cms/base.html" %}
 
-{% block title %}Dashboard | L'Étoile Royale CMS Studio{% endblock %}
+{% block title %}Dashboard & Gestion des Sections | L'Étoile Royale CMS{% endblock %}
 
 {% block extra_head %}
 <style>
+    /* Two-column Layout: Sidebar + Main Content */
+    .cms-layout {
+        display: grid;
+        grid-template-columns: 290px 1fr;
+        gap: 2rem;
+        align-items: flex-start;
+        position: relative;
+    }
+
+    /* Sidebar Navigation */
+    .cms-sidebar {
+        position: sticky;
+        top: 1rem;
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
+        background: #1C1D20;
+        border: 1px solid var(--charcoal-border);
+        border-radius: 8px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+    }
+
+    /* Custom sidebar scrollbar */
+    .cms-sidebar::-webkit-scrollbar {
+        width: 5px;
+    }
+    .cms-sidebar::-webkit-scrollbar-thumb {
+        background: rgba(197, 164, 109, 0.3);
+        border-radius: 4px;
+    }
+
+    .sidebar-search {
+        width: 100%;
+        padding: 0.6rem 0.85rem;
+        background: #141517;
+        border: 1px solid var(--charcoal-border);
+        border-radius: 4px;
+        color: var(--ivory);
+        font-family: var(--font-sans);
+        font-size: 0.82rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .sidebar-search:focus {
+        border-color: var(--gold);
+    }
+
+    .sidebar-group-title {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--gold);
+        font-weight: 700;
+        margin-bottom: 0.45rem;
+        padding-left: 0.5rem;
+    }
+
+    .sidebar-nav-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 0.75rem;
+        color: var(--taupe);
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border-left: 2px solid transparent;
+    }
+
+    .sidebar-link:hover {
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--ivory);
+        border-left-color: rgba(197, 164, 109, 0.4);
+    }
+
+    .sidebar-link.active {
+        background: rgba(84, 37, 47, 0.35);
+        color: var(--gold);
+        font-weight: 600;
+        border-left-color: var(--gold);
+    }
+
+    .sidebar-badge {
+        background: rgba(197, 164, 109, 0.18);
+        color: var(--gold-light);
+        border: 1px solid rgba(197, 164, 109, 0.3);
+        border-radius: 10px;
+        font-size: 0.7rem;
+        padding: 0.1rem 0.5rem;
+        font-weight: 600;
+    }
+
+    /* Content Area */
+    .cms-main-content {
+        min-width: 0;
+    }
+
     .dashboard-header {
         display: flex;
         justify-content: space-between;
@@ -15,7 +127,7 @@
 
     .dashboard-title h2 {
         font-family: var(--font-display);
-        font-size: 2.2rem;
+        font-size: 2.1rem;
         color: var(--ivory);
         font-weight: 600;
         letter-spacing: -0.01em;
@@ -28,7 +140,7 @@
 
     .stats-row {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
         gap: 1.25rem;
         margin-bottom: 2rem;
     }
@@ -66,51 +178,12 @@
 
     .stat-val {
         font-family: var(--font-display);
-        font-size: 1.7rem;
+        font-size: 1.6rem;
         color: var(--ivory);
         font-weight: 600;
     }
 
-    /* Tabs */
-    .tab-nav {
-        display: flex;
-        gap: 0.5rem;
-        border-bottom: 1px solid var(--charcoal-border);
-        margin-bottom: 2rem;
-    }
-
-    .tab-btn {
-        background: transparent;
-        border: none;
-        color: var(--taupe);
-        padding: 0.85rem 1.5rem;
-        font-family: var(--font-sans);
-        font-size: 0.95rem;
-        font-weight: 500;
-        cursor: pointer;
-        position: relative;
-        transition: all 0.2s;
-    }
-
-    .tab-btn:hover {
-        color: var(--ivory);
-    }
-
-    .tab-btn.active {
-        color: var(--gold);
-        font-weight: 600;
-    }
-
-    .tab-btn.active::after {
-        content: '';
-        position: absolute;
-        bottom: -1px;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background: var(--gold);
-    }
-
+    /* Panes */
     .tab-pane {
         display: none;
     }
@@ -125,13 +198,19 @@
         border-radius: 8px;
         padding: 2rem;
         margin-bottom: 2rem;
+        transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .card.highlighted {
+        border-color: var(--gold) !important;
+        box-shadow: 0 0 25px rgba(197, 164, 109, 0.35) !important;
     }
 
     .card-title {
         font-family: var(--font-display);
-        font-size: 1.4rem;
+        font-size: 1.35rem;
         color: var(--ivory);
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.4rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
@@ -139,14 +218,14 @@
 
     .card-subtitle {
         color: var(--taupe);
-        font-size: 0.9rem;
+        font-size: 0.88rem;
         margin-bottom: 1.5rem;
     }
 
     .form-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.25rem;
     }
 
     .form-group {
@@ -155,7 +234,7 @@
 
     .form-group label {
         display: block;
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         text-transform: uppercase;
         letter-spacing: 0.1em;
         color: var(--gold);
@@ -165,13 +244,13 @@
 
     .form-group input, .form-group textarea, .form-group select {
         width: 100%;
-        padding: 0.75rem 1rem;
+        padding: 0.7rem 0.9rem;
         background: #18191B;
         border: 1px solid var(--charcoal-border);
         border-radius: 4px;
         color: var(--ivory);
         font-family: var(--font-sans);
-        font-size: 0.95rem;
+        font-size: 0.92rem;
         outline: none;
         transition: border 0.2s;
     }
@@ -182,7 +261,7 @@
 
     .json-editor-area {
         width: 100%;
-        min-height: 480px;
+        min-height: 520px;
         background: #141517;
         color: #B5E890;
         font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
@@ -195,7 +274,7 @@
         white-space: pre;
     }
 
-    /* Reservations Table */
+    /* Table */
     .table-responsive {
         overflow-x: auto;
     }
@@ -219,7 +298,7 @@
     td {
         padding: 1rem;
         border-bottom: 1px solid rgba(255,255,255,0.05);
-        font-size: 0.9rem;
+        font-size: 0.88rem;
     }
 
     tr:hover td {
@@ -253,343 +332,748 @@
         color: #F18691;
         border: 1px solid rgba(180, 40, 50, 0.5);
     }
+
+    @media (max-width: 992px) {
+        .cms-layout {
+            grid-template-columns: 1fr;
+        }
+        .cms-sidebar {
+            position: relative;
+            top: 0;
+            max-height: none;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-header">
-    <div class="dashboard-title">
-        <h2>{{ config.restaurant_name }}</h2>
-        <p>Salon Gastronomique & Bar à Champagne • Panneau de Contrôle Centralisé</p>
-    </div>
-    <div style="display: flex; gap: 0.75rem;">
-        <a href="http://127.0.0.1:3000" target="_blank" class="btn-gold">
-            <span>Visiter le Site Web Public (3000) ↗</span>
-        </a>
-    </div>
-</div>
-
-<div class="stats-row">
-    <div class="stat-card">
-        <div class="stat-label">Statut CMS</div>
-        <div class="stat-val" style="color: #79D19E; font-size: 1.4rem;">
-            ● En Ligne (Publié)
-        </div>
-    </div>
-    <div class="stat-card burgundy">
-        <div class="stat-label">Dernière Mise à Jour</div>
-        <div class="stat-val" style="font-size: 1.15rem; color: var(--gold);">
-            {{ config.updated_at|date:"d M Y, H:i" }}
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-label">Demandes de Réservations</div>
-        <div class="stat-val">
-            {{ reservations.count }}
-        </div>
-    </div>
-    <div class="stat-card burgundy">
-        <div class="stat-label">En Attente de Confirmation</div>
-        <div class="stat-val" style="color: #E2C792;">
-            {{ reservations|length }}
-        </div>
-    </div>
-</div>
-
-<div class="tab-nav">
-    <button class="tab-btn active" onclick="openTab(event, 'tab-form')">Éditeur de Sections</button>
-    <button class="tab-btn" onclick="openTab(event, 'tab-reservations')">Réservations Clients ({{ reservations.count }})</button>
-    <button class="tab-btn" onclick="openTab(event, 'tab-json')">Master JSON Editor (15 Sections)</button>
-    <button class="tab-btn" onclick="openTab(event, 'tab-tour')">Visite Virtuelle 3D (5 Points)</button>
-</div>
-
-<!-- Tab 1: Section Field Editor -->
-<div id="tab-form" class="tab-pane active">
-    <form method="POST">
-        {% csrf_token %}
-        <input type="hidden" name="action" value="save_form_sections">
-
-        <!-- 1. Hero & Branding -->
-        <div class="card">
-            <h3 class="card-title">✦ 1. Identité & Section Héro (S01, S02)</h3>
-            <p class="card-subtitle">Modifier le nom du restaurant, la devise d'accueil, l'accroche et les boutons principaux.</p>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Nom du Restaurant</label>
-                    <input type="text" name="hero_name" value="{{ content.hero.restaurant_name|default:"L'ÉTOILE ROYALE" }}">
-                </div>
-                <div class="form-group">
-                    <label>Sous-titre / Devise</label>
-                    <input type="text" name="hero_tagline" value="{{ content.hero.tagline|default:'Salon Gastronomique & Bar à Champagne' }}">
-                </div>
-                <div class="form-group">
-                    <label>Badge de Distinction</label>
-                    <input type="text" name="hero_badge" value="{{ content.hero.badge_text|default:'Étoilé Michelin 2026' }}">
-                </div>
-                <div class="form-group">
-                    <label>Bouton Principal (CTA 1)</label>
-                    <input type="text" name="hero_cta_primary" value="{{ content.hero.cta_primary_text|default:'Réserver une Table' }}">
-                </div>
-                <div class="form-group">
-                    <label>Bouton Secondaire (CTA 2)</label>
-                    <input type="text" name="hero_cta_secondary" value="{{ content.hero.cta_secondary_text|default:'Explorer la Carte' }}">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Description Principale</label>
-                <textarea name="hero_desc" rows="3">{{ content.hero.lead_description }}</textarea>
-            </div>
+<div class="cms-layout">
+    <!-- LEFT SIDEBAR: Pages, Sections & Controls -->
+    <aside class="cms-sidebar" id="cmsSidebar">
+        <div>
+            <input type="text"
+                   id="sectionFilterInput"
+                   class="sidebar-search"
+                   placeholder="🔍 Filtrer les pages & sections..."
+                   onkeyup="filterSidebar()">
         </div>
 
-        <!-- 2. Heritage -->
-        <div class="card">
-            <h3 class="card-title">✦ 2. Héritage Gastronomique (S03)</h3>
-            <p class="card-subtitle">Histoire et philosophie de la table parisienne.</p>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Titre de Section</label>
-                    <input type="text" name="heritage_title" value="{{ content.heritage.title|default:'L\'Art de Vivre' }}">
-                </div>
-                <div class="form-group">
-                    <label>Sous-Titre</label>
-                    <input type="text" name="heritage_subtitle" value="{{ content.heritage.subtitle|default:'Notre Héritage' }}">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Paragraphe d'Histoire 1</label>
-                <textarea name="heritage_p1" rows="3">{{ content.heritage.body_paragraph_1 }}</textarea>
-            </div>
-            <div class="form-group">
-                <label>Paragraphe d'Histoire 2</label>
-                <textarea name="heritage_p2" rows="3">{{ content.heritage.body_paragraph_2 }}</textarea>
-            </div>
+        <!-- 1. General & Dashboard Overview -->
+        <div class="sidebar-group">
+            <div class="sidebar-group-title">Tableau de Bord</div>
+            <ul class="sidebar-nav-list">
+                <li>
+                    <a class="sidebar-link active" onclick="activateNav(this, 'pane-overview')">
+                        <span>📊 Vue d'Ensemble</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-link" onclick="activateNav(this, 'pane-reservations')">
+                        <span>🛎 Réservations Clients</span>
+                        <span class="sidebar-badge">{{ reservations.count }}</span>
+                    </a>
+                </li>
+            </ul>
         </div>
 
-        <!-- 3. Chef -->
-        <div class="card">
-            <h3 class="card-title">✦ 3. Chef Exécutif & Cuisine d'Auteur (S09)</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Nom du Chef</label>
-                    <input type="text" name="chef_name" value="{{ content.chef.name|default:'Chef Alexandre de Morbihan' }}">
-                </div>
-                <div class="form-group">
-                    <label>Titre & Distinctions</label>
-                    <input type="text" name="chef_title" value="{{ content.chef.title|default:'Chef Exécutif & Maître Cuisinier de France' }}">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Citation Emblématique du Chef</label>
-                <input type="text" name="chef_quote" value="{{ content.chef.quote }}">
-            </div>
-            <div class="form-group">
-                <label>Biographie Sommaire</label>
-                <textarea name="chef_bio" rows="3">{{ content.chef.bio }}</textarea>
-            </div>
+        <!-- 2. All 15 Website Sections -->
+        <div class="sidebar-group">
+            <div class="sidebar-group-title">Toutes les Pages & Sections (15)</div>
+            <ul class="sidebar-nav-list" id="sectionsNavList">
+                <li data-title="s01 navigation entete marque header">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s01', this)">
+                        <span>S01 ✦ En-tête & Marque</span>
+                    </a>
+                </li>
+                <li data-title="s02 hero banniere accueil distinction titre michelin">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s02', this)">
+                        <span>S02 ✦ Héro & Identité 3D</span>
+                    </a>
+                </li>
+                <li data-title="s03 heritage histoire siecle lumieres piliers terroir">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s03', this)">
+                        <span>S03 ✦ Héritage & Histoire</span>
+                    </a>
+                </li>
+                <li data-title="s04 visite virtuelle 3d salons points de vue facade champagne cave">
+                    <a class="sidebar-link" onclick="activateNav(this, 'pane-tour')">
+                        <span>S04 ✦ Visite Virtuelle 3D</span>
+                        <span class="sidebar-badge">5 Salons</span>
+                    </a>
+                </li>
+                <li data-title="s05 ceremonial service gueridon flambage sommellerie discretion">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s05', this)">
+                        <span>S05 ✦ Cérémonial de Service</span>
+                    </a>
+                </li>
+                <li data-title="s06 plats signatures homard pigeonneau turbot souffle accords">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s06', this)">
+                        <span>S06 ✦ Plats Signatures</span>
+                    </a>
+                </li>
+                <li data-title="s07 menu carte degustation vendome symphonie royale">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s07', this)">
+                        <span>S07 ✦ Menus & Carte Complète</span>
+                    </a>
+                </li>
+                <li data-title="s08 architecture salons 1788 lustres cristal boiseries">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s08', this)">
+                        <span>S08 ✦ Architecture & Salons</span>
+                    </a>
+                </li>
+                <li data-title="s09 chef executif alexandre morbihan maitre cuisinier france">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s09', this)">
+                        <span>S09 ✦ Chef Exécutif & Cuisine</span>
+                    </a>
+                </li>
+                <li data-title="s10 experiences singulieres grand diner champagne clandestin privatisation">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s10', this)">
+                        <span>S10 ✦ Expériences Privées</span>
+                    </a>
+                </li>
+                <li data-title="s11 galerie photographique photos atmosphere cuisine vins table">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s11', this)">
+                        <span>S11 ✦ Galerie Photographique</span>
+                    </a>
+                </li>
+                <li data-title="s12 eloges critiques presse michelin le figaro financial times">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s12', this)">
+                        <span>S12 ✦ Éloges & Critiques</span>
+                    </a>
+                </li>
+                <li data-title="s13 reservation conciergerie table formulaire tenue creneaux">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s13', this)">
+                        <span>S13 ✦ Réservations en Ligne</span>
+                    </a>
+                </li>
+                <li data-title="s14 situation acces place vendome metro voiturier horaires">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s14', this)">
+                        <span>S14 ✦ Situation & Accès</span>
+                    </a>
+                </li>
+                <li data-title="s15 pied de page mentions footer contact loi evin">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s15', this)">
+                        <span>S15 ✦ Pied de Page & Mentions</span>
+                    </a>
+                </li>
+            </ul>
         </div>
 
-        <!-- 4. Location & Contact -->
-        <div class="card">
-            <h3 class="card-title">✦ 4. Emplacement & Coordonnées (S14, S15)</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Adresse Parisienne</label>
-                    <input type="text" name="loc_address" value="{{ content.location.address|default:'18 Place Vendôme, 75001 Paris, France' }}">
-                </div>
-                <div class="form-group">
-                    <label>Téléphone Conciergerie</label>
-                    <input type="text" name="loc_phone" value="{{ content.location.phone|default:'+33 1 42 68 55 00' }}">
-                </div>
-                <div class="form-group">
-                    <label>Email de Réservation</label>
-                    <input type="email" name="loc_email" value="{{ content.location.email|default:'reservations@letoileroyale-paris.fr' }}">
-                </div>
-                <div class="form-group">
-                    <label>Horaires d'Ouverture</label>
-                    <input type="text" name="loc_hours" value="{{ content.location.hours|default:'Mardi au Samedi: 19h00 - 23h30' }}">
-                </div>
+        <!-- 3. Design & Styles -->
+        <div class="sidebar-group">
+            <div class="sidebar-group-title">Design & Nuances</div>
+            <ul class="sidebar-nav-list">
+                <li>
+                    <a class="sidebar-link" onclick="scrollToSection('card-theme', this)">
+                        <span>🎨 Palette & Typographie</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 4. Advanced Tools -->
+        <div class="sidebar-group">
+            <div class="sidebar-group-title">Outils Avancés</div>
+            <ul class="sidebar-nav-list">
+                <li>
+                    <a class="sidebar-link" onclick="activateNav(this, 'pane-json')">
+                        <span>💻 Master JSON Editor</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 5. Quick Links -->
+        <div class="sidebar-group" style="border-top: 1px solid var(--charcoal-border); padding-top: 0.75rem;">
+            <div class="sidebar-group-title">Liens Rapides</div>
+            <ul class="sidebar-nav-list">
+                <li>
+                    <a href="http://127.0.0.1:3000" target="_blank" class="sidebar-link" style="color: var(--gold-light);">
+                        <span>↗ Site Public (3000)</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/api/content/" target="_blank" class="sidebar-link">
+                        <span>↗ API REST (/api/)</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/" target="_blank" class="sidebar-link">
+                        <span>↗ Django Superadmin</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- RIGHT MAIN CONTENT: Header & Tabs -->
+    <section class="cms-main-content">
+        <!-- Dashboard Top Header -->
+        <div class="dashboard-header">
+            <div class="dashboard-title">
+                <h2>{{ config.restaurant_name }}</h2>
+                <p>Salon Gastronomique & Bar à Champagne • Panneau de Contrôle Centralisé</p>
             </div>
-        </div>
-
-        <!-- 5. Theme Tokens -->
-        <div class="card">
-            <h3 class="card-title">✦ 5. Palette & Nuances Parisiennes</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Couleur Primaire (Bordeaux / Burgundy)</label>
-                    <input type="text" name="theme_primary" value="{{ content.theme.primary_color|default:'#54252F' }}">
-                </div>
-                <div class="form-group">
-                    <label>Couleur d'Accent (Or Champagne / Gold)</label>
-                    <input type="text" name="theme_accent" value="{{ content.theme.accent_color|default:'#C5A46D' }}">
-                </div>
-                <div class="form-group">
-                    <label>Couleur Fond Sombre (Charbon / Charcoal)</label>
-                    <input type="text" name="theme_bg" value="{{ content.theme.bg_color|default:'#202124' }}">
-                </div>
-                <div class="form-group">
-                    <label>Couleur Texte (Ivoire Chaud / Warm Ivory)</label>
-                    <input type="text" name="theme_text" value="{{ content.theme.text_color|default:'#F5F0E7' }}">
-                </div>
-            </div>
-        </div>
-
-        <button type="submit" class="btn-gold" style="font-size: 1rem; padding: 0.9rem 2.2rem;">
-            Enregistrer & Publier les Modifications
-        </button>
-    </form>
-</div>
-
-<!-- Tab 2: Reservations Management -->
-<div id="tab-reservations" class="tab-pane">
-    <div class="card">
-        <h3 class="card-title">✦ Demandes de Réservation en Ligne</h3>
-        <p class="card-subtitle">Gérez les demandes soumises par les visiteurs via le formulaire interactif S13 & le modal de réservation.</p>
-
-        {% if reservations %}
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date & Heure</th>
-                        <th>Client</th>
-                        <th>Contact</th>
-                        <th>Couverts</th>
-                        <th>Expérience & Occasion</th>
-                        <th>Statut</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for res in reservations %}
-                    <tr>
-                        <td>
-                            <strong>{{ res.date }}</strong><br>
-                            <span style="color: var(--taupe); font-size: 0.8rem;">{{ res.time }}</span>
-                        </td>
-                        <td>
-                            <strong style="color: var(--gold);">{{ res.full_name }}</strong>
-                            {% if res.special_requests %}
-                            <div style="font-size: 0.8rem; color: var(--taupe); margin-top: 0.2rem;">
-                                Note: {{ res.special_requests|truncatewords:8 }}
-                            </div>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <div>{{ res.phone }}</div>
-                            <div style="font-size: 0.8rem; color: var(--taupe);">{{ res.email|default:"-" }}</div>
-                        </td>
-                        <td>{{ res.guests }}</td>
-                        <td>
-                            <span style="color: var(--ivory);">{{ res.experience }}</span><br>
-                            <span style="color: var(--taupe); font-size: 0.8rem;">{{ res.occasion }}</span>
-                        </td>
-                        <td>
-                            {% if res.status == 'confirmed' %}
-                            <span class="badge badge-confirmed">Confirmée</span>
-                            {% elif res.status == 'cancelled' %}
-                            <span class="badge badge-cancelled">Annulée</span>
-                            {% else %}
-                            <span class="badge badge-pending">En Attente</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <div style="display: flex; gap: 0.35rem; align-items: center;">
-                                <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display:inline;">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="status" value="confirmed">
-                                    <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: #79D19E;" title="Confirmer">✓</button>
-                                </form>
-                                <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display:inline;">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="status" value="cancelled">
-                                    <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: #F18691;" title="Annuler">✕</button>
-                                </form>
-                                <form method="POST" action="{% url 'cms_reservation_delete' res.id %}" style="display:inline;" onsubmit="return confirm('Confirmer la suppression ?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: var(--taupe);" title="Supprimer">🗑</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <p style="color: var(--taupe); padding: 2rem; text-align: center;">Aucune réservation enregistrée pour le moment. Les réservations passées depuis le site s'afficheront ici en direct.</p>
-        {% endif %}
-    </div>
-</div>
-
-<!-- Tab 3: Master JSON Editor -->
-<div id="tab-json" class="tab-pane">
-    <div class="card">
-        <h3 class="card-title">✦ Master JSON Editor (15 Sections Complètes)</h3>
-        <p class="card-subtitle">Éditez l'intégralité de la configuration JSON pour tous les menus, plats signatures, photographies de galerie, avis et citations. La modification est transmise instantanément au frontend React.</p>
-
-        <form method="POST">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="save_raw_json">
-            <textarea name="raw_json" class="json-editor-area" spellcheck="false">{{ pretty_json }}</textarea>
-            <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
-                <span style="color: var(--taupe); font-size: 0.85rem;">Format JSON strict vérifié lors de la soumission.</span>
-                <button type="submit" class="btn-gold" style="padding: 0.85rem 2rem;">
-                    Enregistrer & Publier le JSON
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <button type="submit" form="sectionsForm" class="btn-gold">
+                    <span>💾 Enregistrer & Publier</span>
                 </button>
             </div>
-        </form>
-    </div>
-</div>
+        </div>
 
-<!-- Tab 4: 3D Tour Info -->
-<div id="tab-tour" class="tab-pane">
-    <div class="card">
-        <h3 class="card-title">✦ Configuration des 5 Points de Vue de la Visite Virtuelle (S04)</h3>
-        <p class="card-subtitle">Les 5 points de vue architecturaux configurés dans Three.js / React Three Fiber :</p>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
-            <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
-                <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 01</span>
-                <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Façade & Entrée</h4>
-                <p style="color: var(--taupe); font-size: 0.85rem;">Vue extérieure de l'hôtel particulier, pierre calcaire parisienne et lanternes dorées.</p>
+        <!-- Key Metrics Cards -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">Statut CMS</div>
+                <div class="stat-val" style="color: #79D19E; font-size: 1.35rem;">
+                    ● En Ligne (Publié)
+                </div>
             </div>
-            <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
-                <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 02</span>
-                <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Grand Salon d'Honneur</h4>
-                <p style="color: var(--taupe); font-size: 0.85rem;">Salle à manger princière sous lustre de cristal, tables nappées et velours bordeaux.</p>
+            <div class="stat-card burgundy">
+                <div class="stat-label">Dernière Mise à Jour</div>
+                <div class="stat-val" style="font-size: 1.1rem; color: var(--gold);">
+                    {{ config.updated_at|date:"d M Y, H:i" }}
+                </div>
             </div>
-            <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
-                <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 03</span>
-                <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Bar à Champagne & Verrière</h4>
-                <p style="color: var(--taupe); font-size: 0.85rem;">Comptoir en marbre noir et laiton brossé sous verrière d'époque style Haussmann.</p>
+            <div class="stat-card">
+                <div class="stat-label">Demandes de Réservations</div>
+                <div class="stat-val">
+                    {{ reservations.count }}
+                </div>
             </div>
-            <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
-                <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 04</span>
-                <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Cave Privée des Grands Crus</h4>
-                <p style="color: var(--taupe); font-size: 0.85rem;">Voûtes séculaires abritant plus de 3 000 flacons et millésimes d'exception.</p>
-            </div>
-            <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
-                <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 05</span>
-                <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Table Privée du Chef</h4>
-                <p style="color: var(--taupe); font-size: 0.85rem;">Salon intimiste avec vue privilégiée sur le passe de dressage gastronomique.</p>
+            <div class="stat-card burgundy">
+                <div class="stat-label">Sections Configurées</div>
+                <div class="stat-val" style="color: var(--gold-light);">
+                    15 Sections
+                </div>
             </div>
         </div>
-    </div>
+
+        <!-- ============================================== -->
+        <!-- PANE 1: ALL 15 SECTIONS FORM EDITOR            -->
+        <!-- ============================================== -->
+        <div id="pane-sections" class="tab-pane active">
+            <form id="sectionsForm" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_form_sections">
+
+                <!-- S01: Navigation & Header -->
+                <div class="card" id="card-s01">
+                    <h3 class="card-title">✦ S01. En-tête & Barre de Navigation</h3>
+                    <p class="card-subtitle">Gérez la marque visible dans l'en-tête transparent et les liens de navigation.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Enseigne de Navigation</label>
+                            <input type="text" name="hero_name" value="{{ content.hero.restaurant_name|default:"L'ÉTOILE ROYALE" }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Emplacement En-tête</label>
+                            <input type="text" readonly value="Paris • Place Vendôme" style="opacity: 0.7;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S02: Hero & 3D Extérieur -->
+                <div class="card" id="card-s02">
+                    <h3 class="card-title">✦ S02. Héro & Section d'Accueil (3D Façade)</h3>
+                    <p class="card-subtitle">Nom principal, devise gastronomique, distinction Michelin, accroche et boutons d'appel à l'action.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Sous-titre / Devise Gastronomique</label>
+                            <input type="text" name="hero_tagline" value="{{ content.hero.tagline|default:'Salon Gastronomique & Bar à Champagne' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Badge de Distinction Michelin</label>
+                            <input type="text" name="hero_badge" value="{{ content.hero.badge_text|default:'Étoilé Michelin 2026 • Place Vendôme' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Bouton Principal (CTA 1)</label>
+                            <input type="text" name="hero_cta_primary" value="{{ content.hero.cta_primary_text|default:'Réserver une Table' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Bouton Secondaire (CTA 2)</label>
+                            <input type="text" name="hero_cta_secondary" value="{{ content.hero.cta_secondary_text|default:'Explorer la Carte' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description Principale</label>
+                        <textarea name="hero_desc" rows="3">{{ content.hero.lead_description }}</textarea>
+                    </div>
+                </div>
+
+                <!-- S03: Heritage -->
+                <div class="card" id="card-s03">
+                    <h3 class="card-title">✦ S03. Héritage & Histoire (Depuis 1788)</h3>
+                    <p class="card-subtitle">Histoire du Siècle des Lumières, philosophie culinaire et citation phare.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Titre Principal</label>
+                            <input type="text" name="heritage_title" value="{{ content.heritage.title|default:"L'Art de Vivre Parisien" }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Sous-Titre de Section</label>
+                            <input type="text" name="heritage_subtitle" value="{{ content.heritage.subtitle|default:'Notre Héritage' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Paragraphe d'Histoire 1</label>
+                        <textarea name="heritage_p1" rows="3">{{ content.heritage.body_paragraph_1 }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Paragraphe d'Histoire 2</label>
+                        <textarea name="heritage_p2" rows="3">{{ content.heritage.body_paragraph_2 }}</textarea>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Citation Emblématique</label>
+                            <input type="text" name="heritage_quote" value="{{ content.heritage.quote }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Auteur de la Citation</label>
+                            <input type="text" name="heritage_quote_author" value="{{ content.heritage.quote_author|default:'Chef Alexandre de Morbihan' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S05: Dining Experience Rituals -->
+                <div class="card" id="card-s05">
+                    <h3 class="card-title">✦ S05. Le Cérémonial de Service & Hospitalité</h3>
+                    <p class="card-subtitle">Les 4 temps forts : Service au Guéridon, Flambage & Parfums, Accords Sommelier, Discrétion Absolue.</p>
+                    <div style="background: #18191B; padding: 1rem 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                        <p style="color: var(--taupe); font-size: 0.88rem;">
+                            Les 4 piliers du service (Guéridon, Flambage, Haute Sommellerie, Tables espacées) sont intégrés dans le système de rendu public et synchronisés avec le modèle d'hospitalité française.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- S06: Signature Dishes -->
+                <div class="card" id="card-s06">
+                    <h3 class="card-title">✦ S06. Créations Emblématiques (Plats Signatures)</h3>
+                    <p class="card-subtitle">Homard bleu de Roscoff, Pigeonneau impérial, Turbot sauvage, Soufflé pur Guanaja.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Titre de Section</label>
+                            <input type="text" name="sig_title" value="{{ content.signature_dishes.title|default:'Créations Emblématiques' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Sous-Titre</label>
+                            <input type="text" name="sig_subtitle" value="{{ content.signature_dishes.subtitle|default:'Les Joyaux de la Carte' }}">
+                        </div>
+                    </div>
+                    <p style="color: var(--taupe); font-size: 0.85rem;">
+                        Pour modifier les prix unitaires, accords de vins ou descriptions détaillées de chaque plat, utilisez l'onglet <strong>Master JSON Editor</strong> dans la barre latérale.
+                    </p>
+                </div>
+
+                <!-- S07: Menu & Tasting Menus -->
+                <div class="card" id="card-s07">
+                    <h3 class="card-title">✦ S07. La Carte & Menus Dégustation</h3>
+                    <p class="card-subtitle">Menu Découverte Vendôme (195 €) & Menu Symphonie Royale (285 €) + Catégories Entrées, Poissons, Viandes, Desserts.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Titre de Section</label>
+                            <input type="text" name="menu_title" value="{{ content.menu.title|default:'La Carte & Les Menus' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Sous-Titre</label>
+                            <input type="text" name="menu_subtitle" value="{{ content.menu.subtitle|default:'Dégustation Gastronomique' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S08: Architecture & Salons -->
+                <div class="card" id="card-s08">
+                    <h3 class="card-title">✦ S08. Architecture & Salons (Hôtel Particulier 1788)</h3>
+                    <p class="card-subtitle">Boiseries en chêne sculpté, cheminées de marbre et lustres en pampilles de cristal.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Titre de Section</label>
+                            <input type="text" name="arch_title" value="{{ content.architecture.title|default:'Architecture & Salons' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Sous-Titre</label>
+                            <input type="text" name="arch_subtitle" value="{{ content.architecture.subtitle|default:"L'Écrin d'un Siècle" }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Citation Architecturale</label>
+                        <input type="text" name="arch_quote" value="{{ content.architecture.quote }}">
+                    </div>
+                </div>
+
+                <!-- S09: Executive Chef -->
+                <div class="card" id="card-s09">
+                    <h3 class="card-title">✦ S09. Chef Exécutif & Cuisine d'Auteur</h3>
+                    <p class="card-subtitle">Alexandre de Morbihan, distinctions culinaires, biographie et philosophie.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nom du Chef</label>
+                            <input type="text" name="chef_name" value="{{ content.chef.name|default:'Chef Alexandre de Morbihan' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Titre & Distinctions</label>
+                            <input type="text" name="chef_title" value="{{ content.chef.title|default:'Chef Exécutif & Maître Cuisinier de France' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Citation Phare du Chef</label>
+                        <input type="text" name="chef_quote" value="{{ content.chef.quote }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Biographie Sommaire</label>
+                        <textarea name="chef_bio" rows="3">{{ content.chef.bio }}</textarea>
+                    </div>
+                </div>
+
+                <!-- S10: Dining Experiences -->
+                <div class="card" id="card-s10">
+                    <h3 class="card-title">✦ S10. Expériences Singulières & Salons Privés</h3>
+                    <p class="card-subtitle">Le Grand Dîner d'Honneur, Le Bar à Champagne Clandestin, Salons Particuliers & Privatisation.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Titre</label>
+                            <input type="text" name="exp_title" value="{{ content.experiences.title|default:'Expériences Singulières' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Sous-Titre</label>
+                            <input type="text" name="exp_subtitle" value="{{ content.experiences.subtitle|default:'Des Instants Conçus pour Marquer les Esprits' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S11: Photo Gallery -->
+                <div class="card" id="card-s11">
+                    <h3 class="card-title">✦ S11. Galerie Photographique</h3>
+                    <p class="card-subtitle">Photographies haute résolution des salons, dressage des tables et sommellerie.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Titre</label>
+                            <input type="text" name="gal_title" value="{{ content.gallery.title|default:'Galerie Photographique' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Sous-Titre</label>
+                            <input type="text" name="gal_subtitle" value="{{ content.gallery.subtitle|default:'Atmosphère & Détails Gastronomiques' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S12: Testimonials -->
+                <div class="card" id="card-s12">
+                    <h3 class="card-title">✦ S12. Éloges & Critiques de Presse</h3>
+                    <p class="card-subtitle">Critiques du Guide Michelin, Le Figaro Gastronomie et Financial Times.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Titre</label>
+                            <input type="text" name="test_title" value="{{ content.testimonials.title|default:'Éloges & Critiques' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Sous-Titre</label>
+                            <input type="text" name="test_subtitle" value="{{ content.testimonials.subtitle|default:'Ce que disent les Guides & Épicuriens' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S13: Reservation Info -->
+                <div class="card" id="card-s13">
+                    <h3 class="card-title">✦ S13. Réservations & Conciergerie Privée</h3>
+                    <p class="card-subtitle">Conditions de réservation, dress code et consignes pour les 18 tables exclusives.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Titre</label>
+                            <input type="text" name="res_title" value="{{ content.reservation.title|default:'Réservations & Conciergerie' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Sous-Titre</label>
+                            <input type="text" name="res_subtitle" value="{{ content.reservation.subtitle|default:'Réserver Votre Table Gastronomique' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description des Réservations</label>
+                        <textarea name="res_desc" rows="2">{{ content.reservation.description }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Politique & Dress Code</label>
+                        <textarea name="res_policy" rows="2">{{ content.reservation.policy }}</textarea>
+                    </div>
+                </div>
+
+                <!-- S14: Location & Contact -->
+                <div class="card" id="card-s14">
+                    <h3 class="card-title">✦ S14. Situation, Accès & Métro</h3>
+                    <p class="card-subtitle">Place Vendôme, service voiturier, stations de métro et horaires.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Adresse Parisienne</label>
+                            <input type="text" name="loc_address" value="{{ content.location.address|default:'18 Place Vendôme, 75001 Paris, France' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Accès Métro</label>
+                            <input type="text" name="loc_metro" value="{{ content.location.metro|default:'Station Tuileries (Ligne 1) ou Madeleine' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Service Voiturier</label>
+                            <input type="text" name="loc_valet" value="{{ content.location.valet|default:'Service Voiturier Privé disponible tous les soirs' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Téléphone Conciergerie</label>
+                            <input type="text" name="loc_phone" value="{{ content.location.phone|default:'+33 1 42 68 55 00' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Email de Réservation</label>
+                            <input type="email" name="loc_email" value="{{ content.location.email|default:'reservations@letoileroyale-paris.fr' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S15: Footer -->
+                <div class="card" id="card-s15">
+                    <h3 class="card-title">✦ S15. Pied de Page & Mentions Légales</h3>
+                    <p class="card-subtitle">Mentions relatives à la Loi Évin, copyright et coordonnées administratives.</p>
+                    <div style="background: #18191B; padding: 1rem 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                        <p style="color: var(--taupe); font-size: 0.88rem;">
+                            Le pied de page reprend automatiquement les coordonnées du restaurant, les horaires de service et les liens directs vers ce panneau d'administration.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Theme Settings -->
+                <div class="card" id="card-theme">
+                    <h3 class="card-title">✦ Design Tokens & Nuances Parisiennes</h3>
+                    <p class="card-subtitle">Couleurs transmises en direct au frontend React via le jeton CSS thématique.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Couleur Primaire (Bordeaux / Burgundy)</label>
+                            <input type="text" name="theme_primary" value="{{ content.theme.primary_color|default:'#54252F' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Couleur d'Accent (Or Champagne / Gold)</label>
+                            <input type="text" name="theme_accent" value="{{ content.theme.accent_color|default:'#C5A46D' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Couleur Fond Sombre (Charbon / Charcoal)</label>
+                            <input type="text" name="theme_bg" value="{{ content.theme.bg_color|default:'#202124' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Couleur Texte (Ivoire Chaud / Warm Ivory)</label>
+                            <input type="text" name="theme_text" value="{{ content.theme.text_color|default:'#F5F0E7' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="submit" class="btn-gold" style="font-size: 1rem; padding: 0.95rem 2.5rem;">
+                        Enregistrer & Publier Toutes les Sections
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- PANE 2: RESERVATIONS CLIENTS                   -->
+        <!-- ============================================== -->
+        <div id="pane-reservations" class="tab-pane">
+            <div class="card">
+                <h3 class="card-title">✦ Demandes de Réservation en Direct</h3>
+                <p class="card-subtitle">Gérez les demandes soumises par les visiteurs via le formulaire interactif S13 & le modal de réservation.</p>
+
+                {% if reservations %}
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date & Heure</th>
+                                <th>Client</th>
+                                <th>Contact</th>
+                                <th>Couverts</th>
+                                <th>Expérience</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for res in reservations %}
+                            <tr>
+                                <td>
+                                    <strong>{{ res.date }}</strong><br>
+                                    <span style="color: var(--taupe); font-size: 0.8rem;">{{ res.time }}</span>
+                                </td>
+                                <td>
+                                    <strong style="color: var(--gold);">{{ res.full_name }}</strong>
+                                    {% if res.special_requests %}
+                                    <div style="font-size: 0.8rem; color: var(--taupe); margin-top: 0.2rem;">
+                                        Note: {{ res.special_requests|truncatewords:8 }}
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div>{{ res.phone }}</div>
+                                    <div style="font-size: 0.8rem; color: var(--taupe);">{{ res.email|default:"-" }}</div>
+                                </td>
+                                <td>{{ res.guests }}</td>
+                                <td>
+                                    <span style="color: var(--ivory);">{{ res.experience }}</span><br>
+                                    <span style="color: var(--taupe); font-size: 0.8rem;">{{ res.occasion }}</span>
+                                </td>
+                                <td>
+                                    {% if res.status == 'confirmed' %}
+                                    <span class="badge badge-confirmed">Confirmée</span>
+                                    {% elif res.status == 'cancelled' %}
+                                    <span class="badge badge-cancelled">Annulée</span>
+                                    {% else %}
+                                    <span class="badge badge-pending">En Attente</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 0.35rem; align-items: center;">
+                                        <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="confirmed">
+                                            <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: #79D19E;" title="Confirmer">✓</button>
+                                        </form>
+                                        <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="cancelled">
+                                            <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: #F18691;" title="Annuler">✕</button>
+                                        </form>
+                                        <form method="POST" action="{% url 'cms_reservation_delete' res.id %}" style="display:inline;" onsubmit="return confirm('Confirmer la suppression ?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: var(--taupe);" title="Supprimer">🗑</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p style="color: var(--taupe); padding: 2rem; text-align: center;">Aucune réservation enregistrée pour le moment. Les demandes soumises depuis le site s'afficheront ici en direct.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- PANE 3: 3D TOUR VIEWPOINTS                     -->
+        <!-- ============================================== -->
+        <div id="pane-tour" class="tab-pane">
+            <div class="card">
+                <h3 class="card-title">✦ S04. Configuration des 5 Salons 3D</h3>
+                <p class="card-subtitle">Les 5 points de vue architecturaux animés dans Three.js / React Three Fiber :</p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 1.5rem;">
+                    <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                        <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 01</span>
+                        <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Façade & Entrée Royale</h4>
+                        <p style="color: var(--taupe); font-size: 0.85rem;">Vue extérieure de l'hôtel particulier, pierre calcaire parisienne et lanternes dorées.</p>
+                    </div>
+                    <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                        <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 02</span>
+                        <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Grand Salon d'Honneur</h4>
+                        <p style="color: var(--taupe); font-size: 0.85rem;">Salle à manger princière sous lustre de cristal, tables nappées et velours bordeaux.</p>
+                    </div>
+                    <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                        <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 03</span>
+                        <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Bar à Champagne & Verrière</h4>
+                        <p style="color: var(--taupe); font-size: 0.85rem;">Comptoir en marbre noir et laiton brossé sous verrière d'époque style Haussmann.</p>
+                    </div>
+                    <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                        <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 04</span>
+                        <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Cave Privée des Grands Crus</h4>
+                        <p style="color: var(--taupe); font-size: 0.85rem;">Voûtes séculaires abritant plus de 3 200 flacons et millésimes d'exception.</p>
+                    </div>
+                    <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                        <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 05</span>
+                        <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Table Privée du Chef</h4>
+                        <p style="color: var(--taupe); font-size: 0.85rem;">Salon intimiste avec vue privilégiée sur le passe de dressage gastronomique.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- PANE 4: MASTER JSON EDITOR                     -->
+        <!-- ============================================== -->
+        <div id="pane-json" class="tab-pane">
+            <div class="card">
+                <h3 class="card-title">✦ Master JSON Editor (15 Sections Complètes)</h3>
+                <p class="card-subtitle">Éditez l'intégralité de la configuration JSON pour tous les menus, plats signatures, photographies de galerie, avis et citations. La modification est transmise instantanément au frontend React.</p>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save_raw_json">
+                    <textarea name="raw_json" class="json-editor-area" spellcheck="false">{{ pretty_json }}</textarea>
+                    <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--taupe); font-size: 0.85rem;">Format JSON strict vérifié lors de la soumission.</span>
+                        <button type="submit" class="btn-gold" style="padding: 0.85rem 2rem;">
+                            Enregistrer & Publier le JSON
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
 </div>
 
 <script>
-function openTab(evt, tabId) {
-    var panes = document.getElementsByClassName("tab-pane");
-    for (var i = 0; i < panes.length; i++) {
+// Switch between top-level panes (Sections, Reservations, 3D Tour, JSON)
+function activatePane(paneId) {
+    const panes = document.getElementsByClassName("tab-pane");
+    for (let i = 0; i < panes.length; i++) {
         panes[i].classList.remove("active");
     }
-    var btns = document.getElementsByClassName("tab-btn");
-    for (var i = 0; i < btns.length; i++) {
-        btns[i].classList.remove("active");
+    const target = document.getElementById(paneId);
+    if (target) {
+        target.classList.add("active");
     }
-    document.getElementById(tabId).classList.add("active");
-    evt.currentTarget.classList.add("active");
+}
+
+// Sidebar link click handling
+function activateNav(linkElement, paneId) {
+    // Clear active links
+    const links = document.querySelectorAll(".sidebar-link");
+    links.forEach(l => l.classList.remove("active"));
+    linkElement.classList.add("active");
+
+    activatePane(paneId);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Scroll directly to a specific section card in pane-sections
+function scrollToSection(cardId, linkElement) {
+    // Make sure pane-sections is active
+    activatePane('pane-sections');
+
+    // Update active state in sidebar
+    const links = document.querySelectorAll(".sidebar-link");
+    links.forEach(l => l.classList.remove("active"));
+    linkElement.classList.add("active");
+
+    // Scroll to the card
+    const card = document.getElementById(cardId);
+    if (card) {
+        // Flash highlight animation
+        card.classList.add("highlighted");
+        setTimeout(() => {
+            card.classList.remove("highlighted");
+        }, 1800);
+
+        card.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
+// Real-time sidebar section filtering
+function filterSidebar() {
+    const query = document.getElementById("sectionFilterInput").value.toLowerCase().trim();
+    const items = document.querySelectorAll("#sectionsNavList li");
+
+    items.forEach(item => {
+        const title = (item.getAttribute("data-title") || item.innerText).toLowerCase();
+        if (!query || title.includes(query)) {
+            item.style.display = "";
+        } else {
+            item.style.display = "none";
+        }
+    });
 }
 </script>
 {% endblock %}

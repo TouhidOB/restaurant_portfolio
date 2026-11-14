@@ -71,7 +71,7 @@ def cms_dashboard_view(request):
         elif action == 'save_form_sections':
             data = config.content_json if isinstance(config.content_json, dict) else {}
 
-            # 1. Brand / Hero
+            # S01 & S02: Brand / Hero
             hero = data.get('hero', {})
             hero['restaurant_name'] = request.POST.get('hero_name', hero.get('restaurant_name', "L'ÉTOILE ROYALE"))
             hero['tagline'] = request.POST.get('hero_tagline', hero.get('tagline', 'Salon Gastronomique & Bar à Champagne'))
@@ -81,15 +81,43 @@ def cms_dashboard_view(request):
             hero['badge_text'] = request.POST.get('hero_badge', hero.get('badge_text', 'Étoilé Michelin 2026'))
             data['hero'] = hero
 
-            # 2. Heritage
+            # S03: Heritage
             heritage = data.get('heritage', {})
-            heritage['title'] = request.POST.get('heritage_title', heritage.get('title', 'L\'Art de Vivre'))
+            heritage['title'] = request.POST.get('heritage_title', heritage.get('title', "L'Art de Vivre Parisien"))
             heritage['subtitle'] = request.POST.get('heritage_subtitle', heritage.get('subtitle', 'Notre Héritage'))
             heritage['body_paragraph_1'] = request.POST.get('heritage_p1', heritage.get('body_paragraph_1', ''))
             heritage['body_paragraph_2'] = request.POST.get('heritage_p2', heritage.get('body_paragraph_2', ''))
+            heritage['quote'] = request.POST.get('heritage_quote', heritage.get('quote', ''))
+            heritage['quote_author'] = request.POST.get('heritage_quote_author', heritage.get('quote_author', ''))
             data['heritage'] = heritage
 
-            # 3. Chef
+            # S04: 3D Tour
+            tour = data.get('tour', {})
+            tour['title'] = request.POST.get('tour_title', tour.get('title', 'Visite Virtuelle Immersive'))
+            tour['subtitle'] = request.POST.get('tour_subtitle', tour.get('subtitle', 'Explorer les Salons Particuliers'))
+            tour['description'] = request.POST.get('tour_desc', tour.get('description', ''))
+            data['tour'] = tour
+
+            # S06: Signature Dishes
+            sig = data.get('signature_dishes', {})
+            sig['title'] = request.POST.get('sig_title', sig.get('title', 'Créations Emblématiques'))
+            sig['subtitle'] = request.POST.get('sig_subtitle', sig.get('subtitle', 'Les Joyaux de la Carte'))
+            data['signature_dishes'] = sig
+
+            # S07: Menu
+            menu = data.get('menu', {})
+            menu['title'] = request.POST.get('menu_title', menu.get('title', 'La Carte & Les Menus'))
+            menu['subtitle'] = request.POST.get('menu_subtitle', menu.get('subtitle', 'Dégustation Gastronomique'))
+            data['menu'] = menu
+
+            # S08: Architecture
+            arch = data.get('architecture', {})
+            arch['title'] = request.POST.get('arch_title', arch.get('title', 'Architecture & Salons'))
+            arch['subtitle'] = request.POST.get('arch_subtitle', arch.get('subtitle', "L'Écrin d'un Siècle"))
+            arch['quote'] = request.POST.get('arch_quote', arch.get('quote', ''))
+            data['architecture'] = arch
+
+            # S09: Chef
             chef = data.get('chef', {})
             chef['name'] = request.POST.get('chef_name', chef.get('name', 'Chef Alexandre de Morbihan'))
             chef['title'] = request.POST.get('chef_title', chef.get('title', 'Chef Exécutif & Maître Cuisinier de France'))
@@ -97,15 +125,44 @@ def cms_dashboard_view(request):
             chef['quote'] = request.POST.get('chef_quote', chef.get('quote', ''))
             data['chef'] = chef
 
-            # 4. Location & Contact
+            # S10: Experiences
+            exp = data.get('experiences', {})
+            exp['title'] = request.POST.get('exp_title', exp.get('title', 'Expériences Singulières'))
+            exp['subtitle'] = request.POST.get('exp_subtitle', exp.get('subtitle', 'Des Instants Conçus pour Marquer les Esprits'))
+            data['experiences'] = exp
+
+            # S11: Gallery
+            gallery = data.get('gallery', {})
+            gallery['title'] = request.POST.get('gal_title', gallery.get('title', 'Galerie Photographique'))
+            gallery['subtitle'] = request.POST.get('gal_subtitle', gallery.get('subtitle', 'Atmosphère & Détails Gastronomiques'))
+            data['gallery'] = gallery
+
+            # S12: Testimonials
+            testimonials = data.get('testimonials', {})
+            testimonials['title'] = request.POST.get('test_title', testimonials.get('title', 'Éloges & Critiques'))
+            testimonials['subtitle'] = request.POST.get('test_subtitle', testimonials.get('subtitle', 'Ce que disent les Guides & Épicuriens'))
+            data['testimonials'] = testimonials
+
+            # S13: Reservation Info
+            reservation_cfg = data.get('reservation', {})
+            reservation_cfg['title'] = request.POST.get('res_title', reservation_cfg.get('title', 'Réservations & Conciergerie'))
+            reservation_cfg['subtitle'] = request.POST.get('res_subtitle', reservation_cfg.get('subtitle', 'Réserver Votre Table Gastronomique'))
+            reservation_cfg['description'] = request.POST.get('res_desc', reservation_cfg.get('description', ''))
+            reservation_cfg['policy'] = request.POST.get('res_policy', reservation_cfg.get('policy', ''))
+            data['reservation'] = reservation_cfg
+
+            # S14: Location & Contact
             loc = data.get('location', {})
+            loc['title'] = request.POST.get('loc_title', loc.get('title', 'Situation & Accès'))
+            loc['subtitle'] = request.POST.get('loc_subtitle', loc.get('subtitle', 'Au Cœur du Paris Historique'))
             loc['address'] = request.POST.get('loc_address', loc.get('address', '18 Place Vendôme, 75001 Paris, France'))
+            loc['metro'] = request.POST.get('loc_metro', loc.get('metro', 'Station Tuileries (Ligne 1) ou Madeleine'))
+            loc['valet'] = request.POST.get('loc_valet', loc.get('valet', 'Service Voiturier Privé disponible tous les soirs'))
             loc['phone'] = request.POST.get('loc_phone', loc.get('phone', '+33 1 42 68 55 00'))
             loc['email'] = request.POST.get('loc_email', loc.get('email', 'reservations@letoileroyale-paris.fr'))
-            loc['hours'] = request.POST.get('loc_hours', loc.get('hours', 'Mardi au Samedi: 19h00 - 23h30'))
             data['location'] = loc
 
-            # 5. Theme Settings
+            # Theme Settings
             theme = data.get('theme', {})
             theme['primary_color'] = request.POST.get('theme_primary', theme.get('primary_color', '#54252F'))
             theme['accent_color'] = request.POST.get('theme_accent', theme.get('accent_color', '#C5A46D'))
