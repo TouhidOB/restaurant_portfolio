@@ -1,0 +1,334 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}MONOLITH // ARCHITECTURAL CMS STUDIO{% endblock %}
+
+{% block content %}
+<!-- Top Header with Search Filter -->
+<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <span class="section-tag">CONTROL DESK</span>
+        <h1 style="font-family: var(--font-display); font-size: 2.2rem; letter-spacing: -0.02em; margin-top: 0.25rem;">
+            BRUTALIST STUDIO
+        </h1>
+        <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">
+            Synchronized with React 18 frontend on Port 3000 &bull; Database: SQLite &bull; Sector 09
+        </p>
+    </div>
+    <div class="search-box">
+        <label for="sidebarFilter" class="form-label">Instant Content Filter</label>
+        <input type="text" id="sidebarFilter" placeholder="Filter parameters, dishes, guests..." oninput="handleSearchFilter(this.value)">
+    </div>
+</div>
+
+<!-- Telemetry KPIs -->
+<div class="grid-kpi">
+    <div class="kpi-card active filter-target">
+        <div class="kpi-label">Active Menu Items</div>
+        <div class="kpi-value">{{ kpis.available_menu_items }} <span style="font-size: 1rem; color: var(--text-muted);">/ {{ kpis.total_menu_items }}</span></div>
+    </div>
+    <div class="kpi-card active filter-target">
+        <div class="kpi-label">Pending Inquiries</div>
+        <div class="kpi-value" style="color: var(--accent-orange);">{{ kpis.pending_reservations }}</div>
+    </div>
+    <div class="kpi-card filter-target">
+        <div class="kpi-label">Total Reservations</div>
+        <div class="kpi-value">{{ kpis.total_reservations }}</div>
+    </div>
+    <div class="kpi-card filter-target">
+        <div class="kpi-label">3D Viewpoints</div>
+        <div class="kpi-value">{{ kpis.active_viewpoints }}</div>
+    </div>
+    <div class="kpi-card filter-target">
+        <div class="kpi-label">Gallery Artifacts</div>
+        <div class="kpi-value">{{ kpis.gallery_count }}</div>
+    </div>
+</div>
+
+<!-- Section: General Parameters -->
+<div class="cms-section filter-target" id="section-settings">
+    <div class="section-header">
+        <div class="section-title">
+            <span>01</span>
+            <span>RESTAURANT IDENTITY &amp; HERO SPECS</span>
+        </div>
+        <span class="section-tag">LIVE CONFIGURATION</span>
+    </div>
+
+    <form method="post" action="{% url 'cms_update_settings' %}">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+            <div class="form-group">
+                <label class="form-label">Brand Name</label>
+                <input type="text" name="name" class="form-input" value="{{ restaurant.name }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Tagline</label>
+                <input type="text" name="tagline" class="form-input" value="{{ restaurant.tagline }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Coordinates Display</label>
+                <input type="text" name="coordinates_display" class="form-input" value="{{ restaurant.coordinates_display }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Hours Summary</label>
+                <input type="text" name="opening_hours_summary" class="form-input" value="{{ restaurant.opening_hours_summary }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Contact Phone</label>
+                <input type="text" name="phone" class="form-input" value="{{ restaurant.phone }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Contact Email</label>
+                <input type="email" name="email" class="form-input" value="{{ restaurant.email }}">
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+            <div class="form-group">
+                <label class="form-label">Hero Headline 1</label>
+                <input type="text" name="hero_heading_line1" class="form-input" value="{{ restaurant.hero_heading_line1 }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Hero Headline 2</label>
+                <input type="text" name="hero_heading_line2" class="form-input" value="{{ restaurant.hero_heading_line2 }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Hero Headline 3</label>
+                <input type="text" name="hero_heading_line3" class="form-input" value="{{ restaurant.hero_heading_line3 }}">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+            <label class="form-label">Hero Supporting Text</label>
+            <textarea name="hero_supporting_text" class="form-textarea" rows="2">{{ restaurant.hero_supporting_text }}</textarea>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Architectural Location</label>
+            <input type="text" name="address" class="form-input" value="{{ restaurant.address }}">
+        </div>
+
+        <button type="submit" class="btn-brutal" style="margin-top: 1rem;">
+            UPDATE RESTAURANT SPEC &rarr;
+        </button>
+    </form>
+</div>
+
+<!-- Section: Reservation Triage Desk -->
+<div class="cms-section filter-target" id="section-reservations">
+    <div class="section-header">
+        <div class="section-title">
+            <span>02</span>
+            <span>RESERVATION TRIAGE DESK</span>
+        </div>
+        <span class="section-tag">{{ reservations|length }} ENTRIES</span>
+    </div>
+
+    {% if reservations %}
+    <div style="overflow-x: auto;">
+        <table class="brutal-table">
+            <thead>
+                <tr>
+                    <th>Ref Code</th>
+                    <th>Guest</th>
+                    <th>Date / Time</th>
+                    <th>Guests</th>
+                    <th>Area</th>
+                    <th>Contact</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in reservations %}
+                <tr class="filter-item">
+                    <td><strong style="color: var(--accent-orange);">{{ res.reference_code }}</strong></td>
+                    <td><strong>{{ res.full_name }}</strong></td>
+                    <td>{{ res.reservation_date }} @ {{ res.reservation_time }}</td>
+                    <td>{{ res.guest_count }} PAX</td>
+                    <td>{{ res.seating_area }}</td>
+                    <td>
+                        <div>{{ res.email }}</div>
+                        <div style="color: var(--text-muted); font-size: 0.75rem;">{{ res.phone }}</div>
+                    </td>
+                    <td>
+                        <span class="status-badge status-{{ res.status }}">{{ res.status|upper }}</span>
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'cms_update_reservation_status' res.id %}" style="display: flex; gap: 0.5rem;">
+                            {% csrf_token %}
+                            <select name="status" class="form-select" style="padding: 0.3rem 0.5rem; font-size: 0.75rem; width: auto;">
+                                <option value="pending" {% if res.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="contacted" {% if res.status == 'contacted' %}selected{% endif %}>Contacted</option>
+                                <option value="confirmed" {% if res.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                                <option value="cancelled" {% if res.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                            <button type="submit" class="btn-brutal-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">SET</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="font-family: var(--font-mono); color: var(--text-muted);">No reservation inquiries recorded yet.</p>
+    {% endif %}
+</div>
+
+<!-- Section: Menu Manager -->
+<div class="cms-section filter-target" id="section-menu">
+    <div class="section-header">
+        <div class="section-title">
+            <span>03</span>
+            <span>CULINARY REPERTOIRE (MENU ITEMS)</span>
+        </div>
+        <span class="section-tag">{{ menu_items|length }} DISHES</span>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table class="brutal-table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Dish Title</th>
+                    <th>Price</th>
+                    <th>Dietary Specs</th>
+                    <th>Featured</th>
+                    <th>Availability</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in menu_items %}
+                <tr class="filter-item">
+                    <td><span style="color: var(--text-muted); font-size: 0.75rem;">{{ item.category.name }}</span></td>
+                    <td>
+                        <strong>{{ item.name }}</strong>
+                        <div style="color: var(--text-secondary); font-size: 0.75rem;">{{ item.short_description|truncatechars:60 }}</div>
+                    </td>
+                    <td><strong>{{ item.currency_symbol }}{{ item.price }}</strong></td>
+                    <td>
+                        {% for d in item.dietary_information %}
+                            <span style="background: var(--bg-card); border: 1px solid var(--border-steel); padding: 0.1rem 0.3rem; font-size: 0.7rem; margin-right: 0.2rem;">{{ d }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if item.is_featured %}
+                            <span style="color: var(--accent-orange); font-weight: 700;">[FEATURED]</span>
+                        {% else %}
+                            <span style="color: var(--text-muted);">-</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if item.is_available %}
+                            <span style="color: #4ade80;">ACTIVE</span>
+                        {% else %}
+                            <span style="color: #f87171;">OFF-LINE</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'cms_toggle_menu_item' item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-brutal-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">
+                                {% if item.is_available %}DISABLE{% else %}ENABLE{% endif %}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Section: 3D Virtual Tour Viewpoints -->
+<div class="cms-section filter-target" id="section-tour">
+    <div class="section-header">
+        <div class="section-title">
+            <span>04</span>
+            <span>3D SPATIAL VIEWPOINTS (5 CONFIGURABLE VECTORS)</span>
+        </div>
+        <span class="section-tag">THREE.JS / R3F</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem;">
+        {% for vp in viewpoints %}
+        <div class="filter-item" style="background: var(--bg-card); border: 1px solid var(--border-steel); padding: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.5rem;">
+                <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-orange);">0{{ vp.display_order }}</span>
+                <span class="status-badge status-confirmed" style="font-size: 0.65rem;">ACTIVE</span>
+            </div>
+            <h3 style="font-family: var(--font-heading); font-size: 1.1rem; margin-bottom: 0.25rem;">{{ vp.title }}</h3>
+            <p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                {{ vp.space_name }}
+            </p>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                {{ vp.description|truncatechars:85 }}
+            </p>
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); border-top: 1px solid var(--border-steel); padding-top: 0.5rem;">
+                CAM: {{ vp.camera_position }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Section: Master Architectural JSON Editor -->
+<div class="cms-section filter-target" id="section-json">
+    <div class="section-header">
+        <div class="section-title">
+            <span>05</span>
+            <span>MASTER ARCHITECTURAL JSON CONFIGURATION</span>
+        </div>
+        <span class="section-tag">ADVANCED CONTROL</span>
+    </div>
+    <p style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">
+        Directly customize section titles, subtitles, philosophy pillars, and custom JSON payloads across all 15 editorial modules.
+    </p>
+
+    <form method="post" action="{% url 'cms_save_master_json' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <textarea name="master_json" id="masterJsonEditor" class="form-textarea" style="height: 380px; font-family: var(--font-mono); font-size: 0.8rem;">{{ master_json_str }}</textarea>
+        </div>
+        <button type="submit" class="btn-brutal">
+            COMPILE &amp; SAVE MASTER ARCHITECTURE &rarr;
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function handleSearchFilter(query) {
+    const q = query.toLowerCase().trim();
+    const items = document.querySelectorAll('.filter-item');
+    const sections = document.querySelectorAll('.filter-target');
+
+    if (!q) {
+        items.forEach(el => el.style.display = '');
+        sections.forEach(el => el.style.opacity = '1');
+        return;
+    }
+
+    items.forEach(el => {
+        const text = el.textContent.toLowerCase();
+        if (text.includes(q)) {
+            el.style.display = '';
+        } else {
+            el.style.display = 'none';
+        }
+    });
+
+    sections.forEach(sec => {
+        const text = sec.textContent.toLowerCase();
+        if (text.includes(q)) {
+            sec.style.opacity = '1';
+        } else {
+            sec.style.opacity = '0.35';
+        }
+    });
+}
+</script>
+{% endblock %}

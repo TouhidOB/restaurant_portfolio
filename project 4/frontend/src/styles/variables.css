@@ -1,0 +1,41 @@
+:root {
+  /* Architectural Brutalist Color Palette */
+  --bg-dark: #20211F;
+  --bg-surface: #272825;
+  --bg-surface-elevated: #313330;
+  --bg-card: #2B2C2A;
+  
+  --concrete-raw: #B8B5AD;
+  --concrete-light: #D8D5CC;
+  --arch-white: #F1F0EA;
+  --steel-grey: #777A76;
+  --border-steel: #3D403B;
+  --border-highlight: #5A5E57;
+  
+  --accent-orange: #F05A28;
+  --accent-orange-hover: #D94819;
+  --accent-orange-dim: rgba(240, 90, 40, 0.12);
+  --burnt-rust: #A9472B;
+  --warm-sand: #C7BBA7;
+
+  --text-primary: #F1F0EA;
+  --text-secondary: #B8B5AD;
+  --text-muted: #7E827B;
+  --text-inverse: #20211F;
+
+  /* Typography */
+  --font-display: 'Archivo Black', sans-serif;
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
+
+  /* Layout & Geometry */
+  --radius-sharp: 0px;
+  --border-width: 1px;
+  --container-max: 1440px;
+  --header-height: 80px;
+
+  /* Transitions */
+  --transition-fast: 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}

@@ -1,0 +1,39 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}MONOLITH CMS // AUTHENTICATION{% endblock %}
+
+{% block content %}
+<div style="max-width: 480px; margin: 4rem auto; background: var(--bg-surface); border: 1px solid var(--border-steel); padding: 2.5rem; position: relative;">
+    <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent-orange);"></div>
+    
+    <div style="margin-bottom: 2rem;">
+        <span class="section-tag">RESTRICTED ACCESS</span>
+        <h1 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700; margin-top: 0.5rem;">STUDIO TERMINAL</h1>
+        <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
+            Authenticate to access Monolith restaurant parameters and live reservation triage.
+        </p>
+    </div>
+
+    <form method="post" action="{% url 'cms_login' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label" for="username">Operator Identifier</label>
+            <input type="text" id="username" name="username" class="form-input" required autocomplete="username" placeholder="e.g. admin" value="admin">
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="password">Security Credential</label>
+            <input type="password" id="password" name="password" class="form-input" required autocomplete="current-password" placeholder="••••••••••••" value="adminpassword123">
+        </div>
+
+        <div style="background: var(--bg-card); border: 1px dashed var(--border-steel); padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">
+            <div>DEFAULT DEV CREDENTIALS:</div>
+            <div style="color: var(--accent-orange); font-weight: 700;">USER: admin &nbsp;|&nbsp; PASS: adminpassword123</div>
+        </div>
+
+        <button type="submit" class="btn-brutal" style="width: 100%;">
+            ENTER STUDIO &rarr;
+        </button>
+    </form>
+</div>
+{% endblock %}

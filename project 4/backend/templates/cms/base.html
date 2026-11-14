@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MONOLITH // CMS STUDIO{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #20211F;
+            --bg-surface: #282926;
+            --bg-card: #313330;
+            --bg-concrete: #B8B5AD;
+            --border-steel: #4A4D48;
+            --border-light: #5E625B;
+            --text-primary: #F1F0EA;
+            --text-secondary: #B8B5AD;
+            --text-muted: #8E918B;
+            --accent-orange: #F05A28;
+            --accent-hover: #D94819;
+            --font-display: 'Archivo Black', sans-serif;
+            --font-heading: 'Space Grotesk', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Brutalist Top Navbar */
+        .cms-nav {
+            background-color: var(--bg-surface);
+            border-bottom: 2px solid var(--border-steel);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cms-brand {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .cms-badge {
+            background-color: var(--accent-orange);
+            color: #000;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            letter-spacing: 0.05em;
+        }
+
+        .cms-brand-text {
+            font-family: var(--font-heading);
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .cms-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .cms-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        .cms-link:hover {
+            color: var(--accent-orange);
+        }
+
+        .cms-btn-danger {
+            background: transparent;
+            color: var(--accent-orange);
+            border: 1px solid var(--accent-orange);
+            padding: 0.4rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .cms-btn-danger:hover {
+            background: var(--accent-orange);
+            color: #000;
+        }
+
+        /* Main Container */
+        .cms-container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Notifications */
+        .cms-messages {
+            margin-bottom: 2rem;
+        }
+        .cms-alert {
+            padding: 1rem 1.25rem;
+            border-left: 4px solid var(--accent-orange);
+            background: var(--bg-surface);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Buttons */
+        .btn-brutal {
+            display: inline-block;
+            background: var(--accent-orange);
+            color: #000;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-brutal:hover {
+            background: var(--accent-hover);
+        }
+        .btn-brutal:active {
+            transform: translateY(1px);
+        }
+
+        .btn-brutal-secondary {
+            display: inline-block;
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
+            padding: 0.6rem 1.25rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-brutal-secondary:hover {
+            border-color: var(--accent-orange);
+            color: var(--accent-orange);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-steel);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Cards & Grids */
+        .grid-kpi {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .kpi-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-steel);
+            padding: 1.5rem;
+            position: relative;
+        }
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--border-steel);
+        }
+        .kpi-card.active::before {
+            background: var(--accent-orange);
+        }
+        .kpi-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+        .kpi-value {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--text-primary);
+        }
+
+        .cms-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-steel);
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-steel);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .section-title {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .section-tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent-orange);
+            border: 1px solid var(--accent-orange);
+            padding: 0.15rem 0.4rem;
+        }
+
+        /* Tables */
+        .brutal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+        .brutal-table th, .brutal-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--border-steel);
+            text-align: left;
+        }
+        .brutal-table th {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .brutal-table tr:hover td {
+            background: var(--bg-card);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        .status-pending { background: #5c4314; color: #f5c05c; }
+        .status-confirmed { background: #1a4d2e; color: #4ade80; }
+        .status-cancelled { background: #4d1a1a; color: #f87171; }
+
+        /* Search Filter */
+        .search-box {
+            position: relative;
+            max-width: 320px;
+        }
+        .search-box input {
+            width: 100%;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-steel);
+            color: var(--text-primary);
+            padding: 0.5rem 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+        }
+
+        /* Footer */
+        .cms-footer {
+            border-top: 1px solid var(--border-steel);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: var(--bg-surface);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="cms-nav">
+        <a href="{% url 'cms_dashboard' %}" class="cms-brand">
+            <span class="cms-badge">STUDIO</span>
+            <span class="cms-brand-text">MONOLITH // CMS</span>
+        </a>
+        <div class="cms-nav-actions">
+            <a href="http://localhost:3000" target="_blank" class="cms-link">↗ VIEW FRONTEND</a>
+            {% if user.is_authenticated %}
+                <span class="cms-link" style="color: var(--accent-orange)">USER: {{ user.username }}</span>
+                <a href="{% url 'cms_logout' %}" class="cms-btn-danger">LOGOUT</a>
+            {% else %}
+                <a href="{% url 'cms_login' %}" class="cms-link">LOGIN</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <main class="cms-container">
+        {% if messages %}
+            <div class="cms-messages">
+                {% for message in messages %}
+                    <div class="cms-alert">
+                        <span>{{ message }}</span>
+                        <span style="color: var(--accent-orange);">[OK]</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="cms-footer">
+        <div>MONOLITH ARCHITECTURAL BRUTALISM // CONTENT MANAGEMENT SYSTEM // SECTOR 09</div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
