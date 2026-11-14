@@ -1,0 +1,36 @@
+:root {
+  /* Playful Pop-Art Color Palette */
+  --color-tomato: #F04438;
+  --color-yellow: #FFD928;
+  --color-cobalt: #2455D6;
+  --color-pink: #F45AA5;
+  --color-cream: #FFF5E6;
+  --color-cream-light: #FFFCF7;
+  --color-ink: #171717;
+  --color-coral: #FF784F;
+  --color-mint: #9EE6C0;
+  --color-lime: #C6F36B;
+
+  /* Semantic Aliases */
+  --bg-primary: var(--color-cream);
+  --bg-surface: #FFFFFF;
+  --text-primary: var(--color-ink);
+  --text-muted: #666666;
+  --accent-action: var(--color-tomato);
+  --accent-highlight: var(--color-yellow);
+  --accent-contrast: var(--color-cobalt);
+  --border-comic: 3px solid var(--color-ink);
+  --shadow-comic: 4px 4px 0 var(--color-ink);
+  --shadow-comic-lg: 8px 8px 0 var(--color-ink);
+
+  /* Typography */
+  --font-display: 'Archivo Black', sans-serif;
+  --font-heading: 'Anton', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-ui: 'DM Sans', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+
+  /* Transitions */
+  --transition-fast: all 0.15s ease-out;
+  --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}

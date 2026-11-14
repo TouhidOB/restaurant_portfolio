@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}POP! CMS Studio | Pop-Art Food Studio{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Anton&family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-tomato: #F04438;
+      --color-yellow: #FFD928;
+      --color-cobalt: #2455D6;
+      --color-pink: #F45AA5;
+      --color-cream: #FFF5E6;
+      --color-ink: #171717;
+      --color-coral: #FF784F;
+      --color-mint: #9EE6C0;
+      --color-lime: #C6F36B;
+      --border-dark: #171717;
+      --font-display: 'Archivo Black', sans-serif;
+      --font-heading: 'Anton', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--color-cream);
+      color: var(--color-ink);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a {
+      color: var(--color-cobalt);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: var(--color-tomato);
+    }
+    /* Layout with persistent sidebar */
+    .cms-container {
+      display: flex;
+      min-height: 100vh;
+    }
+    .cms-sidebar {
+      width: 290px;
+      background: #FFFFFF;
+      border-right: 3px solid var(--border-dark);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      display: flex;
+      flex-direction: column;
+      z-index: 100;
+      overflow-y: auto;
+    }
+    .cms-sidebar-header {
+      padding: 24px 20px 16px;
+      border-bottom: 3px solid var(--border-dark);
+      background: var(--color-yellow);
+    }
+    .cms-brand-logo {
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 1px;
+      color: var(--color-ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cms-brand-logo span {
+      background: var(--color-tomato);
+      color: #fff;
+      padding: 2px 6px;
+      border: 2px solid var(--border-dark);
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .cms-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      background: #FFFFFF;
+      color: var(--color-ink);
+      border: 2px solid var(--border-dark);
+      border-radius: 3px;
+      margin-top: 8px;
+    }
+    .cms-search-box {
+      padding: 14px 20px 8px;
+      border-bottom: 2px solid #E5E5E5;
+    }
+    .cms-search-input {
+      width: 100%;
+      background: #FAFAFA;
+      border: 2px solid var(--border-dark);
+      border-radius: 4px;
+      padding: 8px 12px;
+      color: var(--color-ink);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .cms-search-input:focus {
+      background: #fff;
+      border-color: var(--color-cobalt);
+      box-shadow: 2px 2px 0 var(--border-dark);
+    }
+    .cms-nav-group {
+      padding: 12px 0;
+      flex: 1;
+    }
+    .cms-nav-heading {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #888;
+      padding: 10px 20px 4px;
+    }
+    .cms-nav-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 20px;
+      color: var(--color-ink);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border-left: 4px solid transparent;
+      transition: all 0.15s;
+    }
+    .cms-nav-item:hover, .cms-nav-item.active {
+      color: var(--color-ink);
+      background: #FFF5E6;
+      border-left-color: var(--color-tomato);
+    }
+    .cms-nav-item .tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      background: #EFEFEF;
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid #CCC;
+    }
+    .cms-sidebar-footer {
+      padding: 16px 20px;
+      border-top: 3px solid var(--border-dark);
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--color-cream);
+    }
+    /* Main Content Area */
+    .cms-main {
+      margin-left: 290px;
+      flex: 1;
+      padding: 36px 44px;
+      max-width: 1320px;
+    }
+    .cms-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 3px solid var(--border-dark);
+    }
+    .cms-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      letter-spacing: -0.5px;
+      color: var(--color-ink);
+    }
+    .cms-actions {
+      display: flex;
+      gap: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-family: var(--font-display);
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 2px solid var(--border-dark);
+      box-shadow: 3px 3px 0 var(--border-dark);
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--border-dark);
+    }
+    .btn:active {
+      transform: translate(1px, 1px);
+      box-shadow: 1px 1px 0 var(--border-dark);
+    }
+    .btn-tomato {
+      background: var(--color-tomato);
+      color: #fff;
+    }
+    .btn-yellow {
+      background: var(--color-yellow);
+      color: var(--color-ink);
+    }
+    .btn-cobalt {
+      background: var(--color-cobalt);
+      color: #fff;
+    }
+    .btn-white {
+      background: #fff;
+      color: var(--color-ink);
+    }
+    /* Cards and Panels */
+    .cms-card {
+      background: #FFFFFF;
+      border: 3px solid var(--border-dark);
+      box-shadow: 4px 4px 0 var(--border-dark);
+      border-radius: 6px;
+      padding: 26px;
+      margin-bottom: 26px;
+      transition: box-shadow 0.25s, border-color 0.25s;
+    }
+    .cms-card.flash-highlight {
+      border-color: var(--color-tomato);
+      box-shadow: 0 0 25px rgba(240, 68, 56, 0.4), 6px 6px 0 var(--border-dark);
+    }
+    .cms-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 2px dashed #DDD;
+    }
+    .cms-card-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: var(--color-ink);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    /* Form inputs */
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-label {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--color-ink);
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      background: #FAFAFA;
+      border: 2px solid var(--border-dark);
+      border-radius: 4px;
+      padding: 10px 14px;
+      color: var(--color-ink);
+      font-family: var(--font-body);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      background: #fff;
+      border-color: var(--color-cobalt);
+      box-shadow: 2px 2px 0 var(--border-dark);
+    }
+    textarea.form-control {
+      min-height: 90px;
+      resize: vertical;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    /* Table styles */
+    .cms-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .cms-table th {
+      text-align: left;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #666;
+      padding: 10px 14px;
+      border-bottom: 2px solid var(--border-dark);
+    }
+    .cms-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #EEE;
+      color: var(--color-ink);
+      font-size: 13px;
+    }
+    .badge-status {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      border: 1px solid var(--border-dark);
+    }
+    .status-new { background: #FFD928; color: #171717; }
+    .status-reviewing { background: #9EE6C0; color: #171717; }
+    .status-confirmed { background: #C6F36B; color: #171717; }
+    .status-rejected { background: #F04438; color: #fff; }
+
+    /* Alert / Flash messages */
+    .alert {
+      padding: 12px 18px;
+      background: var(--color-yellow);
+      border: 2px solid var(--border-dark);
+      box-shadow: 3px 3px 0 var(--border-dark);
+      border-radius: 4px;
+      color: var(--color-ink);
+      margin-bottom: 20px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .alert-error {
+      background: #FFD2CF;
+      border-color: var(--color-tomato);
+      color: var(--color-tomato);
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% block body_content %}{% endblock %}
+</body>
+</html>

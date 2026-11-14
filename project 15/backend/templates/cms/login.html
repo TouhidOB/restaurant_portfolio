@@ -1,0 +1,54 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Sign In | Pop-Art Food Studio CMS{% endblock %}
+
+{% block body_content %}
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 30%, #FFF5E6 0%, #FFE2B8 100%); padding: 20px;">
+  <div style="width: 100%; max-width: 440px; background: #FFFFFF; border: 3px solid #171717; box-shadow: 8px 8px 0 #171717; border-radius: 8px; padding: 40px;">
+    <div style="text-align: center; margin-bottom: 28px;">
+      <div style="display: inline-block; background: var(--color-yellow); border: 2px solid #171717; border-radius: 6px; padding: 6px 14px; font-family: var(--font-display); font-size: 26px; transform: rotate(-2deg); box-shadow: 3px 3px 0 #171717; margin-bottom: 12px;">
+        POP! STUDIO
+      </div>
+      <h1 style="font-family: var(--font-display); font-size: 22px; color: var(--color-ink);">
+        Studio Operations Desk
+      </h1>
+      <p style="font-family: 'DM Sans', sans-serif; font-size: 12px; color: #666; margin-top: 4px;">
+        Playful Pop-Art Food Platform Administration
+      </p>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-error">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'cms_login' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="admin" required autofocus>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 24px;">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="btn btn-tomato" style="width: 100%; justify-content: center; padding: 14px; font-size: 14px;">
+        Authenticate to Studio &rarr;
+      </button>
+    </form>
+
+    <div style="margin-top: 28px; padding-top: 20px; border-top: 2px dashed #E5E5E5; text-align: center;">
+      <p style="font-size: 12px; line-height: 1.6; color: #555;">
+        Default Administrator Credentials:<br>
+        <strong style="color: var(--color-ink); font-family: var(--font-mono);">admin</strong> / <strong style="color: var(--color-ink); font-family: var(--font-mono);">adminpassword123</strong>
+      </p>
+      <a href="http://localhost:3000/" target="_blank" style="display: inline-block; margin-top: 12px; font-family: var(--font-display); font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--color-cobalt);">
+        &larr; Return to Guest Experience
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
