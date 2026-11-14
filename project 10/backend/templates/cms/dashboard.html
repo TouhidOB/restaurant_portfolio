@@ -1,0 +1,1178 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Admin Dashboard & Bilingual Studio | BENGAL HERITAGE DINING{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Two-column Layout: Sidebar + Main Content */
+    .cms-layout {
+        display: grid;
+        grid-template-columns: 290px 1fr;
+        gap: 2rem;
+        align-items: flex-start;
+        position: relative;
+    }
+
+    /* Sidebar Navigation */
+    .cms-sidebar {
+        position: sticky;
+        top: 5rem;
+        max-height: calc(100vh - 6.5rem);
+        overflow-y: auto;
+        background: var(--indigo);
+        border: 1px solid var(--border-heritage);
+        border-radius: 4px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    .cms-sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .cms-sidebar::-webkit-scrollbar-thumb {
+        background: var(--terracotta);
+    }
+
+    .sidebar-search {
+        width: 100%;
+        padding: 0.65rem 0.85rem;
+        background: var(--indigo-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 3px;
+        color: var(--ivory);
+        font-family: var(--font-body-en);
+        font-size: 0.82rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .sidebar-search:focus {
+        border-color: var(--brass);
+    }
+
+    .sidebar-group-title {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--brass);
+        font-weight: 700;
+        margin-bottom: 0.45rem;
+        padding-left: 0.5rem;
+        font-family: var(--font-body-en);
+    }
+
+    .sidebar-nav-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 0.75rem;
+        color: var(--jute);
+        text-decoration: none;
+        border-radius: 3px;
+        font-size: 0.84rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border-left: 3px solid transparent;
+    }
+
+    .sidebar-link:hover {
+        background: rgba(177, 138, 84, 0.08);
+        color: var(--ivory);
+        border-left-color: var(--brass);
+    }
+
+    .sidebar-link.active {
+        background: rgba(166, 83, 59, 0.35);
+        color: var(--ivory);
+        font-weight: 700;
+        border-left-color: var(--terracotta);
+    }
+
+    .sidebar-badge {
+        font-size: 0.72rem;
+        padding: 0.15rem 0.45rem;
+        border-radius: 999px;
+        background: var(--indigo-card);
+        color: var(--brass);
+        border: 1px solid var(--border-subtle);
+    }
+
+    /* Main Content Area */
+    .cms-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .section-card {
+        background: var(--indigo);
+        border: 1px solid var(--border-heritage);
+        border-radius: 4px;
+        padding: 1.85rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        scroll-margin-top: 6rem;
+    }
+
+    .section-card.flash-highlight {
+        border-color: var(--brass);
+        box-shadow: 0 0 25px rgba(177, 138, 84, 0.4);
+    }
+
+    .section-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 1.25rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+    }
+
+    .section-num {
+        font-family: var(--font-display-en);
+        font-size: 1.3rem;
+        color: var(--terracotta);
+        font-weight: 700;
+    }
+
+    .section-name {
+        font-family: var(--font-display-en);
+        font-size: 1.45rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--ivory);
+        font-weight: 600;
+    }
+
+    .section-desc {
+        color: var(--jute);
+        font-size: 0.85rem;
+        margin-top: 0.2rem;
+    }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+    }
+
+    .form-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1.25rem;
+    }
+
+    .form-grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--brass);
+        font-weight: 700;
+        font-family: var(--font-body-en);
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 0.95rem;
+        background: var(--indigo-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 3px;
+        color: var(--ivory);
+        font-family: var(--font-body-en);
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        outline: none;
+    }
+
+    .form-control:focus {
+        border-color: var(--brass);
+        background: var(--indigo-elevated);
+    }
+
+    .bengali-input {
+        font-family: var(--font-body-bn);
+        font-size: 0.95rem;
+    }
+
+    textarea.form-control {
+        min-height: 85px;
+        line-height: 1.5;
+        resize: vertical;
+    }
+
+    /* Subcard lists */
+    .subcard-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        margin-top: 0.5rem;
+    }
+
+    .subcard {
+        background: var(--indigo-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 3px;
+        padding: 1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .subcard-info h4 {
+        font-size: 0.95rem;
+        color: var(--ivory);
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+    .subcard-info p {
+        font-size: 0.82rem;
+        color: var(--jute);
+    }
+
+    /* Reservations Inbox */
+    .res-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        text-align: left;
+    }
+
+    .res-table th {
+        background: var(--indigo-card);
+        padding: 0.85rem 1rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--brass);
+        border-bottom: 1px solid var(--border-subtle);
+        font-family: var(--font-body-en);
+    }
+
+    .res-table td {
+        padding: 0.95rem 1rem;
+        border-bottom: 1px solid var(--border-subtle);
+        vertical-align: middle;
+    }
+
+    .res-table tr:hover td {
+        background: rgba(177, 138, 84, 0.05);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .status-pending {
+        background: rgba(177, 138, 84, 0.2);
+        color: var(--brass);
+        border: 1px solid var(--border-heritage);
+    }
+
+    .status-confirmed {
+        background: rgba(83, 107, 80, 0.25);
+        color: #A3D49F;
+        border: 1px solid var(--leaf);
+    }
+
+    .status-cancelled {
+        background: rgba(166, 83, 59, 0.25);
+        color: var(--terracotta);
+        border: 1px solid rgba(166, 83, 59, 0.4);
+    }
+
+    .json-editor-box {
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        font-size: 0.85rem;
+        background: var(--indigo-dark);
+        border: 1px solid var(--border-subtle);
+        border-radius: 3px;
+        color: #F8D88E;
+        padding: 1.25rem;
+        min-height: 480px;
+        width: 100%;
+        line-height: 1.5;
+        white-space: pre;
+    }
+
+    .floating-save-bar {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 2rem;
+        z-index: 990;
+        background: var(--indigo);
+        border: 1px solid var(--brass);
+        padding: 0.75rem 1.5rem;
+        border-radius: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+        .cms-layout {
+            grid-template-columns: 1fr;
+        }
+        .cms-sidebar {
+            position: static;
+            max-height: none;
+        }
+        .form-grid-2, .form-grid-3, .form-grid-4 {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cms-layout">
+
+    <!-- Sticky Navigation Sidebar -->
+    <aside class="cms-sidebar" id="cmsSidebar">
+        <div>
+            <input type="text" class="sidebar-search" id="sidebarSearch" placeholder="Filter sections... (e.g. Menu, 3D, Chef)">
+        </div>
+
+        <nav id="sidebarNav">
+            <!-- Group 1: Brand & Identity -->
+            <div class="sidebar-group" data-nav-group>
+                <div class="sidebar-group-title">01. Brand &amp; Identity</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-hero"><span>S02. Hero &amp; Headlines</span><span class="sidebar-badge">Bilingual</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-story"><span>S03. Heritage Story</span><span class="sidebar-badge">Tradition</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Group 2: Spatial & 3D WebGL -->
+            <div class="sidebar-group" data-nav-group style="margin-top: 0.75rem;">
+                <div class="sidebar-group-title">02. Spaces &amp; 3D Tour</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-tour"><span>S04. 3D Virtual Tour</span><span class="sidebar-badge">5 Zones</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-philosophy"><span>S05. Dining Philosophy</span><span class="sidebar-badge">Pillars</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-architecture"><span>S08. Architecture &amp; Craft</span><span class="sidebar-badge">Terracotta</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Group 3: Gastronomy & Menu -->
+            <div class="sidebar-group" data-nav-group style="margin-top: 0.75rem;">
+                <div class="sidebar-group-title">03. Gastronomy &amp; Menu</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-dishes"><span>S06. Signature Dishes</span><span class="sidebar-badge">5 Items</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-menu"><span>S07. Bilingual Menu</span><span class="sidebar-badge">{{ menu_items.count }} Dishes</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-chef"><span>S09. Master Chef</span><span class="sidebar-badge">Archivist</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Group 4: Moments & Archives -->
+            <div class="sidebar-group" data-nav-group style="margin-top: 0.75rem;">
+                <div class="sidebar-group-title">04. Moments &amp; Archives</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-experiences"><span>S10. Cultural Feasts</span><span class="sidebar-badge">Events</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-gallery"><span>S11. Photo Gallery</span><span class="sidebar-badge">Archives</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-testimonials"><span>S12. Guest Accolades</span><span class="sidebar-badge">Reviews</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Group 5: Inquiries & Arrival -->
+            <div class="sidebar-group" data-nav-group style="margin-top: 0.75rem;">
+                <div class="sidebar-group-title">05. Inquiries &amp; Coordinates</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-inbox"><span>Reservations Inbox</span><span class="sidebar-badge" style="background: var(--terracotta); color: #fff;">{{ reservations.count }}</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-reservation"><span>S13. Booking Policies</span><span class="sidebar-badge">Rules</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-location"><span>S14. Location &amp; Enclave</span><span class="sidebar-badge">Gulshan</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-theme"><span>Design Tokens &amp; Lang</span><span class="sidebar-badge">Tokens</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Group 6: Advanced -->
+            <div class="sidebar-group" data-nav-group style="margin-top: 0.75rem;">
+                <div class="sidebar-group-title">06. Advanced</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-json"><span>Master JSON Editor</span><span class="sidebar-badge">Power</span></a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area: 15 Editable Section Cards -->
+    <section class="cms-main">
+
+        <!-- Form for Structured Bilingual Field Edits -->
+        <form method="POST" action="{% url 'cms_dashboard' %}" id="cmsForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_form_sections">
+
+            <!-- S02: Hero & Brand -->
+            <div class="section-card" id="sec-hero">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">02</span>
+                        <div>
+                            <h3 class="section-name">Hero Canvas &amp; Bilingual Identity</h3>
+                            <p class="section-desc">Primary visitor landing view, brand headlines in English and Bengali, and top calls-to-action.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S02</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Restaurant Name (English)</label>
+                        <input type="text" name="hero_name_en" class="form-control" value="{{ content.hero.restaurant_name.en|default:'BENGAL HERITAGE DINING' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Restaurant Name (বাংলা)</label>
+                        <input type="text" name="hero_name_bn" class="form-control bengali-input" value="{{ content.hero.restaurant_name.bn|default:'বাংলার ঐতিহ্য ডাইনিং' }}" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Eyebrow Badge (English)</label>
+                        <input type="text" name="hero_eyebrow_en" class="form-control" value="{{ content.hero.eyebrow.en|default:'A TASTE OF BENGAL' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Eyebrow Badge (বাংলা)</label>
+                        <input type="text" name="hero_eyebrow_bn" class="form-control bengali-input" value="{{ content.hero.eyebrow.bn|default:'বাংলার স্বাদের গল্প' }}">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Hero Headline (English)</label>
+                        <input type="text" name="hero_title_en" class="form-control" value="{{ content.hero.title.en|default:'Where Heritage Meets the Art of Dining.' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hero Headline (বাংলা)</label>
+                        <input type="text" name="hero_title_bn" class="form-control bengali-input" value="{{ content.hero.title.bn|default:'ঐতিহ্যের ছোঁয়ায় আধুনিক ভোজনের অভিজ্ঞতা।' }}" required>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Lead Narrative (English)</label>
+                        <textarea name="hero_desc_en" class="form-control" rows="3">{{ content.hero.lead_description.en }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Lead Narrative (বাংলা)</label>
+                        <textarea name="hero_desc_bn" class="form-control bengali-input" rows="3">{{ content.hero.lead_description.bn }}</textarea>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Primary CTA (Explore Menu)</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" name="hero_cta_primary_en" class="form-control" value="{{ content.hero.cta_primary_text.en|default:'Explore Our Menu' }}">
+                            <input type="text" name="hero_cta_primary_bn" class="form-control bengali-input" value="{{ content.hero.cta_primary_text.bn|default:'মেনু দেখুন' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Secondary CTA (Our Story)</label>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" name="hero_cta_secondary_en" class="form-control" value="{{ content.hero.cta_secondary_text.en|default:'Discover Our Story' }}">
+                            <input type="text" name="hero_cta_secondary_bn" class="form-control bengali-input" value="{{ content.hero.cta_secondary_text.bn|default:'আমাদের গল্প' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- S03: Brand Heritage Story -->
+            <div class="section-card" id="sec-story">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">03</span>
+                        <div>
+                            <h3 class="section-name">Brand Heritage &amp; Story</h3>
+                            <p class="section-desc">The philosophy of Bengali hospitality, terracotta architecture, and culinary traditions.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S03</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Section Heading (English)</label>
+                        <input type="text" name="story_title_en" class="form-control" value="{{ content.brandStory.title.en|default:'Centuries of Culinary Artistry in Every Dish' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Section Heading (বাংলা)</label>
+                        <input type="text" name="story_title_bn" class="form-control bengali-input" value="{{ content.brandStory.title.bn|default:'প্রতিটি পদে শতবর্ষের ঐতিহ্যবাহী রন্ধনশিল্প' }}">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Heritage Narrative Paragraph 1 (English)</label>
+                        <textarea name="story_p1_en" class="form-control" rows="3">{{ content.brandStory.body_paragraph_1.en }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Heritage Narrative Paragraph 1 (বাংলা)</label>
+                        <textarea name="story_p1_bn" class="form-control bengali-input" rows="3">{{ content.brandStory.body_paragraph_1.bn }}</textarea>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Philosophy Quote (English)</label>
+                        <input type="text" name="story_quote_en" class="form-control" value="{{ content.brandStory.quote.en }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Philosophy Quote (বাংলা)</label>
+                        <input type="text" name="story_quote_bn" class="form-control bengali-input" value="{{ content.brandStory.quote.bn }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- S04: 3D Virtual Tour -->
+            <div class="section-card" id="sec-tour">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">04</span>
+                        <div>
+                            <h3 class="section-name">3D Virtual Tour &amp; Five Spaces</h3>
+                            <p class="section-desc">Interactive Three.js / WebGL architectural ascent through 5 viewpoints.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S04</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Tour Title (English)</label>
+                        <input type="text" name="tour_title_en" class="form-control" value="{{ content.virtualTour.title.en|default:'Interactive Heritage Virtual Tour' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tour Title (বাংলা)</label>
+                        <input type="text" name="tour_title_bn" class="form-control bengali-input" value="{{ content.virtualTour.title.bn|default:'ইন্টারেক্টিভ রেস্তোরাঁ ভার্চুয়াল ট্যুর' }}">
+                    </div>
+                </div>
+
+                <div class="subcard-list">
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>01. Heritage Courtyard Exterior (ঐতিহাসিক প্রাঙ্গণ ও প্রবেশপথ)</h4>
+                            <p>Terracotta brick masonry, traditional wooden entrance portals, and water reflection features.</p>
+                        </div>
+                        <span class="sidebar-badge">Pos: [0, 2.5, 9.5]</span>
+                    </div>
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>02. Grand Reception &amp; Brass Vestibule (অভ্যর্থনা ও কাঁসা-পিতলের লাউঞ্জ)</h4>
+                            <p>Antique bell-metal brass urns, carved palanquin motifs, and warm welcoming ambient lights.</p>
+                        </div>
+                        <span class="sidebar-badge">Pos: [-3.2, 2.0, 5.5]</span>
+                    </div>
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>03. Terracotta Central Dining Hall (টেরাকোটা কেন্দ্রীয় ভোজনশালা)</h4>
+                            <p>High ceilings with terracotta relief murals, reclaimed Burma teak tables, and woven cane chairs.</p>
+                        </div>
+                        <span class="sidebar-badge">Pos: [0, 2.2, 5.0]</span>
+                    </div>
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>04. Zamindar Private Dining Salon (জমিন্দারি ব্যক্তিগত ভোজনকক্ষ)</h4>
+                            <p>Exclusive private room with Jamdani textile acoustic wall panels and bespoke royal thali service.</p>
+                        </div>
+                        <span class="sidebar-badge">Pos: [3.0, 2.0, 4.5]</span>
+                    </div>
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>05. Open Kitchen &amp; Spice Hearth (উন্মুক্ত রন্ধনশালা ও মশলাঘর)</h4>
+                            <p>View of the earthen dum cooking pots, live Binchotan tandoor, and master chefs grinding heirloom spices.</p>
+                        </div>
+                        <span class="sidebar-badge">Pos: [-3.5, 2.0, 4.0]</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- S05: Dining Philosophy -->
+            <div class="section-card" id="sec-philosophy">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">05</span>
+                        <div>
+                            <h3 class="section-name">The Bengali Dining Philosophy</h3>
+                            <p class="section-desc">Three culinary pillars: Flavors &amp; Terroir, Craft &amp; Slow-Cooking, Warm Hospitality.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S05</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Philosophy Title (English)</label>
+                        <input type="text" name="phil_title_en" class="form-control" value="{{ content.diningPhilosophy.title.en|default:'Respect for Terroir, Patience & Warmth' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Philosophy Title (বাংলা)</label>
+                        <input type="text" name="phil_title_bn" class="form-control bengali-input" value="{{ content.diningPhilosophy.title.bn|default:'মাটি, মমতা ও আতিথেয়তার মেলবন্ধন' }}">
+                    </div>
+                </div>
+
+                <div class="subcard-list">
+                    {% for p in content.diningPhilosophy.pillars %}
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>{{ p.number }}. {{ p.title.en }} ({{ p.title.bn }})</h4>
+                            <p>{{ p.desc.en|truncatewords:15 }}</p>
+                        </div>
+                        <span class="sidebar-badge">Pillar {{ forloop.counter }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- S06: Signature Dishes -->
+            <div class="section-card" id="sec-dishes">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">06</span>
+                        <div>
+                            <h3 class="section-name">Signature Bengali Dishes Showcase</h3>
+                            <p class="section-desc">Interactive culinary showcase featuring Kacchi Biryani, Shorshe Ilish, Chingri Malai, Kala Bhuna, and Mishti Doi.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S06</span>
+                </div>
+
+                <div class="subcard-list">
+                    {% for dish in content.signatureDishes.dishes %}
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>{{ dish.name.en }} &bull; <span style="font-family: var(--font-display-bn); color: var(--brass);">{{ dish.name.bn }}</span> &bull; <span style="color: var(--terracotta);">{{ dish.price }}</span></h4>
+                            <p>{{ dish.description.en|truncatewords:12 }}</p>
+                        </div>
+                        <span class="sidebar-badge">{{ dish.badge.en }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- S07: Menu Explorer -->
+            <div class="section-card" id="sec-menu">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">07</span>
+                        <div>
+                            <h3 class="section-name">Complete Bilingual Menu Explorer</h3>
+                            <p class="section-desc">Manage categories and live dishes loaded directly from the database.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">{{ categories.count }} Categories &bull; {{ menu_items.count }} Dishes</span>
+                </div>
+
+                <div class="subcard-list">
+                    {% for cat in categories %}
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>{{ cat.name_en }} &bull; <span style="font-family: var(--font-display-bn); color: var(--brass);">{{ cat.name_bn }}</span></h4>
+                            <p>{{ cat.items.count }} dishes active in this category</p>
+                        </div>
+                        <span class="sidebar-badge">Category {{ forloop.counter }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- S08: Architecture & Craft -->
+            <div class="section-card" id="sec-architecture">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">08</span>
+                        <div>
+                            <h3 class="section-name">Architecture, Materials &amp; Craftsmanship</h3>
+                            <p class="section-desc">Terracotta Relief Carvings, Reclaimed Burma Teak, Jamdani Acoustics, and Bell-Metal Tableware.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S08</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Architectural Statement (English)</label>
+                        <textarea name="arch_quote_en" class="form-control" rows="2">{{ content.architecture.quote.en }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Architectural Statement (বাংলা)</label>
+                        <textarea name="arch_quote_bn" class="form-control bengali-input" rows="2">{{ content.architecture.quote.bn }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- S09: Chef Profile -->
+            <div class="section-card" id="sec-chef">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">09</span>
+                        <div>
+                            <h3 class="section-name">Meet the Chef &amp; Culinary Team</h3>
+                            <p class="section-desc">Master Chef Ananya Sen, culinary philosophy, accolades, and heritage archiving.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S09</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Chef Full Name (English)</label>
+                        <input type="text" name="chef_name_en" class="form-control" value="{{ content.chef.name.en|default:'Master Chef Ananya Sen' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Chef Full Name (বাংলা)</label>
+                        <input type="text" name="chef_name_bn" class="form-control bengali-input" value="{{ content.chef.name.bn|default:'মাস্টার শেফ অনন্যা সেন' }}">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Biography (English)</label>
+                        <textarea name="chef_bio_en" class="form-control" rows="3">{{ content.chef.bio.en }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Biography (বাংলা)</label>
+                        <textarea name="chef_bio_bn" class="form-control bengali-input" rows="3">{{ content.chef.bio.bn }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- S10: Cultural Experiences -->
+            <div class="section-card" id="sec-experiences">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">10</span>
+                        <div>
+                            <h3 class="section-name">Cultural Dining &amp; Special Experiences</h3>
+                            <p class="section-desc">Zamindar Royal Thali, Baithak Musical Dinners, Pohela Boishakh Feasts, Private Celebrations.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S10</span>
+                </div>
+
+                <div class="subcard-list">
+                    {% for exp in content.culturalExperiences.experiences %}
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>{{ exp.title.en }} &bull; <span style="font-family: var(--font-display-bn); color: var(--brass);">{{ exp.title.bn }}</span> &bull; <span style="color: var(--terracotta);">{{ exp.price }}</span></h4>
+                            <p>{{ exp.desc.en|truncatewords:14 }}</p>
+                        </div>
+                        <span class="sidebar-badge">Experience {{ forloop.counter }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- S11: Gallery -->
+            <div class="section-card" id="sec-gallery">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">11</span>
+                        <div>
+                            <h3 class="section-name">Food, Craft &amp; Atmosphere Gallery</h3>
+                            <p class="section-desc">Curated high-resolution visual plates of food, interior details, and cultural moments.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S11</span>
+                </div>
+
+                <p style="font-size: 0.85rem; color: var(--jute);">
+                    {{ content.gallery.images|length }} active gallery plates displayed in public lightbox. Edit individual image URLs directly in the Master JSON Editor.
+                </p>
+            </div>
+
+            <!-- S12: Testimonials -->
+            <div class="section-card" id="sec-testimonials">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">12</span>
+                        <div>
+                            <h3 class="section-name">Guest Stories &amp; Testimonials</h3>
+                            <p class="section-desc">Authentic reviews from prominent critics and diners in English and Bengali.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S12</span>
+                </div>
+
+                <div class="subcard-list">
+                    {% for rev in content.testimonials.reviews %}
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>{{ rev.author }} &bull; <span style="color: var(--brass);">{{ rev.role.en }}</span></h4>
+                            <p>"{{ rev.quote.en|truncatewords:16 }}"</p>
+                        </div>
+                        <span class="sidebar-badge">5 &starf;</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- S13: Table Reservation Info -->
+            <div class="section-card" id="sec-reservation">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">13</span>
+                        <div>
+                            <h3 class="section-name">Table Reservation Inquiry Policies</h3>
+                            <p class="section-desc">Booking rules, dining attire, seating atmospheres, and advance policies.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S13</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Reservation Policy (English)</label>
+                        <input type="text" name="res_policy_en" class="form-control" value="{{ content.reservation.policy.en }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reservation Policy (বাংলা)</label>
+                        <input type="text" name="res_policy_bn" class="form-control bengali-input" value="{{ content.reservation.policy.bn }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- S14: Location & Arrival -->
+            <div class="section-card" id="sec-location">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">14</span>
+                        <div>
+                            <h3 class="section-name">Location, Opening Hours &amp; Directions</h3>
+                            <p class="section-desc">Heritage Quarter address, valet notes, telephone, WhatsApp, email, and hours.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S14</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Address (English)</label>
+                        <input type="text" name="loc_address_en" class="form-control" value="{{ content.location.address.en }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Address (বাংলা)</label>
+                        <input type="text" name="loc_address_bn" class="form-control bengali-input" value="{{ content.location.address.bn }}">
+                    </div>
+                </div>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label class="form-label">Telephone</label>
+                        <input type="text" name="loc_phone" class="form-control" value="{{ content.location.phone }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">WhatsApp Contact</label>
+                        <input type="text" name="loc_whatsapp" class="form-control" value="{{ content.location.whatsapp }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Hospitality Email</label>
+                        <input type="email" name="loc_email" class="form-control" value="{{ content.location.email }}">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Opening Hours (English)</label>
+                        <input type="text" name="loc_hours_en" class="form-control" value="{{ content.location.hours.en }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Opening Hours (বাংলা)</label>
+                        <input type="text" name="loc_hours_bn" class="form-control bengali-input" value="{{ content.location.hours.bn }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Theme Color Tokens & Language Settings -->
+            <div class="section-card" id="sec-theme">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">&bull;</span>
+                        <div>
+                            <h3 class="section-name">Design Tokens &amp; Language Settings</h3>
+                            <p class="section-desc">Terracotta, Indigo, Warm Ivory, Brass, Jute, Leaf Green, Charcoal, River Mist.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Design Tokens</span>
+                </div>
+
+                <div class="form-grid-4">
+                    <div class="form-group">
+                        <label class="form-label">Terracotta Earth</label>
+                        <input type="text" name="theme_terracotta" class="form-control" value="{{ content.theme.colors.terracotta|default:'#A6533B' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deep Indigo</label>
+                        <input type="text" name="theme_indigo" class="form-control" value="{{ content.theme.colors.indigo|default:'#26344A' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Warm Ivory</label>
+                        <input type="text" name="theme_ivory" class="form-control" value="{{ content.theme.colors.ivory|default:'#F4EBDD' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Muted Brass</label>
+                        <input type="text" name="theme_brass" class="form-control" value="{{ content.theme.colors.brass|default:'#B18A54' }}">
+                    </div>
+                </div>
+
+                <div class="form-grid-4" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Jute Sand</label>
+                        <input type="text" name="theme_jute" class="form-control" value="{{ content.theme.colors.jute|default:'#C8B18D' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Leaf Green</label>
+                        <input type="text" name="theme_leaf" class="form-control" value="{{ content.theme.colors.leaf|default:'#536B50' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Charcoal Ink</label>
+                        <input type="text" name="theme_charcoal" class="form-control" value="{{ content.theme.colors.charcoal|default:'#242321' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">River Mist</label>
+                        <input type="text" name="theme_river_mist" class="form-control" value="{{ content.theme.colors.river_mist|default:'#AEBCC0' }}">
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; text-align: right;">
+                    <button type="submit" class="btn btn-terracotta">
+                        Publish Form Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Reservations Inbox Section -->
+        <div class="section-card" id="sec-inbox">
+            <div class="section-card-header">
+                <div class="section-card-title">
+                    <span class="section-num">&bull;</span>
+                    <div>
+                        <h3 class="section-name">Live Table Reservations Inbox</h3>
+                        <p class="section-desc">Incoming booking inquiries received from the public website &amp; reservation modal.</p>
+                    </div>
+                </div>
+                <span class="sidebar-badge" style="background: var(--terracotta); color: #fff;">{{ reservations.count }} Total Inquiries</span>
+            </div>
+
+            {% if reservations %}
+                <div style="overflow-x: auto;">
+                    <table class="res-table">
+                        <thead>
+                            <tr>
+                                <th>Date &amp; Time</th>
+                                <th>Guest Name</th>
+                                <th>Party Size</th>
+                                <th>Seating Atmosphere</th>
+                                <th>Contact</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for res in reservations %}
+                            <tr>
+                                <td>
+                                    <strong>{{ res.reservation_date }}</strong><br>
+                                    <span style="color: var(--brass); font-size: 0.8rem;">{{ res.reservation_time }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ res.full_name }}</strong><br>
+                                    <span style="color: var(--jute); font-size: 0.78rem;">{{ res.occasion }}</span>
+                                </td>
+                                <td>{{ res.guests }} Guests</td>
+                                <td>
+                                    <span style="color: var(--brass); font-weight: 600;">{{ res.seating_preference }}</span>
+                                    {% if res.special_requests %}
+                                        <br><span style="font-size: 0.75rem; color: var(--jute);">"{{ res.special_requests|truncatewords:6 }}"</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ res.phone }}<br>
+                                    <span style="color: var(--jute); font-size: 0.8rem;">{{ res.email }}</span>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ res.status }}">{{ res.get_status_display }}</span>
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 0.4rem; align-items: center;">
+                                        <!-- Status Update Form -->
+                                        <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            {% if res.status == 'pending' %}
+                                                <input type="hidden" name="status" value="confirmed">
+                                                <button type="submit" class="btn btn-terracotta" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Confirm</button>
+                                            {% else %}
+                                                <input type="hidden" name="status" value="pending">
+                                                <button type="submit" class="btn btn-outline" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Set Pending</button>
+                                            {% endif %}
+                                        </form>
+
+                                        <!-- Delete Form -->
+                                        <form method="POST" action="{% url 'cms_reservation_delete' res.id %}" style="display: inline;" onsubmit="return confirm('Remove reservation for {{ res.full_name }}?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; color: #ff9e9e; border-color: rgba(255,100,100,0.3);">Del</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p style="color: var(--jute); text-align: center; padding: 2rem;">No reservation inquiries received yet. Submit an inquiry through the public website or modal to test live intake.</p>
+            {% endif %}
+        </div>
+
+        <!-- Master Raw JSON Editor -->
+        <div class="section-card" id="sec-json">
+            <div class="section-card-header">
+                <div class="section-card-title">
+                    <span class="section-num">&bull;</span>
+                    <div>
+                        <h3 class="section-name">Master JSON Power Editor</h3>
+                        <p class="section-desc">Direct schema editor for complete control over all 15 sections, nested menus, 3D viewpoints, and camera coordinates.</p>
+                    </div>
+                </div>
+                <span class="sidebar-badge" style="background: var(--terracotta); color: #fff;">Power Tool</span>
+            </div>
+
+            <form method="POST" action="{% url 'cms_dashboard' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_raw_json">
+
+                <div class="form-group">
+                    <textarea name="raw_json" class="json-editor-box" id="rawJsonEditor">{{ pretty_json }}</textarea>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                    <span style="font-size: 0.8rem; color: var(--jute);">All edits validated as strict JSON before saving to database and publishing to `/api/content/`.</span>
+                    <button type="submit" class="btn btn-terracotta">
+                        Save &amp; Deploy JSON Schema
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </section>
+</div>
+
+<!-- Floating Quick Save Pill -->
+<div class="floating-save-bar">
+    <span style="font-size: 0.82rem; color: var(--brass); font-weight: 600;">Heritage CMS Studio</span>
+    <button type="button" onclick="document.getElementById('cmsForm').submit();" class="btn btn-terracotta" style="padding: 0.45rem 1rem; font-size: 0.8rem;">
+        Publish Form Changes
+    </button>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Live Sidebar Search Filtering
+    const searchInput = document.getElementById('sidebarSearch');
+    const navLinks = document.querySelectorAll('.sidebar-link');
+    const navGroups = document.querySelectorAll('[data-nav-group]');
+    const sectionCards = document.querySelectorAll('.section-card');
+
+    searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase().trim();
+
+        navLinks.forEach(link => {
+            const text = link.textContent.toLowerCase();
+            const parentLi = link.closest('li');
+            if (!query || text.includes(query)) {
+                parentLi.style.display = 'block';
+            } else {
+                parentLi.style.display = 'none';
+            }
+        });
+
+        navGroups.forEach(group => {
+            const visibleItems = group.querySelectorAll('li[style="display: block;"], li:not([style*="display: none"])');
+            if (visibleItems.length > 0) {
+                group.style.display = 'block';
+            } else {
+                group.style.display = 'none';
+            }
+        });
+
+        if (query) {
+            sectionCards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        } else {
+            sectionCards.forEach(card => card.style.display = 'block');
+        }
+    });
+
+    // Smooth Scroll & Flash Highlight for Sidebar Links
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href').substring(1);
+            const targetCard = document.getElementById(targetId);
+            if (targetCard) {
+                // remove active from other links
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                // targetCard flash
+                targetCard.classList.add('flash-highlight');
+                setTimeout(() => {
+                    targetCard.classList.remove('flash-highlight');
+                }, 1500);
+            }
+        });
+    });
+</script>
+{% endblock %}
