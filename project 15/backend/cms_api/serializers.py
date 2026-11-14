@@ -15,13 +15,14 @@ class MenuItemSerializer(serializers.ModelSerializer):
     category_slug = serializers.CharField(source='category.slug', read_only=True)
     category_color = serializers.CharField(source='category.badge_color', read_only=True)
     image = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = MenuItem
         fields = [
             'id', 'category', 'category_name', 'category_slug', 'category_color',
             'name', 'slug', 'short_description', 'description',
-            'price', 'currency', 'image', 'badge_text', 'dietary_tags',
+            'price', 'currency', 'image', 'image_url', 'badge_text', 'dietary_tags',
             'is_available', 'is_featured', 'sort_order'
         ]
 
@@ -29,6 +30,9 @@ class MenuItemSerializer(serializers.ModelSerializer):
         if obj.image:
             return obj.image.url
         return obj.image_url or ''
+
+    def get_image_url(self, obj):
+        return self.get_image(obj)
 
 
 class MenuCategorySerializer(serializers.ModelSerializer):
@@ -45,11 +49,13 @@ class MenuCategorySerializer(serializers.ModelSerializer):
 
 class TourViewpointSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
+    name = serializers.CharField(source='title', read_only=True)
 
     class Meta:
         model = TourViewpoint
         fields = [
-            'id', 'title', 'subtitle', 'description', 'image',
+            'id', 'name', 'title', 'subtitle', 'description', 'image', 'image_url',
             'camera_position', 'camera_target', 'scene_mood',
             'sort_order', 'is_active'
         ]
@@ -59,18 +65,25 @@ class TourViewpointSerializer(serializers.ModelSerializer):
             return obj.image.url
         return obj.image_url or ''
 
+    def get_image_url(self, obj):
+        return self.get_image(obj)
+
 
 class GalleryItemSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
+    image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = GalleryItem
-        fields = ['id', 'title', 'image', 'category', 'alt_text', 'sort_order', 'is_active']
+        fields = ['id', 'title', 'image', 'image_url', 'category', 'alt_text', 'sort_order', 'is_active']
 
     def get_image(self, obj):
         if obj.image:
             return obj.image.url
         return obj.image_url or ''
+
+    def get_image_url(self, obj):
+        return self.get_image(obj)
 
 
 class DiningExperienceSerializer(serializers.ModelSerializer):

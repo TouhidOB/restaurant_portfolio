@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useCMS } from '../context/CMSContext';
-import { CheckCircle2, AlertCircle, Calendar, Clock, Users, Sparkles, Send } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Calendar, Clock, Users, Send } from 'lucide-react';
 
 export default function S13_Reservation() {
   const { handleBookingSubmit } = useCMS();
@@ -48,15 +48,15 @@ export default function S13_Reservation() {
     <section
       id="reservation"
       style={{
-        backgroundColor: '#FFF5E6',
-        padding: '100px 24px',
-        borderBottom: '4px solid #171717',
+        backgroundColor: '#090A0E',
+        padding: '110px 24px',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         position: 'relative'
       }}
     >
       <div
         style={{
-          maxWidth: '1080px',
+          maxWidth: '960px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
@@ -65,22 +65,7 @@ export default function S13_Reservation() {
       >
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '800px', margin: '0 auto' }}>
-          <div
-            style={{
-              display: 'inline-block',
-              backgroundColor: '#F04438',
-              color: '#FFF',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem',
-              fontWeight: 800,
-              padding: '6px 16px',
-              borderRadius: '999px',
-              border: '2px solid #171717',
-              boxShadow: '3px 3px 0 #171717',
-              marginBottom: '16px',
-              textTransform: 'uppercase'
-            }}
-          >
+          <div className="pill-badge" style={{ marginBottom: '16px', color: '#FF3366', borderColor: 'rgba(255, 51, 102, 0.25)' }}>
             CHAPTER 11 // SECURE YOUR SEAT
           </div>
 
@@ -89,9 +74,10 @@ export default function S13_Reservation() {
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(2.4rem, 5vw, 4rem)',
               lineHeight: 1.05,
-              color: '#171717',
-              margin: '0 0 16px 0',
-              textShadow: '3px 3px 0 #FFD928'
+              fontWeight: 800,
+              color: '#FFFFFF',
+              letterSpacing: '-1px',
+              margin: '0 0 16px 0'
             }}
           >
             YOUR TABLE IS CALLING.
@@ -100,24 +86,24 @@ export default function S13_Reservation() {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '1.15rem',
+              fontSize: '15px',
               lineHeight: 1.6,
-              color: '#444',
+              color: '#9FA5B7',
               margin: 0
             }}
           >
-            Whether it's a Friday night smash burger rally or a private VIP studio celebration, book in advance to avoid the queue.
+            Whether it's a Friday night smash burger rally or an intimate lounge celebration, book in advance to avoid the queue.
           </p>
         </div>
 
         {/* Card Form */}
         <div
           style={{
-            backgroundColor: '#FFF',
-            border: '4px solid #171717',
-            borderRadius: '24px',
-            padding: '36px',
-            boxShadow: '10px 10px 0 #FFD928'
+            backgroundColor: '#12141D',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '28px',
+            padding: '40px',
+            boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)'
           }}
         >
           {status === 'success' ? (
@@ -127,24 +113,25 @@ export default function S13_Reservation() {
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  width: '80px',
-                  height: '80px',
+                  width: '64px',
+                  height: '64px',
                   borderRadius: '50%',
-                  backgroundColor: '#00C389',
-                  color: '#FFF',
-                  border: '3px solid #171717',
-                  boxShadow: '4px 4px 0 #171717',
+                  backgroundColor: 'rgba(204, 255, 0, 0.15)',
+                  color: '#CCFF00',
+                  border: '1px solid #CCFF00',
+                  boxShadow: '0 0 25px rgba(204, 255, 0, 0.3)',
                   marginBottom: '20px'
                 }}
               >
-                <CheckCircle2 size={44} />
+                <CheckCircle2 size={36} />
               </div>
 
               <h3
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: '2.2rem',
-                  color: '#171717',
+                  fontSize: '24px',
+                  fontWeight: 700,
+                  color: '#FFF',
                   margin: '0 0 12px 0'
                 }}
               >
@@ -154,33 +141,34 @@ export default function S13_Reservation() {
               <p
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: '1.1rem',
-                  color: '#555',
+                  fontSize: '14.5px',
+                  color: '#9FA5B7',
                   maxWidth: '520px',
                   margin: '0 auto 24px auto',
                   lineHeight: 1.6
                 }}
               >
-                We've routed your booking request to the host desk. A confirmation code has been generated and sent to {formData.email}.
+                We've routed your booking inquiry to the host desk. A confirmation code has been generated and sent to {formData.email}.
               </p>
 
               <div
                 style={{
-                  backgroundColor: '#FFD928',
-                  border: '3px solid #171717',
+                  backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                   borderRadius: '16px',
                   padding: '20px 32px',
                   display: 'inline-block',
-                  boxShadow: '4px 4px 0 #171717',
                   marginBottom: '24px'
                 }}
               >
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 800 }}>PASS NUMBER</div>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', color: '#F04438' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#646A7E', textTransform: 'uppercase' }}>
+                  BOOKING REFERENCE
+                </div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '24px', fontWeight: 800, color: '#CCFF00', margin: '4px 0' }}>
                   {confirmationCode}
                 </div>
-                <div style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.95rem', marginTop: '6px' }}>
-                  {formData.customer_name} • Party of {formData.guest_count} • {formData.preferred_date} @ {formData.preferred_time}
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: '#FFF' }}>
+                  {formData.customer_name} &bull; Party of {formData.guest_count} &bull; {formData.preferred_date} @ {formData.preferred_time}
                 </div>
               </div>
 
@@ -188,15 +176,14 @@ export default function S13_Reservation() {
                 <button
                   onClick={() => setStatus('idle')}
                   style={{
-                    backgroundColor: '#171717',
+                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
                     color: '#FFF',
                     padding: '12px 28px',
-                    borderRadius: '8px',
+                    borderRadius: '999px',
                     fontFamily: 'var(--font-display)',
-                    fontSize: '1rem',
-                    border: 'none',
-                    cursor: 'pointer',
-                    boxShadow: '4px 4px 0 #F04438'
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    cursor: 'pointer'
                   }}
                 >
                   MAKE ANOTHER RESERVATION
@@ -208,53 +195,54 @@ export default function S13_Reservation() {
               {status === 'error' && (
                 <div
                   style={{
-                    backgroundColor: '#FEE4E2',
-                    border: '2px solid #F04438',
+                    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
                     borderRadius: '10px',
                     padding: '14px 18px',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '12px',
-                    color: '#B42318',
+                    color: '#FCA5A5',
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.9rem'
+                    fontSize: '12px'
                   }}
                 >
-                  <AlertCircle size={20} />
+                  <AlertCircle size={18} />
                   <span>{errorMessage}</span>
                 </div>
               )}
 
-              {/* Step 1: Party Size & Area */}
+              {/* Step 1: Party Size */}
               <div>
                 <label
                   style={{
                     display: 'block',
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.85rem',
-                    fontWeight: 800,
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    color: '#646A7E',
                     textTransform: 'uppercase',
                     marginBottom: '10px'
                   }}
                 >
                   Select Party Size
                 </label>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                   {[1, 2, 3, 4, 5, 6, 7, 8, 10].map((num) => (
                     <button
                       type="button"
                       key={num}
                       onClick={() => setFormData((prev) => ({ ...prev, guest_count: num }))}
                       style={{
-                        padding: '10px 20px',
-                        borderRadius: '8px',
-                        border: '2px solid #171717',
-                        backgroundColor: formData.guest_count === num ? '#F04438' : '#FFF5E6',
-                        color: formData.guest_count === num ? '#FFF' : '#171717',
+                        padding: '9px 18px',
+                        borderRadius: '999px',
+                        border: formData.guest_count === num ? '1px solid #CCFF00' : '1px solid rgba(255, 255, 255, 0.1)',
+                        backgroundColor: formData.guest_count === num ? '#CCFF00' : 'rgba(255, 255, 255, 0.04)',
+                        color: formData.guest_count === num ? '#0A0B0E' : '#9FA5B7',
                         fontFamily: 'var(--font-display)',
-                        fontSize: '1rem',
+                        fontSize: '12.5px',
+                        fontWeight: 700,
                         cursor: 'pointer',
-                        boxShadow: formData.guest_count === num ? '3px 3px 0 #FFD928' : '2px 2px 0 #171717',
                         transition: 'all 0.15s ease'
                       }}
                     >
@@ -271,8 +259,9 @@ export default function S13_Reservation() {
                     style={{
                       display: 'block',
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.85rem',
-                      fontWeight: 800,
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: '#646A7E',
                       textTransform: 'uppercase',
                       marginBottom: '8px'
                     }}
@@ -289,11 +278,11 @@ export default function S13_Reservation() {
                       width: '100%',
                       padding: '12px 16px',
                       borderRadius: '10px',
-                      border: '2px solid #171717',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       fontFamily: 'var(--font-body)',
-                      fontSize: '1rem',
-                      backgroundColor: '#FFF5E6',
-                      boxShadow: '3px 3px 0 #171717'
+                      fontSize: '13.5px',
+                      backgroundColor: '#191C28',
+                      color: '#FFF'
                     }}
                   />
                 </div>
@@ -303,8 +292,9 @@ export default function S13_Reservation() {
                     style={{
                       display: 'block',
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.85rem',
-                      fontWeight: 800,
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: '#646A7E',
                       textTransform: 'uppercase',
                       marginBottom: '8px'
                     }}
@@ -319,11 +309,11 @@ export default function S13_Reservation() {
                       width: '100%',
                       padding: '12px 16px',
                       borderRadius: '10px',
-                      border: '2px solid #171717',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       fontFamily: 'var(--font-body)',
-                      fontSize: '1rem',
-                      backgroundColor: '#FFF5E6',
-                      boxShadow: '3px 3px 0 #171717'
+                      fontSize: '13.5px',
+                      backgroundColor: '#191C28',
+                      color: '#FFF'
                     }}
                   >
                     {['12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM', '9:30 PM'].map((t) => (
@@ -342,8 +332,9 @@ export default function S13_Reservation() {
                     style={{
                       display: 'block',
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.85rem',
-                      fontWeight: 800,
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: '#646A7E',
                       textTransform: 'uppercase',
                       marginBottom: '8px'
                     }}
@@ -361,11 +352,11 @@ export default function S13_Reservation() {
                       width: '100%',
                       padding: '12px 16px',
                       borderRadius: '10px',
-                      border: '2px solid #171717',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       fontFamily: 'var(--font-body)',
-                      fontSize: '1rem',
-                      backgroundColor: '#FFF5E6',
-                      boxShadow: '3px 3px 0 #171717'
+                      fontSize: '13.5px',
+                      backgroundColor: '#191C28',
+                      color: '#FFF'
                     }}
                   />
                 </div>
@@ -375,8 +366,9 @@ export default function S13_Reservation() {
                     style={{
                       display: 'block',
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.85rem',
-                      fontWeight: 800,
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: '#646A7E',
                       textTransform: 'uppercase',
                       marginBottom: '8px'
                     }}
@@ -394,11 +386,11 @@ export default function S13_Reservation() {
                       width: '100%',
                       padding: '12px 16px',
                       borderRadius: '10px',
-                      border: '2px solid #171717',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       fontFamily: 'var(--font-body)',
-                      fontSize: '1rem',
-                      backgroundColor: '#FFF5E6',
-                      boxShadow: '3px 3px 0 #171717'
+                      fontSize: '13.5px',
+                      backgroundColor: '#191C28',
+                      color: '#FFF'
                     }}
                   />
                 </div>
@@ -408,8 +400,9 @@ export default function S13_Reservation() {
                     style={{
                       display: 'block',
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.85rem',
-                      fontWeight: 800,
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: '#646A7E',
                       textTransform: 'uppercase',
                       marginBottom: '8px'
                     }}
@@ -427,11 +420,11 @@ export default function S13_Reservation() {
                       width: '100%',
                       padding: '12px 16px',
                       borderRadius: '10px',
-                      border: '2px solid #171717',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       fontFamily: 'var(--font-body)',
-                      fontSize: '1rem',
-                      backgroundColor: '#FFF5E6',
-                      boxShadow: '3px 3px 0 #171717'
+                      fontSize: '13.5px',
+                      backgroundColor: '#191C28',
+                      color: '#FFF'
                     }}
                   />
                 </div>
@@ -443,8 +436,9 @@ export default function S13_Reservation() {
                   style={{
                     display: 'block',
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.85rem',
-                    fontWeight: 800,
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    color: '#646A7E',
                     textTransform: 'uppercase',
                     marginBottom: '8px'
                   }}
@@ -454,18 +448,18 @@ export default function S13_Reservation() {
                 <textarea
                   name="message"
                   rows={2}
-                  placeholder="Anniversary celebration, vegetarian guest, quiet booth request..."
+                  placeholder="Anniversary celebration, vegan guests, quiet booth request..."
                   value={formData.message}
                   onChange={handleChange}
                   style={{
                     width: '100%',
                     padding: '12px 16px',
                     borderRadius: '10px',
-                    border: '2px solid #171717',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                     fontFamily: 'var(--font-body)',
-                    fontSize: '0.95rem',
-                    backgroundColor: '#FFF5E6',
-                    boxShadow: '3px 3px 0 #171717',
+                    fontSize: '13.5px',
+                    backgroundColor: '#191C28',
+                    color: '#FFF',
                     resize: 'none'
                   }}
                 />
@@ -476,20 +470,20 @@ export default function S13_Reservation() {
                 type="submit"
                 disabled={status === 'submitting'}
                 style={{
-                  backgroundColor: '#F04438',
-                  color: '#FFF',
-                  padding: '16px',
-                  borderRadius: '12px',
-                  border: '3px solid #171717',
+                  backgroundColor: '#CCFF00',
+                  color: '#0A0B0E',
+                  padding: '15px',
+                  borderRadius: '999px',
                   fontFamily: 'var(--font-display)',
-                  fontSize: '1.25rem',
-                  letterSpacing: '1px',
+                  fontSize: '14px',
+                  fontWeight: 800,
+                  letterSpacing: '0.5px',
                   cursor: status === 'submitting' ? 'wait' : 'pointer',
-                  boxShadow: '5px 5px 0 #171717',
-                  transition: 'all 0.15s ease'
+                  boxShadow: '0 0 25px rgba(204, 255, 0, 0.35)',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                {status === 'submitting' ? 'TRANSMITTING BOOKING...' : 'RESERVE MY POP TABLE NOW!'}
+                {status === 'submitting' ? 'TRANSMITTING INQUIRY...' : 'CONFIRM POP RESERVATION NOW &rarr;'}
               </button>
             </form>
           )}

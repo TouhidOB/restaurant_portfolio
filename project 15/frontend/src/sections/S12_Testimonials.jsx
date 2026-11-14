@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCMS } from '../context/CMSContext';
-import { Star, MessageSquare } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 export default function S12_Testimonials() {
   const { data } = useCMS();
@@ -10,41 +10,24 @@ export default function S12_Testimonials() {
     <section
       id="reviews"
       style={{
-        backgroundColor: '#FFD928',
-        backgroundImage: 'radial-gradient(#171717 12%, transparent 13%)',
-        backgroundSize: '24px 24px',
-        padding: '100px 24px',
-        borderBottom: '4px solid #171717',
+        backgroundColor: '#090A0E',
+        padding: '110px 24px',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         position: 'relative'
       }}
     >
       <div
         style={{
-          maxWidth: '1360px',
+          maxWidth: '1280px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: '48px'
+          gap: '50px'
         }}
       >
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto' }}>
-          <div
-            style={{
-              display: 'inline-block',
-              backgroundColor: '#171717',
-              color: '#FFD928',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem',
-              fontWeight: 800,
-              padding: '6px 16px',
-              borderRadius: '999px',
-              border: '2px solid #171717',
-              boxShadow: '3px 3px 0 #FFF',
-              marginBottom: '16px',
-              textTransform: 'uppercase'
-            }}
-          >
+          <div className="pill-badge" style={{ marginBottom: '16px', color: '#CCFF00', borderColor: 'rgba(204, 255, 0, 0.25)' }}>
             CHAPTER 10 // CRITIC & GUEST BUZZ
           </div>
 
@@ -53,9 +36,10 @@ export default function S12_Testimonials() {
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(2.4rem, 5vw, 4.2rem)',
               lineHeight: 1.05,
-              color: '#171717',
-              margin: '0 0 16px 0',
-              textShadow: '3px 3px 0 #FFF'
+              fontWeight: 800,
+              color: '#FFFFFF',
+              letterSpacing: '-1px',
+              margin: '0 0 16px 0'
             }}
           >
             LOVE FROM THE TABLE.
@@ -64,48 +48,52 @@ export default function S12_Testimonials() {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '1.2rem',
+              fontSize: '15px',
               lineHeight: 1.6,
-              color: '#171717',
-              fontWeight: 600,
+              color: '#9FA5B7',
               margin: 0
             }}
           >
-            What food journalists, design aficionados, and our neighborhood regulars are saying.
+            What food journalists, design aficionados, and neighborhood regulars are saying.
           </p>
         </div>
 
-        {/* Testimonials Speech Bubbles Grid */}
+        {/* Testimonials Cards Grid */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
-            gap: '28px'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px'
           }}
         >
           {testimonials.map((review, idx) => (
             <div
               key={review.id || idx}
               style={{
-                backgroundColor: '#FFF',
-                border: '4px solid #171717',
+                backgroundColor: '#12141D',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
                 borderRadius: '24px',
-                padding: '28px',
-                boxShadow: '8px 8px 0 #171717',
+                padding: '32px 28px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                position: 'relative',
-                transition: 'all 0.15s ease'
+                transition: 'all 0.25s ease',
+                boxShadow: '0 12px 32px rgba(0, 0, 0, 0.3)'
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-4px)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+              }}
             >
               <div>
                 {/* 5 Stars */}
-                <div style={{ display: 'flex', gap: '4px', marginBottom: '14px', color: '#F04438' }}>
+                <div style={{ display: 'flex', gap: '3px', marginBottom: '18px', color: '#FFB800' }}>
                   {[...Array(review.rating || 5)].map((_, i) => (
-                    <Star key={i} size={18} fill="#F04438" />
+                    <Star key={i} size={15} fill="#FFB800" strokeWidth={0} />
                   ))}
                 </div>
 
@@ -113,11 +101,11 @@ export default function S12_Testimonials() {
                 <p
                   style={{
                     fontFamily: 'var(--font-body)',
-                    fontSize: '1.05rem',
-                    lineHeight: 1.6,
-                    color: '#222',
+                    fontSize: '14.5px',
+                    lineHeight: 1.65,
+                    color: '#D4D4D8',
                     fontStyle: 'italic',
-                    margin: '0 0 20px 0'
+                    margin: '0 0 24px 0'
                   }}
                 >
                   "{review.quote}"
@@ -127,8 +115,8 @@ export default function S12_Testimonials() {
               {/* Author & Source */}
               <div
                 style={{
-                  borderTop: '2px dashed #E0E0E0',
-                  paddingTop: '16px',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                  paddingTop: '18px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between'
@@ -138,9 +126,9 @@ export default function S12_Testimonials() {
                   <div
                     style={{
                       fontFamily: 'var(--font-display)',
-                      fontSize: '1.1rem',
-                      color: '#171717',
-                      lineHeight: 1.2
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      color: '#FFF'
                     }}
                   >
                     {review.author}
@@ -148,9 +136,9 @@ export default function S12_Testimonials() {
                   <div
                     style={{
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.75rem',
-                      color: '#2455D6',
-                      fontWeight: 700
+                      fontSize: '11px',
+                      color: '#CCFF00',
+                      fontWeight: 600
                     }}
                   >
                     {review.publication}
@@ -161,12 +149,8 @@ export default function S12_Testimonials() {
                   <span
                     style={{
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.7rem',
-                      backgroundColor: '#FFF5E6',
-                      border: '1px solid #171717',
-                      borderRadius: '4px',
-                      padding: '2px 6px',
-                      color: '#555'
+                      fontSize: '10px',
+                      color: '#646A7E'
                     }}
                   >
                     {review.city}

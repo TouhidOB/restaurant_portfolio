@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCMS } from '../../context/CMSContext';
-import { ArrowUpRight, Heart, Sparkles, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { ArrowUpRight, Heart, MapPin, Phone, Mail } from 'lucide-react';
 
 export default function Footer() {
   const { data, setIsReservationModalOpen } = useCMS();
@@ -9,17 +9,17 @@ export default function Footer() {
   return (
     <footer
       style={{
-        backgroundColor: '#171717',
-        color: '#FFF5E6',
-        borderTop: '5px solid #FFD928',
-        padding: '80px 24px 40px 24px',
+        backgroundColor: '#050608',
+        color: '#F4F5F8',
+        borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+        padding: '90px 24px 40px 24px',
         position: 'relative',
         overflow: 'hidden'
       }}
     >
       <div
         style={{
-          maxWidth: '1360px',
+          maxWidth: '1280px',
           margin: '0 auto',
           position: 'relative',
           zIndex: 2
@@ -28,12 +28,12 @@ export default function Footer() {
         {/* Top Massive Marquee / Wordmark */}
         <div
           style={{
-            borderBottom: '2px solid rgba(255, 245, 230, 0.2)',
-            paddingBottom: '40px',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            paddingBottom: '48px',
             marginBottom: '60px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '16px'
+            gap: '20px'
           }}
         >
           <div
@@ -42,17 +42,18 @@ export default function Footer() {
               flexWrap: 'wrap',
               alignItems: 'baseline',
               justifyContent: 'space-between',
-              gap: '20px'
+              gap: '24px'
             }}
           >
             <h1
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(3rem, 9vw, 8rem)',
-                lineHeight: 0.9,
-                color: '#FFD928',
-                margin: 0,
-                textShadow: '4px 4px 0 #F04438'
+                fontSize: 'clamp(3rem, 8.5vw, 7.5rem)',
+                lineHeight: 0.95,
+                fontWeight: 900,
+                color: '#FFFFFF',
+                letterSpacing: '-2px',
+                margin: 0
               }}
             >
               POP! FOOD STUDIO
@@ -61,40 +62,40 @@ export default function Footer() {
             <button
               onClick={() => setIsReservationModalOpen(true)}
               style={{
-                backgroundColor: '#F04438',
-                color: '#FFF',
-                border: '3px solid #FFF',
-                borderRadius: '12px',
-                padding: '16px 28px',
+                backgroundColor: '#CCFF00',
+                color: '#0A0B0E',
+                borderRadius: '999px',
+                padding: '16px 32px',
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.2rem',
+                fontSize: '14px',
+                fontWeight: 700,
                 cursor: 'pointer',
-                boxShadow: '5px 5px 0 #FFD928',
+                boxShadow: '0 0 30px rgba(204, 255, 0, 0.35)',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px'
               }}
             >
-              <span>CLAIM YOUR TABLE</span>
-              <ArrowUpRight size={22} />
+              <span>CLAIM A TABLE NOW</span>
+              <ArrowUpRight size={18} />
             </button>
           </div>
 
           <p
             style={{
-              fontFamily: 'var(--font-headline)',
-              fontSize: '1.4rem',
-              color: '#FFF5E6',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '13px',
+              color: '#CCFF00',
               letterSpacing: '2px',
               textTransform: 'uppercase',
               margin: 0
             }}
           >
-            {config.tagline || 'EAT OUTSIDE THE LINES'} — ARTS DISTRICT, STUDIO CITY
+            {config.tagline || 'EAT OUTSIDE THE LINES'} &bull; ARTS DISTRICT, STUDIO CITY
           </p>
         </div>
 
-        {/* 4 Column Layout */}
+        {/* 4 Column Grid */}
         <div
           style={{
             display: 'grid',
@@ -108,9 +109,9 @@ export default function Footer() {
             <div
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.85rem',
-                color: '#FFD928',
-                fontWeight: 800,
+                fontSize: '11px',
+                color: '#646A7E',
+                fontWeight: 700,
                 letterSpacing: '1px',
                 marginBottom: '16px',
                 textTransform: 'uppercase'
@@ -119,18 +120,18 @@ export default function Footer() {
               [ THE LOCATION ]
             </div>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '14px' }}>
-              <MapPin size={18} color="#F04438" style={{ flexShrink: 0, marginTop: '3px' }} />
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', lineHeight: 1.5 }}>
+              <MapPin size={16} color="#FF3366" style={{ flexShrink: 0, marginTop: '3px' }} />
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '13.5px', lineHeight: 1.5, color: '#D4D4D8' }}>
                 {config.address || '742 Evergreen Pop Boulevard, Arts District, Studio City, CA'}
               </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-              <Phone size={18} color="#2455D6" />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem' }}>{config.phone || '+1 (555) 767-3663'}</span>
+              <Phone size={15} color="#0066FF" />
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: '#9FA5B7' }}>{config.phone || '+1 (555) 767-3663'}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Mail size={18} color="#00C389" />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem' }}>{config.email || 'hello@popfoodstudio.com'}</span>
+              <Mail size={15} color="#00F0FF" />
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: '#9FA5B7' }}>{config.email || 'hello@popfoodstudio.com'}</span>
             </div>
           </div>
 
@@ -139,9 +140,9 @@ export default function Footer() {
             <div
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.85rem',
-                color: '#FFD928',
-                fontWeight: 800,
+                fontSize: '11px',
+                color: '#646A7E',
+                fontWeight: 700,
                 letterSpacing: '1px',
                 marginBottom: '16px',
                 textTransform: 'uppercase'
@@ -149,12 +150,12 @@ export default function Footer() {
             >
               [ OPENING HOURS ]
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {config.opening_hours &&
                 Object.entries(config.opening_hours).map(([days, hours]) => (
-                  <div key={days} style={{ fontSize: '0.9rem' }}>
-                    <div style={{ fontFamily: 'var(--font-body)', fontWeight: 700, color: '#FFF' }}>{days}</div>
-                    <div style={{ fontFamily: 'var(--font-mono)', color: '#AAA', fontSize: '0.85rem' }}>{hours}</div>
+                  <div key={days} style={{ fontSize: '12.5px' }}>
+                    <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, color: '#FFF' }}>{days}</div>
+                    <div style={{ fontFamily: 'var(--font-mono)', color: '#8E94A5', fontSize: '11px' }}>{hours}</div>
                   </div>
                 ))}
             </div>
@@ -165,9 +166,9 @@ export default function Footer() {
             <div
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.85rem',
-                color: '#FFD928',
-                fontWeight: 800,
+                fontSize: '11px',
+                color: '#646A7E',
+                fontWeight: 700,
                 letterSpacing: '1px',
                 marginBottom: '16px',
                 textTransform: 'uppercase'
@@ -178,49 +179,48 @@ export default function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {[
                 { name: 'Our Origin Story', href: '#story' },
-                { name: '3D Interactive Tour', href: '#tour' },
+                { name: '3D Interactive Studio', href: '#tour' },
                 { name: 'Signature Dishes', href: '#featured' },
                 { name: 'Full Menu Explorer', href: '#menu' },
                 { name: 'Culinary Laboratory', href: '#kitchen' },
-                { name: 'Experiences & Events', href: '#experiences' },
+                { name: 'Happenings & Brunches', href: '#experiences' },
                 { name: 'Guest Reviews', href: '#reviews' },
               ].map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
                   style={{
-                    color: '#CCC',
-                    textDecoration: 'none',
+                    color: '#9FA5B7',
                     fontFamily: 'var(--font-body)',
-                    fontSize: '0.95rem',
+                    fontSize: '13px',
                     transition: 'color 0.15s ease'
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#FFD928')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = '#CCC')}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#CCFF00')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '#9FA5B7')}
                 >
-                  → {item.name}
+                  &rarr; {item.name}
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Col 4: CMS Management & Admin */}
+          {/* Col 4: CMS Studio Portal */}
           <div>
             <div
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.85rem',
-                color: '#FFD928',
-                fontWeight: 800,
+                fontSize: '11px',
+                color: '#646A7E',
+                fontWeight: 700,
                 letterSpacing: '1px',
                 marginBottom: '16px',
                 textTransform: 'uppercase'
               }}
             >
-              [ STUDIO CONTROL ]
+              [ OPERATIONS OS ]
             </div>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: '#AAA', lineHeight: 1.5, marginBottom: '16px' }}>
-              Authorized restaurant managers can update dishes, modify 3D tour viewpoints, and triage guest reservations via our decoupled CMS Studio.
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: '#8E94A5', lineHeight: 1.6, marginBottom: '16px' }}>
+              Authorized studio managers can update dishes, modify 3D tour viewpoints, and triage guest reservations via our decoupled CMS Studio.
             </p>
             <a
               href="/cms/"
@@ -230,20 +230,19 @@ export default function Footer() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                backgroundColor: '#2455D6',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 color: '#FFF',
-                border: '2px solid #FFF',
-                borderRadius: '8px',
-                padding: '10px 16px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '999px',
+                padding: '10px 18px',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                textDecoration: 'none',
-                boxShadow: '3px 3px 0 #FFD928'
+                fontSize: '11.5px',
+                fontWeight: 600,
+                textDecoration: 'none'
               }}
             >
-              <span>ACCESS CMS STUDIO</span>
-              <ArrowUpRight size={16} />
+              <span>ACCESS STUDIO OS</span>
+              <ArrowUpRight size={14} />
             </a>
           </div>
         </div>
@@ -251,23 +250,23 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div
           style={{
-            borderTop: '1px solid rgba(255, 245, 230, 0.15)',
-            paddingTop: '24px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+            paddingTop: '28px',
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '16px',
-            fontSize: '0.85rem',
+            fontSize: '12px',
             fontFamily: 'var(--font-mono)',
-            color: '#888'
+            color: '#646A7E'
           }}
         >
           <div>
-            © {new Date().getFullYear()} POP! FOOD STUDIO LLC. ALL RIGHTS RESERVED.
+            &copy; {new Date().getFullYear()} POP! FOOD STUDIO LLC. ALL RIGHTS RESERVED.
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            DESIGNED WITH <Heart size={14} color="#F04438" fill="#F04438" /> FOR FOOD & ART LOVERS
+            CRAFTED WITH <Heart size={13} color="#FF3366" fill="#FF3366" /> FOR CONTEMPORARY FOOD LOVERS
           </div>
         </div>
       </div>

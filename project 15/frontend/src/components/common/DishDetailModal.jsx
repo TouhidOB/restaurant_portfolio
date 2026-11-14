@@ -17,8 +17,8 @@ export default function DishDetailModal() {
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(23, 23, 23, 0.85)',
-        backdropFilter: 'blur(8px)',
+        backgroundColor: 'rgba(5, 6, 8, 0.88)',
+        backdropFilter: 'blur(16px)',
         zIndex: 2000,
         display: 'flex',
         alignItems: 'center',
@@ -30,12 +30,12 @@ export default function DishDetailModal() {
     >
       <div
         style={{
-          backgroundColor: '#FFF5E6',
-          border: '4px solid #171717',
-          borderRadius: '24px',
-          boxShadow: '12px 12px 0px #171717',
+          backgroundColor: '#12141D',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          borderRadius: '28px',
+          boxShadow: '0 30px 80px rgba(0, 0, 0, 0.8)',
           width: '100%',
-          maxWidth: '720px',
+          maxWidth: '680px',
           overflow: 'hidden',
           position: 'relative',
           display: 'flex',
@@ -47,9 +47,8 @@ export default function DishDetailModal() {
         {/* Header Bar */}
         <div
           style={{
-            backgroundColor: '#FFD928',
-            borderBottom: '4px solid #171717',
-            padding: '14px 20px',
+            padding: '16px 24px',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between'
@@ -58,14 +57,14 @@ export default function DishDetailModal() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span
               style={{
-                backgroundColor: '#F04438',
-                color: '#FFF',
+                backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                color: '#CCFF00',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
-                fontWeight: 800,
-                padding: '4px 8px',
-                borderRadius: '6px',
-                border: '2px solid #171717',
+                fontSize: '11px',
+                fontWeight: 700,
+                padding: '4px 10px',
+                borderRadius: '999px',
+                border: '1px solid rgba(204, 255, 0, 0.25)',
                 textTransform: 'uppercase'
               }}
             >
@@ -74,20 +73,20 @@ export default function DishDetailModal() {
             {selectedDish.is_featured && (
               <span
                 style={{
-                  backgroundColor: '#2455D6',
-                  color: '#FFF',
+                  backgroundColor: 'rgba(255, 51, 102, 0.12)',
+                  color: '#FF6B8B',
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.75rem',
-                  fontWeight: 800,
-                  padding: '4px 8px',
-                  borderRadius: '6px',
-                  border: '2px solid #171717',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  padding: '4px 10px',
+                  borderRadius: '999px',
+                  border: '1px solid rgba(255, 51, 102, 0.25)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px'
                 }}
               >
-                <Sparkles size={12} /> CROWD FAVORITE
+                <Sparkles size={11} /> CROWD PLEASER
               </span>
             )}
           </div>
@@ -95,38 +94,37 @@ export default function DishDetailModal() {
           <button
             onClick={() => setSelectedDish(null)}
             style={{
-              backgroundColor: '#FFF',
-              border: '2px solid #171717',
-              borderRadius: '8px',
-              width: '34px',
-              height: '34px',
+              backgroundColor: 'rgba(255, 255, 255, 0.06)',
+              color: '#9FA5B7',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: '2px 2px 0 #171717'
+              cursor: 'pointer'
             }}
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
-        {/* Scrollable Modal Content */}
-        <div style={{ overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {/* Scrollable Content */}
+        <div style={{ overflowY: 'auto', padding: '28px', display: 'flex', flexDirection: 'column', gap: '22px' }}>
           {/* Dish Image */}
-          {selectedDish.image_url && (
+          {(selectedDish.image_url || selectedDish.image) && (
             <div
               style={{
                 position: 'relative',
-                borderRadius: '16px',
-                border: '3px solid #171717',
+                borderRadius: '20px',
                 overflow: 'hidden',
-                boxShadow: '6px 6px 0px #171717',
-                maxHeight: '300px'
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                maxHeight: '320px'
               }}
             >
               <img
-                src={selectedDish.image_url}
+                src={selectedDish.image_url || selectedDish.image}
                 alt={selectedDish.name}
                 style={{
                   width: '100%',
@@ -138,16 +136,16 @@ export default function DishDetailModal() {
               <div
                 style={{
                   position: 'absolute',
-                  bottom: '12px',
-                  right: '12px',
-                  backgroundColor: '#F04438',
-                  color: '#FFF',
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.4rem',
+                  bottom: '16px',
+                  right: '16px',
+                  backgroundColor: '#CCFF00',
+                  color: '#0A0B0E',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '15px',
+                  fontWeight: 800,
                   padding: '6px 14px',
-                  borderRadius: '10px',
-                  border: '2px solid #171717',
-                  boxShadow: '3px 3px 0 #171717'
+                  borderRadius: '999px',
+                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.6)'
                 }}
               >
                 ${typeof selectedDish.price === 'number' ? selectedDish.price.toFixed(2) : selectedDish.price}
@@ -155,13 +153,14 @@ export default function DishDetailModal() {
             </div>
           )}
 
-          {/* Title and Tags */}
+          {/* Title & Tags */}
           <div>
             <h2
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(1.5rem, 4vw, 2rem)',
-                color: '#171717',
+                fontSize: '24px',
+                fontWeight: 700,
+                color: '#FFF',
                 margin: 0,
                 lineHeight: 1.2
               }}
@@ -170,19 +169,19 @@ export default function DishDetailModal() {
             </h2>
 
             {selectedDish.dietary_tags && selectedDish.dietary_tags.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '10px' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
                 {selectedDish.dietary_tags.map((tag, idx) => (
                   <span
                     key={idx}
                     style={{
-                      backgroundColor: '#FFD928',
-                      color: '#171717',
-                      border: '2px solid #171717',
+                      backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                      color: '#D4D4D8',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
                       borderRadius: '999px',
                       padding: '3px 10px',
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.75rem',
-                      fontWeight: 700
+                      fontSize: '11px',
+                      fontWeight: 600
                     }}
                   >
                     #{tag}
@@ -196,93 +195,65 @@ export default function DishDetailModal() {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '1.05rem',
-              lineHeight: 1.6,
-              color: '#333333',
+              fontSize: '14.5px',
+              lineHeight: 1.65,
+              color: '#9FA5B7',
               margin: 0
             }}
           >
             {selectedDish.description}
           </p>
 
-          {/* Meta Specifications */}
+          {/* Meta Specs */}
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
               gap: '12px',
-              backgroundColor: '#FFF',
-              border: '2px solid #171717',
-              borderRadius: '12px',
-              padding: '16px',
-              boxShadow: '3px 3px 0 #171717'
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(255, 255, 255, 0.06)',
+              borderRadius: '16px',
+              padding: '18px'
             }}
           >
-            {/* Spice Level */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div
-                style={{
-                  backgroundColor: '#F04438',
-                  color: '#FFF',
-                  padding: '6px',
-                  borderRadius: '6px',
-                  border: '1px solid #171717'
-                }}
-              >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ backgroundColor: 'rgba(255, 51, 102, 0.15)', color: '#FF3366', padding: '8px', borderRadius: '8px' }}>
                 <Flame size={16} />
               </div>
               <div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: '#666', textTransform: 'uppercase' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#646A7E', textTransform: 'uppercase' }}>
                   Heat Scale
                 </div>
-                <div style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.9rem' }}>
+                <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '13px', color: '#FFF' }}>
                   {selectedDish.spice_level ? `Level ${selectedDish.spice_level} of 3` : 'Mild / No Heat'}
                 </div>
               </div>
             </div>
 
-            {/* Prep Time */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div
-                style={{
-                  backgroundColor: '#2455D6',
-                  color: '#FFF',
-                  padding: '6px',
-                  borderRadius: '6px',
-                  border: '1px solid #171717'
-                }}
-              >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{ backgroundColor: 'rgba(0, 102, 255, 0.15)', color: '#0066FF', padding: '8px', borderRadius: '8px' }}>
                 <Clock size={16} />
               </div>
               <div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: '#666', textTransform: 'uppercase' }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#646A7E', textTransform: 'uppercase' }}>
                   Prep Speed
                 </div>
-                <div style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.9rem' }}>
+                <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '13px', color: '#FFF' }}>
                   {selectedDish.prep_time || '8-12 mins'}
                 </div>
               </div>
             </div>
 
-            {/* Pairing */}
             {selectedDish.pairing && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', gridColumn: 'span 2' }}>
-                <div
-                  style={{
-                    backgroundColor: '#00C389',
-                    color: '#FFF',
-                    padding: '6px',
-                    borderRadius: '6px',
-                    border: '1px solid #171717'
-                  }}
-                >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', gridColumn: 'span 2' }}>
+                <div style={{ backgroundColor: 'rgba(204, 255, 0, 0.15)', color: '#CCFF00', padding: '8px', borderRadius: '8px' }}>
                   <Wine size={16} />
                 </div>
                 <div>
-                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: '#666', textTransform: 'uppercase' }}>
-                    Recommended Sip
+                  <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#646A7E', textTransform: 'uppercase' }}>
+                    Recommended Beverage Pairing
                   </div>
-                  <div style={{ fontFamily: 'var(--font-body)', fontWeight: 700, fontSize: '0.9rem' }}>
+                  <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: '13px', color: '#FFF' }}>
                     {selectedDish.pairing}
                   </div>
                 </div>
@@ -291,12 +262,11 @@ export default function DishDetailModal() {
           </div>
         </div>
 
-        {/* Footer CTAs */}
+        {/* Footer Actions */}
         <div
           style={{
-            backgroundColor: '#FFF5E6',
-            borderTop: '3px solid #171717',
-            padding: '16px 24px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            padding: '18px 28px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-end',
@@ -307,34 +277,33 @@ export default function DishDetailModal() {
             onClick={() => setSelectedDish(null)}
             style={{
               padding: '10px 18px',
-              backgroundColor: '#FFF',
-              border: '2px solid #171717',
-              borderRadius: '8px',
+              backgroundColor: 'transparent',
+              color: '#9FA5B7',
+              borderRadius: '999px',
               fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem',
+              fontSize: '11px',
               fontWeight: 700,
               cursor: 'pointer'
             }}
           >
-            BACK TO MENU
+            DISMISS
           </button>
 
           <button
             onClick={handleBookWithDish}
             style={{
-              padding: '10px 24px',
-              backgroundColor: '#F04438',
-              color: '#FFF',
-              border: '2px solid #171717',
-              borderRadius: '8px',
+              padding: '12px 24px',
+              backgroundColor: '#CCFF00',
+              color: '#0A0B0E',
+              borderRadius: '999px',
               fontFamily: 'var(--font-display)',
-              fontSize: '1rem',
-              boxShadow: '4px 4px 0 #171717',
+              fontSize: '13px',
+              fontWeight: 700,
               cursor: 'pointer',
-              letterSpacing: '0.5px'
+              boxShadow: '0 0 20px rgba(204, 255, 0, 0.35)'
             }}
           >
-            BOOK TABLE FOR THIS DISH!
+            BOOK TABLE FOR THIS DISH &rarr;
           </button>
         </div>
       </div>

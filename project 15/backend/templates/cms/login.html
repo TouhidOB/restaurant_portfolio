@@ -1,19 +1,26 @@
 {% extends "cms/base.html" %}
 
-{% block title %}Sign In | Pop-Art Food Studio CMS{% endblock %}
+{% block title %}Authenticate | POP! Studio OS{% endblock %}
 
 {% block body_content %}
-<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 30%, #FFF5E6 0%, #FFE2B8 100%); padding: 20px;">
-  <div style="width: 100%; max-width: 440px; background: #FFFFFF; border: 3px solid #171717; box-shadow: 8px 8px 0 #171717; border-radius: 8px; padding: 40px;">
-    <div style="text-align: center; margin-bottom: 28px;">
-      <div style="display: inline-block; background: var(--color-yellow); border: 2px solid #171717; border-radius: 6px; padding: 6px 14px; font-family: var(--font-display); font-size: 26px; transform: rotate(-2deg); box-shadow: 3px 3px 0 #171717; margin-bottom: 12px;">
-        POP! STUDIO
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 50% 20%, rgba(255, 51, 102, 0.12) 0%, rgba(9, 10, 14, 1) 70%); padding: 24px; position: relative; overflow: hidden;">
+  <!-- Ambient background glow elements -->
+  <div style="position: absolute; top: 15%; left: 30%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(212, 255, 50, 0.08) 0%, transparent 70%); filter: blur(60px); pointer-events: none;"></div>
+  <div style="position: absolute; bottom: 10%; right: 25%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%); filter: blur(80px); pointer-events: none;"></div>
+
+  <div style="width: 100%; max-width: 420px; background: rgba(20, 22, 32, 0.9); backdrop-filter: blur(24px); border: 1px solid var(--border-medium); box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6); border-radius: 16px; padding: 40px 36px; position: relative; z-index: 10;">
+    <!-- Brand Header -->
+    <div style="text-align: center; margin-bottom: 32px;">
+      <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 51, 102, 0.12); border: 1px solid rgba(255, 51, 102, 0.3); border-radius: 999px; padding: 5px 14px; margin-bottom: 16px;">
+        <span style="font-family: var(--font-display); font-size: 11px; font-weight: 700; color: var(--accent-coral); letter-spacing: 1px;">POP! STUDIO OS</span>
+        <span style="font-family: var(--font-mono); font-size: 9px; background: var(--accent-coral); color: #FFF; padding: 1px 5px; border-radius: 4px;">v2.4</span>
       </div>
-      <h1 style="font-family: var(--font-display); font-size: 22px; color: var(--color-ink);">
-        Studio Operations Desk
+
+      <h1 style="font-family: var(--font-display); font-size: 24px; font-weight: 700; color: #FFF; letter-spacing: -0.5px; margin-bottom: 6px;">
+        Studio Control Desk
       </h1>
-      <p style="font-family: 'DM Sans', sans-serif; font-size: 12px; color: #666; margin-top: 4px;">
-        Playful Pop-Art Food Platform Administration
+      <p style="font-family: var(--font-body); font-size: 13px; color: var(--text-secondary);">
+        Decoupled Restaurant Operations & Content Management
       </p>
     </div>
 
@@ -26,27 +33,32 @@
     <form method="POST" action="{% url 'cms_login' %}">
       {% csrf_token %}
       <div class="form-group">
-        <label class="form-label" for="username">Username</label>
+        <label class="form-label" for="username">Operator Username</label>
         <input type="text" id="username" name="username" class="form-control" placeholder="admin" required autofocus>
       </div>
 
       <div class="form-group" style="margin-bottom: 24px;">
-        <label class="form-label" for="password">Password</label>
+        <label class="form-label" for="password">Security Password</label>
         <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required>
       </div>
 
-      <button type="submit" class="btn btn-tomato" style="width: 100%; justify-content: center; padding: 14px; font-size: 14px;">
-        Authenticate to Studio &rarr;
+      <button type="submit" class="btn btn-lime" style="width: 100%; justify-content: center; padding: 12px; font-size: 13.5px; font-weight: 700;">
+        Access Studio Operations &rarr;
       </button>
     </form>
 
-    <div style="margin-top: 28px; padding-top: 20px; border-top: 2px dashed #E5E5E5; text-align: center;">
-      <p style="font-size: 12px; line-height: 1.6; color: #555;">
-        Default Administrator Credentials:<br>
-        <strong style="color: var(--color-ink); font-family: var(--font-mono);">admin</strong> / <strong style="color: var(--color-ink); font-family: var(--font-mono);">adminpassword123</strong>
-      </p>
-      <a href="http://localhost:3000/" target="_blank" style="display: inline-block; margin-top: 12px; font-family: var(--font-display); font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--color-cobalt);">
-        &larr; Return to Guest Experience
+    <div style="margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border-subtle); text-align: center;">
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 10px 14px; margin-bottom: 16px;">
+        <div style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">
+          Default Admin Credentials
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 12px; color: var(--accent-lime);">
+          admin <span style="color: var(--text-muted);">&bull;</span> adminpassword123
+        </div>
+      </div>
+
+      <a href="http://localhost:3000/" target="_blank" style="font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 4px; transition: color 0.15s ease;">
+        <span>&larr; Switch to Public Guest Experience</span>
       </a>
     </div>
   </div>

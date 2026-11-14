@@ -1,21 +1,19 @@
-import React, { useRef, useState, useEffect, Suspense } from 'react';
+import React, { useRef, useState, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Float, Html } from '@react-three/drei';
+import { OrbitControls, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { useCMS } from '../../context/CMSContext';
-import { Sparkles, Sun, Moon, Zap, Eye, Box, Info } from 'lucide-react';
+import { Sun, Moon, Zap, Eye, Box, X } from 'lucide-react';
 
-// Camera Rig that lerps smoothly to target viewpoint position
+// Smooth Camera Lerper
 function CameraRig({ targetPos, targetLookAt }) {
   const currentPos = useRef(new THREE.Vector3(...targetPos));
   const currentLookAt = useRef(new THREE.Vector3(...targetLookAt));
 
   useFrame(({ camera }) => {
-    // Lerp position
     currentPos.current.lerp(new THREE.Vector3(...targetPos), 0.05);
     camera.position.copy(currentPos.current);
 
-    // Lerp lookAt
     currentLookAt.current.lerp(new THREE.Vector3(...targetLookAt), 0.05);
     camera.lookAt(currentLookAt.current);
   });
@@ -23,13 +21,13 @@ function CameraRig({ targetPos, targetLookAt }) {
   return null;
 }
 
-// 3D Interactive Hotspot Marker
-function HotspotMarker({ position, title, description, onSelect, isSelected }) {
+// 3D Glowing Hotspot Marker
+function GlowingHotspot({ position, title, description, onSelect, isSelected }) {
   const markerRef = useRef();
 
   useFrame((state) => {
     if (markerRef.current) {
-      markerRef.current.position.y = position[1] + Math.sin(state.clock.getElapsedTime() * 3) * 0.1;
+      markerRef.current.position.y = position[1] + Math.sin(state.clock.getElapsedTime() * 3) * 0.08;
       markerRef.current.rotation.y = state.clock.getElapsedTime() * 1.5;
     }
   });
@@ -46,14 +44,13 @@ function HotspotMarker({ position, title, description, onSelect, isSelected }) {
       >
         <octahedronGeometry args={[0.22]} />
         <meshStandardMaterial
-          color={isSelected ? '#FFD928' : '#F04438'}
-          emissive={isSelected ? '#FFD928' : '#F04438'}
-          emissiveIntensity={0.6}
+          color={isSelected ? '#CCFF00' : '#FF3366'}
+          emissive={isSelected ? '#CCFF00' : '#FF3366'}
+          emissiveIntensity={2.0}
           roughness={0.2}
         />
       </mesh>
 
-      {/* Floating 3D HTML Tooltip Badge */}
       <Html distanceFactor={8} position={[0, 0.4, 0]} center>
         <div
           onClick={(e) => {
@@ -61,19 +58,19 @@ function HotspotMarker({ position, title, description, onSelect, isSelected }) {
             onSelect({ title, description });
           }}
           style={{
-            backgroundColor: isSelected ? '#FFD928' : '#171717',
-            color: isSelected ? '#171717' : '#FFF5E6',
-            border: '2px solid #171717',
-            borderRadius: '6px',
-            padding: '3px 8px',
+            backgroundColor: isSelected ? '#CCFF00' : 'rgba(15, 17, 24, 0.9)',
+            backdropFilter: 'blur(12px)',
+            color: isSelected ? '#0A0B0E' : '#FFFFFF',
+            border: isSelected ? '1px solid #CCFF00' : '1px solid rgba(255, 255, 255, 0.2)',
+            borderRadius: '999px',
+            padding: '5px 12px',
             fontFamily: 'var(--font-mono)',
             fontSize: '11px',
-            fontWeight: 800,
+            fontWeight: 700,
             whiteSpace: 'nowrap',
             cursor: 'pointer',
-            boxShadow: '2px 2px 0 #171717',
+            boxShadow: isSelected ? '0 0 20px rgba(204, 255, 0, 0.5)' : '0 4px 14px rgba(0, 0, 0, 0.6)',
             pointerEvents: 'auto',
-            transform: 'scale(1)',
             transition: 'all 0.15s ease'
           }}
         >
@@ -84,120 +81,114 @@ function HotspotMarker({ position, title, description, onSelect, isSelected }) {
   );
 }
 
-// Architectural Studio Environment 3D Geometry
-function StudioArchitecture({ activeIndex, mood }) {
-  // Colors based on mood
-  const wallColor = mood === 'midnight' ? '#111424' : mood === 'day' ? '#FFF9F0' : '#22283A';
-  const neonLightColor = mood === 'midnight' ? '#FFD928' : mood === 'day' ? '#F04438' : '#2455D6';
+// Rich Architectural Studio Environment
+function StudioArchitecture({ mood }) {
+  const neonColor = mood === 'midnight' ? '#CCFF00' : mood === 'day' ? '#FF6B8B' : '#00F0FF';
 
   return (
     <group>
-      {/* Studio Floor (Checkerboard Pattern) */}
+      {/* Reflective Dark Floor */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-        <planeGeometry args={[30, 30]} />
-        <meshStandardMaterial color="#2B2D42" roughness={0.4} />
+        <planeGeometry args={[34, 34]} />
+        <meshPhysicalMaterial
+          color="#151722"
+          roughness={0.2}
+          metalness={0.3}
+          clearcoat={0.6}
+        />
       </mesh>
 
-      {/* Studio Back & Side Walls */}
-      <mesh position={[0, 4, -8]}>
-        <planeGeometry args={[30, 8]} />
-        <meshStandardMaterial color={wallColor} roughness={0.6} />
+      {/* Warm Ambient Architectural Walls */}
+      <mesh position={[0, 4.5, -9]}>
+        <planeGeometry args={[34, 9]} />
+        <meshStandardMaterial color="#1C1F2D" roughness={0.6} />
       </mesh>
-      <mesh position={[-10, 4, 0]} rotation={[0, Math.PI / 2, 0]}>
-        <planeGeometry args={[30, 8]} />
-        <meshStandardMaterial color={wallColor} roughness={0.6} />
+      <mesh position={[-11, 4.5, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <planeGeometry args={[34, 9]} />
+        <meshStandardMaterial color="#191C28" roughness={0.6} />
       </mesh>
-      <mesh position={[10, 4, 0]} rotation={[0, -Math.PI / 2, 0]}>
-        <planeGeometry args={[30, 8]} />
-        <meshStandardMaterial color={wallColor} roughness={0.6} />
+      <mesh position={[11, 4.5, 0]} rotation={[0, -Math.PI / 2, 0]}>
+        <planeGeometry args={[34, 9]} />
+        <meshStandardMaterial color="#191C28" roughness={0.6} />
       </mesh>
 
-      {/* Neon Ceiling Light Bars */}
+      {/* Illuminated Ceiling Neon Beams */}
       {[-4, 0, 4].map((z, i) => (
         <mesh key={i} position={[0, 7.5, z]} rotation={[0, 0, Math.PI / 2]}>
-          <cylinderGeometry args={[0.08, 0.08, 14, 16]} />
+          <cylinderGeometry args={[0.06, 0.06, 16, 16]} />
           <meshStandardMaterial
-            color={neonLightColor}
-            emissive={neonLightColor}
-            emissiveIntensity={mood === 'midnight' ? 2.5 : 1.2}
+            color={neonColor}
+            emissive={neonColor}
+            emissiveIntensity={2.5}
           />
         </mesh>
       ))}
 
-      {/* Viewpoint 1: The Neon Entry Archway */}
-      <group position={[0, 0, 4]}>
+      {/* Spatial 1: Entry Archway & Glowing Welcome Sign */}
+      <group position={[0, 0, 3.8]}>
         <mesh position={[0, 3.2, 0]}>
-          <boxGeometry args={[4.5, 0.4, 0.4]} />
-          <meshStandardMaterial color="#FFD928" emissive="#FFD928" emissiveIntensity={1} />
+          <boxGeometry args={[4.8, 0.3, 0.3]} />
+          <meshStandardMaterial color="#FF3366" emissive="#FF3366" emissiveIntensity={2.0} />
         </mesh>
-        <mesh position={[-2.1, 1.6, 0]}>
-          <boxGeometry args={[0.4, 3.2, 0.4]} />
-          <meshStandardMaterial color="#F04438" />
+        <mesh position={[-2.3, 1.6, 0]}>
+          <boxGeometry args={[0.3, 3.2, 0.3]} />
+          <meshStandardMaterial color="#FF3366" />
         </mesh>
-        <mesh position={[2.1, 1.6, 0]}>
-          <boxGeometry args={[0.4, 3.2, 0.4]} />
-          <meshStandardMaterial color="#F04438" />
+        <mesh position={[2.3, 1.6, 0]}>
+          <boxGeometry args={[0.3, 3.2, 0.3]} />
+          <meshStandardMaterial color="#FF3366" />
         </mesh>
       </group>
 
-      {/* Viewpoint 2: Circular Comic Dining Booths */}
-      <group position={[3.5, 0, 1]}>
+      {/* Spatial 2: Crimson Velvet Circular Dining Booth */}
+      <group position={[3.6, 0, 0.8]}>
+        <mesh position={[0, 0.55, 0]}>
+          <cylinderGeometry args={[1.8, 1.8, 1.0, 32, 1, false, 0, Math.PI * 1.4]} />
+          <meshPhysicalMaterial color="#FF3366" roughness={0.35} clearcoat={0.4} />
+        </mesh>
         <mesh position={[0, 0.5, 0]}>
-          <cylinderGeometry args={[1.6, 1.6, 0.9, 16, 1, false, 0, Math.PI * 1.4]} />
-          <meshStandardMaterial color="#F04438" roughness={0.3} />
-        </mesh>
-        <mesh position={[0, 0.45, 0]}>
-          <cylinderGeometry args={[0.8, 0.8, 0.9, 16]} />
-          <meshStandardMaterial color="#FFD928" />
+          <cylinderGeometry args={[0.9, 0.9, 0.95, 24]} />
+          <meshPhysicalMaterial color="#CCFF00" roughness={0.2} metalness={0.1} />
         </mesh>
       </group>
 
-      {/* Viewpoint 3: The Open Kitchen & Pass Counter */}
-      <group position={[-3.5, 0, -2]}>
-        {/* Pass Counter */}
-        <mesh position={[0, 0.6, 0]}>
-          <boxGeometry args={[5, 1.2, 1.2]} />
-          <meshStandardMaterial color="#E0E0E0" metalness={0.7} roughness={0.2} />
+      {/* Spatial 3: Stainless Open Kitchen Pass & Warm Heat Lamps */}
+      <group position={[-3.6, 0, -1.8]}>
+        <mesh position={[0, 0.7, 0]}>
+          <boxGeometry args={[5.2, 1.4, 1.3]} />
+          <meshPhysicalMaterial color="#E5E7EB" metalness={0.9} roughness={0.12} clearcoat={0.8} />
         </mesh>
-        {/* Warm Heat Lamps */}
-        {[-1.5, 0, 1.5].map((x, idx) => (
-          <mesh key={idx} position={[x, 2.2, 0]}>
-            <coneGeometry args={[0.3, 0.5, 16]} />
-            <meshStandardMaterial color="#FFD928" emissive="#F04438" emissiveIntensity={1.2} />
+        {[-1.6, 0, 1.6].map((x, idx) => (
+          <mesh key={idx} position={[x, 2.4, 0]}>
+            <coneGeometry args={[0.26, 0.48, 16]} />
+            <meshStandardMaterial color="#FFB800" emissive="#FF8A00" emissiveIntensity={2.0} />
           </mesh>
         ))}
       </group>
 
-      {/* Viewpoint 4: The Cocktail Lab & Fizz Bar */}
-      <group position={[2.5, 0, -4]}>
-        <mesh position={[0, 0.65, 0]}>
-          <boxGeometry args={[4.2, 1.3, 1.4]} />
-          <meshStandardMaterial color="#2455D6" roughness={0.1} metalness={0.4} />
+      {/* Spatial 4: Electric Blue Quartz Fizz Bar */}
+      <group position={[3.2, 0, -4.2]}>
+        <mesh position={[0, 0.7, 0]}>
+          <boxGeometry args={[4.6, 1.4, 1.4]} />
+          <meshPhysicalMaterial color="#0066FF" roughness={0.1} metalness={0.2} transmission={0.4} />
         </mesh>
-        {/* Stools */}
         {[-1.2, 0, 1.2].map((x, idx) => (
-          <mesh key={idx} position={[x, 0.4, 1.2]}>
-            <cylinderGeometry args={[0.25, 0.25, 0.8, 16]} />
-            <meshStandardMaterial color="#FFD928" />
+          <mesh key={idx} position={[x, 0.45, 1.2]}>
+            <cylinderGeometry args={[0.26, 0.26, 0.9, 16]} />
+            <meshStandardMaterial color="#CCFF00" />
           </mesh>
         ))}
       </group>
 
-      {/* Viewpoint 5: VIP Pop Studio Lounge */}
-      <group position={[0, 0, -5.5]}>
-        {/* Plush Velvet Sofa */}
-        <mesh position={[0, 0.4, 0]}>
-          <boxGeometry args={[3.2, 0.7, 1.2]} />
-          <meshStandardMaterial color="#F04438" roughness={0.8} />
+      {/* Spatial 5: Velvet VIP Lounge Salon */}
+      <group position={[0, 0, -5.8]}>
+        <mesh position={[0, 0.45, 0]}>
+          <boxGeometry args={[3.6, 0.75, 1.3]} />
+          <meshPhysicalMaterial color="#8B5CF6" roughness={0.6} />
         </mesh>
-        <mesh position={[0, 0.9, -0.45]}>
-          <boxGeometry args={[3.2, 0.9, 0.3]} />
-          <meshStandardMaterial color="#F04438" roughness={0.8} />
-        </mesh>
-        {/* Low Coffee Table */}
-        <mesh position={[0, 0.25, 1.2]}>
-          <boxGeometry args={[1.8, 0.4, 0.8]} />
-          <meshStandardMaterial color="#FFD928" />
+        <mesh position={[0, 1.0, -0.5]}>
+          <boxGeometry args={[3.6, 0.95, 0.3]} />
+          <meshPhysicalMaterial color="#8B5CF6" roughness={0.6} />
         </mesh>
       </group>
     </group>
@@ -212,19 +203,19 @@ export default function RestaurantTour() {
   const currentViewpoint = viewpoints[activeViewpointIndex] || viewpoints[0] || {
     name: 'The Neon Entry & Merch Wall',
     camera_x: 0,
-    camera_y: 2.5,
-    camera_z: 7.5,
+    camera_y: 2.2,
+    camera_z: 6.8,
     target_x: 0,
     target_y: 1.2,
     target_z: 0,
-    description: 'Explore the playful pop art dining studio.',
+    description: 'Explore the culinary studio spaces.',
     hotspots: []
   };
 
   const cameraPos = [
     currentViewpoint.camera_x ?? 0,
-    currentViewpoint.camera_y ?? 2.5,
-    currentViewpoint.camera_z ?? 7.5
+    currentViewpoint.camera_y ?? 2.2,
+    currentViewpoint.camera_z ?? 6.8
   ];
 
   const targetLookAt = [
@@ -238,21 +229,21 @@ export default function RestaurantTour() {
       style={{
         position: 'relative',
         width: '100%',
-        height: '650px',
-        borderRadius: '24px',
-        border: '4px solid #171717',
-        backgroundColor: '#171717',
-        boxShadow: '10px 10px 0px #FFD928',
+        height: '660px',
+        borderRadius: '28px',
+        border: '1px solid rgba(255, 255, 255, 0.12)',
+        backgroundColor: '#090A0E',
+        boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7)',
         overflow: 'hidden'
       }}
     >
-      {/* Top HUD Controls Bar */}
+      {/* Top Glass HUD Controls Bar */}
       <div
         style={{
           position: 'absolute',
-          top: '16px',
-          left: '16px',
-          right: '16px',
+          top: '20px',
+          left: '20px',
+          right: '20px',
           zIndex: 20,
           display: 'flex',
           flexWrap: 'wrap',
@@ -261,28 +252,29 @@ export default function RestaurantTour() {
           gap: '12px'
         }}
       >
-        {/* Left: Viewpoint Title Badge */}
+        {/* Active Viewpoint Badge */}
         <div
           style={{
-            backgroundColor: '#FFD928',
-            border: '2px solid #171717',
-            borderRadius: '10px',
-            padding: '8px 16px',
-            boxShadow: '3px 3px 0 #171717',
+            backgroundColor: 'rgba(15, 17, 24, 0.85)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '999px',
+            padding: '7px 18px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px'
+            gap: '10px',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
           }}
         >
           <span
             style={{
-              backgroundColor: '#F04438',
+              backgroundColor: '#FF3366',
               color: '#FFF',
               fontFamily: 'var(--font-mono)',
-              fontSize: '0.75rem',
+              fontSize: '10px',
               fontWeight: 800,
-              padding: '2px 6px',
-              borderRadius: '4px'
+              padding: '2px 7px',
+              borderRadius: '999px'
             }}
           >
             VP 0{activeViewpointIndex + 1}
@@ -290,8 +282,9 @@ export default function RestaurantTour() {
           <span
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: '1rem',
-              color: '#171717'
+              fontSize: '13.5px',
+              fontWeight: 700,
+              color: '#FFF'
             }}
           >
             {currentViewpoint.name}
@@ -299,16 +292,15 @@ export default function RestaurantTour() {
         </div>
 
         {/* Right: Mode & Mood Switchers */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {/* 3D vs Photo toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div
             style={{
-              backgroundColor: '#FFF5E6',
-              border: '2px solid #171717',
-              borderRadius: '8px',
+              backgroundColor: 'rgba(15, 17, 24, 0.85)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '999px',
               display: 'flex',
-              padding: '2px',
-              boxShadow: '2px 2px 0 #171717'
+              padding: '3px'
             }}
           >
             <button
@@ -316,56 +308,55 @@ export default function RestaurantTour() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '4px',
-                padding: '6px 10px',
-                borderRadius: '6px',
+                gap: '5px',
+                padding: '6px 14px',
+                borderRadius: '999px',
                 border: 'none',
-                backgroundColor: viewMode === '3d' ? '#2455D6' : 'transparent',
-                color: viewMode === '3d' ? '#FFF' : '#171717',
+                backgroundColor: viewMode === '3d' ? '#CCFF00' : 'transparent',
+                color: viewMode === '3d' ? '#0A0B0E' : '#9FA5B7',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
+                fontSize: '11px',
                 fontWeight: 700,
                 cursor: 'pointer'
               }}
             >
-              <Box size={14} /> 3D SCENE
+              <Box size={13} /> 3D SCENE
             </button>
             <button
               onClick={() => setViewMode('photo')}
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '4px',
-                padding: '6px 10px',
-                borderRadius: '6px',
+                gap: '5px',
+                padding: '6px 14px',
+                borderRadius: '999px',
                 border: 'none',
-                backgroundColor: viewMode === 'photo' ? '#2455D6' : 'transparent',
-                color: viewMode === 'photo' ? '#FFF' : '#171717',
+                backgroundColor: viewMode === 'photo' ? '#CCFF00' : 'transparent',
+                color: viewMode === 'photo' ? '#0A0B0E' : '#9FA5B7',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
+                fontSize: '11px',
                 fontWeight: 700,
                 cursor: 'pointer'
               }}
             >
-              <Eye size={14} /> PHOTO
+              <Eye size={13} /> PHOTO
             </button>
           </div>
 
-          {/* Mood Selector (Day / Neon / Midnight) */}
           <div
             style={{
-              backgroundColor: '#FFF5E6',
-              border: '2px solid #171717',
-              borderRadius: '8px',
+              backgroundColor: 'rgba(15, 17, 24, 0.85)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '999px',
               display: 'flex',
-              padding: '2px',
-              boxShadow: '2px 2px 0 #171717'
+              padding: '3px'
             }}
           >
             {[
               { id: 'day', label: 'Day', icon: Sun },
               { id: 'neon', label: 'Neon', icon: Zap },
-              { id: 'midnight', label: 'Night', icon: Moon }
+              { id: 'midnight', label: 'Cyber', icon: Moon }
             ].map(({ id, label, icon: Icon }) => (
               <button
                 key={id}
@@ -373,19 +364,19 @@ export default function RestaurantTour() {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
-                  padding: '6px 10px',
-                  borderRadius: '6px',
+                  gap: '5px',
+                  padding: '6px 12px',
+                  borderRadius: '999px',
                   border: 'none',
-                  backgroundColor: tourMood === id ? '#F04438' : 'transparent',
-                  color: tourMood === id ? '#FFF' : '#171717',
+                  backgroundColor: tourMood === id ? 'rgba(255, 255, 255, 0.15)' : 'transparent',
+                  color: tourMood === id ? '#FFF' : '#646A7E',
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.75rem',
+                  fontSize: '11px',
                   fontWeight: 700,
                   cursor: 'pointer'
                 }}
               >
-                <Icon size={13} /> {label}
+                <Icon size={12} /> {label}
               </button>
             ))}
           </div>
@@ -395,44 +386,28 @@ export default function RestaurantTour() {
       {/* Main Tour Canvas or Photo Layer */}
       {viewMode === '3d' ? (
         <Canvas
-          camera={{ position: [0, 2.5, 7.5], fov: 50 }}
-          gl={{ antialias: true }}
+          camera={{ position: [0, 2.2, 6.8], fov: 48 }}
+          gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping }}
           style={{ width: '100%', height: '100%' }}
         >
           <Suspense fallback={null}>
             <CameraRig targetPos={cameraPos} targetLookAt={targetLookAt} />
 
-            {/* Dynamic Mood Lighting */}
-            {tourMood === 'day' && (
-              <>
-                <ambientLight intensity={1.2} />
-                <directionalLight position={[10, 15, 10]} intensity={1.8} />
-              </>
-            )}
-            {tourMood === 'neon' && (
-              <>
-                <ambientLight intensity={0.5} />
-                <pointLight position={[0, 4, 0]} intensity={3.5} color="#2455D6" />
-                <pointLight position={[4, 2, -2]} intensity={2.5} color="#FFD928" />
-                <pointLight position={[-4, 2, 2]} intensity={2.5} color="#F04438" />
-              </>
-            )}
-            {tourMood === 'midnight' && (
-              <>
-                <ambientLight intensity={0.25} />
-                <pointLight position={[0, 3, 0]} intensity={4.0} color="#FFD928" />
-                <pointLight position={[-3, 2, -3]} intensity={3.0} color="#00C389" />
-              </>
-            )}
+            {/* Bright Studio Lighting */}
+            <ambientLight intensity={1.2} />
+            <directionalLight position={[10, 20, 15]} intensity={2.2} color="#FFFFFF" />
+            <pointLight position={[0, 6, 0]} intensity={4.5} color="#00F0FF" />
+            <pointLight position={[5, 4, -2]} intensity={3.5} color="#CCFF00" />
+            <pointLight position={[-5, 4, 2]} intensity={3.5} color="#FF3366" />
 
-            <StudioArchitecture activeIndex={activeViewpointIndex} mood={tourMood} />
+            <StudioArchitecture mood={tourMood} />
 
-            {/* Render 3D Hotspots */}
+            {/* Hotspots */}
             {currentViewpoint.hotspots &&
               currentViewpoint.hotspots.map((hs, idx) => (
-                <HotspotMarker
+                <GlowingHotspot
                   key={idx}
-                  position={[hs.x || 0, hs.y || 1.5, hs.z || 0]}
+                  position={[hs.x || 0, hs.y || 1.4, hs.z || 0]}
                   title={hs.title}
                   description={hs.description}
                   isSelected={selectedHotspot?.title === hs.title}
@@ -449,14 +424,7 @@ export default function RestaurantTour() {
           </Suspense>
         </Canvas>
       ) : (
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-            position: 'relative',
-            overflow: 'hidden'
-          }}
-        >
+        <div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
           <img
             src={currentViewpoint.image_url}
             alt={currentViewpoint.name}
@@ -464,68 +432,70 @@ export default function RestaurantTour() {
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              filter: tourMood === 'midnight' ? 'brightness(0.7) contrast(1.2)' : 'none'
+              filter: tourMood === 'midnight' ? 'brightness(0.75) contrast(1.15)' : 'none'
             }}
           />
           <div
             style={{
               position: 'absolute',
               inset: 0,
-              background: 'linear-gradient(to top, rgba(23,23,23,0.8) 0%, transparent 50%)'
+              background: 'linear-gradient(to top, rgba(9,10,14,0.9) 0%, transparent 50%)'
             }}
           />
         </div>
       )}
 
-      {/* Selected Hotspot Detail Popup Overlay */}
+      {/* Selected Hotspot Detail Popup */}
       {selectedHotspot && (
         <div
           style={{
             position: 'absolute',
-            bottom: '90px',
-            right: '20px',
-            backgroundColor: '#FFF5E6',
-            border: '3px solid #171717',
-            borderRadius: '16px',
-            padding: '16px 20px',
+            bottom: '85px',
+            right: '24px',
+            backgroundColor: 'rgba(18, 20, 29, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: '20px',
+            padding: '20px 24px',
             maxWidth: '340px',
-            boxShadow: '6px 6px 0px #171717',
+            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.7)',
             zIndex: 30
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
-                backgroundColor: '#FFD928',
-                padding: '2px 8px',
-                borderRadius: '4px',
-                fontWeight: 800,
-                border: '1px solid #171717'
+                fontSize: '10px',
+                backgroundColor: 'rgba(204, 255, 0, 0.12)',
+                color: '#CCFF00',
+                padding: '3px 8px',
+                borderRadius: '999px',
+                fontWeight: 700,
+                border: '1px solid rgba(204, 255, 0, 0.3)'
               }}
             >
-              HOTSPOT FEATURE
+              SPACE HIGHLIGHT
             </span>
             <button
               onClick={() => setSelectedHotspot(null)}
               style={{
-                background: 'none',
-                border: 'none',
+                color: '#9FA5B7',
                 cursor: 'pointer',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 900
+                display: 'flex',
+                alignItems: 'center'
               }}
             >
-              ✕
+              <X size={16} />
             </button>
           </div>
           <h4
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: '1.2rem',
-              color: '#171717',
-              margin: '0 0 6px 0'
+              fontSize: '16px',
+              fontWeight: 700,
+              color: '#FFF',
+              margin: '0 0 8px 0'
             }}
           >
             {selectedHotspot.title}
@@ -533,9 +503,9 @@ export default function RestaurantTour() {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '0.9rem',
-              lineHeight: 1.5,
-              color: '#444',
+              fontSize: '13px',
+              lineHeight: 1.6,
+              color: '#9FA5B7',
               margin: 0
             }}
           >
@@ -548,13 +518,13 @@ export default function RestaurantTour() {
       <div
         style={{
           position: 'absolute',
-          bottom: '16px',
-          left: '16px',
-          right: '16px',
+          bottom: '18px',
+          left: '20px',
+          right: '20px',
           zIndex: 20,
           display: 'flex',
           alignItems: 'center',
-          gap: '10px',
+          gap: '8px',
           overflowX: 'auto',
           paddingBottom: '4px'
         }}
@@ -570,22 +540,24 @@ export default function RestaurantTour() {
               }}
               style={{
                 flexShrink: 0,
-                backgroundColor: isActive ? '#F04438' : '#FFF5E6',
-                color: isActive ? '#FFF' : '#171717',
-                border: '2px solid #171717',
-                borderRadius: '8px',
-                padding: '8px 14px',
+                backgroundColor: isActive ? '#CCFF00' : 'rgba(15, 17, 24, 0.85)',
+                color: isActive ? '#0A0B0E' : '#9FA5B7',
+                backdropFilter: 'blur(20px)',
+                border: isActive ? '1px solid #CCFF00' : '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '999px',
+                padding: '8px 16px',
                 fontFamily: 'var(--font-display)',
-                fontSize: '0.85rem',
+                fontSize: '12px',
+                fontWeight: 700,
                 cursor: 'pointer',
-                boxShadow: isActive ? '3px 3px 0 #FFD928' : '2px 2px 0 #171717',
+                boxShadow: isActive ? '0 0 20px rgba(204, 255, 0, 0.35)' : 'none',
                 transition: 'all 0.15s ease',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '6px'
               }}
             >
-              <span>0{index + 1}.</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px' }}>0{index + 1}.</span>
               <span>{vp.name}</span>
             </button>
           );

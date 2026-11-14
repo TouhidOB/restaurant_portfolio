@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCMS } from '../context/CMSContext';
-import { Sparkles, Flame, Eye, ArrowRight } from 'lucide-react';
+import { ArrowUpRight, Flame, Eye } from 'lucide-react';
 
 export default function S06_FeaturedDishes() {
   const { data, setSelectedDish } = useCMS();
@@ -11,39 +11,24 @@ export default function S06_FeaturedDishes() {
     <section
       id="featured"
       style={{
-        backgroundColor: '#FFF5E6',
-        padding: '100px 24px',
-        borderBottom: '4px solid #171717',
+        backgroundColor: '#090A0E',
+        padding: '110px 24px',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         position: 'relative'
       }}
     >
       <div
         style={{
-          maxWidth: '1360px',
+          maxWidth: '1280px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: '48px'
+          gap: '50px'
         }}
       >
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto' }}>
-          <div
-            style={{
-              display: 'inline-block',
-              backgroundColor: '#FFD928',
-              color: '#171717',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem',
-              fontWeight: 800,
-              padding: '6px 16px',
-              borderRadius: '999px',
-              border: '2px solid #171717',
-              boxShadow: '3px 3px 0 #171717',
-              marginBottom: '16px',
-              textTransform: 'uppercase'
-            }}
-          >
+          <div className="pill-badge" style={{ marginBottom: '16px', color: '#FF6B8B', borderColor: 'rgba(255, 51, 102, 0.25)' }}>
             CHAPTER 04 // HALL OF FAME
           </div>
 
@@ -52,9 +37,10 @@ export default function S06_FeaturedDishes() {
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(2.4rem, 5vw, 4rem)',
               lineHeight: 1.05,
-              color: '#171717',
-              margin: '0 0 16px 0',
-              textShadow: '3px 3px 0 #F04438'
+              fontWeight: 800,
+              color: '#FFFFFF',
+              letterSpacing: '-1px',
+              margin: '0 0 16px 0'
             }}
           >
             THE CROWD PLEASERS.
@@ -63,13 +49,13 @@ export default function S06_FeaturedDishes() {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '1.15rem',
+              fontSize: '15px',
               lineHeight: 1.6,
-              color: '#444',
+              color: '#9FA5B7',
               margin: 0
             }}
           >
-            Our most ordered, most photographed, and most celebrated culinary inventions. Click any plate to inspect the recipe details.
+            Our most requested and photographed culinary inventions. Click any plate to inspect recipe specifications and beverage pairings.
           </p>
         </div>
 
@@ -78,7 +64,7 @@ export default function S06_FeaturedDishes() {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '32px'
+            gap: '28px'
           }}
         >
           {featured.map((item) => (
@@ -86,23 +72,25 @@ export default function S06_FeaturedDishes() {
               key={item.id}
               onClick={() => setSelectedDish(item)}
               style={{
-                backgroundColor: '#FFF',
-                border: '4px solid #171717',
-                borderRadius: '20px',
+                backgroundColor: '#12141D',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '24px',
                 overflow: 'hidden',
-                boxShadow: '8px 8px 0 #171717',
                 cursor: 'pointer',
-                transition: 'all 0.2s ease',
+                transition: 'all 0.25s ease',
                 display: 'flex',
-                flexDirection: 'column'
+                flexDirection: 'column',
+                boxShadow: '0 12px 32px rgba(0, 0, 0, 0.4)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translate(-4px, -4px)';
-                e.currentTarget.style.boxShadow = '12px 12px 0 #F04438';
+                e.currentTarget.style.transform = 'translateY(-6px)';
+                e.currentTarget.style.borderColor = 'rgba(204, 255, 0, 0.4)';
+                e.currentTarget.style.boxShadow = '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(204, 255, 0, 0.15)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'none';
-                e.currentTarget.style.boxShadow = '8px 8px 0 #171717';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.4)';
               }}
             >
               {/* Dish Image */}
@@ -110,36 +98,37 @@ export default function S06_FeaturedDishes() {
                 style={{
                   height: '240px',
                   position: 'relative',
-                  borderBottom: '3px solid #171717',
                   overflow: 'hidden'
                 }}
               >
                 <img
-                  src={item.image_url}
+                  src={item.image_url || item.image || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80'}
                   alt={item.name}
                   style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    display: 'block'
+                    display: 'block',
+                    transition: 'transform 0.4s ease'
                   }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                 />
 
-                {/* Price Sticker */}
+                {/* Price Sticker in Cyber Lime */}
                 <div
                   style={{
                     position: 'absolute',
-                    top: '12px',
-                    right: '12px',
-                    backgroundColor: '#FFD928',
-                    color: '#171717',
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '1.25rem',
-                    padding: '4px 12px',
-                    borderRadius: '8px',
-                    border: '2px solid #171717',
-                    boxShadow: '3px 3px 0 #171717',
-                    transform: 'rotate(2deg)'
+                    top: '14px',
+                    right: '14px',
+                    backgroundColor: '#CCFF00',
+                    color: '#0A0B0E',
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '12px',
+                    fontWeight: 800,
+                    padding: '4px 10px',
+                    borderRadius: '999px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)'
                   }}
                 >
                   ${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}
@@ -149,15 +138,17 @@ export default function S06_FeaturedDishes() {
                 <div
                   style={{
                     position: 'absolute',
-                    bottom: '12px',
-                    left: '12px',
-                    backgroundColor: '#171717',
+                    bottom: '14px',
+                    left: '14px',
+                    backgroundColor: 'rgba(9, 10, 14, 0.8)',
+                    backdropFilter: 'blur(10px)',
                     color: '#FFF',
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.75rem',
-                    padding: '4px 10px',
-                    borderRadius: '6px',
-                    fontWeight: 700
+                    fontSize: '10px',
+                    padding: '3px 9px',
+                    borderRadius: '999px',
+                    border: '1px solid rgba(255, 255, 255, 0.15)',
+                    fontWeight: 600
                   }}
                 >
                   {item.category}
@@ -165,15 +156,16 @@ export default function S06_FeaturedDishes() {
               </div>
 
               {/* Body Content */}
-              <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
+              <div style={{ padding: '26px', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
                 <div>
                   <h3
                     style={{
                       fontFamily: 'var(--font-display)',
-                      fontSize: '1.4rem',
-                      color: '#171717',
+                      fontSize: '18px',
+                      fontWeight: 700,
+                      color: '#FFF',
                       margin: '0 0 10px 0',
-                      lineHeight: 1.2
+                      lineHeight: 1.3
                     }}
                   >
                     {item.name}
@@ -182,9 +174,9 @@ export default function S06_FeaturedDishes() {
                   <p
                     style={{
                       fontFamily: 'var(--font-body)',
-                      fontSize: '0.95rem',
-                      lineHeight: 1.5,
-                      color: '#555',
+                      fontSize: '13.5px',
+                      lineHeight: 1.6,
+                      color: '#9FA5B7',
                       margin: '0 0 16px 0'
                     }}
                   >
@@ -197,36 +189,36 @@ export default function S06_FeaturedDishes() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    borderTop: '2px dashed #EEE',
+                    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
                     paddingTop: '16px'
                   }}
                 >
                   <span
                     style={{
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8rem',
-                      color: '#2455D6',
-                      fontWeight: 800,
+                      fontSize: '11px',
+                      color: '#CCFF00',
+                      fontWeight: 700,
                       display: 'flex',
                       alignItems: 'center',
                       gap: '4px'
                     }}
                   >
-                    <Eye size={14} /> VIEW SPECIFICATIONS
+                    <Eye size={13} /> VIEW RECIPE SPECS
                   </span>
                   <div
                     style={{
-                      width: '32px',
-                      height: '32px',
+                      width: '28px',
+                      height: '28px',
                       borderRadius: '50%',
-                      backgroundColor: '#FFD928',
-                      border: '2px solid #171717',
+                      backgroundColor: 'rgba(255, 255, 255, 0.06)',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'center'
+                      justifyContent: 'center',
+                      color: '#FFF'
                     }}
                   >
-                    <ArrowRight size={16} />
+                    <ArrowUpRight size={14} />
                   </div>
                 </div>
               </div>

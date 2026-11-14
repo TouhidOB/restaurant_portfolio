@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCMS } from '../context/CMSContext';
-import { Sparkles, Calendar, Clock, Check, ArrowRight } from 'lucide-react';
+import { Clock, Check, ArrowUpRight } from 'lucide-react';
 
 export default function S10_EventsExperiences() {
   const { data, setIsReservationModalOpen } = useCMS();
@@ -10,39 +10,24 @@ export default function S10_EventsExperiences() {
     <section
       id="experiences"
       style={{
-        backgroundColor: '#FFF5E6',
-        padding: '100px 24px',
-        borderBottom: '4px solid #171717',
+        backgroundColor: '#090A0E',
+        padding: '110px 24px',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         position: 'relative'
       }}
     >
       <div
         style={{
-          maxWidth: '1360px',
+          maxWidth: '1280px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: '48px'
+          gap: '50px'
         }}
       >
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto' }}>
-          <div
-            style={{
-              display: 'inline-block',
-              backgroundColor: '#F04438',
-              color: '#FFF',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem',
-              fontWeight: 800,
-              padding: '6px 16px',
-              borderRadius: '999px',
-              border: '2px solid #171717',
-              boxShadow: '3px 3px 0 #171717',
-              marginBottom: '16px',
-              textTransform: 'uppercase'
-            }}
-          >
+          <div className="pill-badge" style={{ marginBottom: '16px', color: '#00F0FF', borderColor: 'rgba(0, 240, 255, 0.25)' }}>
             CHAPTER 08 // CURATED HAPPENINGS
           </div>
 
@@ -51,9 +36,10 @@ export default function S10_EventsExperiences() {
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(2.4rem, 5vw, 4rem)',
               lineHeight: 1.05,
-              color: '#171717',
-              margin: '0 0 16px 0',
-              textShadow: '3px 3px 0 #FFD928'
+              fontWeight: 800,
+              color: '#FFFFFF',
+              letterSpacing: '-1px',
+              margin: '0 0 16px 0'
             }}
           >
             LET'S MAKE IT AN OCCASION.
@@ -62,9 +48,9 @@ export default function S10_EventsExperiences() {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '1.15rem',
+              fontSize: '15px',
               lineHeight: 1.6,
-              color: '#444',
+              color: '#9FA5B7',
               margin: 0
             }}
           >
@@ -77,45 +63,45 @@ export default function S10_EventsExperiences() {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-            gap: '32px'
+            gap: '28px'
           }}
         >
           {experiences.map((exp, idx) => (
             <div
               key={exp.id || idx}
               style={{
-                backgroundColor: '#FFF',
-                border: '4px solid #171717',
+                backgroundColor: '#12141D',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
                 borderRadius: '24px',
-                padding: '32px',
-                boxShadow: '8px 8px 0 #171717',
+                padding: '36px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.25s ease',
+                boxShadow: '0 12px 32px rgba(0, 0, 0, 0.4)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translate(-4px, -4px)';
-                e.currentTarget.style.boxShadow = '12px 12px 0 #2455D6';
+                e.currentTarget.style.transform = 'translateY(-6px)';
+                e.currentTarget.style.borderColor = 'rgba(204, 255, 0, 0.35)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'none';
-                e.currentTarget.style.boxShadow = '8px 8px 0 #171717';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
               }}
             >
               <div>
-                {/* Price Sticker */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                {/* Price and Badge */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '18px' }}>
                   <span
                     style={{
-                      backgroundColor: '#FFD928',
-                      color: '#171717',
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8rem',
-                      fontWeight: 800,
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                      color: '#CCFF00',
                       padding: '4px 10px',
-                      borderRadius: '6px',
-                      border: '2px solid #171717'
+                      borderRadius: '999px',
+                      border: '1px solid rgba(255, 255, 255, 0.1)'
                     }}
                   >
                     EXPERIENCE 0{idx + 1}
@@ -123,9 +109,10 @@ export default function S10_EventsExperiences() {
 
                   <span
                     style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '1.25rem',
-                      color: '#F04438'
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      color: '#FFF'
                     }}
                   >
                     {exp.price}
@@ -135,10 +122,11 @@ export default function S10_EventsExperiences() {
                 <h3
                   style={{
                     fontFamily: 'var(--font-display)',
-                    fontSize: '1.5rem',
-                    color: '#171717',
+                    fontSize: '20px',
+                    fontWeight: 700,
+                    color: '#FFF',
                     margin: '0 0 6px 0',
-                    lineHeight: 1.2
+                    lineHeight: 1.25
                   }}
                 >
                   {exp.title}
@@ -147,9 +135,9 @@ export default function S10_EventsExperiences() {
                 <div
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.85rem',
-                    color: '#2455D6',
-                    fontWeight: 700,
+                    fontSize: '11px',
+                    color: '#00F0FF',
+                    fontWeight: 600,
                     marginBottom: '14px'
                   }}
                 >
@@ -159,9 +147,9 @@ export default function S10_EventsExperiences() {
                 <p
                   style={{
                     fontFamily: 'var(--font-body)',
-                    fontSize: '0.95rem',
+                    fontSize: '13.5px',
                     lineHeight: 1.6,
-                    color: '#555',
+                    color: '#9FA5B7',
                     margin: '0 0 20px 0'
                   }}
                 >
@@ -175,41 +163,41 @@ export default function S10_EventsExperiences() {
                       display: 'flex',
                       alignItems: 'center',
                       gap: '8px',
-                      backgroundColor: '#FFF5E6',
-                      border: '2px solid #171717',
-                      borderRadius: '8px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(255, 255, 255, 0.06)',
+                      borderRadius: '10px',
                       padding: '8px 12px',
                       marginBottom: '20px'
                     }}
                   >
-                    <Clock size={16} color="#F04438" />
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', fontWeight: 700 }}>
+                    <Clock size={14} color="#FF6B8B" />
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#FFF' }}>
                       {exp.timing}
                     </span>
                   </div>
                 )}
 
-                {/* Feature Checklist */}
+                {/* Features Checklist */}
                 {exp.features && exp.features.length > 0 && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '28px' }}>
                     {exp.features.map((feat, fIdx) => (
                       <div key={fIdx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div
                           style={{
-                            width: '18px',
-                            height: '18px',
+                            width: '16px',
+                            height: '16px',
                             borderRadius: '50%',
-                            backgroundColor: '#00C389',
-                            color: '#FFF',
+                            backgroundColor: 'rgba(204, 255, 0, 0.15)',
+                            color: '#CCFF00',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             flexShrink: 0
                           }}
                         >
-                          <Check size={12} strokeWidth={3} />
+                          <Check size={10} strokeWidth={3} />
                         </div>
-                        <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: '#333' }}>
+                        <span style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: '#D4D4D8' }}>
                           {feat}
                         </span>
                       </div>
@@ -218,30 +206,39 @@ export default function S10_EventsExperiences() {
                 )}
               </div>
 
-              {/* Book Button */}
+              {/* Action Button */}
               <button
                 onClick={() => setIsReservationModalOpen(true)}
                 style={{
                   width: '100%',
                   padding: '12px',
-                  backgroundColor: '#171717',
+                  backgroundColor: 'rgba(255, 255, 255, 0.06)',
                   color: '#FFF',
-                  border: '2px solid #171717',
-                  borderRadius: '10px',
+                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  borderRadius: '999px',
                   fontFamily: 'var(--font-display)',
-                  fontSize: '1rem',
-                  letterSpacing: '0.5px',
+                  fontSize: '13px',
+                  fontWeight: 700,
                   cursor: 'pointer',
-                  boxShadow: '4px 4px 0 #FFD928',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
-                  transition: 'all 0.15s ease'
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#CCFF00';
+                  e.currentTarget.style.color = '#0A0B0E';
+                  e.currentTarget.style.borderColor = '#CCFF00';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.06)';
+                  e.currentTarget.style.color = '#FFF';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
                 }}
               >
-                <span>BOOK THIS HAPPENING</span>
-                <ArrowRight size={16} />
+                <span>BOOK THIS OCCASION</span>
+                <ArrowUpRight size={14} />
               </button>
             </div>
           ))}

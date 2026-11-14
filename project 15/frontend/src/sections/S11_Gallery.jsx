@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useCMS } from '../context/CMSContext';
-import { Eye, Sparkles } from 'lucide-react';
 
 export default function S11_Gallery() {
   const { data, setLightboxIndex } = useCMS();
@@ -19,15 +18,15 @@ export default function S11_Gallery() {
     <section
       id="gallery"
       style={{
-        backgroundColor: '#FFF5E6',
-        padding: '100px 24px',
-        borderBottom: '4px solid #171717',
+        backgroundColor: '#090A0E',
+        padding: '110px 24px',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         position: 'relative'
       }}
     >
       <div
         style={{
-          maxWidth: '1360px',
+          maxWidth: '1280px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
@@ -36,22 +35,7 @@ export default function S11_Gallery() {
       >
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto' }}>
-          <div
-            style={{
-              display: 'inline-block',
-              backgroundColor: '#2455D6',
-              color: '#FFF',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem',
-              fontWeight: 800,
-              padding: '6px 16px',
-              borderRadius: '999px',
-              border: '2px solid #171717',
-              boxShadow: '3px 3px 0 #171717',
-              marginBottom: '16px',
-              textTransform: 'uppercase'
-            }}
-          >
+          <div className="pill-badge" style={{ marginBottom: '16px', color: '#FF3366', borderColor: 'rgba(255, 51, 102, 0.25)' }}>
             CHAPTER 09 // VISUAL ARCHIVE
           </div>
 
@@ -60,9 +44,10 @@ export default function S11_Gallery() {
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(2.4rem, 5vw, 4rem)',
               lineHeight: 1.05,
-              color: '#171717',
-              margin: '0 0 16px 0',
-              textShadow: '3px 3px 0 #FFD928'
+              fontWeight: 800,
+              color: '#FFFFFF',
+              letterSpacing: '-1px',
+              margin: '0 0 16px 0'
             }}
           >
             GOOD FOOD LOOKS GOOD.
@@ -71,33 +56,32 @@ export default function S11_Gallery() {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '1.15rem',
+              fontSize: '15px',
               lineHeight: 1.6,
-              color: '#444',
+              color: '#9FA5B7',
               margin: 0
             }}
           >
-            High-contrast plates, neon-soaked dining booths, and culinary fireworks. Tap any snapshot to view in full screen.
+            High-contrast plates, neon-soaked dining booths, and culinary fireworks. Tap any snapshot to expand into full screen.
           </p>
         </div>
 
         {/* Filter Pills */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '8px' }}>
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveFilter(cat)}
               style={{
-                backgroundColor: activeFilter === cat ? '#FFD928' : '#FFF',
-                color: '#171717',
-                border: '2px solid #171717',
-                borderRadius: '8px',
-                padding: '8px 16px',
+                backgroundColor: activeFilter === cat ? '#CCFF00' : 'rgba(255, 255, 255, 0.04)',
+                color: activeFilter === cat ? '#0A0B0E' : '#9FA5B7',
+                border: activeFilter === cat ? '1px solid #CCFF00' : '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '999px',
+                padding: '6px 16px',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.85rem',
+                fontSize: '11px',
                 fontWeight: 700,
                 cursor: 'pointer',
-                boxShadow: activeFilter === cat ? '3px 3px 0 #F04438' : '2px 2px 0 #171717',
                 transition: 'all 0.15s ease'
               }}
             >
@@ -111,7 +95,7 @@ export default function S11_Gallery() {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '24px'
+            gap: '20px'
           }}
         >
           {filteredItems.map((item, idx) => {
@@ -123,20 +107,20 @@ export default function S11_Gallery() {
                 style={{
                   position: 'relative',
                   height: '280px',
-                  borderRadius: '16px',
-                  border: '3px solid #171717',
+                  borderRadius: '20px',
                   overflow: 'hidden',
-                  boxShadow: '6px 6px 0 #171717',
                   cursor: 'pointer',
-                  transition: 'all 0.2s ease'
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = 'scale(1.02)';
-                  e.currentTarget.style.boxShadow = '10px 10px 0 #F04438';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'none';
-                  e.currentTarget.style.boxShadow = '6px 6px 0 #171717';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
                 }}
               >
                 <img
@@ -150,30 +134,31 @@ export default function S11_Gallery() {
                   }}
                 />
 
-                {/* Hover Caption Overlay */}
+                {/* Dark Vignette Overlay with Title */}
                 <div
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'linear-gradient(to top, rgba(23,23,23,0.85) 0%, transparent 60%)',
+                    background: 'linear-gradient(to top, rgba(9,10,14,0.9) 0%, transparent 60%)',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'flex-end',
-                    padding: '16px'
+                    padding: '20px'
                   }}
                 >
                   <span
                     style={{
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.7rem',
-                      fontWeight: 800,
-                      backgroundColor: '#FFD928',
-                      color: '#171717',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
+                      fontSize: '9px',
+                      fontWeight: 700,
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      backdropFilter: 'blur(8px)',
+                      color: '#CCFF00',
+                      padding: '2px 8px',
+                      borderRadius: '999px',
                       display: 'inline-block',
                       width: 'fit-content',
-                      marginBottom: '4px'
+                      marginBottom: '6px'
                     }}
                   >
                     {item.category}
@@ -181,9 +166,10 @@ export default function S11_Gallery() {
                   <div
                     style={{
                       fontFamily: 'var(--font-display)',
-                      fontSize: '1.15rem',
+                      fontSize: '15px',
+                      fontWeight: 700,
                       color: '#FFF',
-                      lineHeight: 1.2
+                      lineHeight: 1.3
                     }}
                   >
                     {item.title}

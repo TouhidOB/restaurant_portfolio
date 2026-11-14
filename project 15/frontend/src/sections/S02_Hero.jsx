@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCMS } from '../context/CMSContext';
 import HeroScene from '../components/three/HeroScene';
-import { ArrowDown, Sparkles, Flame, Eye, Utensils } from 'lucide-react';
+import { ArrowUpRight, Flame, Eye, Utensils, Sparkles } from 'lucide-react';
 
 export default function S02_Hero() {
   const { data, setIsReservationModalOpen } = useCMS();
@@ -12,134 +12,151 @@ export default function S02_Hero() {
       id="hero"
       style={{
         minHeight: '100vh',
-        backgroundColor: '#FFF5E6',
-        backgroundImage: 'radial-gradient(#171717 10%, transparent 11%)',
-        backgroundSize: '28px 28px',
+        backgroundColor: '#090A0E',
+        backgroundImage: 'radial-gradient(circle at 80% 30%, rgba(255, 51, 102, 0.09) 0%, transparent 55%), radial-gradient(circle at 20% 70%, rgba(204, 255, 0, 0.05) 0%, transparent 50%)',
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        padding: '140px 24px 60px 24px',
+        padding: '130px 24px 70px 24px',
         overflow: 'hidden',
-        borderBottom: '4px solid #171717'
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)'
       }}
     >
       <div
         style={{
-          maxWidth: '1360px',
+          maxWidth: '1280px',
           margin: '0 auto',
           width: '100%',
           display: 'grid',
-          gridTemplateColumns: '1.1fr 1fr',
+          gridTemplateColumns: '1.05fr 1fr',
           alignItems: 'center',
-          gap: '40px',
+          gap: '48px',
           position: 'relative',
           zIndex: 2
         }}
         className="hero-grid"
       >
-        {/* Left Column: Comic Typography & CTAs */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          {/* Top Comic Badges */}
+        {/* Left Column: High-Fashion Editorial Typography */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+          {/* Micro-Pill Tags */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
             <span
               style={{
-                backgroundColor: '#F04438',
-                color: '#FFF',
+                backgroundColor: 'rgba(255, 51, 102, 0.12)',
+                color: '#FF6B8B',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.8rem',
-                fontWeight: 800,
+                fontSize: '11px',
+                fontWeight: 700,
                 padding: '6px 14px',
-                borderRadius: '8px',
-                border: '2px solid #171717',
-                boxShadow: '3px 3px 0 #171717',
-                transform: 'rotate(-2deg)',
+                borderRadius: '999px',
+                border: '1px solid rgba(255, 51, 102, 0.25)',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px'
+                gap: '6px',
+                letterSpacing: '0.5px'
               }}
             >
-              <Flame size={14} /> 100% FLAVOR GUARANTEED
+              <Flame size={13} color="#FF3366" />
+              100% SCRATCH KITCHEN
             </span>
 
             <span
               style={{
-                backgroundColor: '#FFD928',
-                color: '#171717',
+                backgroundColor: 'rgba(204, 255, 0, 0.1)',
+                color: '#CCFF00',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.8rem',
-                fontWeight: 800,
+                fontSize: '11px',
+                fontWeight: 700,
                 padding: '6px 14px',
-                borderRadius: '8px',
-                border: '2px solid #171717',
-                boxShadow: '3px 3px 0 #171717',
-                transform: 'rotate(2deg)'
+                borderRadius: '999px',
+                border: '1px solid rgba(204, 255, 0, 0.25)',
+                letterSpacing: '0.5px'
               }}
             >
-              EST. 2024 • ARTS DISTRICT
+              EST. 2024 • ARTS DISTRICT LA
             </span>
           </div>
 
-          {/* Massive Headline */}
+          {/* Architectural Headline */}
           <h1
             style={{
               fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(2.8rem, 6.5vw, 5.2rem)',
-              lineHeight: 0.95,
-              color: '#171717',
-              margin: 0,
-              textShadow: '3px 3px 0 #FFD928'
+              fontSize: 'clamp(3rem, 6.5vw, 5.4rem)',
+              lineHeight: 1.0,
+              fontWeight: 800,
+              color: '#FFFFFF',
+              letterSpacing: '-1.5px',
+              margin: 0
             }}
           >
-            {config.hero_headline || 'GOOD FOOD. BIG PERSONALITY.'}
+            GOOD FOOD.<br />
+            <span
+              style={{
+                background: 'linear-gradient(135deg, #FFFFFF 0%, #D4D4D8 40%, #CCFF00 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              BIG PERSONALITY.
+            </span>
           </h1>
 
-          {/* Subheadline Comic Speech Box */}
+          {/* Subheadline in Frosted Glass */}
           <div
             style={{
-              backgroundColor: '#FFFFFF',
-              border: '3px solid #171717',
+              backgroundColor: 'rgba(255, 255, 255, 0.03)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
               borderRadius: '16px',
               padding: '18px 24px',
-              boxShadow: '6px 6px 0 #2455D6',
-              position: 'relative'
+              maxWidth: '540px'
             }}
           >
             <p
               style={{
                 fontFamily: 'var(--font-body)',
-                fontSize: '1.15rem',
-                lineHeight: 1.6,
-                color: '#222',
+                fontSize: '15px',
+                lineHeight: 1.65,
+                color: '#9FA5B7',
                 margin: 0
               }}
             >
               {config.hero_subheadline ||
-                'A vibrant dining playground where oversized pop-art aesthetics meet culinary craftsmanship. Bold flavors, neon nights, and unapologetic plates.'}
+                'A contemporary dining playground where oversized pop-art aesthetics meet serious culinary technique. Bold flavors, neon nights, and unapologetic plates.'}
             </p>
           </div>
 
           {/* CTA Buttons */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', marginTop: '10px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', marginTop: '6px' }}>
             <button
               onClick={() => setIsReservationModalOpen(true)}
               style={{
-                backgroundColor: '#F04438',
-                color: '#FFF',
-                border: '3px solid #171717',
-                borderRadius: '12px',
-                padding: '14px 28px',
+                backgroundColor: '#CCFF00',
+                color: '#0A0B0E',
+                borderRadius: '999px',
+                padding: '14px 30px',
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.2rem',
-                letterSpacing: '0.5px',
-                boxShadow: '5px 5px 0 #171717',
+                fontSize: '14px',
+                fontWeight: 700,
+                letterSpacing: '0.3px',
                 cursor: 'pointer',
-                transition: 'all 0.15s ease'
+                boxShadow: '0 0 25px rgba(204, 255, 0, 0.35)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                transition: 'all 0.2s ease'
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translate(-2px, -2px)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 0 35px rgba(204, 255, 0, 0.55)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.boxShadow = '0 0 25px rgba(204, 255, 0, 0.35)';
+              }}
             >
-              CLAIM A TABLE NOW
+              <span>CLAIM A TABLE</span>
+              <ArrowUpRight size={17} />
             </button>
 
             <a
@@ -148,21 +165,27 @@ export default function S02_Hero() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                backgroundColor: '#FFD928',
-                color: '#171717',
-                border: '3px solid #171717',
-                borderRadius: '12px',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                color: '#FFF',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '999px',
                 padding: '14px 24px',
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.1rem',
+                fontSize: '14px',
+                fontWeight: 600,
                 textDecoration: 'none',
-                boxShadow: '5px 5px 0 #171717',
-                transition: 'all 0.15s ease'
+                transition: 'all 0.2s ease'
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translate(-2px, -2px)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+              }}
             >
-              <Utensils size={18} />
+              <Utensils size={16} />
               <span>EXPLORE MENU</span>
             </a>
 
@@ -172,50 +195,68 @@ export default function S02_Hero() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                backgroundColor: '#FFF',
-                color: '#171717',
-                border: '3px solid #171717',
-                borderRadius: '12px',
+                backgroundColor: 'transparent',
+                color: '#9FA5B7',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '999px',
                 padding: '14px 20px',
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.05rem',
+                fontSize: '13px',
+                fontWeight: 600,
                 textDecoration: 'none',
-                boxShadow: '5px 5px 0 #171717'
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#FFF';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = '#9FA5B7';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
               }}
             >
-              <Eye size={18} />
-              <span>3D TOUR</span>
+              <Eye size={16} />
+              <span>3D STUDIO</span>
             </a>
           </div>
 
-          {/* Stat Badges */}
+          {/* Minimalist Telemetry Stats Bar */}
           <div
             style={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: '16px',
-              marginTop: '16px'
+              gap: '24px',
+              marginTop: '16px',
+              paddingTop: '20px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.08)'
             }}
           >
             {[
               { val: '1,200+', label: 'Daily Brioche Buns' },
               { val: '18', label: 'Scratch Sauces' },
+              { val: '650°F', label: 'Smash Griddle Heat' },
               { val: '5.0★', label: 'Critic Score' },
             ].map((stat, i) => (
-              <div
-                key={i}
-                style={{
-                  backgroundColor: '#FFF',
-                  border: '2px solid #171717',
-                  borderRadius: '10px',
-                  padding: '8px 16px',
-                  boxShadow: '3px 3px 0 #171717'
-                }}
-              >
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', color: '#2455D6' }}>
+              <div key={i}>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '18px',
+                    fontWeight: 700,
+                    color: '#FFF'
+                  }}
+                >
                   {stat.val}
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: '#666', fontWeight: 700 }}>
+                <div
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '10px',
+                    color: '#646A7E',
+                    letterSpacing: '0.5px',
+                    textTransform: 'uppercase'
+                  }}
+                >
                   {stat.label}
                 </div>
               </div>
@@ -223,49 +264,42 @@ export default function S02_Hero() {
           </div>
         </div>
 
-        {/* Right Column: 3D Pop Food Canvas */}
+        {/* Right Column: 3D Pop Sculpture Studio Canvas */}
         <div
           style={{
-            height: '540px',
+            height: '560px',
             position: 'relative',
-            backgroundColor: '#FFD928',
-            border: '4px solid #171717',
-            borderRadius: '24px',
-            boxShadow: '10px 10px 0 #171717',
+            background: 'radial-gradient(circle at 50% 50%, #151824 0%, #0E1017 100%)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '28px',
+            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 51, 102, 0.08)',
             overflow: 'hidden'
           }}
         >
-          {/* Halftone Overlay Grid */}
+          {/* Subtle Studio Interactive Badge */}
           <div
             style={{
               position: 'absolute',
-              inset: 0,
-              backgroundImage: 'radial-gradient(#171717 15%, transparent 16%)',
-              backgroundSize: '16px 16px',
-              opacity: 0.15,
-              pointerEvents: 'none'
-            }}
-          />
-
-          {/* Floating Sticker Stamp */}
-          <div
-            style={{
-              position: 'absolute',
-              top: '16px',
-              left: '16px',
+              top: '18px',
+              left: '18px',
               zIndex: 10,
-              backgroundColor: '#F04438',
-              color: '#FFF',
-              fontFamily: 'var(--font-display)',
-              fontSize: '0.85rem',
+              backgroundColor: 'rgba(9, 10, 14, 0.75)',
+              backdropFilter: 'blur(12px)',
+              color: '#CCFF00',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '10px',
+              fontWeight: 700,
+              letterSpacing: '1px',
               padding: '6px 14px',
               borderRadius: '999px',
-              border: '2px solid #171717',
-              transform: 'rotate(-5deg)',
-              boxShadow: '3px 3px 0 #171717'
+              border: '1px solid rgba(204, 255, 0, 0.25)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
             }}
           >
-            DRAG TO ROTATE 3D!
+            <Sparkles size={12} color="#CCFF00" />
+            <span>INTERACTIVE 3D WEBGL SCULPTURE</span>
           </div>
 
           <HeroScene />

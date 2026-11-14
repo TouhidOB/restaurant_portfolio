@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCMS } from '../context/CMSContext';
-import { Flame, Clock, Sparkles, ChefHat } from 'lucide-react';
+import { ChefHat } from 'lucide-react';
 
 export default function S08_KitchenStudio() {
   const { data } = useCMS();
@@ -40,39 +40,24 @@ export default function S08_KitchenStudio() {
     <section
       id="kitchen"
       style={{
-        backgroundColor: '#FFF5E6',
-        padding: '100px 24px',
-        borderBottom: '4px solid #171717',
+        backgroundColor: '#090A0E',
+        padding: '110px 24px',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         position: 'relative'
       }}
     >
       <div
         style={{
-          maxWidth: '1360px',
+          maxWidth: '1280px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: '48px'
+          gap: '50px'
         }}
       >
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto' }}>
-          <div
-            style={{
-              display: 'inline-block',
-              backgroundColor: '#00C389',
-              color: '#FFF',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem',
-              fontWeight: 800,
-              padding: '6px 16px',
-              borderRadius: '999px',
-              border: '2px solid #171717',
-              boxShadow: '3px 3px 0 #171717',
-              marginBottom: '16px',
-              textTransform: 'uppercase'
-            }}
-          >
+          <div className="pill-badge" style={{ marginBottom: '16px', color: '#CCFF00', borderColor: 'rgba(204, 255, 0, 0.25)' }}>
             CHAPTER 06 // THE CULINARY LABORATORY
           </div>
 
@@ -81,9 +66,10 @@ export default function S08_KitchenStudio() {
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(2.4rem, 5vw, 4rem)',
               lineHeight: 1.05,
-              color: '#171717',
-              margin: '0 0 16px 0',
-              textShadow: '3px 3px 0 #FFD928'
+              fontWeight: 800,
+              color: '#FFFFFF',
+              letterSpacing: '-1px',
+              margin: '0 0 16px 0'
             }}
           >
             THE OPEN KITCHEN THEATER.
@@ -92,13 +78,13 @@ export default function S08_KitchenStudio() {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '1.15rem',
+              fontSize: '15px',
               lineHeight: 1.6,
-              color: '#444',
+              color: '#9FA5B7',
               margin: 0
             }}
           >
-            There are no back rooms or hidden secrets at POP! You can watch every smash, sear, sizzle, and sauce swirl from your table or directly at the pass.
+            There are no back rooms or hidden doors at POP! Guests can watch every sear, sizzle, and molecular bubble flourish in full open view.
           </p>
         </div>
 
@@ -114,39 +100,44 @@ export default function S08_KitchenStudio() {
             <div
               key={i}
               style={{
-                backgroundColor: '#FFF',
-                border: '4px solid #171717',
-                borderRadius: '20px',
-                padding: '28px',
-                boxShadow: '6px 6px 0 #2455D6',
+                backgroundColor: '#12141D',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '24px',
+                padding: '32px 28px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                transition: 'all 0.15s ease'
+                transition: 'all 0.2s ease',
+                boxShadow: '0 12px 32px rgba(0, 0, 0, 0.3)'
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-4px)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-4px)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+              }}
             >
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
                   <span
                     style={{
-                      backgroundColor: '#FFD928',
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.75rem',
-                      fontWeight: 800,
-                      padding: '3px 8px',
-                      borderRadius: '4px',
-                      border: '1px solid #171717'
+                      fontSize: '10px',
+                      fontWeight: 700,
+                      color: '#CCFF00',
+                      letterSpacing: '0.5px'
                     }}
                   >
-                    {station.tag}
+                    // {station.tag}
                   </span>
                   <span
                     style={{
                       fontFamily: 'var(--font-display)',
-                      fontSize: '1.3rem',
-                      color: '#F04438'
+                      fontSize: '18px',
+                      fontWeight: 700,
+                      color: '#FF6B8B'
                     }}
                   >
                     {station.stat}
@@ -156,10 +147,11 @@ export default function S08_KitchenStudio() {
                 <h3
                   style={{
                     fontFamily: 'var(--font-display)',
-                    fontSize: '1.4rem',
-                    color: '#171717',
+                    fontSize: '18px',
+                    fontWeight: 700,
+                    color: '#FFF',
                     margin: '0 0 6px 0',
-                    lineHeight: 1.2
+                    lineHeight: 1.3
                   }}
                 >
                   {station.title}
@@ -168,21 +160,21 @@ export default function S08_KitchenStudio() {
                 <div
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.8rem',
-                    color: '#2455D6',
-                    fontWeight: 700,
-                    marginBottom: '12px'
+                    fontSize: '11px',
+                    color: '#00F0FF',
+                    fontWeight: 600,
+                    marginBottom: '14px'
                   }}
                 >
-                  // {station.subtitle}
+                  {station.subtitle}
                 </div>
 
                 <p
                   style={{
                     fontFamily: 'var(--font-body)',
-                    fontSize: '0.95rem',
-                    lineHeight: 1.55,
-                    color: '#555',
+                    fontSize: '13.5px',
+                    lineHeight: 1.6,
+                    color: '#9FA5B7',
                     margin: 0
                   }}
                 >
@@ -192,19 +184,19 @@ export default function S08_KitchenStudio() {
 
               <div
                 style={{
-                  marginTop: '20px',
-                  borderTop: '2px dashed #EEE',
-                  paddingTop: '12px',
+                  marginTop: '28px',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                  paddingTop: '16px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.75rem',
-                  color: '#888'
+                  fontSize: '10.5px',
+                  color: '#646A7E'
                 }}
               >
-                <ChefHat size={14} color="#171717" />
-                <span>EXECUTIVE CULINARY SPECIFICATION</span>
+                <ChefHat size={14} color="#9FA5B7" />
+                <span>EXECUTIVE CULINARY SPEC</span>
               </div>
             </div>
           ))}

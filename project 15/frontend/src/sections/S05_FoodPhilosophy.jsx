@@ -9,17 +9,15 @@ export default function S05_FoodPhilosophy() {
     <section
       id="philosophy"
       style={{
-        backgroundColor: '#171717',
-        color: '#FFF5E6',
-        padding: '100px 24px',
-        borderBottom: '4px solid #FFD928',
-        position: 'relative',
-        overflow: 'hidden'
+        backgroundColor: '#090A0E',
+        padding: '110px 24px',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        position: 'relative'
       }}
     >
       <div
         style={{
-          maxWidth: '1360px',
+          maxWidth: '1280px',
           margin: '0 auto',
           position: 'relative',
           zIndex: 2
@@ -27,22 +25,7 @@ export default function S05_FoodPhilosophy() {
       >
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto 60px auto' }}>
-          <div
-            style={{
-              display: 'inline-block',
-              backgroundColor: '#FFD928',
-              color: '#171717',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem',
-              fontWeight: 800,
-              padding: '6px 16px',
-              borderRadius: '999px',
-              border: '2px solid #FFF',
-              boxShadow: '3px 3px 0 #F04438',
-              marginBottom: '16px',
-              textTransform: 'uppercase'
-            }}
-          >
+          <div className="pill-badge" style={{ marginBottom: '16px', color: '#00F0FF', borderColor: 'rgba(0, 240, 255, 0.25)' }}>
             CHAPTER 03 // CULINARY CODE
           </div>
 
@@ -51,9 +34,10 @@ export default function S05_FoodPhilosophy() {
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(2.4rem, 5vw, 4.2rem)',
               lineHeight: 1.05,
-              color: '#FFD928',
-              margin: '0 0 16px 0',
-              textShadow: '4px 4px 0 #F04438'
+              fontWeight: 800,
+              color: '#FFFFFF',
+              letterSpacing: '-1px',
+              margin: '0 0 16px 0'
             }}
           >
             THE 4 POP PRINCIPLES.
@@ -62,9 +46,9 @@ export default function S05_FoodPhilosophy() {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '1.2rem',
+              fontSize: '15px',
               lineHeight: 1.6,
-              color: '#FFF5E6',
+              color: '#9FA5B7',
               margin: 0
             }}
           >
@@ -76,7 +60,7 @@ export default function S05_FoodPhilosophy() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(270px, 1fr))',
             gap: '24px'
           }}
         >
@@ -84,18 +68,27 @@ export default function S05_FoodPhilosophy() {
             <div
               key={idx}
               style={{
-                backgroundColor: '#242730',
-                border: '3px solid #FFF',
-                borderRadius: '20px',
-                padding: '32px 24px',
-                boxShadow: `6px 6px 0px ${item.color}`,
+                backgroundColor: '#12141D',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '24px',
+                padding: '36px 28px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                transition: 'transform 0.2s ease',
+                transition: 'all 0.25s ease',
+                position: 'relative',
+                overflow: 'hidden'
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = 'translateY(-6px)')}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = 'none')}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px)';
+                e.currentTarget.style.borderColor = item.color;
+                e.currentTarget.style.boxShadow = `0 20px 40px rgba(0, 0, 0, 0.5), 0 0 25px ${item.color}25`;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'none';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
             >
               <div>
                 <div
@@ -103,13 +96,14 @@ export default function S05_FoodPhilosophy() {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    marginBottom: '20px'
+                    marginBottom: '24px'
                   }}
                 >
                   <span
                     style={{
                       fontFamily: 'var(--font-display)',
-                      fontSize: '2.5rem',
+                      fontSize: '32px',
+                      fontWeight: 800,
                       color: item.color,
                       lineHeight: 1
                     }}
@@ -118,11 +112,11 @@ export default function S05_FoodPhilosophy() {
                   </span>
                   <div
                     style={{
-                      width: '16px',
-                      height: '16px',
+                      width: '10px',
+                      height: '10px',
                       borderRadius: '50%',
                       backgroundColor: item.color,
-                      border: '2px solid #FFF'
+                      boxShadow: `0 0 10px ${item.color}`
                     }}
                   />
                 </div>
@@ -130,10 +124,11 @@ export default function S05_FoodPhilosophy() {
                 <h3
                   style={{
                     fontFamily: 'var(--font-display)',
-                    fontSize: '1.5rem',
+                    fontSize: '18px',
+                    fontWeight: 700,
                     color: '#FFF',
-                    margin: '0 0 14px 0',
-                    letterSpacing: '0.5px'
+                    letterSpacing: '-0.3px',
+                    margin: '0 0 14px 0'
                   }}
                 >
                   {item.title}
@@ -142,9 +137,9 @@ export default function S05_FoodPhilosophy() {
                 <p
                   style={{
                     fontFamily: 'var(--font-body)',
-                    fontSize: '1rem',
-                    lineHeight: 1.6,
-                    color: '#DDD',
+                    fontSize: '14px',
+                    lineHeight: 1.65,
+                    color: '#9FA5B7',
                     margin: 0
                   }}
                 >
@@ -154,16 +149,17 @@ export default function S05_FoodPhilosophy() {
 
               <div
                 style={{
-                  marginTop: '24px',
-                  borderTop: '1px solid rgba(255,255,255,0.1)',
-                  paddingTop: '12px',
+                  marginTop: '32px',
+                  borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                  paddingTop: '16px',
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.75rem',
+                  fontSize: '11px',
                   color: item.color,
-                  fontWeight: 700
+                  fontWeight: 600,
+                  letterSpacing: '0.5px'
                 }}
               >
-                RULE NO. {item.number}
+                PRINCIPLE NO. {item.number}
               </div>
             </div>
           ))}

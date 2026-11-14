@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCMS } from '../context/CMSContext';
 import RestaurantTour from '../components/three/RestaurantTour';
-import { Compass, Sparkles, Box, Camera, MapPin } from 'lucide-react';
+import { Sparkles, Box, Compass } from 'lucide-react';
 
 export default function S04_VirtualTour() {
   const { data, activeViewpointIndex, setActiveViewpointIndex } = useCMS();
@@ -11,40 +11,25 @@ export default function S04_VirtualTour() {
     <section
       id="tour"
       style={{
-        backgroundColor: '#FFF5E6',
-        padding: '100px 24px',
-        borderBottom: '4px solid #171717',
+        backgroundColor: '#090A0E',
+        padding: '110px 24px',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         position: 'relative'
       }}
     >
       <div
         style={{
-          maxWidth: '1360px',
+          maxWidth: '1280px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
-          gap: '36px'
+          gap: '40px'
         }}
       >
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto' }}>
-          <div
-            style={{
-              display: 'inline-block',
-              backgroundColor: '#F04438',
-              color: '#FFF',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem',
-              fontWeight: 800,
-              padding: '6px 16px',
-              borderRadius: '999px',
-              border: '2px solid #171717',
-              boxShadow: '3px 3px 0 #171717',
-              marginBottom: '16px',
-              textTransform: 'uppercase'
-            }}
-          >
-            CHAPTER 02 // 3D VIRTUAL TOUR
+          <div className="pill-badge" style={{ marginBottom: '16px', color: '#CCFF00', borderColor: 'rgba(204, 255, 0, 0.25)' }}>
+            CHAPTER 02 // 3D SPATIAL EXPLORATION
           </div>
 
           <h2
@@ -52,9 +37,10 @@ export default function S04_VirtualTour() {
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(2.4rem, 5vw, 4rem)',
               lineHeight: 1.05,
-              color: '#171717',
-              margin: '0 0 16px 0',
-              textShadow: '3px 3px 0 #FFD928'
+              fontWeight: 800,
+              color: '#FFFFFF',
+              letterSpacing: '-1px',
+              margin: '0 0 16px 0'
             }}
           >
             STEP INSIDE THE POP STUDIO.
@@ -63,13 +49,13 @@ export default function S04_VirtualTour() {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '1.15rem',
+              fontSize: '15px',
               lineHeight: 1.6,
-              color: '#444',
+              color: '#9FA5B7',
               margin: 0
             }}
           >
-            Explore our architectural spaces in realtime 3D WebGL. Switch viewpoints, inspect interactive hotspots, and toggle lighting moods from Day Studio to Midnight Neon.
+            Explore our architectural spaces in realtime 3D WebGL. Switch viewpoints, inspect interactive hotspots, and toggle lighting moods from Day Studio to Cyber Midnight.
           </p>
         </div>
 
@@ -80,9 +66,9 @@ export default function S04_VirtualTour() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
             gap: '16px',
-            marginTop: '12px'
+            marginTop: '8px'
           }}
         >
           {viewpoints.map((vp, idx) => {
@@ -92,25 +78,25 @@ export default function S04_VirtualTour() {
                 key={vp.id || idx}
                 onClick={() => setActiveViewpointIndex(idx)}
                 style={{
-                  backgroundColor: isSelected ? '#FFD928' : '#FFF',
-                  border: '3px solid #171717',
+                  backgroundColor: isSelected ? 'rgba(204, 255, 0, 0.05)' : '#12141D',
+                  border: isSelected ? '1px solid #CCFF00' : '1px solid rgba(255, 255, 255, 0.08)',
                   borderRadius: '16px',
-                  padding: '18px',
-                  boxShadow: isSelected ? '5px 5px 0 #F04438' : '3px 3px 0 #171717',
+                  padding: '20px',
+                  boxShadow: isSelected ? '0 0 20px rgba(204, 255, 0, 0.15)' : 'none',
                   cursor: 'pointer',
-                  transition: 'all 0.15s ease'
+                  transition: 'all 0.2s ease'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                   <span
                     style={{
                       fontFamily: 'var(--font-mono)',
-                      fontSize: '0.75rem',
+                      fontSize: '10px',
                       fontWeight: 800,
-                      backgroundColor: '#171717',
-                      color: '#FFF',
+                      backgroundColor: isSelected ? '#CCFF00' : 'rgba(255, 255, 255, 0.06)',
+                      color: isSelected ? '#0A0B0E' : '#9FA5B7',
                       padding: '2px 8px',
-                      borderRadius: '4px'
+                      borderRadius: '999px'
                     }}
                   >
                     0{idx + 1}
@@ -119,12 +105,13 @@ export default function S04_VirtualTour() {
                     <span
                       style={{
                         fontFamily: 'var(--font-mono)',
-                        fontSize: '0.7rem',
-                        fontWeight: 800,
-                        color: '#F04438'
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        color: '#CCFF00',
+                        letterSpacing: '0.5px'
                       }}
                     >
-                      ● ACTIVE VIEW
+                      ● ACTIVE NODE
                     </span>
                   )}
                 </div>
@@ -132,10 +119,11 @@ export default function S04_VirtualTour() {
                 <h3
                   style={{
                     fontFamily: 'var(--font-display)',
-                    fontSize: '1.1rem',
-                    color: '#171717',
-                    margin: '0 0 8px 0',
-                    lineHeight: 1.2
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    color: '#FFF',
+                    margin: '0 0 6px 0',
+                    lineHeight: 1.3
                   }}
                 >
                   {vp.name}
@@ -144,9 +132,9 @@ export default function S04_VirtualTour() {
                 <p
                   style={{
                     fontFamily: 'var(--font-body)',
-                    fontSize: '0.85rem',
-                    lineHeight: 1.45,
-                    color: '#555',
+                    fontSize: '12.5px',
+                    lineHeight: 1.5,
+                    color: '#8E94A5',
                     margin: 0
                   }}
                 >

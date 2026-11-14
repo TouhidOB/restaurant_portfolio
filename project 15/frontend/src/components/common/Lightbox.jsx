@@ -40,8 +40,8 @@ export default function Lightbox() {
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(23, 23, 23, 0.92)',
-        backdropFilter: 'blur(10px)',
+        backgroundColor: 'rgba(5, 6, 8, 0.94)',
+        backdropFilter: 'blur(20px)',
         zIndex: 2500,
         display: 'flex',
         alignItems: 'center',
@@ -50,7 +50,6 @@ export default function Lightbox() {
       }}
       onClick={() => setLightboxIndex(null)}
     >
-      {/* Container */}
       <div
         style={{
           position: 'relative',
@@ -73,46 +72,46 @@ export default function Lightbox() {
             color: '#FFF'
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span
               style={{
-                backgroundColor: '#FFD928',
-                color: '#171717',
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                color: '#CCFF00',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.8rem',
-                fontWeight: 800,
+                fontSize: '11px',
+                fontWeight: 700,
                 padding: '4px 10px',
-                borderRadius: '6px',
-                border: '2px solid #171717'
+                borderRadius: '999px',
+                border: '1px solid rgba(204, 255, 0, 0.25)'
               }}
             >
               {activeItem.category || 'GALLERY'}
             </span>
-            <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', letterSpacing: '0.5px' }}>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 700 }}>
               {activeItem.title}
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: '#FFD928' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: '#646A7E' }}>
               {lightboxIndex + 1} / {galleryItems.length}
             </span>
             <button
               onClick={() => setLightboxIndex(null)}
               style={{
-                backgroundColor: '#F04438',
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
                 color: '#FFF',
-                border: '2px solid #FFF',
-                borderRadius: '8px',
-                width: '36px',
-                height: '36px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                borderRadius: '50%',
+                width: '34px',
+                height: '34px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer'
               }}
             >
-              <X size={20} />
+              <X size={16} />
             </button>
           </div>
         </div>
@@ -122,11 +121,11 @@ export default function Lightbox() {
           style={{
             position: 'relative',
             maxHeight: '75vh',
-            borderRadius: '16px',
-            border: '4px solid #171717',
+            borderRadius: '20px',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
             overflow: 'hidden',
-            boxShadow: '8px 8px 0px #FFD928',
-            backgroundColor: '#000'
+            boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8)',
+            backgroundColor: '#090A0E'
           }}
         >
           <img
@@ -141,7 +140,6 @@ export default function Lightbox() {
             }}
           />
 
-          {/* Nav arrows on image */}
           <button
             onClick={handlePrev}
             style={{
@@ -149,20 +147,20 @@ export default function Lightbox() {
               left: '16px',
               top: '50%',
               transform: 'translateY(-50%)',
-              backgroundColor: '#FFD928',
-              color: '#171717',
-              border: '2px solid #171717',
+              backgroundColor: 'rgba(9, 10, 14, 0.8)',
+              backdropFilter: 'blur(10px)',
+              color: '#FFF',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
               borderRadius: '50%',
-              width: '44px',
-              height: '44px',
+              width: '42px',
+              height: '42px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: '3px 3px 0 #171717'
+              cursor: 'pointer'
             }}
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={20} />
           </button>
 
           <button
@@ -172,20 +170,20 @@ export default function Lightbox() {
               right: '16px',
               top: '50%',
               transform: 'translateY(-50%)',
-              backgroundColor: '#FFD928',
-              color: '#171717',
-              border: '2px solid #171717',
+              backgroundColor: 'rgba(9, 10, 14, 0.8)',
+              backdropFilter: 'blur(10px)',
+              color: '#FFF',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
               borderRadius: '50%',
-              width: '44px',
-              height: '44px',
+              width: '42px',
+              height: '42px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: '3px 3px 0 #171717'
+              cursor: 'pointer'
             }}
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={20} />
           </button>
         </div>
       </div>

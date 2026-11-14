@@ -17,12 +17,12 @@ export default function Navigation() {
 
   const navLinks = [
     { label: 'Story', href: '#story' },
-    { label: '3D Studio Tour', href: '#tour' },
+    { label: '3D Studio', href: '#tour' },
     { label: 'Menu', href: '#menu' },
     { label: 'The Lab', href: '#kitchen' },
-    { label: 'Experiences', href: '#experiences' },
+    { label: 'Happenings', href: '#experiences' },
     { label: 'Gallery', href: '#gallery' },
-    { label: 'Visit', href: '#location' },
+    { label: 'Location', href: '#location' },
   ];
 
   return (
@@ -30,22 +30,26 @@ export default function Navigation() {
       <nav
         style={{
           position: 'fixed',
-          top: isScrolled ? '12px' : '20px',
+          top: isScrolled ? '14px' : '22px',
           left: '50%',
           transform: 'translateX(-50%)',
-          width: 'calc(100% - 32px)',
-          maxWidth: '1360px',
+          width: 'calc(100% - 36px)',
+          maxWidth: '1280px',
           zIndex: 1000,
-          transition: 'all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)',
+          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         <div
           style={{
-            backgroundColor: '#FFF5E6',
-            border: '3px solid #171717',
-            borderRadius: '18px',
-            boxShadow: isScrolled ? '6px 6px 0px #171717' : '8px 8px 0px #171717',
-            padding: '10px 20px',
+            backgroundColor: 'rgba(15, 17, 24, 0.85)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '999px',
+            boxShadow: isScrolled
+              ? '0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 51, 102, 0.08)'
+              : '0 10px 30px rgba(0, 0, 0, 0.4)',
+            padding: '8px 18px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -59,21 +63,19 @@ export default function Navigation() {
               alignItems: 'center',
               gap: '10px',
               textDecoration: 'none',
-              color: '#171717',
             }}
           >
             <div
               style={{
-                backgroundColor: '#F04438',
+                backgroundColor: '#FF3366',
                 color: '#FFF',
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.4rem',
-                padding: '4px 12px',
-                borderRadius: '8px',
-                border: '2px solid #171717',
-                transform: 'rotate(-4deg)',
-                boxShadow: '2px 2px 0px #171717',
-                letterSpacing: '1px'
+                fontSize: '13px',
+                fontWeight: 800,
+                padding: '4px 10px',
+                borderRadius: '999px',
+                letterSpacing: '0.5px',
+                boxShadow: '0 0 16px rgba(255, 51, 102, 0.4)'
               }}
             >
               POP!
@@ -82,10 +84,10 @@ export default function Navigation() {
               <span
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: '1.05rem',
-                  letterSpacing: '1px',
-                  lineHeight: 1.1,
-                  color: '#171717'
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  letterSpacing: '0.5px',
+                  color: '#FFFFFF'
                 }}
               >
                 FOOD STUDIO
@@ -93,10 +95,10 @@ export default function Navigation() {
               <span
                 style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.65rem',
-                  color: '#2455D6',
-                  fontWeight: 800,
-                  letterSpacing: '1px'
+                  fontSize: '9px',
+                  color: '#CCFF00',
+                  letterSpacing: '1px',
+                  fontWeight: 600
                 }}
               >
                 ARTS DISTRICT • LA
@@ -110,7 +112,7 @@ export default function Navigation() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '20px',
+              gap: '6px',
             }}
           >
             {navLinks.map((link) => (
@@ -119,23 +121,22 @@ export default function Navigation() {
                 href={link.href}
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontWeight: 700,
-                  fontSize: '0.9rem',
-                  textTransform: 'uppercase',
-                  color: '#171717',
+                  fontWeight: 600,
+                  fontSize: '13px',
+                  color: '#9FA5B7',
                   textDecoration: 'none',
-                  padding: '6px 10px',
-                  borderRadius: '6px',
+                  padding: '7px 14px',
+                  borderRadius: '999px',
                   transition: 'all 0.15s ease',
-                  letterSpacing: '0.5px'
+                  letterSpacing: '0.2px'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FFD928';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.color = '#FFFFFF';
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
                 }}
                 onMouseLeave={(e) => {
+                  e.currentTarget.style.color = '#9FA5B7';
                   e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
                 {link.label}
@@ -148,10 +149,10 @@ export default function Navigation() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '12px',
+              gap: '10px',
             }}
           >
-            {/* CMS Portal Link */}
+            {/* CMS Studio Link */}
             <a
               href="/cms/"
               target="_blank"
@@ -160,63 +161,62 @@ export default function Navigation() {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                backgroundColor: '#2455D6',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 color: '#FFF',
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.8rem',
-                fontWeight: 700,
+                fontSize: '11px',
+                fontWeight: 600,
                 padding: '8px 14px',
-                borderRadius: '8px',
-                border: '2px solid #171717',
-                boxShadow: '3px 3px 0 #171717',
+                borderRadius: '999px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
                 textDecoration: 'none',
                 transition: 'all 0.15s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#1d44ac';
-                e.currentTarget.style.transform = 'translate(-2px, -2px)';
-                e.currentTarget.style.boxShadow = '5px 5px 0 #171717';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.25)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#2455D6';
-                e.currentTarget.style.transform = 'none';
-                e.currentTarget.style.boxShadow = '3px 3px 0 #171717';
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
               }}
             >
               <span>CMS STUDIO</span>
-              <ExternalLink size={13} />
+              <ExternalLink size={12} color="#9FA5B7" />
             </a>
 
-            {/* Book Table Button */}
+            {/* Book Table Button in Cyber Lime */}
             <button
               onClick={() => setIsReservationModalOpen(true)}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
-                backgroundColor: '#FFD928',
-                color: '#171717',
+                gap: '6px',
+                backgroundColor: '#CCFF00',
+                color: '#0A0B0E',
                 fontFamily: 'var(--font-display)',
-                fontSize: '0.95rem',
-                letterSpacing: '0.5px',
+                fontSize: '12.5px',
+                fontWeight: 700,
+                letterSpacing: '0.3px',
                 padding: '9px 18px',
-                borderRadius: '8px',
-                border: '2px solid #171717',
-                boxShadow: '3px 3px 0 #171717',
+                borderRadius: '999px',
                 cursor: 'pointer',
-                transition: 'all 0.15s ease',
+                boxShadow: '0 0 20px rgba(204, 255, 0, 0.35)',
+                transition: 'all 0.2s ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translate(-2px, -2px)';
-                e.currentTarget.style.boxShadow = '5px 5px 0 #171717';
+                e.currentTarget.style.transform = 'scale(1.03)';
+                e.currentTarget.style.backgroundColor = '#d8ff33';
+                e.currentTarget.style.boxShadow = '0 0 26px rgba(204, 255, 0, 0.55)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'none';
-                e.currentTarget.style.boxShadow = '3px 3px 0 #171717';
+                e.currentTarget.style.transform = 'scale(1)';
+                e.currentTarget.style.backgroundColor = '#CCFF00';
+                e.currentTarget.style.boxShadow = '0 0 20px rgba(204, 255, 0, 0.35)';
               }}
             >
-              <Calendar size={16} />
-              <span>BOOK A TABLE</span>
+              <Calendar size={14} />
+              <span>RESERVE TABLE</span>
             </button>
 
             {/* Mobile Hamburger Button */}
@@ -227,17 +227,17 @@ export default function Navigation() {
                 display: 'none',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '42px',
-                height: '42px',
-                backgroundColor: '#FFD928',
-                border: '2px solid #171717',
-                borderRadius: '8px',
-                boxShadow: '3px 3px 0 #171717',
+                width: '38px',
+                height: '38px',
+                backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '50%',
+                color: '#FFF',
                 cursor: 'pointer',
               }}
               aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
         </div>
@@ -249,8 +249,8 @@ export default function Navigation() {
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(23, 23, 23, 0.85)',
-            backdropFilter: 'blur(8px)',
+            backgroundColor: 'rgba(9, 10, 14, 0.95)',
+            backdropFilter: 'blur(20px)',
             zIndex: 999,
             display: 'flex',
             flexDirection: 'column',
@@ -262,29 +262,30 @@ export default function Navigation() {
         >
           <div
             style={{
-              backgroundColor: '#FFF5E6',
-              border: '4px solid #171717',
-              borderRadius: '20px',
-              boxShadow: '8px 8px 0 #171717',
+              backgroundColor: '#12141D',
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              borderRadius: '24px',
               padding: '32px',
               width: '100%',
               maxWidth: '380px',
               textAlign: 'center',
               display: 'flex',
               flexDirection: 'column',
-              gap: '16px'
+              gap: '14px',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8)'
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <div
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: '2rem',
-                color: '#F04438',
-                marginBottom: '8px'
+                fontSize: '18px',
+                color: '#FF3366',
+                fontWeight: 700,
+                letterSpacing: '1px'
               }}
             >
-              MENU DIRECTORY
+              POP! DIRECTORY
             </div>
 
             {navLinks.map((link) => (
@@ -293,16 +294,14 @@ export default function Navigation() {
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
                 style={{
-                  fontFamily: 'var(--font-headline)',
-                  fontSize: '1.25rem',
-                  textTransform: 'uppercase',
-                  color: '#171717',
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '16px',
+                  color: '#FFF',
                   textDecoration: 'none',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  backgroundColor: '#FFF',
-                  border: '2px solid #171717',
-                  boxShadow: '3px 3px 0 #171717',
+                  padding: '10px 14px',
+                  borderRadius: '12px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
                 }}
               >
                 {link.label}
@@ -315,15 +314,16 @@ export default function Navigation() {
                 setIsReservationModalOpen(true);
               }}
               style={{
-                backgroundColor: '#FFD928',
-                border: '3px solid #171717',
-                borderRadius: '8px',
-                padding: '12px',
+                backgroundColor: '#CCFF00',
+                color: '#0A0B0E',
+                borderRadius: '12px',
+                padding: '14px',
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.1rem',
-                boxShadow: '4px 4px 0 #171717',
+                fontSize: '14px',
+                fontWeight: 700,
                 marginTop: '10px',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                boxShadow: '0 0 20px rgba(204, 255, 0, 0.35)'
               }}
             >
               BOOK A TABLE NOW

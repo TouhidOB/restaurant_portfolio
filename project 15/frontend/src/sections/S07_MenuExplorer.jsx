@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { useCMS } from '../context/CMSContext';
-import { Search, Flame, Sparkles, Filter, Eye } from 'lucide-react';
+import { Search, Flame, ArrowUpRight } from 'lucide-react';
 
 export default function S07_MenuExplorer() {
   const { data, setSelectedDish } = useCMS();
@@ -13,12 +13,10 @@ export default function S07_MenuExplorer() {
 
   const filteredItems = useMemo(() => {
     return menuItems.filter((item) => {
-      // Category match
       const matchesCategory =
         activeCategory === 'all' ||
         (item.category && item.category.toLowerCase().includes(activeCategory.toLowerCase()));
 
-      // Search match
       const query = searchQuery.toLowerCase().trim();
       const matchesSearch =
         !query ||
@@ -26,7 +24,6 @@ export default function S07_MenuExplorer() {
         item.description.toLowerCase().includes(query) ||
         (item.category && item.category.toLowerCase().includes(query));
 
-      // Dietary match
       let matchesDietary = true;
       if (activeDietary !== 'all') {
         matchesDietary = item.dietary_tags && item.dietary_tags.some((tag) =>
@@ -42,15 +39,15 @@ export default function S07_MenuExplorer() {
     <section
       id="menu"
       style={{
-        backgroundColor: '#FFF5E6',
-        padding: '100px 24px',
-        borderBottom: '4px solid #171717',
+        backgroundColor: '#090A0E',
+        padding: '110px 24px',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         position: 'relative'
       }}
     >
       <div
         style={{
-          maxWidth: '1360px',
+          maxWidth: '1280px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'column',
@@ -59,22 +56,7 @@ export default function S07_MenuExplorer() {
       >
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '840px', margin: '0 auto' }}>
-          <div
-            style={{
-              display: 'inline-block',
-              backgroundColor: '#2455D6',
-              color: '#FFF',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.85rem',
-              fontWeight: 800,
-              padding: '6px 16px',
-              borderRadius: '999px',
-              border: '2px solid #171717',
-              boxShadow: '3px 3px 0 #171717',
-              marginBottom: '16px',
-              textTransform: 'uppercase'
-            }}
-          >
+          <div className="pill-badge" style={{ marginBottom: '16px', color: '#0066FF', borderColor: 'rgba(0, 102, 255, 0.3)' }}>
             CHAPTER 05 // MENU DIRECTORY
           </div>
 
@@ -83,9 +65,10 @@ export default function S07_MenuExplorer() {
               fontFamily: 'var(--font-display)',
               fontSize: 'clamp(2.4rem, 5vw, 4rem)',
               lineHeight: 1.05,
-              color: '#171717',
-              margin: '0 0 16px 0',
-              textShadow: '3px 3px 0 #FFD928'
+              fontWeight: 800,
+              color: '#FFFFFF',
+              letterSpacing: '-1px',
+              margin: '0 0 16px 0'
             }}
           >
             THE FULL STUDIO MENU.
@@ -94,24 +77,24 @@ export default function S07_MenuExplorer() {
           <p
             style={{
               fontFamily: 'var(--font-body)',
-              fontSize: '1.15rem',
+              fontSize: '15px',
               lineHeight: 1.6,
-              color: '#444',
+              color: '#9FA5B7',
               margin: 0
             }}
           >
-            Filter by category, search by flavor, or drill down into dietary specifications.
+            Filter by craft category, search by flavor notes, or drill down into dietary specifications.
           </p>
         </div>
 
         {/* Filter Controls Bar */}
         <div
           style={{
-            backgroundColor: '#FFF',
-            border: '4px solid #171717',
-            borderRadius: '20px',
+            backgroundColor: '#12141D',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            borderRadius: '24px',
             padding: '24px',
-            boxShadow: '8px 8px 0 #171717',
+            boxShadow: '0 16px 40px rgba(0, 0, 0, 0.4)',
             display: 'flex',
             flexDirection: 'column',
             gap: '20px'
@@ -128,44 +111,38 @@ export default function S07_MenuExplorer() {
             }}
           >
             {/* Search Input */}
-            <div
-              style={{
-                position: 'relative',
-                flexGrow: 1,
-                maxWidth: '420px'
-              }}
-            >
+            <div style={{ position: 'relative', flexGrow: 1, maxWidth: '420px' }}>
               <Search
-                size={18}
+                size={16}
                 style={{
                   position: 'absolute',
-                  left: '14px',
+                  left: '16px',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  color: '#666'
+                  color: '#646A7E'
                 }}
               />
               <input
                 type="text"
-                placeholder="Search smash burgers, shakes, noodles..."
+                placeholder="Search burgers, shakes, noodles, tots..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '12px 14px 12px 42px',
-                  borderRadius: '10px',
-                  border: '2px solid #171717',
+                  padding: '12px 16px 12px 44px',
+                  borderRadius: '999px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                   fontFamily: 'var(--font-body)',
-                  fontSize: '0.95rem',
-                  backgroundColor: '#FFF5E6',
-                  boxShadow: '2px 2px 0 #171717'
+                  fontSize: '13.5px',
+                  backgroundColor: '#191C28',
+                  color: '#FFF'
                 }}
               />
             </div>
 
             {/* Dietary Tags */}
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 800, color: '#666' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700, color: '#646A7E' }}>
                 DIET:
               </span>
               {[
@@ -179,16 +156,16 @@ export default function S07_MenuExplorer() {
                   key={diet.id}
                   onClick={() => setActiveDietary(diet.id)}
                   style={{
-                    backgroundColor: activeDietary === diet.id ? '#F04438' : '#FFF5E6',
-                    color: activeDietary === diet.id ? '#FFF' : '#171717',
-                    border: '2px solid #171717',
-                    borderRadius: '8px',
-                    padding: '6px 12px',
+                    backgroundColor: activeDietary === diet.id ? 'rgba(204, 255, 0, 0.15)' : 'rgba(255, 255, 255, 0.04)',
+                    color: activeDietary === diet.id ? '#CCFF00' : '#9FA5B7',
+                    border: activeDietary === diet.id ? '1px solid #CCFF00' : '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '999px',
+                    padding: '6px 14px',
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
+                    fontSize: '11px',
+                    fontWeight: 600,
                     cursor: 'pointer',
-                    boxShadow: '2px 2px 0 #171717'
+                    transition: 'all 0.15s ease'
                   }}
                 >
                   {diet.label}
@@ -202,23 +179,23 @@ export default function S07_MenuExplorer() {
             style={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: '10px',
-              borderTop: '2px dashed #DDD',
-              paddingTop: '16px'
+              gap: '8px',
+              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+              paddingTop: '18px'
             }}
           >
             <button
               onClick={() => setActiveCategory('all')}
               style={{
-                backgroundColor: activeCategory === 'all' ? '#FFD928' : '#FFF',
-                color: '#171717',
-                border: '2px solid #171717',
-                borderRadius: '8px',
-                padding: '10px 18px',
+                backgroundColor: activeCategory === 'all' ? '#CCFF00' : 'transparent',
+                color: activeCategory === 'all' ? '#0A0B0E' : '#9FA5B7',
+                border: activeCategory === 'all' ? '1px solid #CCFF00' : '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '999px',
+                padding: '8px 18px',
                 fontFamily: 'var(--font-display)',
-                fontSize: '0.95rem',
+                fontSize: '12px',
+                fontWeight: 700,
                 cursor: 'pointer',
-                boxShadow: activeCategory === 'all' ? '3px 3px 0 #F04438' : '2px 2px 0 #171717',
                 transition: 'all 0.15s ease'
               }}
             >
@@ -232,15 +209,15 @@ export default function S07_MenuExplorer() {
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.name)}
                   style={{
-                    backgroundColor: isCatActive ? '#FFD928' : '#FFF',
-                    color: '#171717',
-                    border: '2px solid #171717',
-                    borderRadius: '8px',
-                    padding: '10px 18px',
+                    backgroundColor: isCatActive ? '#CCFF00' : 'transparent',
+                    color: isCatActive ? '#0A0B0E' : '#9FA5B7',
+                    border: isCatActive ? '1px solid #CCFF00' : '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '999px',
+                    padding: '8px 18px',
                     fontFamily: 'var(--font-display)',
-                    fontSize: '0.95rem',
+                    fontSize: '12px',
+                    fontWeight: 700,
                     cursor: 'pointer',
-                    boxShadow: isCatActive ? '3px 3px 0 #F04438' : '2px 2px 0 #171717',
                     transition: 'all 0.15s ease'
                   }}
                 >
@@ -257,17 +234,16 @@ export default function S07_MenuExplorer() {
             style={{
               textAlign: 'center',
               padding: '60px 20px',
-              backgroundColor: '#FFF',
-              border: '3px solid #171717',
-              borderRadius: '16px',
-              boxShadow: '6px 6px 0 #171717'
+              backgroundColor: '#12141D',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '20px'
             }}
           >
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: '#F04438' }}>
-              NO MATCHING DISHES FOUND!
+            <div style={{ fontFamily: 'var(--font-display)', fontSize: '18px', color: '#FF6B8B' }}>
+              NO MATCHING DISHES FOUND
             </div>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '1rem', color: '#666', marginTop: '8px' }}>
-              Try searching for something else or reset your filter filters.
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: '#646A7E', marginTop: '8px' }}>
+              Try searching for something else or reset your active filters.
             </p>
             <button
               onClick={() => {
@@ -276,12 +252,13 @@ export default function S07_MenuExplorer() {
                 setActiveDietary('all');
               }}
               style={{
-                marginTop: '12px',
-                backgroundColor: '#FFD928',
-                border: '2px solid #171717',
-                borderRadius: '8px',
-                padding: '8px 16px',
+                marginTop: '16px',
+                backgroundColor: '#CCFF00',
+                color: '#0A0B0E',
+                borderRadius: '999px',
+                padding: '8px 18px',
                 fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
                 fontWeight: 700,
                 cursor: 'pointer'
               }}
@@ -293,7 +270,7 @@ export default function S07_MenuExplorer() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
               gap: '24px'
             }}
           >
@@ -302,29 +279,31 @@ export default function S07_MenuExplorer() {
                 key={item.id}
                 onClick={() => setSelectedDish(item)}
                 style={{
-                  backgroundColor: '#FFF',
-                  border: '3px solid #171717',
-                  borderRadius: '16px',
+                  backgroundColor: '#12141D',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '20px',
                   overflow: 'hidden',
-                  boxShadow: '5px 5px 0 #171717',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: 'column',
-                  transition: 'all 0.15s ease'
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translate(-3px, -3px)';
-                  e.currentTarget.style.boxShadow = '8px 8px 0 #2455D6';
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.borderColor = 'rgba(204, 255, 0, 0.35)';
+                  e.currentTarget.style.boxShadow = '0 16px 36px rgba(0, 0, 0, 0.5)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'none';
-                  e.currentTarget.style.boxShadow = '5px 5px 0 #171717';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.3)';
                 }}
               >
                 {/* Image */}
-                <div style={{ height: '180px', position: 'relative', borderBottom: '2px solid #171717' }}>
+                <div style={{ height: '180px', position: 'relative', overflow: 'hidden' }}>
                   <img
-                    src={item.image_url}
+                    src={item.image_url || item.image || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80'}
                     alt={item.name}
                     style={{
                       width: '100%',
@@ -336,16 +315,15 @@ export default function S07_MenuExplorer() {
                   <div
                     style={{
                       position: 'absolute',
-                      top: '10px',
-                      right: '10px',
-                      backgroundColor: '#FFD928',
-                      color: '#171717',
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '1.1rem',
-                      padding: '3px 10px',
-                      borderRadius: '6px',
-                      border: '2px solid #171717',
-                      boxShadow: '2px 2px 0 #171717'
+                      top: '12px',
+                      right: '12px',
+                      backgroundColor: '#CCFF00',
+                      color: '#0A0B0E',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '11px',
+                      fontWeight: 800,
+                      padding: '3px 9px',
+                      borderRadius: '999px'
                     }}
                   >
                     ${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}
@@ -353,24 +331,24 @@ export default function S07_MenuExplorer() {
                 </div>
 
                 {/* Content */}
-                <div style={{ padding: '18px', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
+                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                       <span
                         style={{
                           fontFamily: 'var(--font-mono)',
-                          fontSize: '0.7rem',
-                          color: '#2455D6',
-                          fontWeight: 800,
+                          fontSize: '10px',
+                          color: '#00F0FF',
+                          fontWeight: 700,
                           textTransform: 'uppercase'
                         }}
                       >
                         {item.category}
                       </span>
                       {item.spice_level > 0 && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#F04438' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '2px', color: '#FF3366' }}>
                           {[...Array(item.spice_level)].map((_, i) => (
-                            <Flame key={i} size={12} fill="#F04438" />
+                            <Flame key={i} size={11} fill="#FF3366" />
                           ))}
                         </span>
                       )}
@@ -379,10 +357,11 @@ export default function S07_MenuExplorer() {
                     <h3
                       style={{
                         fontFamily: 'var(--font-display)',
-                        fontSize: '1.2rem',
-                        color: '#171717',
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        color: '#FFF',
                         margin: '0 0 8px 0',
-                        lineHeight: 1.2
+                        lineHeight: 1.3
                       }}
                     >
                       {item.name}
@@ -391,9 +370,9 @@ export default function S07_MenuExplorer() {
                     <p
                       style={{
                         fontFamily: 'var(--font-body)',
-                        fontSize: '0.88rem',
-                        lineHeight: 1.45,
-                        color: '#555',
+                        fontSize: '13px',
+                        lineHeight: 1.5,
+                        color: '#9FA5B7',
                         margin: 0
                       }}
                     >
@@ -403,9 +382,9 @@ export default function S07_MenuExplorer() {
 
                   <div
                     style={{
-                      marginTop: '14px',
-                      borderTop: '1px solid #EEE',
-                      paddingTop: '10px',
+                      marginTop: '16px',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                      paddingTop: '12px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between'
@@ -418,11 +397,12 @@ export default function S07_MenuExplorer() {
                             key={i}
                             style={{
                               fontFamily: 'var(--font-mono)',
-                              fontSize: '0.68rem',
-                              backgroundColor: '#FFF5E6',
-                              border: '1px solid #171717',
-                              borderRadius: '4px',
-                              padding: '2px 6px'
+                              fontSize: '9.5px',
+                              backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                              border: '1px solid rgba(255, 255, 255, 0.08)',
+                              borderRadius: '999px',
+                              padding: '2px 8px',
+                              color: '#9FA5B7'
                             }}
                           >
                             {tag}
@@ -430,8 +410,8 @@ export default function S07_MenuExplorer() {
                         ))}
                     </div>
 
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 800, color: '#F04438' }}>
-                      DETAILS →
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10.5px', fontWeight: 700, color: '#CCFF00' }}>
+                      DETAILS &rarr;
                     </span>
                   </div>
                 </div>

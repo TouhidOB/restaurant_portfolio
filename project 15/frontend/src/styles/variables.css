@@ -1,36 +1,37 @@
 :root {
-  /* Playful Pop-Art Color Palette */
-  --color-tomato: #F04438;
-  --color-yellow: #FFD928;
-  --color-cobalt: #2455D6;
-  --color-pink: #F45AA5;
-  --color-cream: #FFF5E6;
-  --color-cream-light: #FFFCF7;
-  --color-ink: #171717;
-  --color-coral: #FF784F;
-  --color-mint: #9EE6C0;
-  --color-lime: #C6F36B;
-
-  /* Semantic Aliases */
-  --bg-primary: var(--color-cream);
-  --bg-surface: #FFFFFF;
-  --text-primary: var(--color-ink);
-  --text-muted: #666666;
-  --accent-action: var(--color-tomato);
-  --accent-highlight: var(--color-yellow);
-  --accent-contrast: var(--color-cobalt);
-  --border-comic: 3px solid var(--color-ink);
-  --shadow-comic: 4px 4px 0 var(--color-ink);
-  --shadow-comic-lg: 8px 8px 0 var(--color-ink);
-
+  /* Contemporary Dark Pop-Art Color Foundation */
+  --bg-canvas: #090A0E;
+  --bg-card: #12141D;
+  --bg-card-hover: #191C28;
+  --bg-glass: rgba(18, 20, 29, 0.75);
+  
+  --text-primary: #F5F6FA;
+  --text-secondary: #9FA5B7;
+  --text-muted: #646A7E;
+  
+  /* High-Impact Fashion Pop Accents */
+  --accent-coral: #FF3366;
+  --accent-lime: #CCFF00;
+  --accent-cobalt: #0066FF;
+  --accent-cyan: #00F0FF;
+  --accent-magenta: #FF007A;
+  --accent-purple: #8B5CF6;
+  --accent-gold: #FFB800;
+  
+  /* Borders and Glass */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.14);
+  --border-glow: rgba(204, 255, 0, 0.3);
+  
   /* Typography */
-  --font-display: 'Archivo Black', sans-serif;
-  --font-heading: 'Anton', sans-serif;
-  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-ui: 'DM Sans', sans-serif;
-  --font-mono: 'Space Mono', monospace;
-
-  /* Transitions */
-  --transition-fast: all 0.15s ease-out;
-  --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 30px rgba(255, 51, 102, 0.25);
+  --shadow-lime: 0 0 25px rgba(204, 255, 0, 0.25);
 }

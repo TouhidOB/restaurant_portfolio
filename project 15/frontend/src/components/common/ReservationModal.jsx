@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useCMS } from '../../context/CMSContext';
-import { X, CheckCircle2, AlertCircle, Calendar, Clock, Users, MapPin, Sparkles } from 'lucide-react';
+import { X, CheckCircle2, AlertCircle } from 'lucide-react';
 
 export default function ReservationModal() {
   const { isReservationModalOpen, setIsReservationModalOpen, handleBookingSubmit } = useCMS();
@@ -16,7 +16,7 @@ export default function ReservationModal() {
     message: ''
   });
 
-  const [status, setStatus] = useState('idle'); // 'idle' | 'submitting' | 'success' | 'error'
+  const [status, setStatus] = useState('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [confirmationNumber, setConfirmationNumber] = useState('');
 
@@ -57,8 +57,8 @@ export default function ReservationModal() {
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(23, 23, 23, 0.85)',
-        backdropFilter: 'blur(8px)',
+        backgroundColor: 'rgba(5, 6, 8, 0.88)',
+        backdropFilter: 'blur(16px)',
         zIndex: 2000,
         display: 'flex',
         alignItems: 'center',
@@ -70,12 +70,12 @@ export default function ReservationModal() {
     >
       <div
         style={{
-          backgroundColor: '#FFF5E6',
-          border: '4px solid #171717',
-          borderRadius: '24px',
-          boxShadow: '12px 12px 0px #171717',
+          backgroundColor: '#12141D',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          borderRadius: '28px',
+          boxShadow: '0 30px 80px rgba(0, 0, 0, 0.8)',
           width: '100%',
-          maxWidth: '680px',
+          maxWidth: '640px',
           overflow: 'hidden',
           position: 'relative',
           maxHeight: '92vh',
@@ -87,10 +87,8 @@ export default function ReservationModal() {
         {/* Header Bar */}
         <div
           style={{
-            backgroundColor: '#F04438',
-            color: '#FFF',
-            borderBottom: '4px solid #171717',
-            padding: '16px 24px',
+            padding: '20px 28px',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between'
@@ -99,14 +97,14 @@ export default function ReservationModal() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <span
               style={{
-                backgroundColor: '#FFD928',
-                color: '#171717',
-                fontFamily: 'var(--font-display)',
-                fontSize: '1rem',
+                backgroundColor: 'rgba(204, 255, 0, 0.15)',
+                color: '#CCFF00',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                fontWeight: 700,
                 padding: '4px 10px',
-                borderRadius: '6px',
-                border: '2px solid #171717',
-                transform: 'rotate(-2deg)'
+                borderRadius: '999px',
+                border: '1px solid rgba(204, 255, 0, 0.25)'
               }}
             >
               VIP PASS
@@ -114,8 +112,9 @@ export default function ReservationModal() {
             <span
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.4rem',
-                letterSpacing: '1px'
+                fontSize: '18px',
+                fontWeight: 700,
+                color: '#FFF'
               }}
             >
               RESERVE YOUR TABLE
@@ -125,50 +124,50 @@ export default function ReservationModal() {
           <button
             onClick={handleClose}
             style={{
-              backgroundColor: '#FFF',
-              color: '#171717',
-              border: '2px solid #171717',
-              borderRadius: '8px',
-              width: '34px',
-              height: '34px',
+              backgroundColor: 'rgba(255, 255, 255, 0.06)',
+              color: '#9FA5B7',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              cursor: 'pointer',
-              boxShadow: '2px 2px 0 #171717'
+              cursor: 'pointer'
             }}
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         </div>
 
         {/* Modal Body */}
         <div style={{ overflowY: 'auto', padding: '28px' }}>
           {status === 'success' ? (
-            <div style={{ textAlign: 'center', padding: '24px 0' }}>
+            <div style={{ textAlign: 'center', padding: '32px 10px' }}>
               <div
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  width: '72px',
-                  height: '72px',
+                  width: '64px',
+                  height: '64px',
                   borderRadius: '50%',
-                  backgroundColor: '#00C389',
-                  color: '#FFF',
-                  border: '3px solid #171717',
-                  boxShadow: '4px 4px 0 #171717',
-                  marginBottom: '16px'
+                  backgroundColor: 'rgba(204, 255, 0, 0.15)',
+                  color: '#CCFF00',
+                  border: '1px solid #CCFF00',
+                  boxShadow: '0 0 25px rgba(204, 255, 0, 0.3)',
+                  marginBottom: '20px'
                 }}
               >
-                <CheckCircle2 size={40} />
+                <CheckCircle2 size={36} />
               </div>
 
               <h2
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: '2rem',
-                  color: '#171717',
+                  fontSize: '22px',
+                  fontWeight: 700,
+                  color: '#FFF',
                   margin: '0 0 10px 0'
                 }}
               >
@@ -178,35 +177,34 @@ export default function ReservationModal() {
               <p
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: '1.1rem',
-                  lineHeight: 1.5,
-                  color: '#444',
-                  maxWidth: '480px',
+                  fontSize: '14px',
+                  lineHeight: 1.6,
+                  color: '#9FA5B7',
+                  maxWidth: '460px',
                   margin: '0 auto 20px auto'
                 }}
               >
-                Your reservation inquiry has been received. Our studio host will lock in your booth and send confirmation.
+                Your reservation request has been dispatched to the studio host desk. We will confirm your seating shortly.
               </p>
 
               <div
                 style={{
-                  backgroundColor: '#FFD928',
-                  border: '3px solid #171717',
+                  backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                   borderRadius: '16px',
-                  padding: '16px 24px',
+                  padding: '18px 28px',
                   display: 'inline-block',
-                  boxShadow: '4px 4px 0 #171717',
                   marginBottom: '24px'
                 }}
               >
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: '#171717', fontWeight: 700 }}>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: '#646A7E', textTransform: 'uppercase' }}>
                   BOOKING REFERENCE
                 </div>
-                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.6rem', color: '#F04438' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '22px', fontWeight: 800, color: '#CCFF00', margin: '4px 0' }}>
                   {confirmationNumber}
                 </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: '#171717', marginTop: '4px' }}>
-                  {formData.customer_name} • {formData.guest_count} Guests • {formData.preferred_date} @ {formData.preferred_time}
+                <div style={{ fontFamily: 'var(--font-body)', fontSize: '12.5px', color: '#FFF' }}>
+                  {formData.customer_name} &bull; {formData.guest_count} Guests &bull; {formData.preferred_date} @ {formData.preferred_time}
                 </div>
               </div>
 
@@ -214,18 +212,17 @@ export default function ReservationModal() {
                 <button
                   onClick={handleClose}
                   style={{
-                    backgroundColor: '#171717',
+                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
                     color: '#FFF',
                     padding: '12px 28px',
-                    borderRadius: '8px',
+                    borderRadius: '999px',
                     fontFamily: 'var(--font-display)',
-                    fontSize: '1.1rem',
-                    border: 'none',
-                    cursor: 'pointer',
-                    boxShadow: '4px 4px 0 #F04438'
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    cursor: 'pointer'
                   }}
                 >
-                  AWESOME, BACK TO THE STUDIO
+                  RETURN TO STUDIO
                 </button>
               </div>
             </div>
@@ -234,19 +231,19 @@ export default function ReservationModal() {
               {status === 'error' && (
                 <div
                   style={{
-                    backgroundColor: '#FEE4E2',
-                    border: '2px solid #F04438',
+                    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
                     borderRadius: '8px',
                     padding: '12px 16px',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '10px',
-                    color: '#B42318',
+                    color: '#FCA5A5',
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '0.85rem'
+                    fontSize: '12px'
                   }}
                 >
-                  <AlertCircle size={18} />
+                  <AlertCircle size={16} />
                   <span>{errorMessage}</span>
                 </div>
               )}
@@ -254,17 +251,8 @@ export default function ReservationModal() {
               {/* Guest Name & Phone */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      marginBottom: '6px',
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    Your Full Name *
+                  <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#646A7E', textTransform: 'uppercase', marginBottom: '6px' }}>
+                    Full Name *
                   </label>
                   <input
                     type="text"
@@ -272,31 +260,22 @@ export default function ReservationModal() {
                     required
                     value={formData.customer_name}
                     onChange={handleChange}
-                    placeholder="e.g. Alex Rivera"
+                    placeholder="Alex Rivera"
                     style={{
                       width: '100%',
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       borderRadius: '8px',
-                      border: '2px solid #171717',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       fontFamily: 'var(--font-body)',
-                      fontSize: '0.95rem',
-                      backgroundColor: '#FFF',
-                      boxShadow: '2px 2px 0 #171717'
+                      fontSize: '13.5px',
+                      backgroundColor: '#191C28',
+                      color: '#FFF'
                     }}
                   />
                 </div>
 
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      marginBottom: '6px',
-                      textTransform: 'uppercase'
-                    }}
-                  >
+                  <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#646A7E', textTransform: 'uppercase', marginBottom: '6px' }}>
                     Phone Number *
                   </label>
                   <input
@@ -305,16 +284,16 @@ export default function ReservationModal() {
                     required
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="e.g. (555) 019-2834"
+                    placeholder="(555) 019-2834"
                     style={{
                       width: '100%',
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       borderRadius: '8px',
-                      border: '2px solid #171717',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       fontFamily: 'var(--font-body)',
-                      fontSize: '0.95rem',
-                      backgroundColor: '#FFF',
-                      boxShadow: '2px 2px 0 #171717'
+                      fontSize: '13.5px',
+                      backgroundColor: '#191C28',
+                      color: '#FFF'
                     }}
                   />
                 </div>
@@ -323,16 +302,7 @@ export default function ReservationModal() {
               {/* Email & Guests */}
               <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px' }}>
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      marginBottom: '6px',
-                      textTransform: 'uppercase'
-                    }}
-                  >
+                  <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#646A7E', textTransform: 'uppercase', marginBottom: '6px' }}>
                     Email Address *
                   </label>
                   <input
@@ -344,28 +314,19 @@ export default function ReservationModal() {
                     placeholder="alex@example.com"
                     style={{
                       width: '100%',
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       borderRadius: '8px',
-                      border: '2px solid #171717',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       fontFamily: 'var(--font-body)',
-                      fontSize: '0.95rem',
-                      backgroundColor: '#FFF',
-                      boxShadow: '2px 2px 0 #171717'
+                      fontSize: '13.5px',
+                      backgroundColor: '#191C28',
+                      color: '#FFF'
                     }}
                   />
                 </div>
 
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      marginBottom: '6px',
-                      textTransform: 'uppercase'
-                    }}
-                  >
+                  <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#646A7E', textTransform: 'uppercase', marginBottom: '6px' }}>
                     Guests *
                   </label>
                   <select
@@ -374,17 +335,17 @@ export default function ReservationModal() {
                     onChange={handleChange}
                     style={{
                       width: '100%',
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       borderRadius: '8px',
-                      border: '2px solid #171717',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       fontFamily: 'var(--font-body)',
-                      fontSize: '0.95rem',
-                      backgroundColor: '#FFF',
-                      boxShadow: '2px 2px 0 #171717'
+                      fontSize: '13.5px',
+                      backgroundColor: '#191C28',
+                      color: '#FFF'
                     }}
                   >
-                    {[1, 2, 3, 4, 5, 6, 7, 8, '9+'].map((num) => (
-                      <option key={num} value={typeof num === 'number' ? num : 10}>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 10].map((num) => (
+                      <option key={num} value={num}>
                         {num} {num === 1 ? 'Guest' : 'Guests'}
                       </option>
                     ))}
@@ -395,17 +356,8 @@ export default function ReservationModal() {
               {/* Date & Time */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      marginBottom: '6px',
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    Desired Date *
+                  <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#646A7E', textTransform: 'uppercase', marginBottom: '6px' }}>
+                    Date *
                   </label>
                   <input
                     type="date"
@@ -415,29 +367,20 @@ export default function ReservationModal() {
                     onChange={handleChange}
                     style={{
                       width: '100%',
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       borderRadius: '8px',
-                      border: '2px solid #171717',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       fontFamily: 'var(--font-body)',
-                      fontSize: '0.95rem',
-                      backgroundColor: '#FFF',
-                      boxShadow: '2px 2px 0 #171717'
+                      fontSize: '13.5px',
+                      backgroundColor: '#191C28',
+                      color: '#FFF'
                     }}
                   />
                 </div>
 
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8rem',
-                      fontWeight: 700,
-                      marginBottom: '6px',
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    Preferred Time *
+                  <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#646A7E', textTransform: 'uppercase', marginBottom: '6px' }}>
+                    Time *
                   </label>
                   <select
                     name="preferred_time"
@@ -445,99 +388,44 @@ export default function ReservationModal() {
                     onChange={handleChange}
                     style={{
                       width: '100%',
-                      padding: '10px 14px',
+                      padding: '11px 14px',
                       borderRadius: '8px',
-                      border: '2px solid #171717',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
                       fontFamily: 'var(--font-body)',
-                      fontSize: '0.95rem',
-                      backgroundColor: '#FFF',
-                      boxShadow: '2px 2px 0 #171717'
+                      fontSize: '13.5px',
+                      backgroundColor: '#191C28',
+                      color: '#FFF'
                     }}
                   >
-                    {['12:00', '12:30', '13:00', '13:30', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30'].map((time) => (
-                      <option key={time} value={time}>
-                        {time}
+                    {['12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '5:30 PM', '6:00 PM', '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM', '9:00 PM'].map((t) => (
+                      <option key={t} value={t}>
+                        {t}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
 
-              {/* Seating Area */}
+              {/* Notes */}
               <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  Preferred Vibe / Seating
-                </label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '10px' }}>
-                  {['Main Comic Dining Floor', 'The Cocktail Fizz Bar', 'VIP Pop Studio Lounge'].map((area) => (
-                    <label
-                      key={area}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '10px 12px',
-                        borderRadius: '8px',
-                        border: '2px solid #171717',
-                        backgroundColor: formData.seating_area === area ? '#FFD928' : '#FFF',
-                        cursor: 'pointer',
-                        fontFamily: 'var(--font-body)',
-                        fontSize: '0.85rem',
-                        fontWeight: 700,
-                        boxShadow: '2px 2px 0 #171717'
-                      }}
-                    >
-                      <input
-                        type="radio"
-                        name="seating_area"
-                        value={area}
-                        checked={formData.seating_area === area}
-                        onChange={handleChange}
-                      />
-                      <span>{area}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Message / Notes */}
-              <div>
-                <label
-                  style={{
-                    display: 'block',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    marginBottom: '6px',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  Special Notes or Celebrations
+                <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#646A7E', textTransform: 'uppercase', marginBottom: '6px' }}>
+                  Special Notes / Celebrations
                 </label>
                 <textarea
                   name="message"
                   rows={2}
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Dietary preferences, birthdays, anniversaries, or favorite dishes..."
+                  placeholder="Dietary requests, birthday, or preferred seating zone..."
                   style={{
                     width: '100%',
-                    padding: '10px 14px',
+                    padding: '11px 14px',
                     borderRadius: '8px',
-                    border: '2px solid #171717',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
                     fontFamily: 'var(--font-body)',
-                    fontSize: '0.95rem',
-                    backgroundColor: '#FFF',
-                    boxShadow: '2px 2px 0 #171717',
+                    fontSize: '13.5px',
+                    backgroundColor: '#191C28',
+                    color: '#FFF',
                     resize: 'none'
                   }}
                 />
@@ -549,20 +437,19 @@ export default function ReservationModal() {
                 disabled={status === 'submitting'}
                 style={{
                   marginTop: '8px',
-                  backgroundColor: '#F04438',
-                  color: '#FFF',
+                  backgroundColor: '#CCFF00',
+                  color: '#0A0B0E',
                   padding: '14px',
-                  borderRadius: '10px',
-                  border: '3px solid #171717',
+                  borderRadius: '999px',
                   fontFamily: 'var(--font-display)',
-                  fontSize: '1.2rem',
-                  letterSpacing: '1px',
+                  fontSize: '13.5px',
+                  fontWeight: 800,
                   cursor: status === 'submitting' ? 'wait' : 'pointer',
-                  boxShadow: '4px 4px 0 #171717',
-                  transition: 'all 0.15s ease'
+                  boxShadow: '0 0 25px rgba(204, 255, 0, 0.35)',
+                  transition: 'all 0.2s ease'
                 }}
               >
-                {status === 'submitting' ? 'LOCKING IN BOOTH...' : 'CONFIRM POP RESERVATION!'}
+                {status === 'submitting' ? 'LOCKING IN BOOTH...' : 'CONFIRM POP RESERVATION NOW &rarr;'}
               </button>
             </form>
           )}
