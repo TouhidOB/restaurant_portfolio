@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import Preloader from './components/common/Preloader';
 import Navigation from './components/common/Navigation';
 import Footer from './components/common/Footer';
@@ -21,11 +21,14 @@ import Lightbox from './components/gallery/Lightbox';
 
 export default function App() {
   const [loaded, setLoaded] = useState(false);
+  const handleLoaded = useCallback(() => {
+    setLoaded(true);
+  }, []);
 
   return (
     <div className="dark-luxury-app">
       {/* S01: Preloader Loading Experience */}
-      {!loaded && <Preloader onComplete={() => setLoaded(true)} />}
+      {!loaded && <Preloader onComplete={handleLoaded} />}
 
       {/* Global Navigation */}
       <Navigation />

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Float, Html, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
@@ -229,20 +229,22 @@ export default function RestaurantTour({ viewpoints = [] }) {
           camera={{ position: cameraPos, fov: 50 }}
           gl={{ antialias: true, powerPreference: 'high-performance' }}
         >
-          <color attach="background" args={[mood === 'fire' ? '#18120e' : mood === 'vintage' ? '#141217' : '#101010']} />
-          <ambientLight intensity={0.65} color="#282522" />
-          <directionalLight position={[6, 12, 8]} intensity={0.8} color="#EDE5D8" />
+          <Suspense fallback={null}>
+            <color attach="background" args={[mood === 'fire' ? '#18120e' : mood === 'vintage' ? '#141217' : '#101010']} />
+            <ambientLight intensity={0.65} color="#282522" />
+            <directionalLight position={[6, 12, 8]} intensity={0.8} color="#EDE5D8" />
 
-          <TourSceneInterior activeViewpointIndex={activeIndex} mood={mood} />
-          <CameraTourController targetPos={cameraPos} targetLookAt={cameraTarget} />
+            <TourSceneInterior activeViewpointIndex={activeIndex} mood={mood} />
+            <CameraTourController targetPos={cameraPos} targetLookAt={cameraTarget} />
 
-          <OrbitControls
-            enablePan={false}
-            maxPolarAngle={Math.PI / 2 - 0.05}
-            minDistance={3}
-            maxDistance={14}
-            rotateSpeed={0.5}
-          />
+            <OrbitControls
+              enablePan={false}
+              maxPolarAngle={Math.PI / 2 - 0.05}
+              minDistance={3}
+              maxDistance={14}
+              rotateSpeed={0.5}
+            />
+          </Suspense>
         </Canvas>
       ) : (
         /* Photographic Fallback / High-Res Imagery Mode */

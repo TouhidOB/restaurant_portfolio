@@ -1,10 +1,10 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Float, Text } from '@react-three/drei';
+import { OrbitControls, Text } from '@react-three/drei';
 import * as THREE from 'three';
 
 // Fire Embers rising from the kitchen grill
-function HearthEmbers({ count = 40 }) {
+function HearthEmbers({ count = 35 }) {
   const meshRef = useRef();
   
   const particles = useMemo(() => {
@@ -24,7 +24,7 @@ function HearthEmbers({ count = 40 }) {
 
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
-  useFrame((state, delta) => {
+  useFrame((state) => {
     if (!meshRef.current) return;
     particles.forEach((p, i) => {
       p.y += p.speed;
@@ -186,15 +186,14 @@ function SteakhouseArchitecture() {
           <boxGeometry args={[9.7, 1.35, 0.05]} />
           <meshStandardMaterial color="#94734F" roughness={0.3} metalness={0.85} />
         </mesh>
-        {/* Restaurant Name in 3D Typography */}
+        {/* Built-in 3D typography without external font download dependencies */}
         <Text
           position={[0, 0, 0.14]}
-          fontSize={0.52}
+          fontSize={0.48}
           color="#EDE5D8"
-          font="https://fonts.gstatic.com/s/cormorantgaramond/v16/0FlUPGDAcGxY4-DUPl5bHs2x-g.woff"
           anchorX="center"
           anchorY="middle"
-          letterSpacing={0.18}
+          letterSpacing={0.14}
         >
           CHARRED & PRIME
         </Text>
@@ -249,36 +248,38 @@ export default function HeroScene() {
         shadows
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
-        <color attach="background" args={['#101010']} />
-        
-        {/* Ambient base lighting */}
-        <ambientLight intensity={0.7} color="#282522" />
-        
-        {/* Soft directional exterior moonlight */}
-        <directionalLight
-          position={[8, 16, 12]}
-          intensity={0.9}
-          color="#C5B9A6"
-          castShadow
-          shadow-mapSize={[1024, 1024]}
-        />
+        <Suspense fallback={null}>
+          <color attach="background" args={['#101010']} />
+          
+          {/* Ambient base lighting */}
+          <ambientLight intensity={0.7} color="#282522" />
+          
+          {/* Soft directional exterior moonlight */}
+          <directionalLight
+            position={[8, 16, 12]}
+            intensity={0.9}
+            color="#C5B9A6"
+            castShadow
+            shadow-mapSize={[1024, 1024]}
+          />
 
-        {/* 3D Steakhouse Architecture */}
-        <SteakhouseArchitecture />
-        
-        {/* Subtle camera drift */}
-        <CameraRig />
+          {/* 3D Steakhouse Architecture */}
+          <SteakhouseArchitecture />
+          
+          {/* Subtle camera drift */}
+          <CameraRig />
 
-        {/* Orbit controls with strict constraints to preserve architectural composition */}
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          maxPolarAngle={Math.PI / 2 - 0.02}
-          minPolarAngle={Math.PI / 3}
-          maxAzimuthAngle={Math.PI / 8}
-          minAzimuthAngle={-Math.PI / 8}
-          rotateSpeed={0.3}
-        />
+          {/* Orbit controls with strict constraints to preserve architectural composition */}
+          <OrbitControls
+            enableZoom={false}
+            enablePan={false}
+            maxPolarAngle={Math.PI / 2 - 0.02}
+            minPolarAngle={Math.PI / 3}
+            maxAzimuthAngle={Math.PI / 8}
+            minAzimuthAngle={-Math.PI / 8}
+            rotateSpeed={0.3}
+          />
+        </Suspense>
       </Canvas>
     </div>
   );

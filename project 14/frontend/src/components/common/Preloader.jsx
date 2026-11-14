@@ -1,62 +1,96 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function Preloader({ onComplete }) {
   const [progress, setProgress] = useState(0);
   const [fade, setFade] = useState(false);
+  const finishedRef = useRef(false);
+
+  const handleFinish = () => {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+    setFade(true);
+    try {
+      sessionStorage.setItem('visited_charred_prime', 'true');
+    } catch (e) {}
+    setTimeout(() => {
+      onComplete?.();
+    }, 250);
+  };
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          setTimeout(() => setFade(true), 300);
-          setTimeout(() => onComplete?.(), 900);
-          return 100;
-        }
-        return prev + Math.floor(Math.random() * 15) + 8;
-      });
-    }, 60);
+    // If already visited this session, complete immediately
+    try {
+      if (sessionStorage.getItem('visited_charred_prime')) {
+        handleFinish();
+        return;
+      }
+    } catch (e) {}
 
-    return () => clearInterval(timer);
-  }, [onComplete]);
+    let current = 0;
+    const interval = setInterval(() => {
+      current += Math.floor(Math.random() * 30) + 25;
+      if (current >= 100) {
+        current = 100;
+        setProgress(100);
+        clearInterval(interval);
+        setTimeout(handleFinish, 80);
+      } else {
+        setProgress(current);
+      }
+    }, 20);
+
+    // Guaranteed fallback dismiss after 600ms
+    const safety = setTimeout(() => {
+      setProgress(100);
+      handleFinish();
+    }, 600);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(safety);
+    };
+  }, []);
 
   return (
     <div
+      id="preloader-container"
+      onClick={handleFinish}
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'var(--color-obsidian)',
+        backgroundColor: '#101010',
         zIndex: 9999,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         opacity: fade ? 0 : 1,
-        transition: 'opacity 0.6s ease-out',
-        pointerEvents: fade ? 'none' : 'auto'
+        transition: 'opacity 0.25s ease-out',
+        pointerEvents: fade ? 'none' : 'auto',
+        cursor: 'pointer'
       }}
     >
-      <div style={{ textAlign: 'center', maxWidth: '420px', padding: '20px' }}>
+      <div style={{ textAlign: 'center', maxWidth: '420px', padding: '24px' }}>
         <div style={{
-          fontFamily: 'var(--font-heading)',
+          fontFamily: "'DM Sans', sans-serif",
           fontSize: '11px',
           letterSpacing: '3px',
           textTransform: 'uppercase',
-          color: 'var(--color-champagne)',
-          marginBottom: '16px'
+          color: '#C4A878',
+          marginBottom: '14px'
         }}>
           NEW YORK CITY • DRY-AGED PRIME HEARTH
         </div>
 
         <h1 style={{
-          fontFamily: 'var(--font-display)',
+          fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontSize: '44px',
-          letterSpacing: '4px',
-          color: 'var(--color-ivory)',
+          letterSpacing: '3px',
+          color: '#EDE5D8',
           fontWeight: 600,
-          marginBottom: '28px'
+          marginBottom: '20px'
         }}>
-          CHARRED <span style={{ color: 'var(--color-bronze)' }}>&</span> PRIME
+          CHARRED <span style={{ color: '#94734F' }}>&</span> PRIME
         </h1>
 
         {/* Bronze Loading Bar */}
@@ -66,7 +100,7 @@ export default function Preloader({ onComplete }) {
           background: 'rgba(148, 115, 79, 0.2)',
           position: 'relative',
           overflow: 'hidden',
-          marginBottom: '16px'
+          marginBottom: '14px'
         }}>
           <div style={{
             position: 'absolute',
@@ -74,21 +108,26 @@ export default function Preloader({ onComplete }) {
             top: 0,
             bottom: 0,
             width: `${progress}%`,
-            background: 'linear-gradient(90deg, var(--color-bronze), var(--color-champagne))',
-            transition: 'width 0.1s linear'
+            background: 'linear-gradient(90deg, #94734F, #C4A878)',
+            transition: 'width 0.08s ease-out'
           }} />
         </div>
 
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
-          fontFamily: 'var(--font-heading)',
+          fontFamily: "'DM Sans', sans-serif",
           fontSize: '11px',
-          color: 'var(--color-taupe)',
-          letterSpacing: '1px'
+          color: '#A59A8C',
+          letterSpacing: '1px',
+          marginBottom: '16px'
         }}>
           <span>PREPARING 3D HEARTH</span>
-          <span>{Math.min(progress, 100)}%</span>
+          <span>{progress}%</span>
+        </div>
+
+        <div style={{ fontSize: '11px', color: '#94734F', letterSpacing: '1px', textTransform: 'uppercase' }}>
+          Click anywhere to enter &rarr;
         </div>
       </div>
     </div>
