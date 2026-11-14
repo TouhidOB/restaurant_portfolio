@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}STARDUST // Retro-Futuristic Diner Studio{% endblock %}</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-midnight: #111A2B;
+      --bg-midnight-deep: #0B111D;
+      --bg-card: #182338;
+      --bg-card-hover: #1F2D47;
+      --cherry-red: #D83A45;
+      --cherry-red-hover: #BF2A35;
+      --neon-cyan: #43D9E8;
+      --electric-blue: #277DA1;
+      --chrome-silver: #BFC6CC;
+      --cream-ivory: #F6E9D5;
+      --atomic-yellow: #F2C94C;
+      --border-color: #243552;
+      --border-glow: rgba(67, 217, 232, 0.35);
+      --text-main: #F6E9D5;
+      --text-muted: #8F9EB3;
+      --sidebar-width: 290px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-midnight-deep);
+      color: var(--text-main);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Permanent Left Sidebar */
+    #cmsSidebar {
+      width: var(--sidebar-width);
+      background-color: var(--bg-midnight);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 100;
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .sidebar-header {
+      padding: 1.5rem 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .neon-star-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--cherry-red), #F0535E);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      color: #FFF;
+      box-shadow: 0 0 12px rgba(216, 58, 69, 0.5);
+    }
+
+    .brand-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: #FFFFFF;
+      line-height: 1.1;
+    }
+
+    .brand-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--neon-cyan);
+      letter-spacing: 0.12em;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .sidebar-search-box {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      background-color: rgba(11, 17, 29, 0.4);
+    }
+
+    #sidebarFilter {
+      width: 100%;
+      background-color: var(--bg-midnight-deep);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-main);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    #sidebarFilter:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 8px var(--border-glow);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 4px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: all 0.18s;
+      border: 1px solid transparent;
+    }
+
+    .nav-item:hover, .nav-item.active {
+      color: #FFFFFF;
+      background-color: var(--bg-card);
+      border-color: rgba(67, 217, 232, 0.25);
+    }
+
+    .nav-item.active {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(67, 217, 232, 0.2);
+    }
+
+    .nav-item .icon {
+      font-size: 1rem;
+      color: var(--cherry-red);
+      width: 20px;
+      text-align: center;
+    }
+
+    .sidebar-footer {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      background-color: var(--bg-midnight-deep);
+    }
+
+    /* Main Content Wrapper */
+    .cms-main {
+      margin-left: var(--sidebar-width);
+      flex: 1;
+      padding: 2.5rem;
+      max-width: 1440px;
+      width: calc(100% - var(--sidebar-width));
+    }
+
+    /* Header Strip */
+    .cms-topbar {
+      display: flex;
+      align-items: center;
+      justifyContent: space-between;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .topbar-title h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.01em;
+    }
+
+    .topbar-title p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+    }
+
+    .btn-cherry {
+      background-color: var(--cherry-red);
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(216, 58, 69, 0.35);
+    }
+    .btn-cherry:hover {
+      background-color: var(--cherry-red-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-cyan {
+      background-color: transparent;
+      color: var(--neon-cyan);
+      border: 1px solid var(--neon-cyan);
+    }
+    .btn-cyan:hover {
+      background-color: rgba(67, 217, 232, 0.12);
+      box-shadow: 0 0 12px var(--border-glow);
+    }
+
+    /* Cards */
+    .cms-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .cms-card-header {
+      display: flex;
+      align-items: center;
+      justifyContent: space-between;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .cms-card-header h2 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    /* Tables */
+    .cms-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .cms-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      color: var(--neon-cyan);
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-midnight);
+    }
+
+    .cms-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid rgba(36, 53, 82, 0.5);
+      color: var(--text-main);
+    }
+
+    .cms-table tr:hover td {
+      background-color: var(--bg-card-hover);
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--neon-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-control {
+      width: 100%;
+      background-color: var(--bg-midnight-deep);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 0.65rem 0.85rem;
+      color: var(--text-main);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 8px var(--border-glow);
+    }
+
+    /* Alert Messages */
+    .alert {
+      padding: 0.85rem 1.25rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      font-size: 0.88rem;
+    }
+    .alert-success {
+      background-color: rgba(67, 217, 232, 0.15);
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+    .alert-danger {
+      background-color: rgba(216, 58, 69, 0.18);
+      border: 1px solid var(--cherry-red);
+      color: #FFA5AC;
+    }
+
+    /* Status Badges */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 3px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .badge-pending {
+      background-color: rgba(242, 201, 76, 0.15);
+      color: var(--atomic-yellow);
+      border: 1px solid var(--atomic-yellow);
+    }
+    .badge-confirmed {
+      background-color: rgba(67, 217, 232, 0.15);
+      color: var(--neon-cyan);
+      border: 1px solid var(--neon-cyan);
+    }
+    .badge-completed {
+      background-color: rgba(82, 116, 90, 0.25);
+      color: #AAB9A0;
+      border: 1px solid #71866A;
+    }
+    .badge-cancelled {
+      background-color: rgba(216, 58, 69, 0.15);
+      color: var(--cherry-red);
+      border: 1px solid var(--cherry-red);
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <!-- Permanent Left Sidebar Navigation -->
+  <aside id="cmsSidebar">
+    <div class="sidebar-header">
+      <a href="{% url 'cms_dashboard' %}" class="brand-badge">
+        <div class="neon-star-icon">★</div>
+        <div>
+          <span class="brand-title">STARDUST</span>
+          <span class="brand-sub">RETRO DINER CMS</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- Quick Search Filter -->
+    <div class="sidebar-search-box">
+      <input type="text" id="sidebarFilter" placeholder="Filter sections... (e.g. menu, tour)" autocomplete="off">
+    </div>
+
+    <!-- Navigation Anchors -->
+    <nav class="sidebar-nav" id="sidebarNav">
+      <a href="#overview" class="nav-item active"><span class="icon">⚡</span><span>Overview & KPIs</span></a>
+      <a href="#section-settings" class="nav-item"><span class="icon">⚙</span><span>Diner Identity & Hours</span></a>
+      <a href="#section-reservations" class="nav-item"><span class="icon">📅</span><span>Live Reservations</span></a>
+      <a href="#section-menu" class="nav-item"><span class="icon">🍔</span><span>Menu & Availability</span></a>
+      <a href="#section-tour" class="nav-item"><span class="icon">🚀</span><span>3D Spatial Tour</span></a>
+      <a href="#section-editorial" class="nav-item"><span class="icon">✍</span><span>15-Section Editor</span></a>
+      <a href="#section-gallery" class="nav-item"><span class="icon">📸</span><span>Atomic Archive</span></a>
+      <a href="#section-testimonials" class="nav-item"><span class="icon">★</span><span>Guest Reviews</span></a>
+      <a href="#section-faqs" class="nav-item"><span class="icon">❓</span><span>FAQ Manager</span></a>
+      <a href="#section-json" class="nav-item"><span class="icon">{ }</span><span>Master JSON Schema</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div>
+        <span style="color: var(--neon-cyan);">●</span> LIVE DJANGO 5
+      </div>
+      <a href="{% url 'cms_logout' %}" style="color: var(--cherry-red); text-decoration: none;">LOGOUT ↗</a>
+    </div>
+  </aside>
+
+  <!-- Main Content Shell -->
+  <main class="cms-main">
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert {% if msg.tags == 'error' %}alert-danger{% else %}alert-success{% endif %}">
+          {{ msg }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    // Live Sidebar Filtering
+    const filterInput = document.getElementById('sidebarFilter');
+    const navItems = document.querySelectorAll('#sidebarNav .nav-item');
+
+    if (filterInput) {
+      filterInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        navItems.forEach(item => {
+          const text = item.innerText.toLowerCase();
+          if (!query || text.includes(query)) {
+            item.style.display = 'flex';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    }
+
+    // Active state highlighting on scroll
+    window.addEventListener('scroll', () => {
+      let currentSection = '';
+      const sections = document.querySelectorAll('section[id], div[id]');
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 120;
+        if (window.pageYOffset >= top) {
+          currentSection = sec.getAttribute('id');
+        }
+      });
+      if (currentSection) {
+        navItems.forEach(item => {
+          item.classList.remove('active');
+          if (item.getAttribute('href') === '#' + currentSection) {
+            item.classList.add('active');
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

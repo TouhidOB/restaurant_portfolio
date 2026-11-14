@@ -1,0 +1,53 @@
+:root {
+  /* PRD 05 Retro-Futuristic Color Palette */
+  --bg-midnight: #111A2B;
+  --bg-midnight-deep: #090F1B;
+  --bg-surface: #19253B;
+  --bg-surface-elevated: #21324E;
+  --bg-card: #182338;
+
+  --electric-blue: #277DA1;
+  --neon-cyan: #43D9E8;
+  --neon-cyan-dim: rgba(67, 217, 232, 0.15);
+  --neon-cyan-glow: 0 0 16px rgba(67, 217, 232, 0.45);
+
+  --cherry-red: #D83A45;
+  --cherry-red-hover: #BF2A35;
+  --cherry-red-dim: rgba(216, 58, 69, 0.18);
+  --cherry-red-glow: 0 0 16px rgba(216, 58, 69, 0.45);
+
+  --cherry-cream: #F6E9D5;
+  --vintage-ivory: #FFF7E8;
+  --chrome-silver: #BFC6CC;
+  --warm-pink: #E99BAA;
+  --atomic-yellow: #F2C94C;
+  --deep-charcoal: #20242B;
+  --diner-brown: #775744;
+
+  --border-diner: #243552;
+  --border-light: #364B6E;
+  --border-cream: #E4D5BE;
+
+  --text-ivory: #FFF7E8;
+  --text-cream: #F6E9D5;
+  --text-muted: #8F9EB3;
+  --text-dark: #1A1F29;
+
+  /* Typography */
+  --font-retro: 'Righteous', 'Bungee', cursive, sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-sans: 'DM Sans', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+
+  /* Sizing & Radius */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --container-max: 1480px;
+  --header-height: 84px;
+
+  /* Transitions */
+  --transition-fast: 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+}

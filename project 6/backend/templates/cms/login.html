@@ -1,0 +1,66 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}LOGIN // Stardust Retro-Futuristic Diner Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+  #cmsSidebar {
+    display: none !important;
+  }
+  .cms-main {
+    margin-left: 0 !important;
+    width: 100% !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="width: 100%; max-width: 440px; margin: 0 auto;">
+  <div class="cms-card" style="border-color: rgba(67, 217, 232, 0.4); box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6); padding: 2.5rem 2rem;">
+    <div style="text-align: center; margin-bottom: 2rem;">
+      <div class="neon-star-icon" style="margin: 0 auto 1.25rem; width: 48px; height: 48px; font-size: 1.5rem;">★</div>
+      <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.75rem; color: #FFF; font-weight: 700;">
+        STARDUST DINER
+      </h2>
+      <p style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--neon-cyan); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 0.25rem;">
+        DECOUPLED STUDIO TERMINAL // DJANGO 5
+      </p>
+    </div>
+
+    {% if error %}
+      <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="username">Staff Username</label>
+        <input type="text" id="username" name="username" class="form-control" required autofocus placeholder="admin" value="admin">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 2rem;">
+        <label for="password">Security Password</label>
+        <input type="password" id="password" name="password" class="form-control" required placeholder="adminpassword123" value="adminpassword123">
+      </div>
+
+      <button type="submit" class="btn btn-cherry" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.95rem;">
+        <span>ENTER CMS STUDIO</span>
+        <span>→</span>
+      </button>
+    </form>
+
+    <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color); text-align: center;">
+      <p style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted);">
+        Preset Demo Credentials:<br>
+        <strong style="color: var(--neon-cyan);">admin</strong> / <strong style="color: var(--neon-cyan);">adminpassword123</strong>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

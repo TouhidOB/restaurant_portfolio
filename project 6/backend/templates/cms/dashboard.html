@@ -1,0 +1,441 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}DASHBOARD // Stardust Retro-Futuristic Diner Studio{% endblock %}
+
+{% block content %}
+<!-- Topbar -->
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>Retro-Futuristic Diner Studio</h1>
+    <p>Real-time headless content, menu availability, and table reservation management.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000" target="_blank" class="btn btn-cyan">
+      <span>PREVIEW 3D FRONTEND</span> ↗
+    </a>
+    <a href="/api/v1/content/" target="_blank" class="btn btn-cherry">
+      <span>RAW API JSON</span> ↗
+    </a>
+  </div>
+</header>
+
+<!-- MODULE 1: Overview & Telemetry KPIs -->
+<section id="overview" style="margin-bottom: 3rem;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem;">
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--cherry-red); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Pending Reservations
+      </span>
+      <div style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: var(--atomic-yellow); margin-top: 0.25rem;">
+        {{ kpis.pending_reservations }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">Total: {{ kpis.total_reservations }} inquiries</span>
+    </div>
+
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--neon-cyan); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Active Menu Dishes
+      </span>
+      <div style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: var(--neon-cyan); margin-top: 0.25rem;">
+        {{ kpis.active_menu_items }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">Across {{ kpis.total_categories }} categories</span>
+    </div>
+
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--electric-blue); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Spatial Viewpoints
+      </span>
+      <div style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: #FFFFFF; margin-top: 0.25rem;">
+        {{ kpis.total_viewpoints }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">3D WebGL Camera Angles</span>
+    </div>
+
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--atomic-yellow); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Atomic Archive Photos
+      </span>
+      <div style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: #FFFFFF; margin-top: 0.25rem;">
+        {{ kpis.gallery_count }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">Curated Gallery Items</span>
+    </div>
+  </div>
+</section>
+
+<!-- MODULE 2: Diner Identity & Logistics Settings -->
+<section id="section-settings" class="cms-card">
+  <div class="cms-card-header">
+    <h2>⚙ Diner Identity & Logistics Settings</h2>
+    <span class="badge badge-confirmed">CORE ATTRIBUTES</span>
+  </div>
+
+  <form method="POST" action="{% url 'cms_update_settings' %}">
+    {% csrf_token %}
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+      <div class="form-group">
+        <label>Diner Brand Name</label>
+        <input type="text" name="name" class="form-control" value="{{ restaurant.name }}">
+      </div>
+      <div class="form-group">
+        <label>Tagline</label>
+        <input type="text" name="tagline" class="form-control" value="{{ restaurant.tagline }}">
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+      <div class="form-group">
+        <label>Contact Phone</label>
+        <input type="text" name="phone" class="form-control" value="{{ restaurant.phone }}">
+      </div>
+      <div class="form-group">
+        <label>Concierge Email</label>
+        <input type="email" name="email" class="form-control" value="{{ restaurant.email }}">
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem;">
+      <div class="form-group">
+        <label>Physical Address</label>
+        <input type="text" name="address" class="form-control" value="{{ restaurant.address }}">
+      </div>
+      <div class="form-group">
+        <label>City & Zip</label>
+        <input type="text" name="city" class="form-control" value="{{ restaurant.city }}">
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+      <div class="form-group">
+        <label>Service Hours Summary</label>
+        <input type="text" name="opening_hours_summary" class="form-control" value="{{ restaurant.opening_hours_summary }}">
+      </div>
+      <div class="form-group">
+        <label>GPS Coordinates String</label>
+        <input type="text" name="coordinates_display" class="form-control" value="{{ restaurant.coordinates_display }}">
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-cherry" style="margin-top: 0.5rem;">
+      <span>SAVE LOGISTICS SETTINGS</span>
+    </button>
+  </form>
+</section>
+
+<!-- MODULE 3: Live Reservations Desk -->
+<section id="section-reservations" class="cms-card">
+  <div class="cms-card-header">
+    <h2>📅 Live Reservations Triage Desk</h2>
+    <span class="badge badge-pending">{{ kpis.pending_reservations }} PENDING</span>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table class="cms-table">
+      <thead>
+        <tr>
+          <th>Ref Code</th>
+          <th>Guest Name</th>
+          <th>Date & Time</th>
+          <th>Guests</th>
+          <th>Zone Preference</th>
+          <th>Status</th>
+          <th>Notes</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for res in reservations %}
+          <tr>
+            <td>
+              <strong style="font-family: 'Space Mono', monospace; color: var(--neon-cyan);">
+                {{ res.reference_code }}
+              </strong>
+            </td>
+            <td>
+              {{ res.full_name }}<br>
+              <small style="color: var(--text-muted); font-size: 0.78rem;">{{ res.email }} | {{ res.phone }}</small>
+            </td>
+            <td>{{ res.reservation_date }} @ {{ res.reservation_time }}</td>
+            <td><strong>{{ res.guest_count }} PAX</strong></td>
+            <td>{{ res.seating_area }}</td>
+            <td>
+              <span class="badge badge-{{ res.status }}">{{ res.get_status_display }}</span>
+            </td>
+            <td>
+              <small style="color: var(--text-muted);">{{ res.message|default:"—" }}</small>
+            </td>
+            <td>
+              <form method="POST" action="{% url 'cms_update_reservation_status' res.pk %}" style="display: flex; gap: 0.35rem; align-items: center;">
+                {% csrf_token %}
+                <select name="status" class="form-control" style="padding: 0.35rem 0.5rem; font-size: 0.78rem; width: auto;">
+                  <option value="pending" {% if res.status == 'pending' %}selected{% endif %}>Pending</option>
+                  <option value="contacted" {% if res.status == 'contacted' %}selected{% endif %}>Contacted</option>
+                  <option value="confirmed" {% if res.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                  <option value="completed" {% if res.status == 'completed' %}selected{% endif %}>Completed</option>
+                  <option value="cancelled" {% if res.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+                <button type="submit" class="btn btn-cyan" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
+                  Save
+                </button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+              No reservation inquiries logged yet.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- MODULE 4: Menu Items & Real-time Availability -->
+<section id="section-menu" class="cms-card">
+  <div class="cms-card-header">
+    <h2>🍔 Menu Repertoire & Instant Availability Toggle</h2>
+    <span class="badge badge-confirmed">{{ kpis.total_menu_items }} TOTAL ITEMS</span>
+  </div>
+
+  {% for cat in categories %}
+    <div style="margin-bottom: 2rem;">
+      <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.15rem; color: var(--atomic-yellow); margin-bottom: 0.75rem; border-bottom: 1px dashed var(--border-color); padding-bottom: 0.35rem;">
+        {{ cat.name }} <span style="font-size: 0.75rem; color: var(--text-muted); font-family: 'Space Mono', monospace;">({{ cat.items.count }} items)</span>
+      </h3>
+
+      <table class="cms-table" style="margin-bottom: 1.5rem;">
+        <thead>
+          <tr>
+            <th>Dish Name</th>
+            <th>Price</th>
+            <th>Dietary Tags</th>
+            <th>Featured</th>
+            <th>Availability Status</th>
+            <th>Toggle Control</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cat.items.all %}
+            <tr>
+              <td>
+                <strong>{{ item.name }}</strong><br>
+                <small style="color: var(--text-muted);">{{ item.short_description }}</small>
+              </td>
+              <td><strong style="color: var(--neon-cyan);">{{ item.currency_symbol }}{{ item.price }}</strong></td>
+              <td>
+                {% for tag in item.dietary_information %}
+                  <span class="badge" style="background: rgba(67, 217, 232, 0.1); color: var(--neon-cyan); border: 1px solid var(--border-color); margin-right: 2px;">
+                    {{ tag }}
+                  </span>
+                {% empty %}
+                  <span style="color: var(--text-muted);">—</span>
+                {% endfor %}
+              </td>
+              <td>
+                {% if item.is_featured %}
+                  <span style="color: var(--atomic-yellow);">★ Highlight</span>
+                {% else %}
+                  <span style="color: var(--text-muted);">Standard</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if item.is_available %}
+                  <span class="badge badge-confirmed">ACTIVE ON MENU</span>
+                {% else %}
+                  <span class="badge badge-cancelled">SOLD OUT</span>
+                {% endif %}
+              </td>
+              <td>
+                <form method="POST" action="{% url 'cms_toggle_menu_item' item.pk %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn {% if item.is_available %}btn-cherry{% else %}btn-cyan{% endif %}" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                    {% if item.is_available %}Mark Sold Out{% else %}Make Available{% endif %}
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endfor %}
+</section>
+
+<!-- MODULE 5: 3D Spatial Virtual Tour Viewpoints -->
+<section id="section-tour" class="cms-card">
+  <div class="cms-card-header">
+    <h2>🚀 3D Spatial Viewpoints Manager</h2>
+    <span class="badge badge-confirmed">5 ATOMIC VENUE ANGLES</span>
+  </div>
+
+  <table class="cms-table">
+    <thead>
+      <tr>
+        <th>Index</th>
+        <th>Viewpoint Name</th>
+        <th>Zone Specification</th>
+        <th>Camera Position [X, Y, Z]</th>
+        <th>Hotspot Overlay</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for vp in viewpoints %}
+        <tr>
+          <td><strong style="color: var(--cherry-red);">0{{ forloop.counter }}</strong></td>
+          <td>
+            <strong>{{ vp.title }}</strong><br>
+            <small style="color: var(--text-muted);">{{ vp.description|truncatewords:15 }}</small>
+          </td>
+          <td>{{ vp.materials_spec }}</td>
+          <td>
+            <code style="font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--neon-cyan);">
+              {{ vp.camera_position }}
+            </code>
+          </td>
+          <td>
+            {% if vp.hotspot_title %}
+              <strong style="color: var(--atomic-yellow);">{{ vp.hotspot_title }}</strong><br>
+              <small style="color: var(--text-muted);">{{ vp.hotspot_detail|truncatewords:8 }}</small>
+            {% else %}
+              <span style="color: var(--text-muted);">None</span>
+            {% endif %}
+          </td>
+          <td>
+            <span class="badge badge-confirmed">ONLINE</span>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<!-- MODULE 6: 15-Section Editorial Copy -->
+<section id="section-editorial" class="cms-card">
+  <div class="cms-card-header">
+    <h2>✍ 15-Section Editorial Content Controls</h2>
+    <span class="badge badge-confirmed">LIVE REPERTOIRE</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    {% for sec in sections %}
+      <div style="background-color: var(--bg-midnight); padding: 1.25rem; border-radius: 4px; border: 1px solid var(--border-color);">
+        <form method="POST" action="{% url 'cms_update_section' sec.pk %}">
+          {% csrf_token %}
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.75rem;">
+            <strong style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--neon-cyan);">
+              {{ sec.get_section_key_display }}
+            </strong>
+            <button type="submit" class="btn btn-cyan" style="padding: 0.35rem 0.85rem; font-size: 0.75rem;">
+              Update Section
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;">
+            <div class="form-group">
+              <label>Eyebrow Label</label>
+              <input type="text" name="eyebrow" class="form-control" value="{{ sec.eyebrow }}">
+            </div>
+            <div class="form-group">
+              <label>Section Title</label>
+              <input type="text" name="title" class="form-control" value="{{ sec.title }}">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Subtitle / Lead Copy</label>
+            <textarea name="subtitle" class="form-control" rows="2">{{ sec.subtitle }}</textarea>
+          </div>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- MODULE 7: Atomic Archive (Gallery) -->
+<section id="section-gallery" class="cms-card">
+  <div class="cms-card-header">
+    <h2>📸 Atomic Photography Archive</h2>
+    <span class="badge badge-confirmed">{{ gallery_images.count }} ASSETS</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem;">
+    {% for img in gallery_images %}
+      <div style="background-color: var(--bg-midnight); border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden;">
+        <img src="{{ img.image_url }}" alt="{{ img.title }}" style="width: 100%; height: 140px; object-fit: cover;">
+        <div style="padding: 0.75rem;">
+          <strong style="font-size: 0.88rem; display: block; color: #FFF;">{{ img.title }}</strong>
+          <span class="badge" style="background: rgba(216, 58, 69, 0.15); color: var(--cherry-red); margin-top: 0.25rem;">
+            {{ img.category }}
+          </span>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- MODULE 8: Guest Testimonials -->
+<section id="section-testimonials" class="cms-card">
+  <div class="cms-card-header">
+    <h2>★ Guest Reviews & Critic Ratings</h2>
+    <span class="badge badge-confirmed">{{ testimonials.count }} APPROVED</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+    {% for test in testimonials %}
+      <div style="background-color: var(--bg-midnight); border: 1px solid var(--border-color); border-radius: 4px; padding: 1.25rem;">
+        <div style="color: var(--atomic-yellow); margin-bottom: 0.5rem;">
+          ★★★★★
+        </div>
+        <p style="font-size: 0.88rem; font-style: italic; color: var(--text-main); line-height: 1.5; margin-bottom: 0.85rem;">
+          "{{ test.review_text }}"
+        </p>
+        <strong style="display: block; font-size: 0.85rem; color: #FFF;">{{ test.guest_name }}</strong>
+        <small style="color: var(--neon-cyan); font-family: 'Space Mono', monospace; font-size: 0.72rem;">{{ test.source }}</small>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- MODULE 9: FAQ Manager -->
+<section id="section-faqs" class="cms-card">
+  <div class="cms-card-header">
+    <h2>❓ Frequently Asked Questions (Accordion)</h2>
+    <span class="badge badge-confirmed">{{ faqs.count }} ITEMS</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+    {% for faq in faqs %}
+      <div style="background-color: var(--bg-midnight); border: 1px solid var(--border-color); border-radius: 4px; padding: 1rem;">
+        <strong style="color: var(--atomic-yellow); font-size: 0.95rem; display: block; margin-bottom: 0.35rem;">
+          Q: {{ faq.question }}
+        </strong>
+        <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">
+          A: {{ faq.answer }}
+        </p>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- MODULE 10: Master JSON Schema Editor -->
+<section id="section-json" class="cms-card">
+  <div class="cms-card-header">
+    <h2>{ } Master JSON Schema Direct Editor</h2>
+    <span class="badge badge-pending">EMERGENCY SYNC</span>
+  </div>
+
+  <form method="POST" action="{% url 'cms_save_master_json' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <textarea name="master_json" class="form-control" rows="14" style="font-family: 'Space Mono', monospace; font-size: 0.78rem; line-height: 1.4;">{{ master_json_str }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-cherry">
+      <span>APPLY MASTER JSON PAYLOAD</span>
+    </button>
+  </form>
+</section>
+{% endblock %}
