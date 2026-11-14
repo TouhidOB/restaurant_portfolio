@@ -19,240 +19,258 @@ export default function S02_Hero() {
         flexDirection: 'column',
         justifyContent: 'center',
         paddingTop: '110px',
-        paddingBottom: '70px',
+        paddingBottom: '50px',
         overflow: 'hidden',
-        background: 'linear-gradient(180deg, #E7EDE7 0%, #FAF7F0 45%, #F4F0E6 100%)',
-        color: '#292D29',
+        background: '#FAF7F0',
       }}
     >
-      {/* 3D Glasshouse Pavilion Canvas */}
+      {/* 3D Interactive Glasshouse Pavilion Canvas (Background & Right Stage) */}
       <HeroScene />
 
-      {/* Hero Content Overlay */}
+      {/* Main Content Layout Container */}
       <div
         className="container"
         style={{
           position: 'relative',
           zIndex: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          maxWidth: '1240px',
+          maxWidth: '1360px',
           margin: '0 auto',
           padding: '0 24px',
           width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '32px',
+          pointerEvents: 'none', // Allows clicking through empty areas to 3D canvas
         }}
       >
-        {/* Cultural Eyebrow Tag */}
+        {/* Editorial Glassmorphic Panel (Left-Aligned for 100% Crystal-Clear Readability) */}
         <div
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '10px',
-            backgroundColor: 'rgba(38, 63, 53, 0.08)',
-            border: '1px solid rgba(38, 63, 53, 0.25)',
-            padding: '6px 14px',
-            borderRadius: '2px',
-            marginBottom: '18px',
-            backdropFilter: 'blur(6px)',
+            maxWidth: '620px',
+            width: '100%',
+            backgroundColor: 'rgba(250, 247, 240, 0.92)',
+            backdropFilter: 'blur(16px)',
+            border: '1px solid rgba(166, 181, 160, 0.5)',
+            borderRadius: '4px',
+            padding: '44px 40px',
+            boxShadow: '0 25px 60px rgba(26, 43, 36, 0.14)',
+            pointerEvents: 'auto', // Re-enable pointer events for form/buttons
+            animation: 'fadeIn 0.6s ease-out',
           }}
         >
-          <span style={{ fontSize: '13px' }}>🌿</span>
-          <span
-            style={{
-              fontSize: '11px',
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              color: 'var(--color-forest)',
-            }}
-          >
-            {hero.eyebrow || 'ARCHITECTURAL BOTANICAL CAFÉ'}
-          </span>
-          <span style={{ color: 'var(--color-copper)', fontSize: '12px' }}>•</span>
-          <span
-            style={{
-              fontSize: '11px',
-              letterSpacing: '0.08em',
-              color: 'var(--color-olive)',
-              fontWeight: 600,
-            }}
-          >
-            Biophilic Conservatory
-          </span>
-        </div>
-
-        {/* Main Title */}
-        <h1
-          style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(38px, 6vw, 70px)',
-            fontWeight: 500,
-            lineHeight: 1.1,
-            letterSpacing: '-0.01em',
-            color: 'var(--color-forest)',
-            maxWidth: '920px',
-            margin: '0 0 18px 0',
-            textShadow: '0 2px 15px rgba(255, 255, 255, 0.8)',
-          }}
-        >
-          {hero.title || 'Sunlight, Living Flora & Artisanal Coffee.'}
-        </h1>
-
-        {/* Lead Description */}
-        <p
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: 'clamp(15px, 1.8vw, 18px)',
-            lineHeight: 1.7,
-            color: 'rgba(41, 45, 41, 0.88)',
-            maxWidth: '680px',
-            margin: '0 0 32px 0',
-          }}
-        >
-          {hero.description || 'Step into a breathtaking pavilion where double-height structural glass, soaring fiddle-leaf figs, and warm natural timber frame the finest micro-lot coffees and botanical culinary creations.'}
-        </p>
-
-        {/* Action Buttons */}
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '16px',
-            marginBottom: '54px',
-          }}
-        >
-          <a
-            href="#menu"
+          {/* Eyebrow Pill */}
+          <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              padding: '14px 28px',
-              backgroundColor: 'var(--color-forest)',
-              color: '#FAF7F0',
-              border: 'none',
-              borderRadius: '2px',
-              fontSize: '13px',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              textDecoration: 'none',
-              boxShadow: '0 10px 25px rgba(38, 63, 53, 0.25)',
-              transition: 'all 0.25s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#1A2B24';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-forest)';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            {hero.cta_primary || 'Explore Menu'}
-          </a>
-
-          <button
-            onClick={() => openReservation()}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '14px 26px',
-              backgroundColor: 'var(--color-copper)',
-              color: '#FFFFFF',
-              border: 'none',
-              borderRadius: '2px',
-              fontSize: '13px',
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: '0 10px 25px rgba(168, 121, 88, 0.3)',
-              transition: 'all 0.25s ease',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#8c5f42')}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-copper)')}
-          >
-            Reserve a Table
-          </button>
-
-          <a
-            href="#tour"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '14px 24px',
-              backgroundColor: 'rgba(255, 255, 255, 0.75)',
-              color: 'var(--color-forest)',
+              gap: '8px',
+              backgroundColor: 'rgba(38, 63, 53, 0.08)',
               border: '1px solid rgba(38, 63, 53, 0.25)',
+              padding: '6px 14px',
               borderRadius: '2px',
-              fontSize: '13px',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              textDecoration: 'none',
-              backdropFilter: 'blur(6px)',
-              transition: 'all 0.25s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#FFFFFF';
-              e.currentTarget.style.borderColor = 'var(--color-forest)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.75)';
-              e.currentTarget.style.borderColor = 'rgba(38, 63, 53, 0.25)';
+              marginBottom: '18px',
             }}
           >
-            {hero.cta_secondary || 'Virtual Glasshouse Tour'}
-          </a>
+            <span style={{ fontSize: '13px' }}>🌿</span>
+            <span
+              style={{
+                fontSize: '11px',
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                fontWeight: 700,
+                color: 'var(--color-forest, #263F35)',
+              }}
+            >
+              {hero.eyebrow || 'ARCHITECTURAL BOTANICAL CAFÉ'}
+            </span>
+          </div>
+
+          {/* High-Contrast Editorial Title */}
+          <h1
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(36px, 4.8vw, 56px)',
+              fontWeight: 600,
+              lineHeight: 1.12,
+              letterSpacing: '-0.01em',
+              color: 'var(--color-forest-dark, #1A2B24)',
+              margin: '0 0 16px 0',
+            }}
+          >
+            {hero.title || 'Sunlight, Living Flora & Artisanal Coffee.'}
+          </h1>
+
+          {/* Subtitle / Tagline */}
+          {hero.tagline && (
+            <div
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '17px',
+                fontStyle: 'italic',
+                color: 'var(--color-copper, #A87958)',
+                marginBottom: '16px',
+                lineHeight: 1.4,
+              }}
+            >
+              {hero.tagline}
+            </div>
+          )}
+
+          {/* Clear Lead Paragraph */}
+          <p
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '15px',
+              lineHeight: 1.75,
+              color: 'var(--color-charcoal, #292D29)',
+              margin: '0 0 28px 0',
+            }}
+          >
+            {hero.description || 'Step into a breathtaking pavilion where double-height structural glass, soaring fiddle-leaf figs, and warm natural timber frame the finest micro-lot coffees and botanical culinary creations.'}
+          </p>
+
+          {/* Action CTAs */}
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '14px',
+            }}
+          >
+            <a
+              href="#menu"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '13px 26px',
+                backgroundColor: 'var(--color-forest, #263F35)',
+                color: '#FAF7F0',
+                border: 'none',
+                borderRadius: '2px',
+                fontSize: '12.5px',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                fontWeight: 700,
+                textDecoration: 'none',
+                boxShadow: '0 8px 20px rgba(38, 63, 53, 0.25)',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#1A2B24';
+                e.currentTarget.style.transform = 'translateY(-2px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--color-forest, #263F35)';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              {hero.cta_primary || 'Explore Menu'}
+            </a>
+
+            <button
+              onClick={() => openReservation()}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '13px 24px',
+                backgroundColor: 'var(--color-copper, #A87958)',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '2px',
+                fontSize: '12.5px',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: '0 8px 20px rgba(168, 121, 88, 0.3)',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#8c5f42')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'var(--color-copper, #A87958)')}
+            >
+              Reserve a Table
+            </button>
+
+            <a
+              href="#tour"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '13px 20px',
+                backgroundColor: 'transparent',
+                color: 'var(--color-forest, #263F35)',
+                border: '1px solid rgba(38, 63, 53, 0.35)',
+                borderRadius: '2px',
+                fontSize: '12px',
+                letterSpacing: '0.1em',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                textDecoration: 'none',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(38, 63, 53, 0.08)';
+                e.currentTarget.style.borderColor = 'var(--color-forest, #263F35)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.borderColor = 'rgba(38, 63, 53, 0.35)';
+              }}
+            >
+              Virtual Tour ↗
+            </a>
+          </div>
         </div>
 
-        {/* 4 Architectural & Botanical Stat Cards */}
+        {/* 4 Architectural & Botanical Stat Cards (Clear, High-Contrast Banner) */}
         {stats.length > 0 && (
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '16px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+              gap: '14px',
               width: '100%',
-              maxWidth: '1050px',
-              borderTop: '1px solid rgba(38, 63, 53, 0.2)',
-              paddingTop: '28px',
+              maxWidth: '920px',
+              pointerEvents: 'auto',
             }}
           >
             {stats.map((stat, idx) => (
               <div
                 key={idx}
                 style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                  border: '1px solid rgba(38, 63, 53, 0.15)',
-                  padding: '18px 20px',
-                  borderRadius: '2px',
+                  backgroundColor: 'rgba(255, 255, 255, 0.92)',
+                  border: '1px solid rgba(166, 181, 160, 0.45)',
+                  padding: '16px 20px',
+                  borderRadius: '3px',
                   backdropFilter: 'blur(8px)',
-                  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.03)',
+                  boxShadow: '0 6px 18px rgba(38, 63, 53, 0.05)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
                 }}
               >
                 <div
                   style={{
                     fontFamily: 'var(--font-display)',
-                    fontSize: '34px',
+                    fontSize: '32px',
                     fontWeight: 700,
-                    color: 'var(--color-forest)',
+                    color: 'var(--color-forest, #263F35)',
                     lineHeight: 1,
-                    marginBottom: '6px',
+                    marginBottom: '4px',
                   }}
                 >
                   {stat.number}
                 </div>
                 <div
                   style={{
-                    fontSize: '12px',
+                    fontSize: '11.5px',
                     letterSpacing: '0.04em',
-                    color: 'rgba(41, 45, 41, 0.75)',
-                    lineHeight: 1.4,
+                    color: 'rgba(41, 45, 41, 0.8)',
+                    lineHeight: 1.35,
+                    fontWeight: 500,
                   }}
                 >
                   {stat.label}
