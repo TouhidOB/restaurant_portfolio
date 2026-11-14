@@ -1,0 +1,49 @@
+:root {
+  /* Tropical Modernism Color Palette */
+  --bg-forest-deep: #1A2F25;
+  --bg-forest: #243F32;
+  --bg-surface: #2D4C3D;
+  --bg-surface-elevated: #375D4B;
+  --bg-card: #274537;
+  
+  --botanical-green: #52745A;
+  --palm-green: #71866A;
+  --sage-mist: #AAB9A0;
+  
+  --warm-ivory: #F6F2E9;
+  --natural-sand: #E5D7C2;
+  --limestone: #C8B99F;
+  --teak: #76533C;
+  --charcoal: #292D29;
+  
+  --accent-terracotta: #BC7153;
+  --accent-terracotta-hover: #A65F43;
+  --accent-terracotta-dim: rgba(188, 113, 83, 0.15);
+  --accent-citrus: #D9B84E;
+
+  --border-botanical: #3D614E;
+  --border-light: #527863;
+  --border-ivory: #E3D9C8;
+
+  --text-ivory: #F6F2E9;
+  --text-sand: #E5D7C2;
+  --text-muted: #9EBAAB;
+  --text-dark: #292D29;
+
+  /* Typography */
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', sans-serif;
+  --font-ui: 'Manrope', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+
+  /* Layout */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --container-max: 1480px;
+  --header-height: 84px;
+
+  /* Transitions */
+  --transition-fast: 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-normal: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}

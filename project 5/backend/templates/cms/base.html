@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VERDANT // TROPICAL CMS STUDIO{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-forest: #243F32;
+            --bg-forest-deep: #1A2F25;
+            --bg-surface: #2E4E3F;
+            --bg-surface-elevated: #375D4B;
+            --bg-card: #2B493B;
+            --border-botanical: #456B57;
+            --border-light: #5A836D;
+            --text-ivory: #F6F2E9;
+            --text-sand: #E5D7C2;
+            --text-muted: #9EBAAB;
+            --accent-terracotta: #BC7153;
+            --accent-terracotta-hover: #A65F43;
+            --accent-citrus: #D9B84E;
+            --font-serif: 'Cormorant Garamond', Georgia, serif;
+            --font-sans: 'DM Sans', sans-serif;
+            --font-ui: 'Manrope', sans-serif;
+            --font-mono: 'DM Mono', monospace;
+            --sidebar-width: 290px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-forest-deep);
+            color: var(--text-ivory);
+            font-family: var(--font-sans);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-forest-deep);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-botanical);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-terracotta);
+        }
+
+        /* Layout Structure */
+        .cms-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Fixed Left Botanical Sidebar */
+        .cms-sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            background-color: var(--bg-forest);
+            border-right: 1px solid var(--border-botanical);
+            display: flex;
+            flex-direction: column;
+            justifyContent: space-between;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.25s ease;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-botanical);
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            text-decoration: none;
+            color: var(--text-ivory);
+            margin-bottom: 0.75rem;
+        }
+
+        .brand-leaf-icon {
+            width: 22px;
+            height: 26px;
+            background: var(--accent-terracotta);
+            border-radius: 4px 12px 4px 12px;
+            flex-shrink: 0;
+        }
+
+        .brand-title {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            line-height: 1;
+        }
+
+        .sidebar-status-tag {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            background: var(--bg-forest-deep);
+            padding: 0.35rem 0.6rem;
+            border: 1px solid var(--border-botanical);
+            border-radius: 3px;
+        }
+
+        /* Instant Filter Box in Sidebar */
+        .sidebar-filter-box {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-botanical);
+            background: rgba(26, 47, 37, 0.4);
+        }
+
+        .sidebar-filter-box label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.4rem;
+        }
+
+        .sidebar-filter-input {
+            width: 100%;
+            background: var(--bg-forest-deep);
+            border: 1px solid var(--border-botanical);
+            color: #fff;
+            padding: 0.5rem 0.75rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            border-radius: 3px;
+            transition: border-color 0.2s;
+        }
+        .sidebar-filter-input:focus {
+            outline: none;
+            border-color: var(--accent-terracotta);
+        }
+
+        /* Sidebar Navigation Groups */
+        .sidebar-nav {
+            padding: 1rem 0;
+            flex: 1;
+        }
+
+        .nav-group-label {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--accent-terracotta);
+            letter-spacing: 0.12em;
+            padding: 0.75rem 1.5rem 0.35rem;
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.65rem 1.5rem;
+            color: var(--text-sand);
+            text-decoration: none;
+            font-family: var(--font-ui);
+            font-size: 0.82rem;
+            font-weight: 600;
+            border-left: 3px solid transparent;
+            transition: all 0.15s ease;
+        }
+
+        .sidebar-nav-link:hover, .sidebar-nav-link.active {
+            color: #FFFFFF;
+            background-color: var(--bg-surface);
+            border-left-color: var(--accent-terracotta);
+        }
+
+        .nav-badge {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            padding: 0.15rem 0.4rem;
+            background: var(--bg-forest-deep);
+            border: 1px solid var(--border-botanical);
+            color: var(--text-muted);
+            border-radius: 3px;
+        }
+        .sidebar-nav-link:hover .nav-badge, .sidebar-nav-link.active .nav-badge {
+            border-color: var(--accent-terracotta);
+            color: var(--accent-terracotta);
+        }
+
+        .sidebar-footer {
+            padding: 1.25rem 1.5rem;
+            border-top: 1px solid var(--border-botanical);
+            background: rgba(26, 47, 37, 0.75);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        /* Main Workspace Area */
+        .cms-main {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cms-main-standalone {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        /* Top Sticky Bar */
+        .cms-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 500;
+            background: rgba(26, 47, 37, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-botanical);
+            padding: 1rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar-breadcrumb {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .topbar-sync-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.12);
+            border: 1px solid #4ade80;
+            padding: 0.25rem 0.6rem;
+            border-radius: 3px;
+        }
+
+        /* Container Inside Main Workspace */
+        .workspace-content {
+            flex: 1;
+            padding: 2.5rem;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* Alerts */
+        .cms-alert {
+            padding: 1rem 1.25rem;
+            border-left: 4px solid var(--accent-terracotta);
+            background: var(--bg-surface);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* Buttons */
+        .btn-tropical {
+            display: inline-block;
+            background: var(--accent-terracotta);
+            color: #FFFFFF;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .btn-tropical:hover {
+            background: var(--accent-terracotta-hover);
+        }
+        .btn-tropical:active {
+            transform: translateY(1px);
+        }
+
+        .btn-tropical-secondary {
+            display: inline-block;
+            background: transparent;
+            color: var(--text-sand);
+            border: 1px solid var(--border-light);
+            padding: 0.6rem 1.2rem;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .btn-tropical-secondary:hover {
+            border-color: var(--accent-terracotta);
+            color: var(--accent-terracotta);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.35rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            background: var(--bg-forest-deep);
+            border: 1px solid var(--border-botanical);
+            color: #fff;
+            padding: 0.7rem 0.9rem;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            border-radius: 3px;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent-terracotta);
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        /* Section Cards */
+        .cms-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-botanical);
+            padding: 2.25rem;
+            margin-bottom: 3rem;
+            position: relative;
+            border-radius: 6px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-botanical);
+            padding-bottom: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .section-tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--accent-terracotta);
+            border: 1px solid var(--accent-terracotta);
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+        }
+
+        /* Tables */
+        .brutal-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+        .brutal-table th, .brutal-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid var(--border-botanical);
+            text-align: left;
+        }
+        .brutal-table th {
+            background: var(--bg-card);
+            color: var(--text-sand);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .brutal-table tr:hover td {
+            background: var(--bg-card);
+        }
+
+        /* KPI Cards */
+        .grid-kpi {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+        .kpi-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-botanical);
+            padding: 1.5rem;
+            position: relative;
+            border-radius: 4px;
+        }
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--border-botanical);
+            border-radius: 4px 0 0 4px;
+        }
+        .kpi-card.active::before {
+            background: var(--accent-terracotta);
+        }
+        .kpi-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.4rem;
+        }
+        .kpi-value {
+            font-family: var(--font-serif);
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--text-ivory);
+            line-height: 1;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            border-radius: 3px;
+        }
+        .status-pending { background: #5c4314; color: #f5c05c; }
+        .status-confirmed { background: #1a4d2e; color: #4ade80; }
+        .status-cancelled { background: #4d1a1a; color: #f87171; }
+
+        /* Responsive Mobile Layout */
+        .mobile-sidebar-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-botanical);
+            color: #fff;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 1024px) {
+            .cms-sidebar {
+                transform: translateX(-100%);
+            }
+            .cms-sidebar.open {
+                transform: translateX(0);
+            }
+            .cms-main {
+                margin-left: 0;
+                width: 100%;
+            }
+            .mobile-sidebar-toggle {
+                display: block;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <div class="cms-layout">
+        <!-- Dedicated Left Architectural Sidebar -->
+        <aside class="cms-sidebar" id="cmsSidebar">
+            <div>
+                <!-- Brand Header -->
+                <div class="sidebar-header">
+                    <a href="{% url 'cms_dashboard' %}" class="sidebar-brand">
+                        <div class="brand-leaf-icon"></div>
+                        <div>
+                            <div class="brand-title">VERDANT</div>
+                            <div style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--text-muted);">
+                                TROPICAL STUDIO // MIAMI
+                            </div>
+                        </div>
+                    </a>
+                    <div class="sidebar-status-tag">
+                        <span>OPERATOR: {{ user.username }}</span>
+                        <span style="color: #4ade80;">● ONLINE</span>
+                    </div>
+                </div>
+
+                <!-- Instant Search Filter -->
+                <div class="sidebar-filter-box">
+                    <label for="sidebarFilter">Instant Access Filter</label>
+                    <input
+                        type="text"
+                        id="sidebarFilter"
+                        class="sidebar-filter-input"
+                        placeholder="Filter pages, dishes, guests..."
+                        oninput="handleSearchFilter(this.value)"
+                    >
+                </div>
+
+                <!-- Navigation Pages & Modules -->
+                <nav class="sidebar-nav">
+                    <div class="nav-group-label">00. System Telemetry</div>
+                    <a href="#overview" class="sidebar-nav-link active">
+                        <span>00. Metrics Overview</span>
+                        <span class="nav-badge">LIVE</span>
+                    </a>
+
+                    <div class="nav-group-label">01. Identity &amp; Specs</div>
+                    <a href="#section-settings" class="sidebar-nav-link">
+                        <span>01. Restaurant Identity</span>
+                        <span class="nav-badge">HERO</span>
+                    </a>
+
+                    <div class="nav-group-label">02. Operational Desk</div>
+                    <a href="#section-reservations" class="sidebar-nav-link">
+                        <span>02. Reservation Triage</span>
+                        <span class="nav-badge" style="color: var(--accent-terracotta);">{{ kpis.pending_reservations }} PENDING</span>
+                    </a>
+                    <a href="#section-menu" class="sidebar-nav-link">
+                        <span>03. Menu Repertoire</span>
+                        <span class="nav-badge">{{ kpis.total_menu_items }} DISHES</span>
+                    </a>
+                    <a href="#section-tour" class="sidebar-nav-link">
+                        <span>04. 3D Spatial Viewpoints</span>
+                        <span class="nav-badge">{{ viewpoints|length }} VECTORS</span>
+                    </a>
+
+                    <div class="nav-group-label">03. Editorial Content</div>
+                    <a href="#section-editorial" class="sidebar-nav-link">
+                        <span>05. 15 Editorial Sections</span>
+                        <span class="nav-badge">15 MODS</span>
+                    </a>
+                    <a href="#section-gallery" class="sidebar-nav-link">
+                        <span>06. Gallery Archive</span>
+                        <span class="nav-badge">{{ gallery|length }}</span>
+                    </a>
+                    <a href="#section-testimonials" class="sidebar-nav-link">
+                        <span>07. Critical Acclaim</span>
+                        <span class="nav-badge">{{ testimonials|length }}</span>
+                    </a>
+                    <a href="#section-faqs" class="sidebar-nav-link">
+                        <span>08. Frequent Inquiries</span>
+                        <span class="nav-badge">{{ faqs|length }}</span>
+                    </a>
+
+                    <div class="nav-group-label">04. System Matrix</div>
+                    <a href="#section-json" class="sidebar-nav-link">
+                        <span>09. Master Architectural JSON</span>
+                        <span class="nav-badge">RAW</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <a href="http://localhost:3000" target="_blank" class="btn-tropical-secondary" style="border-color: var(--accent-terracotta); color: var(--accent-terracotta);">
+                    ↗ VIEW FRONTEND (PORT 3000)
+                </a>
+                <a href="{% url 'cms_logout' %}" class="btn-tropical-secondary" style="color: #f87171; border-color: #5e2424;">
+                    LOGOUT OPERATOR
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Workspace Area -->
+        <div class="cms-main">
+            <!-- Top Sticky Control Bar -->
+            <header class="cms-topbar">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <button type="button" class="mobile-sidebar-toggle" onclick="toggleSidebar()">
+                        ☰ MENU
+                    </button>
+                    <div class="topbar-breadcrumb">
+                        <span>VERDANT STUDIO</span>
+                        <span>/</span>
+                        <span>TROPICAL MODERNISM</span>
+                        <span>/</span>
+                        <span style="color: var(--text-ivory);">CONTROL DESK</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 1.25rem;">
+                    <div class="topbar-sync-tag">
+                        <span>● SYNC ACTIVE (PORT 3000)</span>
+                    </div>
+                    <a href="http://localhost:3000" target="_blank" style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-terracotta); text-decoration: none;">
+                        PUBLIC EXPERIENCE &rarr;
+                    </a>
+                </div>
+            </header>
+
+            <!-- Main Scrollable Content -->
+            <main class="workspace-content">
+                {% if messages %}
+                    <div class="cms-messages">
+                        {% for message in messages %}
+                            <div class="cms-alert">
+                                <span>{{ message }}</span>
+                                <span style="color: var(--accent-terracotta);">[CONFIRMED]</span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    {% else %}
+    <!-- Standalone Layout for Authentication -->
+    <div class="cms-main-standalone">
+        <header style="background: var(--bg-forest); border-bottom: 1px solid var(--border-botanical); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.85rem;">
+                <div class="brand-leaf-icon"></div>
+                <div class="brand-title">VERDANT // CMS STUDIO</div>
+            </div>
+            <a href="http://localhost:3000" target="_blank" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent-terracotta); text-decoration: none;">
+                ↗ FRONTEND
+            </a>
+        </header>
+
+        <main style="padding: 2rem;">
+            {% if messages %}
+                <div style="max-width: 480px; margin: 0 auto 1.5rem;">
+                    {% for message in messages %}
+                        <div class="cms-alert">
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block auth_content %}{% endblock %}
+        </main>
+    </div>
+    {% endif %}
+
+    <script>
+    function toggleSidebar() {
+        const sb = document.getElementById('cmsSidebar');
+        if (sb) sb.classList.toggle('open');
+    }
+
+    function handleSearchFilter(query) {
+        const q = query.toLowerCase().trim();
+        const items = document.querySelectorAll('.filter-item');
+        const sections = document.querySelectorAll('.filter-target');
+
+        if (!q) {
+            items.forEach(el => el.style.display = '');
+            sections.forEach(el => el.style.opacity = '1');
+            return;
+        }
+
+        items.forEach(el => {
+            const text = el.textContent.toLowerCase();
+            if (text.includes(q)) {
+                el.style.display = '';
+            } else {
+                el.style.display = 'none';
+            }
+        });
+
+        sections.forEach(sec => {
+            const text = sec.textContent.toLowerCase();
+            if (text.includes(q)) {
+                sec.style.opacity = '1';
+            } else {
+                sec.style.opacity = '0.35';
+            }
+        });
+    }
+
+    // Highlight active link on click / scroll
+    document.querySelectorAll('.sidebar-nav-link').forEach(link => {
+        link.addEventListener('click', function() {
+            document.querySelectorAll('.sidebar-nav-link').forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
