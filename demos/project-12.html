@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VILLA RIVIERA — Mediterranean Riviera Fine Dining | Saint-Jean-Cap-Ferrat</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1B4965;
+      --accent: #62B6CB;
+      --bg: #F9F6F0;
+      --surface: #FFFFFF;
+      --surface-light: #E9F1F5;
+      --text: #13293D;
+      --text-muted: #5B7083;
+      --font-heading: 'Cormorant Garamond', serif;
+      --font-body: 'Outfit', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Global Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-heading);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Floating Portfolio Return Pill */
+    .portfolio-pill {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1000;
+      background: rgba(15, 17, 23, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #FFFFFF;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .portfolio-pill:hover {
+      background: var(--primary);
+      color: #000;
+      transform: translateY(-2px);
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 900;
+      background: rgba(10, 13, 20, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1rem 0;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand-logo {
+      display: flex;
+      flex-direction: column;
+    }
+    .brand-name {
+      font-family: var(--font-heading);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.05em;
+    }
+    .brand-sub {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+    .btn-nav {
+      background: var(--primary);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.6rem 1.4rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .btn-nav:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+    .mobile-toggle {
+      display: none;
+      background: transparent;
+      color: var(--text);
+      font-size: 1.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      background: linear-gradient(to right, rgba(10, 13, 20, 0.95) 0%, rgba(10, 13, 20, 0.8) 50%, rgba(10, 13, 20, 0.4) 100%), url('https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+      padding: 6rem 0;
+    }
+    .hero-content {
+      max-width: 680px;
+    }
+    .hero-badge {
+      display: inline-block;
+      padding: 0.35rem 0.9rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      border-radius: 4px;
+      margin-bottom: 1.25rem;
+    }
+    .hero-title {
+      font-size: clamp(2.5rem, 5vw, 4.2rem);
+      margin-bottom: 1.2rem;
+      color: var(--text);
+    }
+    .hero-tagline {
+      font-size: clamp(1.1rem, 2vw, 1.35rem);
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #000;
+      font-weight: 700;
+      padding: 0.9rem 2rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.85rem;
+    }
+    .btn-primary:hover {
+      filter: brightness(1.15);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: var(--text);
+      font-weight: 600;
+      padding: 0.9rem 2rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.85rem;
+    }
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* Section Common */
+    .section {
+      padding: 6rem 0;
+    }
+    .section-header {
+      text-align: center;
+      max-width: 650px;
+      margin: 0 auto 3.5rem auto;
+    }
+    .section-subtitle {
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 0.75rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.75rem);
+      margin-bottom: 1rem;
+    }
+
+    /* About / Pillars */
+    .about-lead {
+      font-size: 1.15rem;
+      text-align: center;
+      color: var(--text-muted);
+      max-width: 800px;
+      margin: 0 auto 3rem auto;
+      line-height: 1.8;
+    }
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+    .pillar-card {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 2.5rem 2rem;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+    .pillar-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-4px);
+    }
+    .pillar-number {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+    .pillar-title {
+      font-size: 1.35rem;
+      margin-bottom: 0.75rem;
+    }
+    .pillar-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Menu Explorer */
+    .menu-section {
+      background: var(--surface);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .menu-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+    .menu-tab-btn {
+      padding: 0.6rem 1.5rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .menu-tab-btn.active, .menu-tab-btn:hover {
+      background: var(--primary);
+      color: #000;
+      border-color: var(--primary);
+    }
+    .menu-items-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .menu-card {
+      background: var(--bg);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 8px;
+      padding: 1.8rem;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .menu-card:hover {
+      border-color: var(--primary);
+    }
+    .menu-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.6rem;
+    }
+    .dish-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    .dish-price {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-left: 1rem;
+    }
+    .dish-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+    .dish-diet {
+      display: inline-block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--primary);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      width: fit-content;
+    }
+
+    /* Gallery */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .gallery-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .gallery-item:hover img {
+      transform: scale(1.08);
+    }
+
+    /* Reservation Banner */
+    .res-banner {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface-light) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 4rem 2rem;
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .res-banner h2 {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+    .res-banner p {
+      color: var(--text-muted);
+      max-width: 550px;
+      margin: 0 auto 2rem auto;
+    }
+
+    /* Footer */
+    .footer {
+      background: #07090E;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4rem 0 2rem 0;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+    .footer-col h4 {
+      color: var(--text);
+      font-size: 1rem;
+      margin-bottom: 1.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .footer-col ul {
+      list-style: none;
+    }
+    .footer-col li {
+      margin-bottom: 0.6rem;
+    }
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-backdrop.open {
+      display: flex;
+    }
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 520px;
+      padding: 2.5rem;
+      position: relative;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    }
+    .modal-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+    }
+    .modal-close:hover {
+      color: var(--text);
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+      color: var(--text-muted);
+    }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      background: var(--bg);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: inherit;
+    }
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .modal-success {
+      display: none;
+      text-align: center;
+      padding: 1rem 0;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      .mobile-toggle {
+        display: block;
+      }
+      .hero {
+        min-height: 75vh;
+        padding: 4rem 0;
+      }
+      .section {
+        padding: 4rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Navigation to Main Showcase -->
+  <a href="../index.html" class="portfolio-pill" title="Return to 15 Projects Showcase">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+    <span>All 15 Projects</span>
+  </a>
+
+  <!-- Header -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <div class="brand-logo">
+        <a href="#hero" class="brand-name">VILLA RIVIERA</a>
+        <span class="brand-sub">French Riviera Villa & Harbor Dining</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#about">Story</a></li>
+        <li><a href="#pillars">Philosophy</a></li>
+        <li><a href="#menu">Menu</a></li>
+        <li><a href="#gallery">Atmosphere</a></li>
+        <li><a href="#reserve" class="btn-nav open-modal-btn">Reserve Table</a></li>
+      </ul>
+      <button class="mobile-toggle open-modal-btn" aria-label="Book Table">
+        <span class="btn-nav" style="padding: 0.4rem 0.8rem; font-size: 0.7rem;">Book</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <div class="container">
+      <div class="hero-content">
+        <span class="hero-badge">French Riviera Villa & Harbor Dining</span>
+        <h1 class="hero-title">VILLA RIVIERA</h1>
+        <p class="hero-tagline">Coastal Villa Architecture Meets Contemporary Fine Dining</p>
+        <div class="hero-actions">
+          <button class="btn-primary open-modal-btn">Reserve Experience</button>
+          <a href="#menu" class="btn-outline">Explore Menu</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About / Story -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-subtitle">Our Heritage</span>
+        <h2 class="section-title">The Culinary Vision</h2>
+      </div>
+      <p class="about-lead">Situated on the exclusive cliffs of Saint-Jean-Cap-Ferrat, Villa Riviera captures the golden age of Côte d'Azur glamour. Shaded by ancient pines and olive trees, guests savor Michelin-starred Provençal seafood dining overlooking superyachts anchored in the bay.</p>
+
+      <!-- Pillars -->
+      <div class="pillars-grid" id="pillars">
+        
+            <div class="pillar-card">
+              <div class="pillar-number">01</div>
+              <h3 class="pillar-title">Côte d'Azur Villa</h3>
+              <p class="pillar-desc">Limestone arcades, terracotta tiled terraces, and white canvas pergolas framing the sea.</p>
+            </div>
+            
+            <div class="pillar-card">
+              <div class="pillar-number">02</div>
+              <h3 class="pillar-title">Provençal Raw Bar</h3>
+              <p class="pillar-desc">Wild amberjack, red mullet, langoustines, and sea urchins harvested directly from the Mediterranean.</p>
+            </div>
+            
+            <div class="pillar-card">
+              <div class="pillar-number">03</div>
+              <h3 class="pillar-title">Riviera Rosé & Champagne</h3>
+              <p class="pillar-desc">Curated cellar specializing in vintage Côtes de Provence crus and boutique grower champagnes.</p>
+            </div>
+            
+      </div>
+    </div>
+  </section>
+
+  <!-- Menu Explorer -->
+  <section class="section menu-section" id="menu">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-subtitle">Gastronomy</span>
+        <h2 class="section-title">Curated Repertoire</h2>
+      </div>
+
+      <!-- Menu Category Tabs -->
+      <div class="menu-tabs">
+        <button class="menu-tab-btn active" data-cat="Signatures">Signatures</button>
+<button class="menu-tab-btn " data-cat="Chef Specialties">Chef Specialties</button>
+<button class="menu-tab-btn " data-cat="Drinks & Wine">Drinks & Wine</button>
+
+      </div>
+
+      <!-- Dish Cards Container -->
+      <div class="menu-items-grid" id="menuGrid">
+        
+            <div class="menu-card">
+              <div>
+                <div class="menu-card-top">
+                  <span class="dish-name">Crudo di Ricciola al Bergamotto</span>
+                  <span class="dish-price">$36</span>
+                </div>
+                <p class="dish-desc">Amberjack crudo, preserved Menton bergamot, Riviera olive oil, Fleur de Sel de Guérande</p>
+              </div>
+              <span class="dish-diet">Raw Bar</span>
+            </div>
+            
+            <div class="menu-card">
+              <div>
+                <div class="menu-card-top">
+                  <span class="dish-name">Bouillabaisse Royale aux Crustacés</span>
+                  <span class="dish-price">$78</span>
+                </div>
+                <p class="dish-desc">Red mullet, Brittany blue lobster, saffron rouille, garlic croutons, rich fish reduction</p>
+              </div>
+              <span class="dish-diet">Riviera Classic</span>
+            </div>
+            
+            <div class="menu-card">
+              <div>
+                <div class="menu-card-top">
+                  <span class="dish-name">Soufflé Chaud au Grand Marnier</span>
+                  <span class="dish-price">$24</span>
+                </div>
+                <p class="dish-desc">Tahitian vanilla bean crème anglaise poured tableside</p>
+              </div>
+              <span class="dish-diet">Dessert Icon</span>
+            </div>
+            
+      </div>
+    </div>
+  </section>
+
+  <!-- Atmosphere Gallery -->
+  <section class="section" id="gallery">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-subtitle">Architectural Spatial Experience</span>
+        <h2 class="section-title">Atmosphere & Materials</h2>
+      </div>
+      <div class="gallery-grid">
+        
+            <div class="gallery-item">
+              <img src="https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?auto=format&fit=crop&w=800&q=80" alt="VILLA RIVIERA interior atmosphere" loading="lazy">
+            </div>
+            
+            <div class="gallery-item">
+              <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80" alt="VILLA RIVIERA interior atmosphere" loading="lazy">
+            </div>
+            
+            <div class="gallery-item">
+              <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80" alt="VILLA RIVIERA interior atmosphere" loading="lazy">
+            </div>
+            
+      </div>
+    </div>
+  </section>
+
+  <!-- Reservation Banner -->
+  <section class="section" id="reserve">
+    <div class="container">
+      <div class="res-banner">
+        <span class="section-subtitle">Private Dining & Reservations</span>
+        <h2>Reserve Your Table at VILLA RIVIERA</h2>
+        <p>Experience an unforgettable dining journey. Tables are released 30 days in advance. Special requests and private dining salons available upon request.</p>
+        <button class="btn-primary open-modal-btn">Request Reservation</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-family: var(--font-heading);">VILLA RIVIERA</h3>
+          <p style="margin-bottom: 1rem; color: var(--text-muted);">Mediterranean Riviera Fine Dining | Saint-Jean-Cap-Ferrat</p>
+          <p>© 2026 VILLA RIVIERA. All rights reserved.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Operating Hours</h4>
+          <ul>
+            <li>Tuesday – Friday: 5:30 PM – 11:00 PM</li>
+            <li>Saturday & Sunday: 12:00 PM – 11:30 PM</li>
+            <li>Monday: Closed for Culinary Prep</li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Location & Contact</h4>
+          <ul>
+            <li>VIP Reservation Concierge</li>
+            <li>reservations@villariviera-dining.com</li>
+            <li>+1 (555) 789-2026</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Part of the 15 Luxury Restaurant Concepts Showcase • <a href="../index.html" style="color: var(--primary); text-decoration: underline;">Return to Master Portal</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Reservation Modal -->
+  <div class="modal-backdrop" id="resModal">
+    <div class="modal-box">
+      <button class="modal-close" id="closeModalBtn" aria-label="Close Modal">&times;</button>
+      
+      <div id="modalFormContent">
+        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--primary);">Reserve a Table</h3>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Join us for an immersive culinary experience at VILLA RIVIERA.</p>
+        
+        <form id="bookingForm">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="guestName" required placeholder="Alexander Vance">
+          </div>
+          <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div>
+              <label>Date</label>
+              <input type="date" required value="2026-11-20">
+            </div>
+            <div>
+              <label>Guests</label>
+              <select>
+                <option>2 Guests (Intimate Table)</option>
+                <option>4 Guests (Booth)</option>
+                <option>6 Guests (Chef's Counter)</option>
+                <option>8+ Guests (Private Salon)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Seating Preference</label>
+            <select>
+              <option>Main Dining Room</option>
+              <option>Window / Panoramic View</option>
+              <option>Architectural Bar Lounge</option>
+              <option>Private Dining Alcove</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">Confirm Reservation Request</button>
+        </form>
+      </div>
+
+      <div class="modal-success" id="modalSuccess">
+        <div style="font-size: 3rem; color: var(--primary); margin-bottom: 0.5rem;">✓</div>
+        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Reservation Confirmed!</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">Your booking at VILLA RIVIERA has been processed. Confirmation code:</p>
+        <div style="background: rgba(255,255,255,0.06); border: 1px dashed var(--primary); padding: 0.75rem; border-radius: 4px; font-weight: 700; color: var(--primary); letter-spacing: 0.1em; margin-bottom: 1.5rem;" id="confirmCode">
+          LUX-2026-CONFIRMED
+        </div>
+        <button class="btn-outline" id="doneModalBtn" style="width: 100%;">Close Window</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab filtering
+    const menuData = {"Signatures": [{"name": "Crudo di Ricciola al Bergamotto", "price": "$36", "desc": "Amberjack crudo, preserved Menton bergamot, Riviera olive oil, Fleur de Sel de Gu\u00e9rande", "diet": "Raw Bar"}, {"name": "Bouillabaisse Royale aux Crustac\u00e9s", "price": "$78", "desc": "Red mullet, Brittany blue lobster, saffron rouille, garlic croutons, rich fish reduction", "diet": "Riviera Classic"}, {"name": "Souffl\u00e9 Chaud au Grand Marnier", "price": "$24", "desc": "Tahitian vanilla bean cr\u00e8me anglaise poured tableside", "diet": "Dessert Icon"}], "Chef Specialties": [{"name": "C\u00f4te de Veau R\u00f4tie \u00e0 la Sauge", "price": "$64", "desc": "Pan-roasted milk-fed veal chop, crispy sage butter, morel mushroom fricassee", "diet": "Viande"}, {"name": "Fleurs de Courgette Farcies", "price": "$28", "desc": "Zucchini blossoms stuffed with fresh ricotta and mint, light tempura crisp", "diet": "Antipasti"}], "Drinks & Wine": [{"name": "Ch\u00e2teau d'Esclans Garrus Ros\u00e9", "price": "$45", "desc": "Oak-aged Grenache and Rolle, creamy peach and toasted almond notes", "diet": "Prestigious Ros\u00e9"}, {"name": "Cap Ferrat Sunset Spritz", "price": "$24", "desc": "Aperol, blood orange reduction, rosemary sprig, vintage champagne float", "diet": "Sunset Cocktail"}]};
+    const tabButtons = document.querySelectorAll('.menu-tab-btn');
+    const menuGrid = document.getElementById('menuGrid');
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const cat = btn.getAttribute('data-cat');
+        renderMenuCategory(cat);
+      });
+    });
+
+    function renderMenuCategory(cat) {
+      const items = menuData[cat] || [];
+      menuGrid.innerHTML = items.map(dish => `
+        <div class="menu-card">
+          <div>
+            <div class="menu-card-top">
+              <span class="dish-name">${dish.name}</span>
+              <span class="dish-price">${dish.price}</span>
+            </div>
+            <p class="dish-desc">${dish.desc}</p>
+          </div>
+          <span class="dish-diet">${dish.diet}</span>
+        </div>
+      `).join('');
+    }
+
+    // Reservation Modal
+    const modal = document.getElementById('resModal');
+    const openBtns = document.querySelectorAll('.open-modal-btn');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const doneBtn = document.getElementById('doneModalBtn');
+    const bookingForm = document.getElementById('bookingForm');
+    const formContent = document.getElementById('modalFormContent');
+    const successContent = document.getElementById('modalSuccess');
+
+    openBtns.forEach(b => b.addEventListener('click', (e) => {
+      e.preventDefault();
+      modal.classList.add('open');
+      formContent.style.display = 'block';
+      successContent.style.display = 'none';
+    }));
+
+    [closeBtn, doneBtn].forEach(b => b && b.addEventListener('click', () => {
+      modal.classList.remove('open');
+    }));
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('open');
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) {
+        modal.classList.remove('open');
+      }
+    });
+
+    bookingForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const code = 'RES-' + Math.floor(100000 + Math.random() * 900000);
+      document.getElementById('confirmCode').textContent = code;
+      formContent.style.display = 'none';
+      successContent.style.display = 'block';
+    });
+  </script>
+</body>
+</html>
