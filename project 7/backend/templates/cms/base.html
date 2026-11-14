@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Parisian CMS Studio | L'Étoile Royale{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --burgundy: #54252F;
+            --burgundy-dark: #3B1A21;
+            --burgundy-deep: #2A1218;
+            --gold: #C5A46D;
+            --gold-light: #E0C79B;
+            --ivory: #F5F0E7;
+            --charcoal: #202124;
+            --charcoal-card: #28292D;
+            --charcoal-border: #383A40;
+            --taupe: #A89B8B;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-editorial: 'Cormorant Garamond', Georgia, serif;
+            --font-sans: 'DM Sans', -apple-system, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--charcoal);
+            color: var(--ivory);
+            font-family: var(--font-sans);
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar */
+        .topbar {
+            background-color: var(--burgundy-deep);
+            border-bottom: 1px solid rgba(197, 164, 109, 0.25);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .brand-crest {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--burgundy) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--ivory);
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: 1px solid var(--gold);
+        }
+
+        .brand-text h1 {
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            color: var(--ivory);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .brand-text span {
+            font-family: var(--font-editorial);
+            font-size: 0.85rem;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold) 0%, #A9864E 100%);
+            color: #1A1208;
+            padding: 0.55rem 1.2rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            border: 1px solid var(--gold-light);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-gold:hover {
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+            box-shadow: 0 4px 15px rgba(197, 164, 109, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--taupe);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: 1px solid var(--charcoal-border);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-outline:hover {
+            color: var(--ivory);
+            border-color: var(--taupe);
+        }
+
+        /* Messages */
+        .alerts-wrapper {
+            max-width: 1300px;
+            margin: 1.5rem auto 0;
+            padding: 0 2rem;
+            width: 100%;
+        }
+
+        .alert {
+            padding: 0.9rem 1.25rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .alert-success {
+            background: rgba(30, 70, 45, 0.4);
+            border: 1px solid #3ca364;
+            color: #9fe2b6;
+        }
+
+        .alert-error {
+            background: rgba(84, 37, 47, 0.5);
+            border: 1px solid #d45d6f;
+            color: #f7aab5;
+        }
+
+        .alert-info {
+            background: rgba(40, 60, 90, 0.4);
+            border: 1px solid #4a88d9;
+            color: #b0d4ff;
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1300px;
+            width: 100%;
+            margin: 1.5rem auto 3rem;
+            padding: 0 2rem;
+            flex: 1;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--burgundy-deep);
+            border-top: 1px solid rgba(197, 164, 109, 0.15);
+            text-align: center;
+            padding: 1.5rem;
+            color: var(--taupe);
+            font-size: 0.85rem;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <header class="topbar">
+        <a href="{% url 'cms_dashboard' %}" class="brand-badge">
+            <div class="brand-crest">✦</div>
+            <div class="brand-text">
+                <h1>L'Étoile Royale</h1>
+                <span>Studio CMS Gastronomique</span>
+            </div>
+        </a>
+        <div class="nav-actions">
+            <a href="http://127.0.0.1:3000" target="_blank" class="btn-outline">
+                <span>↗ Voir le Site Public</span>
+            </a>
+            {% if user.is_authenticated %}
+                <span style="color: var(--gold); font-size: 0.9rem;">
+                    👤 {{ user.username }} (Admin)
+                </span>
+                <a href="{% url 'cms_logout' %}" class="btn-outline">Déconnexion</a>
+            {% else %}
+                <a href="{% url 'cms_login' %}" class="btn-gold">Connexion</a>
+            {% endif %}
+        </div>
+    </header>
+
+    {% if messages %}
+    <div class="alerts-wrapper">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="main-container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 L'Étoile Royale — Salon Gastronomique & Bar à Champagne • 18 Place Vendôme, Paris • CMS Découplé Django 5</p>
+    </footer>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

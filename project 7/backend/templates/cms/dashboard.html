@@ -1,0 +1,595 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Dashboard | L'Étoile Royale CMS Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 1px solid rgba(197, 164, 109, 0.2);
+        padding-bottom: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-title h2 {
+        font-family: var(--font-display);
+        font-size: 2.2rem;
+        color: var(--ivory);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    .dashboard-title p {
+        color: var(--taupe);
+        font-size: 0.95rem;
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--charcoal-card);
+        border: 1px solid var(--charcoal-border);
+        border-radius: 8px;
+        padding: 1.25rem 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--gold);
+    }
+
+    .stat-card.burgundy::before {
+        background: var(--burgundy);
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--taupe);
+        margin-bottom: 0.35rem;
+    }
+
+    .stat-val {
+        font-family: var(--font-display);
+        font-size: 1.7rem;
+        color: var(--ivory);
+        font-weight: 600;
+    }
+
+    /* Tabs */
+    .tab-nav {
+        display: flex;
+        gap: 0.5rem;
+        border-bottom: 1px solid var(--charcoal-border);
+        margin-bottom: 2rem;
+    }
+
+    .tab-btn {
+        background: transparent;
+        border: none;
+        color: var(--taupe);
+        padding: 0.85rem 1.5rem;
+        font-family: var(--font-sans);
+        font-size: 0.95rem;
+        font-weight: 500;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s;
+    }
+
+    .tab-btn:hover {
+        color: var(--ivory);
+    }
+
+    .tab-btn.active {
+        color: var(--gold);
+        font-weight: 600;
+    }
+
+    .tab-btn.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--gold);
+    }
+
+    .tab-pane {
+        display: none;
+    }
+
+    .tab-pane.active {
+        display: block;
+    }
+
+    .card {
+        background: var(--charcoal-card);
+        border: 1px solid var(--charcoal-border);
+        border-radius: 8px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .card-title {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        color: var(--ivory);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-subtitle {
+        color: var(--taupe);
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--gold);
+        margin-bottom: 0.4rem;
+        font-weight: 600;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: #18191B;
+        border: 1px solid var(--charcoal-border);
+        border-radius: 4px;
+        color: var(--ivory);
+        font-family: var(--font-sans);
+        font-size: 0.95rem;
+        outline: none;
+        transition: border 0.2s;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+        border-color: var(--gold);
+    }
+
+    .json-editor-area {
+        width: 100%;
+        min-height: 480px;
+        background: #141517;
+        color: #B5E890;
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        padding: 1.25rem;
+        border: 1px solid var(--charcoal-border);
+        border-radius: 6px;
+        outline: none;
+        white-space: pre;
+    }
+
+    /* Reservations Table */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    th {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--taupe);
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid var(--charcoal-border);
+        background: rgba(0,0,0,0.2);
+    }
+
+    td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        font-size: 0.9rem;
+    }
+
+    tr:hover td {
+        background: rgba(255,255,255,0.02);
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.65rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .badge-pending {
+        background: rgba(214, 184, 121, 0.15);
+        color: #E2C792;
+        border: 1px solid rgba(214, 184, 121, 0.4);
+    }
+
+    .badge-confirmed {
+        background: rgba(46, 125, 80, 0.2);
+        color: #79D19E;
+        border: 1px solid rgba(46, 125, 80, 0.5);
+    }
+
+    .badge-cancelled {
+        background: rgba(180, 40, 50, 0.2);
+        color: #F18691;
+        border: 1px solid rgba(180, 40, 50, 0.5);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="dashboard-title">
+        <h2>{{ config.restaurant_name }}</h2>
+        <p>Salon Gastronomique & Bar à Champagne • Panneau de Contrôle Centralisé</p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+        <a href="http://127.0.0.1:3000" target="_blank" class="btn-gold">
+            <span>Visiter le Site Web Public (3000) ↗</span>
+        </a>
+    </div>
+</div>
+
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-label">Statut CMS</div>
+        <div class="stat-val" style="color: #79D19E; font-size: 1.4rem;">
+            ● En Ligne (Publié)
+        </div>
+    </div>
+    <div class="stat-card burgundy">
+        <div class="stat-label">Dernière Mise à Jour</div>
+        <div class="stat-val" style="font-size: 1.15rem; color: var(--gold);">
+            {{ config.updated_at|date:"d M Y, H:i" }}
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Demandes de Réservations</div>
+        <div class="stat-val">
+            {{ reservations.count }}
+        </div>
+    </div>
+    <div class="stat-card burgundy">
+        <div class="stat-label">En Attente de Confirmation</div>
+        <div class="stat-val" style="color: #E2C792;">
+            {{ reservations|length }}
+        </div>
+    </div>
+</div>
+
+<div class="tab-nav">
+    <button class="tab-btn active" onclick="openTab(event, 'tab-form')">Éditeur de Sections</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab-reservations')">Réservations Clients ({{ reservations.count }})</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab-json')">Master JSON Editor (15 Sections)</button>
+    <button class="tab-btn" onclick="openTab(event, 'tab-tour')">Visite Virtuelle 3D (5 Points)</button>
+</div>
+
+<!-- Tab 1: Section Field Editor -->
+<div id="tab-form" class="tab-pane active">
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save_form_sections">
+
+        <!-- 1. Hero & Branding -->
+        <div class="card">
+            <h3 class="card-title">✦ 1. Identité & Section Héro (S01, S02)</h3>
+            <p class="card-subtitle">Modifier le nom du restaurant, la devise d'accueil, l'accroche et les boutons principaux.</p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nom du Restaurant</label>
+                    <input type="text" name="hero_name" value="{{ content.hero.restaurant_name|default:"L'ÉTOILE ROYALE" }}">
+                </div>
+                <div class="form-group">
+                    <label>Sous-titre / Devise</label>
+                    <input type="text" name="hero_tagline" value="{{ content.hero.tagline|default:'Salon Gastronomique & Bar à Champagne' }}">
+                </div>
+                <div class="form-group">
+                    <label>Badge de Distinction</label>
+                    <input type="text" name="hero_badge" value="{{ content.hero.badge_text|default:'Étoilé Michelin 2026' }}">
+                </div>
+                <div class="form-group">
+                    <label>Bouton Principal (CTA 1)</label>
+                    <input type="text" name="hero_cta_primary" value="{{ content.hero.cta_primary_text|default:'Réserver une Table' }}">
+                </div>
+                <div class="form-group">
+                    <label>Bouton Secondaire (CTA 2)</label>
+                    <input type="text" name="hero_cta_secondary" value="{{ content.hero.cta_secondary_text|default:'Explorer la Carte' }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description Principale</label>
+                <textarea name="hero_desc" rows="3">{{ content.hero.lead_description }}</textarea>
+            </div>
+        </div>
+
+        <!-- 2. Heritage -->
+        <div class="card">
+            <h3 class="card-title">✦ 2. Héritage Gastronomique (S03)</h3>
+            <p class="card-subtitle">Histoire et philosophie de la table parisienne.</p>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Titre de Section</label>
+                    <input type="text" name="heritage_title" value="{{ content.heritage.title|default:'L\'Art de Vivre' }}">
+                </div>
+                <div class="form-group">
+                    <label>Sous-Titre</label>
+                    <input type="text" name="heritage_subtitle" value="{{ content.heritage.subtitle|default:'Notre Héritage' }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Paragraphe d'Histoire 1</label>
+                <textarea name="heritage_p1" rows="3">{{ content.heritage.body_paragraph_1 }}</textarea>
+            </div>
+            <div class="form-group">
+                <label>Paragraphe d'Histoire 2</label>
+                <textarea name="heritage_p2" rows="3">{{ content.heritage.body_paragraph_2 }}</textarea>
+            </div>
+        </div>
+
+        <!-- 3. Chef -->
+        <div class="card">
+            <h3 class="card-title">✦ 3. Chef Exécutif & Cuisine d'Auteur (S09)</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nom du Chef</label>
+                    <input type="text" name="chef_name" value="{{ content.chef.name|default:'Chef Alexandre de Morbihan' }}">
+                </div>
+                <div class="form-group">
+                    <label>Titre & Distinctions</label>
+                    <input type="text" name="chef_title" value="{{ content.chef.title|default:'Chef Exécutif & Maître Cuisinier de France' }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Citation Emblématique du Chef</label>
+                <input type="text" name="chef_quote" value="{{ content.chef.quote }}">
+            </div>
+            <div class="form-group">
+                <label>Biographie Sommaire</label>
+                <textarea name="chef_bio" rows="3">{{ content.chef.bio }}</textarea>
+            </div>
+        </div>
+
+        <!-- 4. Location & Contact -->
+        <div class="card">
+            <h3 class="card-title">✦ 4. Emplacement & Coordonnées (S14, S15)</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Adresse Parisienne</label>
+                    <input type="text" name="loc_address" value="{{ content.location.address|default:'18 Place Vendôme, 75001 Paris, France' }}">
+                </div>
+                <div class="form-group">
+                    <label>Téléphone Conciergerie</label>
+                    <input type="text" name="loc_phone" value="{{ content.location.phone|default:'+33 1 42 68 55 00' }}">
+                </div>
+                <div class="form-group">
+                    <label>Email de Réservation</label>
+                    <input type="email" name="loc_email" value="{{ content.location.email|default:'reservations@letoileroyale-paris.fr' }}">
+                </div>
+                <div class="form-group">
+                    <label>Horaires d'Ouverture</label>
+                    <input type="text" name="loc_hours" value="{{ content.location.hours|default:'Mardi au Samedi: 19h00 - 23h30' }}">
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. Theme Tokens -->
+        <div class="card">
+            <h3 class="card-title">✦ 5. Palette & Nuances Parisiennes</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Couleur Primaire (Bordeaux / Burgundy)</label>
+                    <input type="text" name="theme_primary" value="{{ content.theme.primary_color|default:'#54252F' }}">
+                </div>
+                <div class="form-group">
+                    <label>Couleur d'Accent (Or Champagne / Gold)</label>
+                    <input type="text" name="theme_accent" value="{{ content.theme.accent_color|default:'#C5A46D' }}">
+                </div>
+                <div class="form-group">
+                    <label>Couleur Fond Sombre (Charbon / Charcoal)</label>
+                    <input type="text" name="theme_bg" value="{{ content.theme.bg_color|default:'#202124' }}">
+                </div>
+                <div class="form-group">
+                    <label>Couleur Texte (Ivoire Chaud / Warm Ivory)</label>
+                    <input type="text" name="theme_text" value="{{ content.theme.text_color|default:'#F5F0E7' }}">
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-gold" style="font-size: 1rem; padding: 0.9rem 2.2rem;">
+            Enregistrer & Publier les Modifications
+        </button>
+    </form>
+</div>
+
+<!-- Tab 2: Reservations Management -->
+<div id="tab-reservations" class="tab-pane">
+    <div class="card">
+        <h3 class="card-title">✦ Demandes de Réservation en Ligne</h3>
+        <p class="card-subtitle">Gérez les demandes soumises par les visiteurs via le formulaire interactif S13 & le modal de réservation.</p>
+
+        {% if reservations %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date & Heure</th>
+                        <th>Client</th>
+                        <th>Contact</th>
+                        <th>Couverts</th>
+                        <th>Expérience & Occasion</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in reservations %}
+                    <tr>
+                        <td>
+                            <strong>{{ res.date }}</strong><br>
+                            <span style="color: var(--taupe); font-size: 0.8rem;">{{ res.time }}</span>
+                        </td>
+                        <td>
+                            <strong style="color: var(--gold);">{{ res.full_name }}</strong>
+                            {% if res.special_requests %}
+                            <div style="font-size: 0.8rem; color: var(--taupe); margin-top: 0.2rem;">
+                                Note: {{ res.special_requests|truncatewords:8 }}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div>{{ res.phone }}</div>
+                            <div style="font-size: 0.8rem; color: var(--taupe);">{{ res.email|default:"-" }}</div>
+                        </td>
+                        <td>{{ res.guests }}</td>
+                        <td>
+                            <span style="color: var(--ivory);">{{ res.experience }}</span><br>
+                            <span style="color: var(--taupe); font-size: 0.8rem;">{{ res.occasion }}</span>
+                        </td>
+                        <td>
+                            {% if res.status == 'confirmed' %}
+                            <span class="badge badge-confirmed">Confirmée</span>
+                            {% elif res.status == 'cancelled' %}
+                            <span class="badge badge-cancelled">Annulée</span>
+                            {% else %}
+                            <span class="badge badge-pending">En Attente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 0.35rem; align-items: center;">
+                                <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="confirmed">
+                                    <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: #79D19E;" title="Confirmer">✓</button>
+                                </form>
+                                <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="cancelled">
+                                    <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: #F18691;" title="Annuler">✕</button>
+                                </form>
+                                <form method="POST" action="{% url 'cms_reservation_delete' res.id %}" style="display:inline;" onsubmit="return confirm('Confirmer la suppression ?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: var(--taupe);" title="Supprimer">🗑</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color: var(--taupe); padding: 2rem; text-align: center;">Aucune réservation enregistrée pour le moment. Les réservations passées depuis le site s'afficheront ici en direct.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Tab 3: Master JSON Editor -->
+<div id="tab-json" class="tab-pane">
+    <div class="card">
+        <h3 class="card-title">✦ Master JSON Editor (15 Sections Complètes)</h3>
+        <p class="card-subtitle">Éditez l'intégralité de la configuration JSON pour tous les menus, plats signatures, photographies de galerie, avis et citations. La modification est transmise instantanément au frontend React.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_raw_json">
+            <textarea name="raw_json" class="json-editor-area" spellcheck="false">{{ pretty_json }}</textarea>
+            <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--taupe); font-size: 0.85rem;">Format JSON strict vérifié lors de la soumission.</span>
+                <button type="submit" class="btn-gold" style="padding: 0.85rem 2rem;">
+                    Enregistrer & Publier le JSON
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tab 4: 3D Tour Info -->
+<div id="tab-tour" class="tab-pane">
+    <div class="card">
+        <h3 class="card-title">✦ Configuration des 5 Points de Vue de la Visite Virtuelle (S04)</h3>
+        <p class="card-subtitle">Les 5 points de vue architecturaux configurés dans Three.js / React Three Fiber :</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+            <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 01</span>
+                <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Façade & Entrée</h4>
+                <p style="color: var(--taupe); font-size: 0.85rem;">Vue extérieure de l'hôtel particulier, pierre calcaire parisienne et lanternes dorées.</p>
+            </div>
+            <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 02</span>
+                <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Grand Salon d'Honneur</h4>
+                <p style="color: var(--taupe); font-size: 0.85rem;">Salle à manger princière sous lustre de cristal, tables nappées et velours bordeaux.</p>
+            </div>
+            <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 03</span>
+                <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Bar à Champagne & Verrière</h4>
+                <p style="color: var(--taupe); font-size: 0.85rem;">Comptoir en marbre noir et laiton brossé sous verrière d'époque style Haussmann.</p>
+            </div>
+            <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 04</span>
+                <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Cave Privée des Grands Crus</h4>
+                <p style="color: var(--taupe); font-size: 0.85rem;">Voûtes séculaires abritant plus de 3 000 flacons et millésimes d'exception.</p>
+            </div>
+            <div style="background: #18191B; padding: 1.25rem; border-radius: 6px; border: 1px solid var(--charcoal-border);">
+                <span style="color: var(--gold); font-size: 0.8rem; font-weight: 700;">POINT 05</span>
+                <h4 style="margin: 0.4rem 0; font-family: var(--font-display);">Table Privée du Chef</h4>
+                <p style="color: var(--taupe); font-size: 0.85rem;">Salon intimiste avec vue privilégiée sur le passe de dressage gastronomique.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openTab(evt, tabId) {
+    var panes = document.getElementsByClassName("tab-pane");
+    for (var i = 0; i < panes.length; i++) {
+        panes[i].classList.remove("active");
+    }
+    var btns = document.getElementsByClassName("tab-btn");
+    for (var i = 0; i < btns.length; i++) {
+        btns[i].classList.remove("active");
+    }
+    document.getElementById(tabId).classList.add("active");
+    evt.currentTarget.classList.add("active");
+}
+</script>
+{% endblock %}

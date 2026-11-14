@@ -1,0 +1,38 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Authentification Administrative | L'Étoile Royale CMS{% endblock %}
+
+{% block content %}
+<div style="max-width: 440px; margin: 5rem auto; background: var(--charcoal-card); border: 1px solid rgba(197, 164, 109, 0.35); border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.4); padding: 2.5rem; text-align: center;">
+    <div style="font-size: 2rem; color: var(--gold); margin-bottom: 0.5rem;">✦</div>
+    <h2 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--ivory); font-weight: 600; margin-bottom: 0.5rem;">CMS Studio Privé</h2>
+    <p style="color: var(--taupe); font-size: 0.9rem; margin-bottom: 2rem;">Accès réservé à la direction gastronomique & sommellerie</p>
+
+    <form method="POST" action="{% url 'cms_login' %}">
+        {% csrf_token %}
+        <div style="margin-bottom: 1.25rem; text-align: left;">
+            <label style="display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.4rem;">Identifiant Administrateur</label>
+            <input type="text" name="username" required autocomplete="username" autofocus
+                   style="width: 100%; padding: 0.75rem 1rem; background: #1B1C1E; border: 1px solid var(--charcoal-border); border-radius: 4px; color: var(--ivory); font-family: var(--font-sans); font-size: 0.95rem; outline: none; transition: border 0.2s;"
+                   onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--charcoal-border)'"
+                   placeholder="ex: admin">
+        </div>
+
+        <div style="margin-bottom: 2rem; text-align: left;">
+            <label style="display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.4rem;">Mot de Passe</label>
+            <input type="password" name="password" required autocomplete="current-password"
+                   style="width: 100%; padding: 0.75rem 1rem; background: #1B1C1E; border: 1px solid var(--charcoal-border); border-radius: 4px; color: var(--ivory); font-family: var(--font-sans); font-size: 0.95rem; outline: none; transition: border 0.2s;"
+                   onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--charcoal-border)'"
+                   placeholder="••••••••••••">
+        </div>
+
+        <button type="submit" class="btn-gold" style="width: 100%; justify-content: center; padding: 0.85rem; font-size: 0.95rem;">
+            Entrer dans le Studio CMS
+        </button>
+    </form>
+
+    <div style="margin-top: 1.75rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 1.25rem; font-size: 0.85rem; color: var(--taupe);">
+        Identifiants par défaut: <code style="color: var(--gold); background: #151618; padding: 2px 6px; border-radius: 3px;">admin</code> / <code style="color: var(--gold); background: #151618; padding: 2px 6px; border-radius: 3px;">adminpassword123</code>
+    </div>
+</div>
+{% endblock %}
