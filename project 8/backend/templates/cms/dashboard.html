@@ -1,0 +1,1078 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Admin Dashboard & Section Studio | URBAN TABLE{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Two-column Layout: Sidebar + Main Content */
+    .cms-layout {
+        display: grid;
+        grid-template-columns: 290px 1fr;
+        gap: 2rem;
+        align-items: flex-start;
+        position: relative;
+    }
+
+    /* Sidebar Navigation */
+    .cms-sidebar {
+        position: sticky;
+        top: 1rem;
+        max-height: calc(100vh - 2rem);
+        overflow-y: auto;
+        background: var(--graphite);
+        border: 1px solid var(--border-industrial);
+        border-radius: 2px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    .cms-sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .cms-sidebar::-webkit-scrollbar-thumb {
+        background: var(--copper);
+    }
+
+    .sidebar-search {
+        width: 100%;
+        padding: 0.65rem 0.85rem;
+        background: var(--black);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 2px;
+        color: var(--offwhite);
+        font-family: var(--font-body);
+        font-size: 0.82rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .sidebar-search:focus {
+        border-color: var(--copper);
+    }
+
+    .sidebar-group-title {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--copper);
+        font-weight: 800;
+        margin-bottom: 0.45rem;
+        padding-left: 0.5rem;
+    }
+
+    .sidebar-nav-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 0.75rem;
+        color: var(--concrete);
+        text-decoration: none;
+        border-radius: 2px;
+        font-size: 0.84rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border-left: 3px solid transparent;
+    }
+
+    .sidebar-link:hover {
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--offwhite);
+        border-left-color: var(--copper-light);
+    }
+
+    .sidebar-link.active {
+        background: rgba(145, 77, 55, 0.3);
+        color: var(--copper);
+        font-weight: 700;
+        border-left-color: var(--copper);
+    }
+
+    .sidebar-badge {
+        background: rgba(184, 115, 69, 0.2);
+        color: var(--copper);
+        border: 1px solid var(--copper);
+        border-radius: 2px;
+        font-size: 0.7rem;
+        padding: 0.1rem 0.45rem;
+        font-weight: 700;
+    }
+
+    /* Content Area */
+    .cms-main-content {
+        min-width: 0;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        border-bottom: 2px solid var(--brick);
+        padding-bottom: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-title h2 {
+        font-family: var(--font-display);
+        font-size: 2.2rem;
+        color: var(--offwhite);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .dashboard-title p {
+        color: var(--concrete);
+        font-size: 0.92rem;
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--black-card);
+        border: 1px solid var(--border-industrial);
+        border-radius: 2px;
+        padding: 1.25rem 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--copper);
+    }
+
+    .stat-card.brick::before {
+        background: var(--brick);
+    }
+
+    .stat-label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--steel);
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+    }
+
+    .stat-val {
+        font-family: var(--font-display);
+        font-size: 1.6rem;
+        color: var(--offwhite);
+        font-weight: 700;
+        letter-spacing: 0.04em;
+    }
+
+    /* Panes */
+    .tab-pane {
+        display: none;
+    }
+
+    .tab-pane.active {
+        display: block;
+    }
+
+    .card {
+        background: var(--black-card);
+        border: 1px solid var(--border-industrial);
+        border-radius: 2px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        transition: border-color 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    .card.highlighted {
+        border-color: var(--copper) !important;
+        box-shadow: 0 0 25px rgba(184, 115, 69, 0.4) !important;
+    }
+
+    .card-title {
+        font-family: var(--font-display);
+        font-size: 1.4rem;
+        color: var(--offwhite);
+        margin-bottom: 0.35rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .card-subtitle {
+        color: var(--concrete);
+        font-size: 0.88rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.25rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--copper);
+        margin-bottom: 0.4rem;
+        font-weight: 700;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%;
+        padding: 0.7rem 0.9rem;
+        background: var(--graphite);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 2px;
+        color: var(--offwhite);
+        font-family: var(--font-body);
+        font-size: 0.92rem;
+        outline: none;
+        transition: border 0.2s;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+        border-color: var(--copper);
+    }
+
+    .json-editor-area {
+        width: 100%;
+        min-height: 520px;
+        background: #0E0F10;
+        color: #E9A24B;
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        padding: 1.25rem;
+        border: 1px solid var(--border-industrial);
+        border-radius: 2px;
+        outline: none;
+        white-space: pre;
+    }
+
+    /* Table */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    th {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--steel);
+        padding: 0.9rem 1rem;
+        border-bottom: 2px solid var(--brick);
+        background: rgba(0,0,0,0.3);
+    }
+
+    td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        font-size: 0.88rem;
+    }
+
+    tr:hover td {
+        background: rgba(255,255,255,0.02);
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 2px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .badge-pending {
+        background: rgba(233, 162, 75, 0.18);
+        color: #E9A24B;
+        border: 1px solid rgba(233, 162, 75, 0.5);
+    }
+
+    .badge-confirmed {
+        background: rgba(46, 125, 80, 0.25);
+        color: #79D19E;
+        border: 1px solid rgba(46, 125, 80, 0.6);
+    }
+
+    .badge-cancelled {
+        background: rgba(145, 77, 55, 0.25);
+        color: #FF9B87;
+        border: 1px solid rgba(145, 77, 55, 0.6);
+    }
+
+    @media (max-width: 992px) {
+        .cms-layout {
+            grid-template-columns: 1fr;
+        }
+        .cms-sidebar {
+            position: relative;
+            top: 0;
+            max-height: none;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cms-layout">
+    <!-- LEFT SIDEBAR: Pages, Sections & Controls -->
+    <aside class="cms-sidebar" id="cmsSidebar">
+        <div>
+            <input type="text"
+                   id="sectionFilterInput"
+                   class="sidebar-search"
+                   placeholder="🔍 Filter sections & pages..."
+                   onkeyup="filterSidebar()">
+        </div>
+
+        <!-- 1. General & Dashboard Overview -->
+        <div class="sidebar-group">
+            <div class="sidebar-group-title">Dashboard Overview</div>
+            <ul class="sidebar-nav-list">
+                <li>
+                    <a class="sidebar-link active" onclick="activateNav(this, 'pane-overview')">
+                        <span>📊 System Metrics</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="sidebar-link" onclick="activateNav(this, 'pane-reservations')">
+                        <span>🛎 Guest Reservations</span>
+                        <span class="sidebar-badge">{{ reservations.count }}</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 2. All 15 Website Sections -->
+        <div class="sidebar-group">
+            <div class="sidebar-group-title">All 15 Website Sections</div>
+            <ul class="sidebar-nav-list" id="sectionsNavList">
+                <li data-title="s01 preloader navigation header brand mark">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s01', this)">
+                        <span>S01 ✦ Brand Header & Nav</span>
+                    </a>
+                </li>
+                <li data-title="s02 hero arrival 3d warehouse exterior headline stats">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s02', this)">
+                        <span>S02 ✦ Hero 3D Arrival</span>
+                    </a>
+                </li>
+                <li data-title="s03 brand story fire craft foundry history pillars">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s03', this)">
+                        <span>S03 ✦ Brand Story & Fire</span>
+                    </a>
+                </li>
+                <li data-title="s04 virtual tour 3d viewpoints warehouse hearth bar loft">
+                    <a class="sidebar-link" onclick="activateNav(this, 'pane-tour')">
+                        <span>S04 ✦ 3D Virtual Tour</span>
+                        <span class="sidebar-badge">5 Spaces</span>
+                    </a>
+                </li>
+                <li data-title="s05 experience pillars craft atmosphere hospitality">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s05', this)">
+                        <span>S05 ✦ Dining Experience</span>
+                    </a>
+                </li>
+                <li data-title="s06 signature dishes brisket ribeye pizza skillet showcase">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s06', this)">
+                        <span>S06 ✦ Signature Dishes</span>
+                    </a>
+                </li>
+                <li data-title="s07 menu full explorer burgers starters hearth sides">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s07', this)">
+                        <span>S07 ✦ Full Menu Explorer</span>
+                    </a>
+                </li>
+                <li data-title="s08 interior architecture warehouse brick concrete steel beams">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s08', this)">
+                        <span>S08 ✦ Interior Architecture</span>
+                    </a>
+                </li>
+                <li data-title="s09 chef pitmaster marcus vance culinary philosophy">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s09', this)">
+                        <span>S09 ✦ Executive Chef & Team</span>
+                    </a>
+                </li>
+                <li data-title="s10 special experiences loft counter buyout events">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s10', this)">
+                        <span>S10 ✦ Dining Experiences</span>
+                    </a>
+                </li>
+                <li data-title="s11 gallery food interior kitchen bar atmosphere photos">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s11', this)">
+                        <span>S11 ✦ Visual Gallery</span>
+                    </a>
+                </li>
+                <li data-title="s12 testimonials guest reviews eater food wine social proof">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s12', this)">
+                        <span>S12 ✦ Reviews & Press</span>
+                    </a>
+                </li>
+                <li data-title="s13 reservation online table booking inquiry form policy">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s13', this)">
+                        <span>S13 ✦ Table Reservation</span>
+                    </a>
+                </li>
+                <li data-title="s14 location address hours ironworks warehouse district map">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s14', this)">
+                        <span>S14 ✦ Location, Hours & Map</span>
+                    </a>
+                </li>
+                <li data-title="s15 footer copyright terms brand statement">
+                    <a class="sidebar-link" onclick="scrollToSection('card-s15', this)">
+                        <span>S15 ✦ Brand Footer</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 3. Design & Styles -->
+        <div class="sidebar-group">
+            <div class="sidebar-group-title">Design & Palette</div>
+            <ul class="sidebar-nav-list">
+                <li>
+                    <a class="sidebar-link" onclick="scrollToSection('card-theme', this)">
+                        <span>🎨 Industrial Theme Tokens</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 4. Advanced Tools -->
+        <div class="sidebar-group">
+            <div class="sidebar-group-title">Advanced Control</div>
+            <ul class="sidebar-nav-list">
+                <li>
+                    <a class="sidebar-link" onclick="activateNav(this, 'pane-json')">
+                        <span>💻 Master JSON Power Editor</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 5. Quick Links -->
+        <div class="sidebar-group" style="border-top: 1px solid var(--border-industrial); padding-top: 0.75rem;">
+            <div class="sidebar-group-title">Quick Links</div>
+            <ul class="sidebar-nav-list">
+                <li>
+                    <a href="http://127.0.0.1:3000" target="_blank" class="sidebar-link" style="color: var(--copper);">
+                        <span>↗ Public Site (Port 3000)</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/api/content/" target="_blank" class="sidebar-link">
+                        <span>↗ REST Content API (/api/)</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/admin/" target="_blank" class="sidebar-link">
+                        <span>↗ Django Superadmin</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+    <!-- RIGHT MAIN CONTENT: Header & Tabs -->
+    <section class="cms-main-content">
+        <!-- Dashboard Top Header -->
+        <div class="dashboard-header">
+            <div class="dashboard-title">
+                <h2>{{ config.restaurant_name }}</h2>
+                <p>Urban Kitchen • Craft Smokehouse • Open Fire • Real-time Admin Studio</p>
+            </div>
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <button type="submit" form="sectionsForm" class="btn-copper">
+                    <span>💾 Save & Publish Changes</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Key Metrics Cards -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-label">CMS Status</div>
+                <div class="stat-val" style="color: #79D19E; font-size: 1.35rem;">
+                    ● Published & Live
+                </div>
+            </div>
+            <div class="stat-card brick">
+                <div class="stat-label">Last Content Update</div>
+                <div class="stat-val" style="font-size: 1.05rem; color: var(--copper);">
+                    {{ config.updated_at|date:"d M Y, H:i" }}
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Reservation Requests</div>
+                <div class="stat-val">
+                    {{ reservations.count }}
+                </div>
+            </div>
+            <div class="stat-card brick">
+                <div class="stat-label">Architectural Sections</div>
+                <div class="stat-val" style="color: var(--copper);">
+                    15 Sections
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- PANE 1: ALL 15 SECTIONS FORM EDITOR            -->
+        <!-- ============================================== -->
+        <div id="pane-sections" class="tab-pane active">
+            <form id="sectionsForm" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_form_sections">
+
+                <!-- S01: Navigation & Header -->
+                <div class="card" id="card-s01">
+                    <h3 class="card-title">✦ S01. Brand Header & Navigation</h3>
+                    <p class="card-subtitle">Manage top navigation branding, quick reservation trigger, and header coordinates.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Restaurant Name (Display Title)</label>
+                            <input type="text" name="hero_name" value="{{ content.hero.restaurant_name|default:'URBAN TABLE' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>District Coordinates</label>
+                            <input type="text" readonly value="Industrial Arts District • Port 3000" style="opacity: 0.7;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S02: Hero & 3D Arrival -->
+                <div class="card" id="card-s02">
+                    <h3 class="card-title">✦ S02. Hero 3D Arrival & Warehouse Facade</h3>
+                    <p class="card-subtitle">Headline, eyebrow, culinary tagline, action CTAs, and numerical warehouse metrics.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Eyebrow Label</label>
+                            <input type="text" name="hero_eyebrow" value="{{ content.hero.eyebrow|default:'AN URBAN DINING EXPERIENCE' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Culinary Tagline</label>
+                            <input type="text" name="hero_tagline" value="{{ content.hero.tagline|default:'Urban Kitchen • Craft Smokehouse • Open Fire' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Distinction Badge</label>
+                            <input type="text" name="hero_badge" value="{{ content.hero.badge_text|default:'Open Fire & Wood Hearth • 1924 Warehouse' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Primary CTA Text</label>
+                            <input type="text" name="hero_cta_primary" value="{{ content.hero.cta_primary_text|default:'Explore The Menu' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Secondary CTA Text</label>
+                            <input type="text" name="hero_cta_secondary" value="{{ content.hero.cta_secondary_text|default:'Discover Our Space' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Lead Statement / Hero Description</label>
+                        <textarea name="hero_desc" rows="3">{{ content.hero.lead_description }}</textarea>
+                    </div>
+                </div>
+
+                <!-- S03: Brand Story -->
+                <div class="card" id="card-s03">
+                    <h3 class="card-title">✦ S03. Brand Story — Made With Fire & Craft</h3>
+                    <p class="card-subtitle">Foundry origin story, culinary philosophy, and core elemental pillars.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Heading</label>
+                            <input type="text" name="story_title" value="{{ content.brandStory.title|default:'Made With Fire & Craft' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Eyebrow / Subtitle</label>
+                            <input type="text" name="story_subtitle" value="{{ content.brandStory.subtitle|default:'Our Story' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Story Paragraph 1 (Foundry Origins)</label>
+                        <textarea name="story_p1" rows="3">{{ content.brandStory.body_paragraph_1 }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Story Paragraph 2 (Fire & Smoke Technique)</label>
+                        <textarea name="story_p2" rows="3">{{ content.brandStory.body_paragraph_2 }}</textarea>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Featured Quote</label>
+                            <input type="text" name="story_quote" value="{{ content.brandStory.quote }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Quote Attribution</label>
+                            <input type="text" name="story_quote_author" value="{{ content.brandStory.quote_author|default:'Chef Marcus Vance' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S05: Dining Experience -->
+                <div class="card" id="card-s05">
+                    <h3 class="card-title">✦ S05. The Industrial Dining Experience Pillars</h3>
+                    <p class="card-subtitle">The 3 Pillars: 01 The Craft (Smokehouse Pit & Butchery), 02 The Atmosphere (Warehouse Acoustics & Lighting), 03 The Hospitality.</p>
+                    <div style="background: var(--graphite); padding: 1.25rem; border-radius: 2px; border: 1px solid var(--border-industrial);">
+                        <p style="color: var(--concrete); font-size: 0.88rem;">
+                            The 3 foundational pillars are dynamically managed and hydrated into the frontend React layout. To edit pillar headings or granular text, use the <strong>Master JSON Power Editor</strong> in the sidebar.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- S06: Signature Dishes -->
+                <div class="card" id="card-s06">
+                    <h3 class="card-title">✦ S06. Signature Dishes Showcase</h3>
+                    <p class="card-subtitle">14-Hour Smoked Prime Brisket, 45-Day Cowboy Ribeye, Hot Honey Wood-Fired Pizza, Cast-Iron Skillet Cookie.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Section Heading</label>
+                            <input type="text" name="sig_title" value="{{ content.signatureDishes.title|default:'Signature Dishes Showcase' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Section Subtitle</label>
+                            <input type="text" name="sig_subtitle" value="{{ content.signatureDishes.subtitle|default:'Raw Flavor • Open Flame' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S07: Menu Explorer -->
+                <div class="card" id="card-s07">
+                    <h3 class="card-title">✦ S07. Full Menu Explorer</h3>
+                    <p class="card-subtitle">Filterable categories: Starters, Burgers & Sandwiches, Wood Hearth & Grills, Skillet Sides, Craft Beer & Cocktails.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Menu Section Heading</label>
+                            <input type="text" name="menu_title" value="{{ content.menu.title|default:'Full Menu Explorer' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Menu Subtitle</label>
+                            <input type="text" name="menu_subtitle" value="{{ content.menu.subtitle|default:'Crafted Daily In Our Open Kitchen' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S08: Interior Architecture -->
+                <div class="card" id="card-s08">
+                    <h3 class="card-title">✦ S08. Interior Architecture & Atmosphere</h3>
+                    <p class="card-subtitle">1924 Converted Locomotive Foundry, exposed brick, structural steel I-beams, copper bars, and Edison filaments.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Heading</label>
+                            <input type="text" name="int_title" value="{{ content.interior.title|default:'Interior Architecture & Atmosphere' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Subtitle</label>
+                            <input type="text" name="int_subtitle" value="{{ content.interior.subtitle|default:'Converted 1920s Industrial Warehouse' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Architectural Quote</label>
+                        <input type="text" name="int_quote" value="{{ content.interior.quote }}">
+                    </div>
+                </div>
+
+                <!-- S09: Executive Chef -->
+                <div class="card" id="card-s09">
+                    <h3 class="card-title">✦ S09. Executive Chef & Kitchen Team</h3>
+                    <p class="card-subtitle">Chef Marcus Vance, open-fire pitmaster credentials, biography, and quote.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Chef Name</label>
+                            <input type="text" name="chef_name" value="{{ content.chef.name|default:'Marcus Vance' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Role & Credentials</label>
+                            <input type="text" name="chef_title" value="{{ content.chef.title|default:'Executive Chef & Pitmaster' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Chef Personal Quote</label>
+                        <input type="text" name="chef_quote" value="{{ content.chef.quote }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Biography</label>
+                        <textarea name="chef_bio" rows="3">{{ content.chef.bio }}</textarea>
+                    </div>
+                </div>
+
+                <!-- S10: Special Dining Experiences -->
+                <div class="card" id="card-s10">
+                    <h3 class="card-title">✦ S10. Special Dining Experiences</h3>
+                    <p class="card-subtitle">The Foundry Private Loft, The Pitmaster Fire Counter, Full Warehouse Buyouts.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Heading</label>
+                            <input type="text" name="exp_title" value="{{ content.experiences.title|default:'Special Dining Experiences' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Subtitle</label>
+                            <input type="text" name="exp_subtitle" value="{{ content.experiences.subtitle|default:'From Warehouse Feasts To Private Tastings' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S11: Photo Gallery -->
+                <div class="card" id="card-s11">
+                    <h3 class="card-title">✦ S11. Food, People & Atmosphere Gallery</h3>
+                    <p class="card-subtitle">Curated industrial photography across Food, Interior, Kitchen, and Bar categories.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Gallery Heading</label>
+                            <input type="text" name="gal_title" value="{{ content.gallery.title|default:'Food, People & Atmosphere Gallery' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Subtitle</label>
+                            <input type="text" name="gal_subtitle" value="{{ content.gallery.subtitle|default:'Raw Visual Moments' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S12: Testimonials -->
+                <div class="card" id="card-s12">
+                    <h3 class="card-title">✦ S12. Guest Reviews & Social Proof</h3>
+                    <p class="card-subtitle">Editorial praise from Eater, Food & Wine Magazine, and verified community patrons.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Section Heading</label>
+                            <input type="text" name="test_title" value="{{ content.testimonials.title|default:'Guest Reviews & Social Proof' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Subtitle</label>
+                            <input type="text" name="test_subtitle" value="{{ content.testimonials.subtitle|default:'Honest Feedback From Our Community' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S13: Table Reservation -->
+                <div class="card" id="card-s13">
+                    <h3 class="card-title">✦ S13. Table Reservation System</h3>
+                    <p class="card-subtitle">Reservation guidelines, party size rules, walk-in bar seating policy, and occasion options.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Heading</label>
+                            <input type="text" name="res_title" value="{{ content.reservation.title|default:'Table Reservation' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Subtitle</label>
+                            <input type="text" name="res_subtitle" value="{{ content.reservation.subtitle|default:'Reserve An Industrial Dining Experience' }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Booking Policy & Walk-in Guidelines</label>
+                        <textarea name="res_policy" rows="2">{{ content.reservation.policy }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Reservation Description</label>
+                        <textarea name="res_desc" rows="2">{{ content.reservation.description }}</textarea>
+                    </div>
+                </div>
+
+                <!-- S14: Location, Hours & Map -->
+                <div class="card" id="card-s14">
+                    <h3 class="card-title">✦ S14. Location, Hours & Interactive Map</h3>
+                    <p class="card-subtitle">Warehouse district street address, parking lot access, phone, email, and operating schedule.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Physical Address</label>
+                            <input type="text" name="loc_address" value="{{ content.location.address|default:'420 Ironworks Avenue, Warehouse District' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Telephone Line</label>
+                            <input type="text" name="loc_phone" value="{{ content.location.phone|default:'+1 (555) 789-2044' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Contact Email</label>
+                            <input type="email" name="loc_email" value="{{ content.location.email|default:'table@urbankitchen.com' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- S15: Footer -->
+                <div class="card" id="card-s15">
+                    <h3 class="card-title">✦ S15. Industrial Brand Footer</h3>
+                    <p class="card-subtitle">Closing brand wordmark, warehouse district address, and quick links.</p>
+                    <div style="background: var(--graphite); padding: 1.25rem; border-radius: 2px; border: 1px solid var(--border-industrial);">
+                        <p style="color: var(--concrete); font-size: 0.88rem;">
+                            The footer automatically displays current contact information, operating hours, and admin studio shortcuts.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Industrial Theme Tokens -->
+                <div class="card" id="card-theme">
+                    <h3 class="card-title">✦ Industrial Theme Design Tokens</h3>
+                    <p class="card-subtitle">Core color values fed directly into the React CSS variables system.</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Industrial Graphite (#252729)</label>
+                            <input type="text" name="theme_graphite" value="{{ content.theme.colors.graphite|default:'#252729' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Burnt Brick (#914D37)</label>
+                            <input type="text" name="theme_brick" value="{{ content.theme.colors.brick|default:'#914D37' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Copper Accent (#B87345)</label>
+                            <input type="text" name="theme_copper" value="{{ content.theme.colors.copper|default:'#B87345' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Concrete Grey (#B7B4AC)</label>
+                            <input type="text" name="theme_concrete" value="{{ content.theme.colors.concrete|default:'#B7B4AC' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Warm Off-White (#F1EEE7)</label>
+                            <input type="text" name="theme_offwhite" value="{{ content.theme.colors.offwhite|default:'#F1EEE7' }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Charcoal Black (#111314)</label>
+                            <input type="text" name="theme_black" value="{{ content.theme.colors.black|default:'#111314' }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button type="submit" class="btn-copper" style="font-size: 0.95rem; padding: 0.95rem 2.5rem;">
+                        Save & Publish All 15 Sections
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- PANE 2: RESERVATIONS CLIENTS                   -->
+        <!-- ============================================== -->
+        <div id="pane-reservations" class="tab-pane">
+            <div class="card">
+                <h3 class="card-title">✦ Guest Reservation Inquiries</h3>
+                <p class="card-subtitle">Live customer table reservations submitted through the website reservation form & modal.</p>
+
+                {% if reservations %}
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Guest Name</th>
+                                <th>Contact Info</th>
+                                <th>Party Size</th>
+                                <th>Occasion & Notes</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for res in reservations %}
+                            <tr>
+                                <td>
+                                    <strong>{{ res.date }}</strong><br>
+                                    <span style="color: var(--steel); font-size: 0.8rem;">{{ res.time }}</span>
+                                </td>
+                                <td>
+                                    <strong style="color: var(--copper);">{{ res.full_name }}</strong>
+                                </td>
+                                <td>
+                                    <div>{{ res.phone }}</div>
+                                    <div style="font-size: 0.8rem; color: var(--steel);">{{ res.email|default:"-" }}</div>
+                                </td>
+                                <td>{{ res.guests }}</td>
+                                <td>
+                                    <span style="color: var(--offwhite);">{{ res.occasion }}</span>
+                                    {% if res.special_requests %}
+                                    <div style="font-size: 0.8rem; color: var(--steel); margin-top: 0.2rem;">
+                                        Note: {{ res.special_requests|truncatewords:8 }}
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if res.status == 'confirmed' %}
+                                    <span class="badge badge-confirmed">Confirmed</span>
+                                    {% elif res.status == 'cancelled' %}
+                                    <span class="badge badge-cancelled">Cancelled</span>
+                                    {% else %}
+                                    <span class="badge badge-pending">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 0.35rem; align-items: center;">
+                                        <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="confirmed">
+                                            <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: #79D19E;" title="Confirm">✓</button>
+                                        </form>
+                                        <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display:inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="cancelled">
+                                            <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: #FF9B87;" title="Cancel">✕</button>
+                                        </form>
+                                        <form method="POST" action="{% url 'cms_reservation_delete' res.id %}" style="display:inline;" onsubmit="return confirm('Delete this reservation inquiry?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn-outline" style="padding: 0.25rem 0.6rem; font-size: 0.75rem; color: var(--steel);" title="Delete">🗑</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p style="color: var(--steel); padding: 2rem; text-align: center;">No reservation inquiries recorded yet. Online bookings will appear here in real-time.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- PANE 3: 3D TOUR VIEWPOINTS                     -->
+        <!-- ============================================== -->
+        <div id="pane-tour" class="tab-pane">
+            <div class="card">
+                <h3 class="card-title">✦ S04. 3D Virtual Tour 5-Spaces Configuration</h3>
+                <p class="card-subtitle">The five spatial locations rendered with Three.js / React Three Fiber camera interpolation:</p>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-top: 1.5rem;">
+                    <div style="background: var(--graphite); padding: 1.25rem; border-radius: 2px; border: 1px solid var(--border-industrial);">
+                        <span style="color: var(--copper); font-size: 0.75rem; font-weight: 800;">SPACE 01</span>
+                        <h4 style="margin: 0.4rem 0; font-family: var(--font-display); text-transform: uppercase;">Street-Level Exterior</h4>
+                        <p style="color: var(--concrete); font-size: 0.85rem;">Exposed red brick masonry, black steel casement windows, illuminated copper marquee.</p>
+                    </div>
+                    <div style="background: var(--graphite); padding: 1.25rem; border-radius: 2px; border: 1px solid var(--border-industrial);">
+                        <span style="color: var(--copper); font-size: 0.75rem; font-weight: 800;">SPACE 02</span>
+                        <h4 style="margin: 0.4rem 0; font-family: var(--font-display); text-transform: uppercase;">Entrance & Host Station</h4>
+                        <p style="color: var(--concrete); font-size: 0.85rem;">Poured monolithic concrete desk, reclaimed factory timber benches, and filament pendants.</p>
+                    </div>
+                    <div style="background: var(--graphite); padding: 1.25rem; border-radius: 2px; border: 1px solid var(--border-industrial);">
+                        <span style="color: var(--copper); font-size: 0.75rem; font-weight: 800;">SPACE 03</span>
+                        <h4 style="margin: 0.4rem 0; font-family: var(--font-display); text-transform: uppercase;">Main Warehouse Dining Hall</h4>
+                        <p style="color: var(--concrete); font-size: 0.85rem;">High-volume 24-foot vaulted ceilings, heavy steel I-beam trusses, communal white oak tables.</p>
+                    </div>
+                    <div style="background: var(--graphite); padding: 1.25rem; border-radius: 2px; border: 1px solid var(--border-industrial);">
+                        <span style="color: var(--copper); font-size: 0.75rem; font-weight: 800;">SPACE 04</span>
+                        <h4 style="margin: 0.4rem 0; font-family: var(--font-display); text-transform: uppercase;">Open Hearth & Smokehouse</h4>
+                        <p style="color: var(--concrete); font-size: 0.85rem;">Custom 14-foot open wood fire pit, heavy iron rotisseries, stainless chef brigade line.</p>
+                    </div>
+                    <div style="background: var(--graphite); padding: 1.25rem; border-radius: 2px; border: 1px solid var(--border-industrial);">
+                        <span style="color: var(--copper); font-size: 0.75rem; font-weight: 800;">SPACE 05</span>
+                        <h4 style="margin: 0.4rem 0; font-family: var(--font-display); text-transform: uppercase;">Copper Bar & High-Top Lounge</h4>
+                        <p style="color: var(--concrete); font-size: 0.85rem;">Hammered copper bar top, 20 draft microbrew tap handles, industrial spirit shelving.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================== -->
+        <!-- PANE 4: MASTER JSON POWER EDITOR               -->
+        <!-- ============================================== -->
+        <div id="pane-json" class="tab-pane">
+            <div class="card">
+                <h3 class="card-title">✦ Master JSON Power Editor (Complete 15 Sections)</h3>
+                <p class="card-subtitle">Full headless control over all menus, categories, ingredients, 3D viewpoints, and design variables. Edits are published immediately to the public React frontend.</p>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save_raw_json">
+                    <textarea name="raw_json" class="json-editor-area" spellcheck="false">{{ pretty_json }}</textarea>
+                    <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--steel); font-size: 0.82rem;">Strict JSON syntax validated upon submission.</span>
+                        <button type="submit" class="btn-copper" style="padding: 0.85rem 2rem;">
+                            Publish Raw JSON Configuration
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+// Switch between top-level panes (Sections, Reservations, 3D Tour, JSON)
+function activatePane(paneId) {
+    const panes = document.getElementsByClassName("tab-pane");
+    for (let i = 0; i < panes.length; i++) {
+        panes[i].classList.remove("active");
+    }
+    const target = document.getElementById(paneId);
+    if (target) {
+        target.classList.add("active");
+    }
+}
+
+// Sidebar link click handling
+function activateNav(linkElement, paneId) {
+    const links = document.querySelectorAll(".sidebar-link");
+    links.forEach(l => l.classList.remove("active"));
+    linkElement.classList.add("active");
+
+    activatePane(paneId);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Scroll directly to a specific section card in pane-sections
+function scrollToSection(cardId, linkElement) {
+    activatePane('pane-sections');
+
+    const links = document.querySelectorAll(".sidebar-link");
+    links.forEach(l => l.classList.remove("active"));
+    linkElement.classList.add("active");
+
+    const card = document.getElementById(cardId);
+    if (card) {
+        card.classList.add("highlighted");
+        setTimeout(() => {
+            card.classList.remove("highlighted");
+        }, 1800);
+
+        card.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+}
+
+// Real-time sidebar section filtering
+function filterSidebar() {
+    const query = document.getElementById("sectionFilterInput").value.toLowerCase().trim();
+    const items = document.querySelectorAll("#sectionsNavList li");
+
+    items.forEach(item => {
+        const title = (item.getAttribute("data-title") || item.innerText).toLowerCase();
+        if (!query || title.includes(query)) {
+            item.style.display = "";
+        } else {
+            item.style.display = "none";
+        }
+    });
+}
+</script>
+{% endblock %}
