@@ -1,5 +1,5 @@
 import React from 'react';
-import { Anchor, Droplet, Sun, Sparkles, CheckCircle2 } from 'lucide-react';
+import { Anchor, Droplet, Sun, Sparkles } from 'lucide-react';
 import { useCMS } from '../../context/CMSContext';
 
 export default function PhilosophySection() {
@@ -9,15 +9,15 @@ export default function PhilosophySection() {
 
   const getIcon = (iconName) => {
     switch (iconName) {
-      case 'Anchor': return <Anchor size={24} color="#174A63" />;
-      case 'Droplet': return <Droplet size={24} color="#68765A" />;
-      case 'Sun': return <Sun size={24} color="#D6A854" />;
-      default: return <Sparkles size={24} color="#B86E50" />;
+      case 'Anchor': return <Anchor size={24} color="#C5A059" />;
+      case 'Droplet': return <Droplet size={24} color="#C5A059" />;
+      case 'Sun': return <Sun size={24} color="#C5A059" />;
+      default: return <Sparkles size={24} color="#C5A059" />;
     }
   };
 
   return (
-    <section id="philosophy" className="section-wrapper" style={{ backgroundColor: '#F8F6F0' }}>
+    <section id="philosophy" className="section-wrapper" style={{ backgroundColor: '#F6F4EE' }}>
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
@@ -25,7 +25,7 @@ export default function PhilosophySection() {
             {section.badge || 'PROVENANCE & CRAFT'}
           </div>
           <h2 className="section-title">
-            {section.title || 'FOUR CORNERSTONES OF OUR CUISINE'}
+            Four Cornerstones of <em>Our Cuisine</em>
           </h2>
           <p className="section-subtitle">
             {section.subtitle || 'We honor the fisherman, the orchard keeper, and the coastal soil with zero-compromise ingredient traceability.'}
@@ -36,8 +36,8 @@ export default function PhilosophySection() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '28px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
+            gap: '30px',
           }}
         >
           {pillars.map((p, idx) => (
@@ -45,23 +45,23 @@ export default function PhilosophySection() {
               key={idx}
               className="luxury-card"
               style={{
-                padding: '36px 30px',
-                background: '#FFFFFF',
+                padding: '40px 32px',
                 display: 'flex',
                 flexDirection: 'column',
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                 <div
                   style={{
-                    width: '52px',
-                    height: '52px',
+                    width: '56px',
+                    height: '56px',
                     borderRadius: '50%',
-                    background: '#F0F6F7',
+                    background: 'linear-gradient(135deg, #0A1C27 0%, #15384B 100%)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    border: '1px solid #C9DDE0',
+                    border: '1px solid #C5A059',
+                    boxShadow: '0 4px 15px rgba(197, 160, 89, 0.2)',
                   }}
                 >
                   {getIcon(p.icon_name)}
@@ -70,24 +70,25 @@ export default function PhilosophySection() {
                   style={{
                     fontFamily: 'var(--font-mono)',
                     fontSize: '11px',
-                    color: '#174A63',
-                    background: '#E8D9C2',
-                    padding: '4px 10px',
-                    borderRadius: '12px',
-                    fontWeight: 600,
+                    color: '#081721',
+                    background: 'var(--grad-gold)',
+                    padding: '5px 12px',
+                    borderRadius: '20px',
+                    fontWeight: 700,
+                    letterSpacing: '0.04em',
                   }}
                 >
                   {p.metric_label}
                 </span>
               </div>
 
-              <h3 style={{ fontSize: '1.6rem', color: '#174A63', marginBottom: '8px' }}>
+              <h3 style={{ fontSize: '1.7rem', color: '#081721', marginBottom: '8px' }}>
                 {p.title}
               </h3>
-              <p style={{ fontSize: '0.9rem', fontStyle: 'italic', color: '#8C8981', marginBottom: '14px' }}>
+              <p style={{ fontSize: '0.92rem', fontStyle: 'italic', color: '#7A7E80', marginBottom: '16px' }}>
                 {p.subtitle}
               </p>
-              <p style={{ fontSize: '0.95rem', color: '#4A4E4D', lineHeight: 1.6 }}>
+              <p style={{ fontSize: '0.96rem', color: '#4A5255', lineHeight: 1.65 }}>
                 {p.description}
               </p>
             </div>

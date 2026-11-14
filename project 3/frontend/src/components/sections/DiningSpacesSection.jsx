@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, Wind, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Users, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useCMS } from '../../context/CMSContext';
 
 export default function DiningSpacesSection() {
@@ -8,7 +8,7 @@ export default function DiningSpacesSection() {
   const section = data.sections?.dining_spaces || {};
 
   return (
-    <section id="spaces" className="section-wrapper" style={{ backgroundColor: '#FAF9F5' }}>
+    <section id="spaces" className="section-wrapper" style={{ backgroundColor: '#FCFBF8' }}>
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
@@ -16,7 +16,7 @@ export default function DiningSpacesSection() {
             {section.badge || 'THE SPACES'}
           </div>
           <h2 className="section-title">
-            {section.title || 'FOUR ATMOSPHERIC SEATING SPACES'}
+            Four Atmospheric <em>Seating Environments</em>
           </h2>
           <p className="section-subtitle">
             {section.subtitle || 'From panoramic cliff terraces to private limestone alcoves, each setting provides a distinct perspective of the Tyrrhenian horizon.'}
@@ -27,8 +27,8 @@ export default function DiningSpacesSection() {
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))',
-            gap: '30px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
+            gap: '32px',
           }}
         >
           {spaces.map((space) => (
@@ -37,26 +37,31 @@ export default function DiningSpacesSection() {
               className="luxury-card"
               style={{ display: 'flex', flexDirection: 'column' }}
             >
-              {/* Space Image */}
-              <div style={{ position: 'relative', height: '220px', overflow: 'hidden' }}>
+              {/* Space Image with Arch Silhouette */}
+              <div style={{ position: 'relative', height: '250px', overflow: 'hidden' }}>
                 <img
                   src={space.image_url || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80'}
                   alt={space.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s ease' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
                 />
                 <span
                   style={{
                     position: 'absolute',
-                    top: '14px',
-                    left: '14px',
-                    background: 'rgba(23, 74, 99, 0.88)',
-                    color: '#FAF9F5',
-                    padding: '4px 10px',
-                    borderRadius: '20px',
+                    top: '16px',
+                    left: '16px',
+                    background: 'rgba(8, 23, 33, 0.88)',
+                    backdropFilter: 'blur(8px)',
+                    color: '#DFBA73',
+                    padding: '5px 12px',
+                    borderRadius: '30px',
                     fontFamily: 'var(--font-mono)',
                     fontSize: '10px',
-                    letterSpacing: '0.08em',
+                    letterSpacing: '0.12em',
                     textTransform: 'uppercase',
+                    border: '1px solid rgba(197, 160, 89, 0.4)',
+                    fontWeight: 600,
                   }}
                 >
                   {space.tag}
@@ -64,8 +69,8 @@ export default function DiningSpacesSection() {
               </div>
 
               {/* Space Info */}
-              <div style={{ padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <h3 style={{ fontSize: '1.6rem', color: '#174A63', marginBottom: '8px' }}>
+              <div style={{ padding: '28px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <h3 style={{ fontSize: '1.75rem', color: '#081721', marginBottom: '8px' }}>
                   {space.name}
                 </h3>
 
@@ -76,33 +81,34 @@ export default function DiningSpacesSection() {
                     gap: '8px',
                     fontFamily: 'var(--font-mono)',
                     fontSize: '11px',
-                    color: '#367E94',
-                    marginBottom: '14px',
+                    color: '#C5A059',
+                    marginBottom: '16px',
+                    fontWeight: 600,
                   }}
                 >
                   <Users size={14} />
                   <span>{space.capacity}</span>
                 </div>
 
-                <p style={{ fontSize: '0.92rem', color: '#4A4E4D', lineHeight: 1.5, marginBottom: '16px' }}>
+                <p style={{ fontSize: '0.96rem', color: '#4A5255', lineHeight: 1.6, marginBottom: '20px' }}>
                   {space.description}
                 </p>
 
                 {/* Features List */}
-                <div style={{ marginTop: 'auto', marginBottom: '20px', borderTop: '1px solid #EFEAE0', paddingTop: '14px' }}>
+                <div style={{ marginTop: 'auto', marginBottom: '24px', borderTop: '1px solid rgba(197, 160, 89, 0.25)', paddingTop: '16px' }}>
                   {space.features && space.features.map((feat, i) => (
                     <div
                       key={i}
                       style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '6px',
-                        fontSize: '11px',
-                        color: '#68765A',
-                        marginBottom: '4px',
+                        gap: '8px',
+                        fontSize: '12px',
+                        color: '#253B2F',
+                        marginBottom: '6px',
                       }}
                     >
-                      <CheckCircle2 size={12} color="#68765A" />
+                      <CheckCircle2 size={13} color="#C5A059" />
                       <span>{feat}</span>
                     </div>
                   ))}
@@ -111,9 +117,9 @@ export default function DiningSpacesSection() {
                 <button
                   onClick={() => setIsReservationModalOpen(true)}
                   className="btn-outline-gold"
-                  style={{ width: '100%', textAlign: 'center', fontSize: '0.8rem' }}
+                  style={{ width: '100%', textAlign: 'center', fontSize: '0.85rem' }}
                 >
-                  Request Seating Here →
+                  Reserve Table Here →
                 </button>
               </div>
             </div>

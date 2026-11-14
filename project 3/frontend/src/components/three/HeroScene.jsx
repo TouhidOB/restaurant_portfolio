@@ -1,175 +1,225 @@
-import React, { useRef, Suspense } from 'react';
+import React, { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Float } from '@react-three/drei';
+import { OrbitControls, Float, Sparkles } from '@react-three/drei';
 import * as THREE from 'three';
 
-// Procedural Mediterranean Coastal Villa Architectural Model
-function MediterraneanVilla() {
+// Procedural Luxury Mediterranean Coastal Architectural Pavilion
+function MediterraneanCoastalPavilion() {
   const waterRef = useRef();
-  const seaWaves = useRef();
+  const flameRef = useRef();
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    if (seaWaves.current) {
-      seaWaves.current.position.y = -1.2 + Math.sin(t * 0.8) * 0.05;
-      seaWaves.current.rotation.z = Math.sin(t * 0.2) * 0.02;
+    if (waterRef.current) {
+      waterRef.current.position.y = -1.4 + Math.sin(t * 0.9) * 0.04;
+      waterRef.current.rotation.z = Math.sin(t * 0.3) * 0.015;
+    }
+    if (flameRef.current) {
+      flameRef.current.intensity = 0.8 + Math.sin(t * 12) * 0.2;
     }
   });
 
   return (
-    <group position={[0, -0.6, 0]}>
-      {/* Ocean Water Plane */}
-      <mesh ref={seaWaves} rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.2, -5]}>
-        <planeGeometry args={[60, 60, 32, 32]} />
+    <group position={[0, -0.5, 0]}>
+      {/* 1. Shimmering Mediterranean Ocean Horizon */}
+      <mesh ref={waterRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.4, -6]}>
+        <planeGeometry args={[70, 70, 48, 48]} />
         <meshStandardMaterial
-          color="#1B627F"
-          roughness={0.15}
-          metalness={0.4}
+          color="#15536E"
+          roughness={0.12}
+          metalness={0.5}
           flatShading={false}
         />
       </mesh>
 
-      {/* Main Cliffside Limestone Base / Foundation */}
-      <mesh position={[0, -0.4, 0]} receiveShadow>
-        <boxGeometry args={[12, 1.4, 8]} />
-        <meshStandardMaterial color="#E4DCD0" roughness={0.9} />
+      {/* 2. Sea Horizon Backdrop Tint */}
+      <mesh position={[0, 4, -20]}>
+        <planeGeometry args={[80, 24]} />
+        <meshBasicMaterial color="#91C4D4" />
       </mesh>
 
-      {/* Travertine Stone Terrace Flooring */}
-      <mesh position={[0, 0.35, 0]} receiveShadow>
-        <boxGeometry args={[11.6, 0.1, 7.6]} />
-        <meshStandardMaterial color="#EFE9DE" roughness={0.7} />
+      {/* 3. Rugged Coastal Cliff Foundation */}
+      <mesh position={[0, -0.5, 0]} receiveShadow>
+        <boxGeometry args={[13, 1.6, 9]} />
+        <meshStandardMaterial color="#D6CCC0" roughness={0.9} />
       </mesh>
 
-      {/* Whitewashed Colonnade Arch 1 (Left) */}
-      <group position={[-3.2, 1.8, 0]}>
-        {/* Left Column */}
-        <mesh position={[-1.1, 0, 0]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.22, 0.26, 2.8, 16]} />
-          <meshStandardMaterial color="#FAF8F2" roughness={0.5} />
+      {/* 4. Fine Travertine Polished Flooring */}
+      <mesh position={[0, 0.36, 0]} receiveShadow>
+        <boxGeometry args={[12.6, 0.12, 8.6]} />
+        <meshStandardMaterial color="#F4EFE6" roughness={0.5} metalness={0.05} />
+      </mesh>
+
+      {/* 5. Gilded Perimeter Brass Inset Line on Floor */}
+      <mesh position={[0, 0.43, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[4.2, 4.24, 64]} />
+        <meshStandardMaterial color="#C5A059" roughness={0.3} metalness={0.8} />
+      </mesh>
+
+      {/* 6. Monumental Architectural Colonnade & Arches */}
+      {/* Center Grand Arch */}
+      <group position={[0, 2.3, -1.2]}>
+        {/* Left Column with Base & Capital */}
+        <group position={[-1.6, 0, 0]}>
+          <mesh position={[0, -1.5, 0]} castShadow>
+            <boxGeometry args={[0.6, 0.2, 0.6]} />
+            <meshStandardMaterial color="#ECE4D8" roughness={0.6} />
+          </mesh>
+          <mesh position={[0, 0, 0]} castShadow receiveShadow>
+            <cylinderGeometry args={[0.26, 0.3, 3.2, 24]} />
+            <meshStandardMaterial color="#FAF8F3" roughness={0.4} />
+          </mesh>
+          <mesh position={[0, 1.5, 0]} castShadow>
+            <boxGeometry args={[0.55, 0.25, 0.55]} />
+            <meshStandardMaterial color="#ECE4D8" roughness={0.6} />
+          </mesh>
+        </group>
+
+        {/* Right Column with Base & Capital */}
+        <group position={[1.6, 0, 0]}>
+          <mesh position={[0, -1.5, 0]} castShadow>
+            <boxGeometry args={[0.6, 0.2, 0.6]} />
+            <meshStandardMaterial color="#ECE4D8" roughness={0.6} />
+          </mesh>
+          <mesh position={[0, 0, 0]} castShadow receiveShadow>
+            <cylinderGeometry args={[0.26, 0.3, 3.2, 24]} />
+            <meshStandardMaterial color="#FAF8F3" roughness={0.4} />
+          </mesh>
+          <mesh position={[0, 1.5, 0]} castShadow>
+            <boxGeometry args={[0.55, 0.25, 0.55]} />
+            <meshStandardMaterial color="#ECE4D8" roughness={0.6} />
+          </mesh>
+        </group>
+
+        {/* Grand Semicircular Arch Curve */}
+        <mesh position={[0, 1.6, 0]} castShadow>
+          <torusGeometry args={[1.6, 0.26, 16, 32, Math.PI]} />
+          <meshStandardMaterial color="#FAF8F3" roughness={0.4} />
         </mesh>
-        {/* Right Column */}
-        <mesh position={[1.1, 0, 0]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.22, 0.26, 2.8, 16]} />
-          <meshStandardMaterial color="#FAF8F2" roughness={0.5} />
-        </mesh>
-        {/* Arch Top */}
-        <mesh position={[0, 1.4, 0]} rotation={[0, 0, 0]} castShadow>
-          <torusGeometry args={[1.1, 0.22, 12, 24, Math.PI]} />
-          <meshStandardMaterial color="#FAF8F2" roughness={0.5} />
-        </mesh>
-        {/* Arch Lintel Header */}
-        <mesh position={[0, 1.85, 0]} castShadow>
-          <boxGeometry args={[3, 0.35, 0.7]} />
-          <meshStandardMaterial color="#F5EFE4" roughness={0.6} />
+
+        {/* Crown Arch Lintel Header */}
+        <mesh position={[0, 2.15, 0]} castShadow>
+          <boxGeometry args={[4.2, 0.4, 0.8]} />
+          <meshStandardMaterial color="#F2EDE4" roughness={0.5} />
         </mesh>
       </group>
 
-      {/* Whitewashed Colonnade Arch 2 (Center - Monumental) */}
-      <group position={[0, 2.2, 0]}>
-        <mesh position={[-1.5, 0, 0]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.28, 0.32, 3.4, 16]} />
-          <meshStandardMaterial color="#FAF8F2" roughness={0.5} />
-        </mesh>
-        <mesh position={[1.5, 0, 0]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.28, 0.32, 3.4, 16]} />
-          <meshStandardMaterial color="#FAF8F2" roughness={0.5} />
-        </mesh>
-        <mesh position={[0, 1.7, 0]} castShadow>
-          <torusGeometry args={[1.5, 0.28, 12, 24, Math.PI]} />
-          <meshStandardMaterial color="#FAF8F2" roughness={0.5} />
-        </mesh>
-        <mesh position={[0, 2.2, 0]} castShadow>
-          <boxGeometry args={[3.8, 0.45, 0.8]} />
-          <meshStandardMaterial color="#F5EFE4" roughness={0.6} />
-        </mesh>
-      </group>
-
-      {/* Whitewashed Colonnade Arch 3 (Right) */}
-      <group position={[3.2, 1.8, 0]}>
-        <mesh position={[-1.1, 0, 0]} castShadow receiveShadow>
+      {/* Flanking Side Arch (Left) */}
+      <group position={[-3.6, 1.9, -1.2]}>
+        <mesh position={[-1.2, 0, 0]} castShadow>
           <cylinderGeometry args={[0.22, 0.26, 2.8, 16]} />
-          <meshStandardMaterial color="#FAF8F2" roughness={0.5} />
-        </mesh>
-        <mesh position={[1.1, 0, 0]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.22, 0.26, 2.8, 16]} />
-          <meshStandardMaterial color="#FAF8F2" roughness={0.5} />
+          <meshStandardMaterial color="#FAF8F3" roughness={0.4} />
         </mesh>
         <mesh position={[0, 1.4, 0]} castShadow>
-          <torusGeometry args={[1.1, 0.22, 12, 24, Math.PI]} />
-          <meshStandardMaterial color="#FAF8F2" roughness={0.5} />
-        </mesh>
-        <mesh position={[0, 1.85, 0]} castShadow>
-          <boxGeometry args={[3, 0.35, 0.7]} />
-          <meshStandardMaterial color="#F5EFE4" roughness={0.6} />
+          <torusGeometry args={[1.2, 0.22, 14, 28, Math.PI]} />
+          <meshStandardMaterial color="#FAF8F3" roughness={0.4} />
         </mesh>
       </group>
 
-      {/* Pergola Wooden Beams (Overhead) */}
-      <group position={[0, 4.0, 1.2]}>
-        {[-3.6, -1.8, 0, 1.8, 3.6].map((x, i) => (
+      {/* Flanking Side Arch (Right) */}
+      <group position={[3.6, 1.9, -1.2]}>
+        <mesh position={[1.2, 0, 0]} castShadow>
+          <cylinderGeometry args={[0.22, 0.26, 2.8, 16]} />
+          <meshStandardMaterial color="#FAF8F3" roughness={0.4} />
+        </mesh>
+        <mesh position={[0, 1.4, 0]} castShadow>
+          <torusGeometry args={[1.2, 0.22, 14, 28, Math.PI]} />
+          <meshStandardMaterial color="#FAF8F3" roughness={0.4} />
+        </mesh>
+      </group>
+
+      {/* 7. Natural Chestnut Pergola Beams Overhead */}
+      <group position={[0, 4.2, 0.8]}>
+        {[-3.8, -1.9, 0, 1.9, 3.8].map((x, i) => (
           <mesh key={i} position={[x, 0, 0]} castShadow>
-            <boxGeometry args={[0.15, 0.25, 4.2]} />
-            <meshStandardMaterial color="#5C4533" roughness={0.8} />
+            <boxGeometry args={[0.16, 0.26, 4.6]} />
+            <meshStandardMaterial color="#4A3B2C" roughness={0.8} />
           </mesh>
         ))}
-        {[-1.5, 0, 1.5].map((z, j) => (
-          <mesh key={`cross-${j}`} position={[0, 0.15, z]} castShadow>
-            <boxGeometry args={[9.5, 0.15, 0.15]} />
-            <meshStandardMaterial color="#6B513C" roughness={0.8} />
+        {[-1.6, 0, 1.6].map((z, j) => (
+          <mesh key={`cross-${j}`} position={[0, 0.16, z]} castShadow>
+            <boxGeometry args={[10.2, 0.14, 0.14]} />
+            <meshStandardMaterial color="#5C4B3A" roughness={0.8} />
           </mesh>
         ))}
       </group>
 
-      {/* Terracotta Urns & Olive Trees on Terrace */}
-      <group position={[-4.5, 0.4, 2.2]}>
+      {/* 8. Terracotta Planters & Olive Trees */}
+      <group position={[-4.8, 0.42, 1.8]}>
         <mesh castShadow>
-          <cylinderGeometry args={[0.35, 0.22, 0.8, 16]} />
-          <meshStandardMaterial color="#B86E50" roughness={0.9} />
+          <cylinderGeometry args={[0.42, 0.28, 0.9, 16]} />
+          <meshStandardMaterial color="#B65A3D" roughness={0.85} />
         </mesh>
-        <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.2}>
-          <mesh position={[0, 0.9, 0]} castShadow>
-            <dodecahedronGeometry args={[0.65, 1]} />
-            <meshStandardMaterial color="#68765A" roughness={0.7} />
+        <Float speed={1.2} rotationIntensity={0.15} floatIntensity={0.15}>
+          <mesh position={[0, 1.1, 0]} castShadow>
+            <dodecahedronGeometry args={[0.75, 1]} />
+            <meshStandardMaterial color="#4B5D43" roughness={0.7} />
+          </mesh>
+          <mesh position={[0.2, 1.4, 0.1]} castShadow>
+            <dodecahedronGeometry args={[0.5, 1]} />
+            <meshStandardMaterial color="#5B6B4C" roughness={0.65} />
           </mesh>
         </Float>
       </group>
 
-      <group position={[4.5, 0.4, 2.2]}>
+      <group position={[4.8, 0.42, 1.8]}>
         <mesh castShadow>
-          <cylinderGeometry args={[0.35, 0.22, 0.8, 16]} />
-          <meshStandardMaterial color="#B86E50" roughness={0.9} />
+          <cylinderGeometry args={[0.42, 0.28, 0.9, 16]} />
+          <meshStandardMaterial color="#B65A3D" roughness={0.85} />
         </mesh>
-        <Float speed={1.8} rotationIntensity={0.25} floatIntensity={0.2}>
-          <mesh position={[0, 0.9, 0]} castShadow>
-            <dodecahedronGeometry args={[0.65, 1]} />
-            <meshStandardMaterial color="#68765A" roughness={0.7} />
+        <Float speed={1.4} rotationIntensity={0.18} floatIntensity={0.15}>
+          <mesh position={[0, 1.1, 0]} castShadow>
+            <dodecahedronGeometry args={[0.75, 1]} />
+            <meshStandardMaterial color="#4B5D43" roughness={0.7} />
+          </mesh>
+          <mesh position={[-0.2, 1.4, 0.1]} castShadow>
+            <dodecahedronGeometry args={[0.5, 1]} />
+            <meshStandardMaterial color="#5B6B4C" roughness={0.65} />
           </mesh>
         </Float>
       </group>
 
-      {/* Minimalist Dining Table & Chairs on Terrace */}
-      <group position={[0, 0.4, 2.4]}>
-        {/* Table Top */}
-        <mesh position={[0, 0.4, 0]} castShadow receiveShadow>
-          <cylinderGeometry args={[0.75, 0.75, 0.05, 32]} />
-          <meshStandardMaterial color="#FAF9F5" roughness={0.5} />
+      {/* 9. Central Fine Dining Table & Setting */}
+      <group position={[0, 0.42, 1.8]}>
+        {/* Travertine Table Top */}
+        <mesh position={[0, 0.45, 0]} castShadow receiveShadow>
+          <cylinderGeometry args={[0.85, 0.85, 0.05, 32]} />
+          <meshStandardMaterial color="#FCFBF8" roughness={0.3} />
         </mesh>
-        {/* Table Pedestal */}
-        <mesh position={[0, 0.18, 0]} castShadow>
-          <cylinderGeometry args={[0.08, 0.14, 0.4, 16]} />
-          <meshStandardMaterial color="#D6A854" roughness={0.4} metalness={0.6} />
+        {/* Brass Pedestal */}
+        <mesh position={[0, 0.2, 0]} castShadow>
+          <cylinderGeometry args={[0.09, 0.18, 0.45, 16]} />
+          <meshStandardMaterial color="#C5A059" roughness={0.3} metalness={0.8} />
         </mesh>
-        {/* Chairs */}
-        {[-0.85, 0.85].map((x, k) => (
-          <group key={k} position={[x, 0, 0]} rotation={[0, x > 0 ? -Math.PI / 2 : Math.PI / 2, 0]}>
-            <mesh position={[0, 0.25, 0]} castShadow>
-              <boxGeometry args={[0.4, 0.04, 0.4]} />
-              <meshStandardMaterial color="#E8D9C2" roughness={0.6} />
+
+        {/* Bronze Candle Lantern */}
+        <mesh position={[0, 0.52, 0]} castShadow>
+          <cylinderGeometry args={[0.06, 0.08, 0.12, 16]} />
+          <meshStandardMaterial color="#C5A059" roughness={0.4} metalness={0.7} />
+        </mesh>
+        {/* Warm Candle Light Point */}
+        <pointLight ref={flameRef} position={[0, 0.65, 0]} color="#FFBA6B" intensity={1.2} distance={3} />
+
+        {/* Wine Glasses */}
+        {[-0.25, 0.25].map((x, idx) => (
+          <group key={idx} position={[x, 0.51, 0]}>
+            <mesh castShadow>
+              <cylinderGeometry args={[0.05, 0.03, 0.1, 12]} />
+              <meshStandardMaterial color="#FFFFFF" transparent opacity={0.6} roughness={0.1} />
             </mesh>
-            <mesh position={[0, 0.48, -0.18]} castShadow>
-              <boxGeometry args={[0.4, 0.45, 0.04]} />
-              <meshStandardMaterial color="#C8B69B" roughness={0.7} />
+          </group>
+        ))}
+
+        {/* Walnut Terrace Chairs */}
+        {[-0.95, 0.95].map((x, k) => (
+          <group key={k} position={[x, 0, 0]} rotation={[0, x > 0 ? -Math.PI / 2 : Math.PI / 2, 0]}>
+            <mesh position={[0, 0.28, 0]} castShadow>
+              <boxGeometry args={[0.42, 0.04, 0.42]} />
+              <meshStandardMaterial color="#EAE3D6" roughness={0.7} />
+            </mesh>
+            <mesh position={[0, 0.52, -0.2]} castShadow>
+              <boxGeometry args={[0.42, 0.48, 0.04]} />
+              <meshStandardMaterial color="#C5A059" roughness={0.5} metalness={0.5} />
             </mesh>
           </group>
         ))}
@@ -182,46 +232,54 @@ export default function HeroScene() {
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
       <Canvas
-        camera={{ position: [0, 2.5, 9.5], fov: 42 }}
+        camera={{ position: [0, 2.6, 9.2], fov: 40 }}
         shadows
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         <Suspense fallback={null}>
-          {/* Mediterranean Ambient & Sun Lighting */}
-          <ambientLight intensity={0.85} color="#F2F8FA" />
-          
-          {/* Warm Sun Key Light */}
+          {/* Mediterranean Ambient Fill */}
+          <ambientLight intensity={0.9} color="#F2F8FA" />
+
+          {/* Golden Hour Sun Key Light */}
           <directionalLight
-            position={[8, 12, 6]}
-            intensity={1.8}
+            position={[9, 14, 7]}
+            intensity={2.2}
             castShadow
             shadow-mapSize-width={1024}
             shadow-mapSize-height={1024}
-            color="#FFF4DE"
+            color="#FFF2D6"
           />
-          
-          {/* Coastal Azure Sky Fill */}
+
+          {/* Aegean Sky Fill Light */}
           <directionalLight
-            position={[-8, 6, -4]}
-            intensity={0.6}
-            color="#8ACCE0"
+            position={[-9, 7, -5]}
+            intensity={0.8}
+            color="#8ED2E8"
           />
 
-          <pointLight position={[0, 1.5, 2.5]} intensity={0.4} color="#FFDCA8" />
+          {/* Shimmering Golden Sparkles / Sun Motes */}
+          <Sparkles
+            count={45}
+            scale={12}
+            size={2.5}
+            speed={0.4}
+            color="#DFBA73"
+            opacity={0.6}
+          />
 
-          {/* Interactive Villa Model */}
-          <MediterraneanVilla />
+          {/* Architectural Model */}
+          <MediterraneanCoastalPavilion />
 
-          {/* Damped Controls restricted to dignified angles */}
+          {/* Damped Dignified Orbit Controls */}
           <OrbitControls
             enableZoom={false}
             enablePan={false}
             autoRotate
-            autoRotateSpeed={0.5}
-            minPolarAngle={Math.PI / 3.2}
-            maxPolarAngle={Math.PI / 2.05}
-            minAzimuthAngle={-Math.PI / 4}
-            maxAzimuthAngle={Math.PI / 4}
+            autoRotateSpeed={0.4}
+            minPolarAngle={Math.PI / 3.4}
+            maxPolarAngle={Math.PI / 2.08}
+            minAzimuthAngle={-Math.PI / 4.5}
+            maxAzimuthAngle={Math.PI / 4.5}
           />
         </Suspense>
       </Canvas>

@@ -1,38 +1,58 @@
 :root {
-  /* Mediterranean Riviera Luxury Palette */
-  --color-med-deep: #174A63;
-  --color-med-dark: #0F3142;
-  --color-ocean: #367E94;
-  --color-azure: #25617D;
-  --color-sea-mist: #C9DDE0;
-  --color-sea-mist-soft: #F2F7F8;
-  --color-coastal-white: #FAF9F5;
-  --color-sand: #E8D9C2;
-  --color-sand-light: #F6F1EA;
-  --color-travertine: #C8B69B;
-  --color-travertine-border: #E0D6C5;
-  --color-olive: #68765A;
-  --color-olive-dark: #4B5640;
-  --color-terracotta: #B86E50;
-  --color-charcoal: #292B29;
-  --color-muted-stone: #8C8981;
-  --color-gold: #D6A854;
+  /* Ultra-Luxury Mediterranean Riviera Palette */
+  --color-med-midnight: #081721;
+  --color-med-deep: #0D2533;
+  --color-med-navy: #15384B;
+  --color-ocean: #2A6F85;
+  --color-azure: #3D889F;
+  --color-sea-mist: #D5E5EB;
+  --color-sea-mist-soft: #F0F6F8;
+  
+  /* Alabaster & Marble Foundations */
+  --color-coastal-white: #FCFBF8;
+  --color-chalk: #F5F3ED;
+  --color-sand: #EAE3D6;
+  --color-sand-light: #F8F6F1;
+  --color-travertine: #D0C4B0;
+  --color-travertine-border: #E5DDCF;
+
+  /* Tuscan Gold & Brushed Brass */
+  --color-gold: #C5A059;
+  --color-gold-light: #E0C184;
+  --color-gold-dark: #9E7B36;
+  --color-gold-glow: rgba(197, 160, 89, 0.22);
+
+  /* Earth & Botanical Accents */
+  --color-cypress: #253B2F;
+  --color-olive: #5B6B4C;
+  --color-terracotta: #B65A3D;
+  --color-terracotta-light: #F3DDD5;
+  --color-charcoal: #1C2022;
+  --color-muted-stone: #7A7E80;
+  --color-light-stone: #9FA4A6;
+
+  /* Gradients */
+  --grad-gold: linear-gradient(135deg, #E6C88A 0%, #C5A059 50%, #A67F33 100%);
+  --grad-midnight: linear-gradient(160deg, #0A1C27 0%, #061118 100%);
+  --grad-ocean: linear-gradient(135deg, #2A6F85 0%, #15384B 100%);
+  --grad-pearl: linear-gradient(180deg, #FFFFFF 0%, #F8F6F1 100%);
+  --grad-card: linear-gradient(180deg, #FFFFFF 0%, #FAF8F4 100%);
 
   /* Typography */
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Transitions */
-  --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Transitions & Shadows */
+  --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   --transition-fast: all 0.2s ease-out;
 
-  /* Shadows */
-  --shadow-subtle: 0 4px 20px rgba(23, 74, 99, 0.05);
-  --shadow-elevated: 0 12px 35px rgba(23, 74, 99, 0.08);
-  --shadow-float: 0 20px 50px rgba(15, 49, 66, 0.12);
+  --shadow-subtle: 0 4px 20px rgba(8, 23, 33, 0.04);
+  --shadow-elevated: 0 12px 36px rgba(8, 23, 33, 0.08);
+  --shadow-float: 0 24px 60px rgba(8, 23, 33, 0.12);
+  --shadow-gold: 0 8px 30px rgba(197, 160, 89, 0.25);
 
   /* Container */
-  --max-width: 1360px;
-  --section-pad-y: 110px;
+  --max-width: 1380px;
+  --section-pad-y: 120px;
 }

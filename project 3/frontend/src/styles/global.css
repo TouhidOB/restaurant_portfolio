@@ -19,7 +19,7 @@ html {
 body {
   font-family: var(--font-sans);
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.65;
   background-color: var(--color-coastal-white);
   color: var(--color-charcoal);
   overflow-x: hidden;
@@ -27,36 +27,41 @@ body {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-sand-light);
+  background: var(--color-chalk);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--color-travertine);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-ocean);
+  background: var(--color-gold);
 }
 
-/* Selection */
 ::selection {
-  background: var(--color-sea-mist);
-  color: var(--color-med-deep);
+  background: var(--color-gold-light);
+  color: var(--color-med-midnight);
 }
 
-/* Headings */
+/* Headings & Editorial Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-serif);
   font-weight: 500;
   color: var(--color-med-deep);
-  line-height: 1.15;
+  line-height: 1.12;
   letter-spacing: -0.015em;
 }
 
+.serif-italic {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+}
+
 p {
-  color: #4A4E4D;
+  color: #4A5255;
   font-size: 1.05rem;
   line-height: 1.7;
 }
@@ -73,14 +78,14 @@ button {
   cursor: pointer;
 }
 
-/* Utility Containers */
+/* Containers */
 .container {
   width: 100%;
   max-width: var(--max-width);
   margin-left: auto;
   margin-right: auto;
-  padding-left: 28px;
-  padding-right: 28px;
+  padding-left: 32px;
+  padding-right: 32px;
 }
 
 .section-wrapper {
@@ -92,8 +97,9 @@ button {
 /* Section Header Editorial Style */
 .section-header {
   text-align: center;
-  max-width: 760px;
-  margin: 0 auto 64px;
+  max-width: 820px;
+  margin: 0 auto 72px;
+  position: relative;
 }
 
 .section-badge {
@@ -101,123 +107,192 @@ button {
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--color-ocean);
-  background: var(--color-sea-mist-soft);
-  border: 1px solid var(--color-sea-mist);
-  padding: 6px 14px;
-  border-radius: 30px;
-  margin-bottom: 20px;
-  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--color-gold-dark);
+  background: rgba(197, 160, 89, 0.09);
+  border: 1px solid rgba(197, 160, 89, 0.35);
+  padding: 7px 18px;
+  border-radius: 40px;
+  margin-bottom: 22px;
+  font-weight: 600;
 }
 
 .section-title {
-  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
   text-transform: uppercase;
-  margin-bottom: 18px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
+  color: var(--color-med-deep);
+  margin-bottom: 20px;
+}
+
+.section-title em {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-gold-dark);
 }
 
 .section-subtitle {
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   color: var(--color-muted-stone);
   font-weight: 300;
+  line-height: 1.75;
 }
 
 /* Buttons */
-.btn-primary {
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--grad-gold);
+  color: var(--color-med-midnight);
+  padding: 16px 34px;
+  border-radius: 40px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-gold);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(197, 160, 89, 0.4);
+  color: #000000;
+}
+
+.btn-marine {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
   background: var(--color-med-deep);
   color: var(--color-coastal-white);
-  padding: 14px 28px;
+  padding: 16px 34px;
   border-radius: 40px;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   transition: var(--transition-smooth);
-  box-shadow: 0 4px 15px rgba(23, 74, 99, 0.2);
+  border: 1px solid rgba(200, 182, 155, 0.4);
+  box-shadow: 0 8px 25px rgba(8, 23, 33, 0.15);
 }
 
-.btn-primary:hover {
-  background: var(--color-med-dark);
+.btn-marine:hover {
+  background: var(--color-med-midnight);
+  border-color: var(--color-gold);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(23, 74, 99, 0.3);
+  box-shadow: 0 12px 30px rgba(8, 23, 33, 0.25);
 }
 
-.btn-secondary {
+.btn-ghost-luxe {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
   color: var(--color-med-deep);
   border: 1px solid var(--color-travertine-border);
-  padding: 14px 28px;
+  padding: 15px 30px;
   border-radius: 40px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   transition: var(--transition-smooth);
 }
 
-.btn-secondary:hover {
-  background: var(--color-coastal-white);
-  border-color: var(--color-ocean);
+.btn-ghost-luxe:hover {
+  background: #FFFFFF;
+  border-color: var(--color-gold);
+  color: var(--color-gold-dark);
   transform: translateY(-2px);
+  box-shadow: var(--shadow-subtle);
 }
 
 .btn-outline-gold {
-  border: 1px solid var(--color-travertine);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--color-gold);
   color: var(--color-med-deep);
   background: transparent;
-  padding: 12px 24px;
+  padding: 12px 26px;
   border-radius: 30px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
+  font-weight: 600;
   transition: var(--transition-fast);
 }
 
 .btn-outline-gold:hover {
-  background: var(--color-sand);
-  border-color: var(--color-sand);
+  background: var(--color-gold);
+  color: var(--color-med-midnight);
 }
 
-/* Luxury Card */
+/* Luxury Architectural Card */
 .luxury-card {
-  background: #FFFFFF;
+  background: var(--grad-card);
   border: 1px solid var(--color-travertine-border);
-  border-radius: 14px;
+  border-radius: 18px;
   overflow: hidden;
   box-shadow: var(--shadow-subtle);
   transition: var(--transition-smooth);
+  position: relative;
 }
 
 .luxury-card:hover {
   box-shadow: var(--shadow-elevated);
+  transform: translateY(-5px);
+  border-color: var(--color-gold);
+}
+
+/* Architectural Arch Frame */
+.arch-frame {
+  border-radius: 200px 200px 14px 14px;
+  overflow: hidden;
+  border: 1px solid var(--color-travertine-border);
+  box-shadow: var(--shadow-elevated);
+  transition: var(--transition-smooth);
+}
+
+.arch-frame:hover {
+  border-color: var(--color-gold);
   transform: translateY(-4px);
-  border-color: var(--color-travertine);
+}
+
+/* Decorative Gold Hairline Rule */
+.gold-divider {
+  width: 60px;
+  height: 1px;
+  background: var(--grad-gold);
+  margin: 20px auto;
 }
 
 /* Modal Overlay */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 49, 66, 0.65);
-  backdrop-filter: blur(6px);
+  background: rgba(6, 17, 24, 0.78);
+  backdrop-filter: blur(10px);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 24px;
   animation: fadeIn 0.25s ease-out;
 }
 
@@ -227,15 +302,15 @@ button {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .modal-content {
   background: var(--color-coastal-white);
-  border: 1px solid var(--color-travertine-border);
-  border-radius: 16px;
-  max-width: 640px;
+  border: 1px solid var(--color-gold);
+  border-radius: 20px;
+  max-width: 660px;
   width: 100%;
   max-height: 90vh;
   overflow-y: auto;
@@ -247,13 +322,13 @@ button {
 /* Responsive adjustments */
 @media (max-width: 768px) {
   :root {
-    --section-pad-y: 70px;
+    --section-pad-y: 80px;
   }
   .container {
     padding-left: 20px;
     padding-right: 20px;
   }
   .section-header {
-    margin-bottom: 40px;
+    margin-bottom: 48px;
   }
 }

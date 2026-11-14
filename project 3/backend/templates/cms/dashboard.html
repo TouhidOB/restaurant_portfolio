@@ -47,7 +47,7 @@
         <div class="kpi-sub">Sunset & evening seatings</div>
     </div>
     <div class="kpi-card">
-        <div class="kpi-label">Daily Catches</div>
+        <div class="kpi-label">Daily Fresh Catches</div>
         <div class="kpi-value">{{ settings.daily_fresh_catches|default:"8" }}</div>
         <div class="kpi-sub">Salerno & Capri artisanal fishers</div>
     </div>
@@ -60,7 +60,7 @@
             <h3>Architectural & Restaurant Settings</h3>
             <span>Brand identity, hero messaging, coastal coordinates, and guest policies</span>
         </div>
-        <span class="mono-font" style="font-size: 11px; background: #EFF8FA; color: var(--med-blue); padding: 4px 8px; border-radius: 4px;">S01 — S03 CONFIG</span>
+        <span class="mono-font" style="font-size: 11px; background: rgba(197, 160, 89, 0.15); color: var(--gold-dark); border: 1px solid rgba(197, 160, 89, 0.4); padding: 5px 12px; border-radius: 20px; font-weight: 600;">S01 — S03 CONFIG</span>
     </div>
     <div class="cms-card-body">
         <form method="POST" action="{% url 'cms_update_settings' %}">
@@ -119,7 +119,7 @@
                     <input type="text" name="boat_access_notes" class="form-control" value="{{ settings.boat_access_notes }}">
                 </div>
             </div>
-            <div style="margin-top: 10px;">
+            <div style="margin-top: 14px;">
                 <button type="submit" class="btn-primary">Save Settings</button>
             </div>
         </form>
@@ -133,7 +133,7 @@
             <h3>3D Spatial Tour Viewpoints</h3>
             <span>Configurable camera coordinates, spatial transitions, and interactive architectural hotspots</span>
         </div>
-        <span class="mono-font" style="font-size: 11px; background: #EFF8FA; color: var(--med-blue); padding: 4px 8px; border-radius: 4px;">S04 3D WEBGL</span>
+        <span class="mono-font" style="font-size: 11px; background: rgba(197, 160, 89, 0.15); color: var(--gold-dark); border: 1px solid rgba(197, 160, 89, 0.4); padding: 5px 12px; border-radius: 20px; font-weight: 600;">S04 3D WEBGL</span>
     </div>
     <div class="cms-card-body">
         <div class="table-responsive">
@@ -151,11 +151,11 @@
                 <tbody>
                     {% for vp in viewpoints %}
                     <tr>
-                        <td class="mono-font">{{ vp.sort_order }}</td>
+                        <td class="mono-font" style="font-weight: 700; color: var(--gold-dark);">0{{ vp.sort_order }}</td>
                         <td><strong>{{ vp.title }}</strong><br><small style="color: var(--muted-stone);">{{ vp.subtitle }}</small></td>
-                        <td>{{ vp.space_name }}</td>
-                        <td class="mono-font" style="font-size: 12px; color: var(--med-blue);">{{ vp.camera_position }}</td>
-                        <td class="mono-font" style="font-size: 12px; color: var(--med-blue);">{{ vp.camera_target }}</td>
+                        <td><span style="font-weight: 600; color: var(--med-midnight);">{{ vp.space_name }}</span></td>
+                        <td class="mono-font" style="font-size: 12px; color: var(--ocean-blue); font-weight: 600;">{{ vp.camera_position }}</td>
+                        <td class="mono-font" style="font-size: 12px; color: var(--ocean-blue); font-weight: 600;">{{ vp.camera_target }}</td>
                         <td><strong>{{ vp.hotspot_title }}</strong><br><small style="color: var(--muted-stone);">{{ vp.hotspot_description|truncatewords:8 }}</small></td>
                     </tr>
                     {% empty %}
@@ -176,7 +176,7 @@
             <h3>Culinary Offerings & Signature Dishes</h3>
             <span>Manage prices, local origin stories, wine pairings, and live availability</span>
         </div>
-        <span class="mono-font" style="font-size: 11px; background: #EFF8FA; color: var(--med-blue); padding: 4px 8px; border-radius: 4px;">S06 — S07 MENU</span>
+        <span class="mono-font" style="font-size: 11px; background: rgba(197, 160, 89, 0.15); color: var(--gold-dark); border: 1px solid rgba(197, 160, 89, 0.4); padding: 5px 12px; border-radius: 20px; font-weight: 600;">S06 — S07 MENU</span>
     </div>
     <div class="cms-card-body">
         <div class="table-responsive">
@@ -198,19 +198,19 @@
                         <td>
                             <strong>{{ item.name }}</strong>
                             {% if item.is_signature %}
-                            <span style="font-size: 10px; background: #E8D9C2; color: #174A63; padding: 2px 6px; border-radius: 10px; margin-left: 6px; font-weight: 600;">SIGNATURE</span>
+                            <span style="font-size: 9.5px; background: rgba(197, 160, 89, 0.2); color: var(--gold-dark); border: 1px solid var(--gold); padding: 2px 7px; border-radius: 12px; margin-left: 6px; font-weight: 700; font-family: 'JetBrains Mono', monospace;">SIGNATURE</span>
                             {% endif %}
-                            <br><small style="color: var(--muted-stone);">{{ item.english_name }}</small>
+                            <br><small style="color: var(--muted-stone); font-style: italic;">{{ item.english_name }}</small>
                         </td>
-                        <td>{{ item.category.name }}</td>
-                        <td class="mono-font" style="font-weight: 600; color: var(--med-blue);">{{ item.currency_symbol }}{{ item.price }}</td>
+                        <td><span style="font-weight: 600; color: var(--ocean-blue);">{{ item.category.name }}</span></td>
+                        <td class="mono-font" style="font-weight: 700; font-size: 15px; color: var(--gold-dark);">{{ item.currency_symbol }}{{ item.price }}</td>
                         <td>
                             <small><strong>Origin:</strong> {{ item.origin }}</small><br>
                             <small style="color: var(--olive-green);"><strong>Wine:</strong> {{ item.wine_pairing }}</small>
                         </td>
                         <td>
                             {% for tag in item.dietary_tags %}
-                            <span style="display: inline-block; font-size: 10px; background: #F0F6F7; color: var(--med-blue); padding: 2px 6px; border-radius: 4px; margin-right: 2px;">{{ tag }}</span>
+                            <span style="display: inline-block; font-size: 10px; background: #F0F6F8; color: var(--ocean-blue); padding: 3px 7px; border-radius: 6px; margin-right: 3px; font-weight: 500;">{{ tag }}</span>
                             {% endfor %}
                         </td>
                         <td>
@@ -223,7 +223,7 @@
                         <td>
                             <form method="POST" action="{% url 'cms_toggle_menu_item' item.id %}" style="display: inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn-secondary" style="font-size: 11px; padding: 4px 8px;">
+                                <button type="submit" class="btn-secondary" style="font-size: 11px; padding: 5px 10px;">
                                     {% if item.is_available %}Mark Sold Out{% else %}Mark Available{% endif %}
                                 </button>
                             </form>
@@ -247,7 +247,7 @@
             <h3>Reservation & Dining Inquiry Desk</h3>
             <span>Guest reservation requests from S13 with contact, seating preference, and concierge workflow</span>
         </div>
-        <span class="mono-font" style="font-size: 11px; background: #FEF3C7; color: #92400E; padding: 4px 8px; border-radius: 4px;">S13 INQUIRIES</span>
+        <span class="mono-font" style="font-size: 11px; background: #FEF3C7; color: #92400E; padding: 5px 12px; border-radius: 20px; font-weight: 600;">S13 INQUIRIES</span>
     </div>
     <div class="cms-card-body">
         <div class="table-responsive">
@@ -266,17 +266,17 @@
                 <tbody>
                     {% for res in reservations %}
                     <tr>
-                        <td class="mono-font" style="font-weight: 600; color: var(--med-blue);">{{ res.reference_code }}</td>
+                        <td class="mono-font" style="font-weight: 700; color: var(--gold-dark);">{{ res.reference_code }}</td>
                         <td>
                             <strong>{{ res.guest_name }}</strong><br>
                             <small>{{ res.email }}</small><br>
-                            <small class="mono-font">{{ res.phone }}</small>
+                            <small class="mono-font" style="color: var(--muted-stone);">{{ res.phone }}</small>
                         </td>
                         <td>
                             <strong>{{ res.reservation_date|date:"M d, Y" }}</strong><br>
                             <small class="mono-font">{{ res.reservation_time }}</small>
                         </td>
-                        <td class="mono-font" style="font-weight: 600;">{{ res.party_size }} Guests</td>
+                        <td class="mono-font" style="font-weight: 700; color: var(--med-midnight);">{{ res.party_size }} Guests</td>
                         <td>
                             <strong>{{ res.seating_preference }}</strong><br>
                             <small style="color: var(--muted-stone);">{{ res.occasion }}</small>
@@ -288,16 +288,16 @@
                             <span class="status-pill status-{{ res.status }}">{{ res.get_status_display }}</span>
                         </td>
                         <td>
-                            <form method="POST" action="{% url 'cms_update_reservation_status' res.id %}" style="display: flex; gap: 4px; align-items: center;">
+                            <form method="POST" action="{% url 'cms_update_reservation_status' res.id %}" style="display: flex; gap: 6px; align-items: center;">
                                 {% csrf_token %}
-                                <select name="status" class="form-control" style="font-size: 11px; padding: 4px 6px; width: 110px;">
+                                <select name="status" class="form-control" style="font-size: 11.5px; padding: 5px 8px; width: 115px;">
                                     <option value="pending" {% if res.status == 'pending' %}selected{% endif %}>Pending</option>
                                     <option value="confirmed" {% if res.status == 'confirmed' %}selected{% endif %}>Confirm</option>
                                     <option value="seated" {% if res.status == 'seated' %}selected{% endif %}>Seated</option>
                                     <option value="declined" {% if res.status == 'declined' %}selected{% endif %}>Decline</option>
                                     <option value="archived" {% if res.status == 'archived' %}selected{% endif %}>Archive</option>
                                 </select>
-                                <button type="submit" class="btn-primary" style="font-size: 11px; padding: 5px 8px;">Update</button>
+                                <button type="submit" class="btn-primary" style="font-size: 11px; padding: 6px 10px;">Update</button>
                             </form>
                         </td>
                     </tr>
@@ -321,14 +321,14 @@
             <h3>Master JSON Configuration Editor</h3>
             <span>Direct low-level content payload configuration for developers and power managers</span>
         </div>
-        <span class="mono-font" style="font-size: 11px; background: #EFF8FA; color: var(--med-blue); padding: 4px 8px; border-radius: 4px;">RAW CONFIG</span>
+        <span class="mono-font" style="font-size: 11px; background: rgba(197, 160, 89, 0.15); color: var(--gold-dark); border: 1px solid rgba(197, 160, 89, 0.4); padding: 5px 12px; border-radius: 20px; font-weight: 600;">RAW CONFIG</span>
     </div>
     <div class="cms-card-body">
         <form method="POST" action="{% url 'cms_save_master_json' %}">
             {% csrf_token %}
             <div class="form-group">
                 <label>JSON Configuration Payload</label>
-                <textarea name="master_json_text" class="form-control mono-font" style="min-height: 220px; font-size: 12px; background: #FAFAF7; color: #174A63;">{{ master_json_str }}</textarea>
+                <textarea name="master_json_text" class="form-control mono-font" style="min-height: 230px; font-size: 12.5px; background: #FAF8F4; color: var(--med-midnight); border: 1px solid rgba(197, 160, 89, 0.4);">{{ master_json_str }}</textarea>
             </div>
             <button type="submit" class="btn-primary">Apply Master JSON Updates</button>
         </form>

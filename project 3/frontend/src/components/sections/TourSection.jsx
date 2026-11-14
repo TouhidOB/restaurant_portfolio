@@ -20,7 +20,7 @@ export default function TourSection() {
   const section = data.sections?.tour || {};
 
   return (
-    <section id="tour" className="section-wrapper" style={{ backgroundColor: '#F4EFE6' }}>
+    <section id="tour" className="section-wrapper" style={{ backgroundColor: '#F6F4EE' }}>
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
@@ -28,7 +28,7 @@ export default function TourSection() {
             {section.badge || 'SPATIAL EXPERIENCE'}
           </div>
           <h2 className="section-title">
-            {section.title || 'INTERACTIVE 3D VIRTUAL TOUR'}
+            Interactive 3D <em>Virtual Tour</em>
           </h2>
           <p className="section-subtitle">
             {section.subtitle || 'Step inside our cliffside sanctuary through real-time 3D navigation across our arrival portal, arches, dining terrace, and hearth.'}
@@ -38,17 +38,17 @@ export default function TourSection() {
         {/* Control Toolbar */}
         <div
           style={{
-            background: '#FAF9F5',
-            border: '1px solid #D8CCB8',
-            borderRadius: '16px',
-            padding: '16px 20px',
-            marginBottom: '20px',
+            background: '#FFFFFF',
+            border: '1px solid rgba(197, 160, 89, 0.35)',
+            borderRadius: '20px',
+            padding: '18px 24px',
+            marginBottom: '24px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
-            gap: '16px',
-            boxShadow: '0 4px 15px rgba(23, 74, 99, 0.04)',
+            gap: '18px',
+            boxShadow: '0 8px 25px rgba(8, 23, 33, 0.04)',
           }}
         >
           {/* Viewpoint Navigation Pills */}
@@ -58,16 +58,18 @@ export default function TourSection() {
                 key={vp.slug || idx}
                 onClick={() => setActiveTourIndex(idx)}
                 style={{
-                  padding: '8px 16px',
-                  borderRadius: '20px',
+                  padding: '9px 18px',
+                  borderRadius: '30px',
                   fontSize: '12px',
                   fontFamily: 'var(--font-mono)',
-                  letterSpacing: '0.04em',
+                  letterSpacing: '0.05em',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  background: activeTourIndex === idx ? '#174A63' : '#FAF9F5',
-                  color: activeTourIndex === idx ? '#FFFFFF' : '#174A63',
-                  border: activeTourIndex === idx ? '1px solid #174A63' : '1px solid #D8CCB8',
+                  transition: 'all 0.25s',
+                  background: activeTourIndex === idx ? 'var(--grad-gold)' : 'transparent',
+                  color: activeTourIndex === idx ? '#081721' : '#1C2022',
+                  border: activeTourIndex === idx ? '1px solid #C5A059' : '1px solid #E5DDCF',
+                  fontWeight: activeTourIndex === idx ? 700 : 500,
+                  boxShadow: activeTourIndex === idx ? '0 4px 15px rgba(197, 160, 89, 0.3)' : 'none',
                 }}
               >
                 0{idx + 1}. {vp.title}
@@ -78,93 +80,101 @@ export default function TourSection() {
           {/* Lighting & Display Mode Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
             {/* Lighting Modes */}
-            <div style={{ display: 'flex', background: '#EFEAE0', borderRadius: '20px', padding: '3px' }}>
+            <div style={{ display: 'flex', background: '#F0ECE4', borderRadius: '30px', padding: '3px', border: '1px solid #E0D8CB' }}>
               <button
                 onClick={() => setTourLightingMode('day')}
                 title="Crisp Sunlight (Day)"
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: '16px',
+                  padding: '7px 14px',
+                  borderRadius: '20px',
                   fontSize: '11px',
+                  fontFamily: 'var(--font-mono)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  gap: '5px',
                   background: tourLightingMode === 'day' ? '#FFFFFF' : 'transparent',
-                  color: tourLightingMode === 'day' ? '#174A63' : '#8C8981',
+                  color: tourLightingMode === 'day' ? '#081721' : '#7A7E80',
                   fontWeight: 600,
+                  boxShadow: tourLightingMode === 'day' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
                 }}
               >
-                <Sun size={13} color="#D6A854" />
+                <Sun size={13} color="#C5A059" />
                 <span>Day</span>
               </button>
               <button
                 onClick={() => setTourLightingMode('golden')}
                 title="Sunset Amber (Golden Hour)"
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: '16px',
+                  padding: '7px 14px',
+                  borderRadius: '20px',
                   fontSize: '11px',
+                  fontFamily: 'var(--font-mono)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  gap: '5px',
                   background: tourLightingMode === 'golden' ? '#FFFFFF' : 'transparent',
-                  color: tourLightingMode === 'golden' ? '#174A63' : '#8C8981',
+                  color: tourLightingMode === 'golden' ? '#081721' : '#7A7E80',
                   fontWeight: 600,
+                  boxShadow: tourLightingMode === 'golden' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
                 }}
               >
-                <Sunset size={13} color="#B86E50" />
+                <Sunset size={13} color="#B65A3D" />
                 <span>Golden</span>
               </button>
               <button
                 onClick={() => setTourLightingMode('dusk')}
                 title="Aegean Twilight (Dusk)"
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: '16px',
+                  padding: '7px 14px',
+                  borderRadius: '20px',
                   fontSize: '11px',
+                  fontFamily: 'var(--font-mono)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
+                  gap: '5px',
                   background: tourLightingMode === 'dusk' ? '#FFFFFF' : 'transparent',
-                  color: tourLightingMode === 'dusk' ? '#174A63' : '#8C8981',
+                  color: tourLightingMode === 'dusk' ? '#081721' : '#7A7E80',
                   fontWeight: 600,
+                  boxShadow: tourLightingMode === 'dusk' ? '0 2px 8px rgba(0,0,0,0.06)' : 'none',
                 }}
               >
-                <Moon size={13} color="#174A63" />
+                <Moon size={13} color="#2A6F85" />
                 <span>Dusk</span>
               </button>
             </div>
 
             {/* Display Mode Toggle */}
-            <div style={{ display: 'flex', background: '#EFEAE0', borderRadius: '20px', padding: '3px' }}>
+            <div style={{ display: 'flex', background: '#F0ECE4', borderRadius: '30px', padding: '3px', border: '1px solid #E0D8CB' }}>
               <button
                 onClick={() => setTourDisplayMode('3d')}
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: '16px',
+                  padding: '7px 14px',
+                  borderRadius: '20px',
                   fontSize: '11px',
+                  fontFamily: 'var(--font-mono)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
-                  background: tourDisplayMode === '3d' ? '#174A63' : 'transparent',
-                  color: tourDisplayMode === '3d' ? '#FFFFFF' : '#8C8981',
+                  gap: '5px',
+                  background: tourDisplayMode === '3d' ? '#081721' : 'transparent',
+                  color: tourDisplayMode === '3d' ? '#DFBA73' : '#7A7E80',
                   fontWeight: 600,
                 }}
               >
                 <Eye size={13} />
-                <span>3D WebGL</span>
+                <span>3D Canvas</span>
               </button>
               <button
                 onClick={() => setTourDisplayMode('photo')}
                 style={{
-                  padding: '6px 12px',
-                  borderRadius: '16px',
+                  padding: '7px 14px',
+                  borderRadius: '20px',
                   fontSize: '11px',
+                  fontFamily: 'var(--font-mono)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px',
-                  background: tourDisplayMode === 'photo' ? '#174A63' : 'transparent',
-                  color: tourDisplayMode === 'photo' ? '#FFFFFF' : '#8C8981',
+                  gap: '5px',
+                  background: tourDisplayMode === 'photo' ? '#081721' : 'transparent',
+                  color: tourDisplayMode === 'photo' ? '#DFBA73' : '#7A7E80',
                   fontWeight: 600,
                 }}
               >
@@ -175,18 +185,18 @@ export default function TourSection() {
           </div>
         </div>
 
-        {/* 3D Canvas Stage Container */}
+        {/* 3D Canvas Stage */}
         <div
           style={{
             position: 'relative',
-            height: '560px',
+            height: '580px',
             width: '100%',
-            borderRadius: '20px',
+            borderRadius: '24px',
             overflow: 'hidden',
-            border: '1px solid #D8CCB8',
-            boxShadow: '0 15px 45px rgba(23, 74, 99, 0.08)',
-            background: '#E9F1F4',
-            marginBottom: '28px',
+            border: '1px solid rgba(197, 160, 89, 0.45)',
+            boxShadow: '0 20px 60px rgba(8, 23, 33, 0.1)',
+            background: 'linear-gradient(180deg, #E6F0F4 0%, #D8E7EE 100%)',
+            marginBottom: '32px',
           }}
         >
           <RestaurantTour />
@@ -195,24 +205,24 @@ export default function TourSection() {
           <div
             style={{
               position: 'absolute',
-              top: '20px',
-              left: '20px',
-              background: 'rgba(250, 249, 245, 0.92)',
-              backdropFilter: 'blur(8px)',
-              padding: '8px 16px',
-              borderRadius: '20px',
-              border: '1px solid #D8CCB8',
+              top: '22px',
+              left: '22px',
+              background: 'rgba(252, 251, 248, 0.94)',
+              backdropFilter: 'blur(10px)',
+              padding: '8px 18px',
+              borderRadius: '30px',
+              border: '1px solid rgba(197, 160, 89, 0.4)',
               fontFamily: 'var(--font-mono)',
               fontSize: '11px',
-              color: '#174A63',
-              letterSpacing: '0.08em',
+              color: '#081721',
+              letterSpacing: '0.1em',
               textTransform: 'uppercase',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
             }}
           >
-            <Sparkles size={13} color="#D6A854" />
+            <Sparkles size={13} color="#C5A059" />
             <span>VIEWPOINT 0{activeTourIndex + 1} OF 05</span>
           </div>
         </div>
@@ -222,11 +232,10 @@ export default function TourSection() {
           <div
             className="luxury-card"
             style={{
-              padding: '32px 36px',
-              background: '#FFFFFF',
+              padding: '36px 42px',
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '30px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              gap: '36px',
               alignItems: 'center',
             }}
           >
@@ -236,48 +245,49 @@ export default function TourSection() {
                   fontFamily: 'var(--font-mono)',
                   fontSize: '11px',
                   textTransform: 'uppercase',
-                  letterSpacing: '0.12em',
-                  color: '#367E94',
+                  letterSpacing: '0.15em',
+                  color: '#C5A059',
                   display: 'block',
-                  marginBottom: '6px',
+                  marginBottom: '8px',
+                  fontWeight: 600,
                 }}
               >
                 {currentViewpoint.space_name}
               </span>
-              <h3 style={{ fontSize: '2rem', color: '#174A63', marginBottom: '8px' }}>
+              <h3 style={{ fontSize: '2.2rem', color: '#081721', marginBottom: '8px' }}>
                 {currentViewpoint.title}
               </h3>
-              <p style={{ fontSize: '1rem', color: '#8C8981', fontStyle: 'italic', marginBottom: '12px' }}>
+              <p style={{ fontSize: '1.05rem', color: '#7A7E80', fontStyle: 'italic', marginBottom: '14px' }}>
                 {currentViewpoint.subtitle}
               </p>
-              <p style={{ fontSize: '1rem', color: '#4A4E4D', lineHeight: 1.6 }}>
+              <p style={{ fontSize: '1.05rem', color: '#4A5255', lineHeight: 1.7 }}>
                 {currentViewpoint.description}
               </p>
             </div>
 
-            <div style={{ borderLeft: '1px solid #EDE7DC', paddingLeft: '28px' }}>
-              <div style={{ marginBottom: '16px' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, color: '#174A63', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '4px' }}>
+            <div style={{ borderLeft: '1px solid rgba(197, 160, 89, 0.25)', paddingLeft: '32px' }}>
+              <div style={{ marginBottom: '18px' }}>
+                <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: '#C5A059', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '6px' }}>
                   Architectural Materials
                 </span>
-                <p style={{ fontSize: '0.9rem', color: '#68765A', lineHeight: 1.5 }}>
+                <p style={{ fontSize: '0.95rem', color: '#253B2F', lineHeight: 1.6 }}>
                   {currentViewpoint.architectural_details || 'Hand-hewn porous limestone walls and natural lime plaster.'}
                 </p>
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <span style={{ fontSize: '11px', fontWeight: 600, color: '#174A63', textTransform: 'uppercase', letterSpacing: '0.08em', display: 'block', marginBottom: '4px' }}>
-                  Hotspot Feature
+              <div style={{ marginBottom: '24px' }}>
+                <span style={{ fontSize: '11px', fontFamily: 'var(--font-mono)', fontWeight: 600, color: '#C5A059', textTransform: 'uppercase', letterSpacing: '0.1em', display: 'block', marginBottom: '6px' }}>
+                  Curated Spatial Hotspot
                 </span>
-                <p style={{ fontSize: '0.9rem', color: '#174A63', fontWeight: 500 }}>
+                <p style={{ fontSize: '0.95rem', color: '#081721', fontWeight: 500 }}>
                   <strong>{currentViewpoint.hotspot_title}:</strong> {currentViewpoint.hotspot_description}
                 </p>
               </div>
 
               <button
                 onClick={() => setIsReservationModalOpen(true)}
-                className="btn-primary"
-                style={{ padding: '12px 24px', fontSize: '0.85rem' }}
+                className="btn-gold"
+                style={{ padding: '13px 28px', fontSize: '0.85rem' }}
               >
                 <Calendar size={14} />
                 <span>Reserve Table in This Space</span>

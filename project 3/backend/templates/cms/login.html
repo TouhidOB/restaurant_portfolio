@@ -6,13 +6,13 @@
 
 {% block content %}
 <div style="display: flex; align-items: center; justify-content: center; min-height: 85vh;">
-    <div style="width: 100%; max-width: 440px; background: #FFFFFF; border: 1px solid var(--travertine-border); border-radius: 16px; padding: 40px; box-shadow: 0 10px 30px rgba(23, 74, 99, 0.06);">
-        <div style="text-align: center; margin-bottom: 30px;">
-            <div style="display: inline-block; width: 48px; height: 48px; border-radius: 50%; background: #EFF8FA; border: 1px solid var(--sea-mist); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: var(--med-blue);">
+    <div style="width: 100%; max-width: 460px; background: #FFFFFF; border: 1px solid rgba(197, 160, 89, 0.45); border-radius: 20px; padding: 48px 40px; box-shadow: 0 20px 60px rgba(8, 23, 33, 0.08);">
+        <div style="text-align: center; margin-bottom: 32px;">
+            <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #081721 0%, #15384B 100%); border: 1px solid var(--gold); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 700; color: var(--gold-light); box-shadow: 0 4px 20px rgba(197, 160, 89, 0.25);">
                 AM
             </div>
-            <h1 style="font-size: 28px; font-weight: 600; color: var(--med-blue-dark); margin-bottom: 6px;">AURA MARINA</h1>
-            <p style="font-size: 13px; color: var(--muted-stone); text-transform: uppercase; letter-spacing: 0.1em;">Coastal Restaurant CMS Studio</p>
+            <h1 style="font-size: 30px; font-weight: 600; color: var(--med-midnight); letter-spacing: 0.08em; margin-bottom: 6px;">AURA MARINA</h1>
+            <p style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--gold-dark); text-transform: uppercase; letter-spacing: 0.15em; font-weight: 600;">Coastal Restaurant CMS Studio</p>
         </div>
 
         {% if error_message %}
@@ -36,23 +36,23 @@
                 <input type="text" id="username" name="username" class="form-control" placeholder="admin" required autofocus>
             </div>
 
-            <div class="form-group" style="margin-bottom: 24px;">
+            <div class="form-group" style="margin-bottom: 28px;">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" class="form-control" placeholder="••••••••••••" required>
             </div>
 
-            <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 14px; letter-spacing: 0.05em; text-transform: uppercase;">
-                Access Studio
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase;">
+                Access Studio Console
             </button>
         </form>
 
-        <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid #EFECE4; text-align: center;">
-            <p style="font-size: 12px; color: var(--muted-stone); margin-bottom: 6px;">Default Administrator Credentials:</p>
-            <div style="background: #F9F8F5; border: 1px dashed var(--travertine); padding: 8px 12px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--med-blue);">
+        <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--travertine-border); text-align: center;">
+            <p style="font-size: 12px; color: var(--muted-stone); margin-bottom: 8px;">Default Administrator Credentials:</p>
+            <div style="background: #FAF8F4; border: 1px dashed var(--gold); padding: 10px 14px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--med-midnight); font-weight: 600;">
                 admin / adminpassword123
             </div>
-            <div style="margin-top: 16px;">
-                <a href="http://127.0.0.1:3000/" target="_blank" style="font-size: 12px; color: var(--ocean-blue); text-decoration: none;">
+            <div style="margin-top: 20px;">
+                <a href="http://127.0.0.1:3000/" target="_blank" style="font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--ocean-blue); text-decoration: none; font-weight: 600;">
                     ← Return to Guest Website
                 </a>
             </div>

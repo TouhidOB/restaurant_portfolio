@@ -84,7 +84,7 @@ def test_frontend_and_cms():
 
         # Test Reservation Modal
         print("   - Testing Reservation Modal interaction...")
-        page.locator("header .btn-primary").click()
+        page.locator("header button:has-text('Reserve Table')").click()
         page.wait_for_timeout(500)
         assert page.locator(".modal-content form").count() > 0, "Reservation modal form did not appear"
         print("   ✓ Global Reservation Modal opened successfully!")

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Compass, Calendar, ArrowRight, Sparkles, Anchor } from 'lucide-react';
+import { Compass, Calendar, ArrowRight, Sparkles, Anchor, Waves } from 'lucide-react';
 import { useCMS } from '../../context/CMSContext';
 import HeroScene from '../three/HeroScene';
 
@@ -16,24 +16,24 @@ export default function HeroSection() {
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        paddingTop: '100px',
-        paddingBottom: '60px',
+        paddingTop: '110px',
+        paddingBottom: '70px',
         overflow: 'hidden',
-        background: 'radial-gradient(ellipse at 70% 30%, #E8F4F8 0%, #FAF9F5 65%)',
+        background: 'radial-gradient(circle at 75% 25%, #E2F0F5 0%, #FAF8F4 55%, #F5F1E8 100%)',
       }}
     >
       <div className="container" style={{ position: 'relative', zIndex: 10 }}>
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
-            gap: '40px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))',
+            gap: '48px',
             alignItems: 'center',
           }}
         >
           {/* Left Column: Editorial Headline & Actions */}
-          <div style={{ maxWidth: '600px' }}>
-            {/* Michelin / Season Badge */}
+          <div style={{ maxWidth: '620px' }}>
+            {/* Michelin & Provenance Emblem */}
             <div
               style={{
                 display: 'inline-flex',
@@ -42,53 +42,66 @@ export default function HeroSection() {
                 fontFamily: 'var(--font-mono)',
                 fontSize: '11px',
                 textTransform: 'uppercase',
-                letterSpacing: '0.15em',
-                color: '#174A63',
-                background: 'rgba(201, 221, 224, 0.4)',
-                border: '1px solid #C9DDE0',
-                padding: '6px 16px',
+                letterSpacing: '0.2em',
+                color: '#9E7B36',
+                background: 'rgba(197, 160, 89, 0.12)',
+                border: '1px solid rgba(197, 160, 89, 0.45)',
+                padding: '7px 18px',
                 borderRadius: '30px',
-                marginBottom: '24px',
+                marginBottom: '28px',
+                fontWeight: 600,
               }}
             >
-              <Sparkles size={13} color="#D6A854" />
-              <span>{settings.hero_badge || section.badge || 'SEASON 2026 • MEDITERRANEAN RIVIERA'}</span>
+              <Sparkles size={13} color="#C5A059" />
+              <span>{settings.hero_badge || section.badge || 'MICHELIN SELECTED • POSITANO CLIFFSIDE • 2026'}</span>
             </div>
 
-            {/* Main Headline */}
+            {/* Main Headline with Serif Italic Distinction */}
             <h1
               style={{
-                fontSize: 'clamp(2.8rem, 5.5vw, 4.4rem)',
+                fontSize: 'clamp(3rem, 5.8vw, 4.8rem)',
                 fontFamily: 'var(--font-serif)',
                 fontWeight: 600,
-                color: '#174A63',
-                lineHeight: 1.08,
+                color: '#081721',
+                lineHeight: 1.05,
                 letterSpacing: '-0.02em',
-                marginBottom: '24px',
+                marginBottom: '26px',
               }}
             >
-              {settings.hero_headline || section.title || 'WHERE THE COAST MEETS THE TABLE'}
+              Where the Coast <br />
+              <em
+                style={{
+                  fontFamily: 'var(--font-serif)',
+                  fontWeight: 400,
+                  fontStyle: 'italic',
+                  color: '#C5A059',
+                  textTransform: 'none',
+                  letterSpacing: '0',
+                }}
+              >
+                Meets the Table
+              </em>
             </h1>
 
             {/* Subheadline */}
             <p
               style={{
-                fontSize: '1.2rem',
-                lineHeight: 1.65,
-                color: '#4A4E4D',
-                marginBottom: '36px',
+                fontSize: '1.22rem',
+                lineHeight: 1.7,
+                color: '#4A5255',
+                marginBottom: '38px',
                 fontWeight: 300,
               }}
             >
-              {settings.hero_subheadline || section.subtitle || 'Hand-harvested Adriatic crudo, ancient olive groves, and architectural dining suspended above the azure Mediterranean.'}
+              {settings.hero_subheadline || section.subtitle || 'Hand-harvested Adriatic crudo, cold-pressed hillside oils, and architectural dining suspended 60 meters above the azure Mediterranean.'}
             </p>
 
-            {/* CTAs */}
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '44px' }}>
+            {/* Luxury CTAs */}
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '48px' }}>
               <button
                 onClick={() => setIsReservationModalOpen(true)}
-                className="btn-primary"
-                style={{ padding: '16px 32px', fontSize: '0.95rem' }}
+                className="btn-gold"
+                style={{ padding: '17px 36px', fontSize: '0.9rem' }}
               >
                 <Calendar size={16} />
                 <span>{settings.hero_cta_primary || 'Reserve a Table'}</span>
@@ -96,109 +109,173 @@ export default function HeroSection() {
 
               <a
                 href="#tour"
-                className="btn-secondary"
-                style={{ padding: '16px 30px', fontSize: '0.95rem' }}
+                className="btn-marine"
+                style={{ padding: '17px 34px', fontSize: '0.9rem' }}
               >
                 <span>{settings.hero_cta_secondary || 'Explore 3D Tour'}</span>
                 <ArrowRight size={16} />
               </a>
             </div>
 
-            {/* Live Metrics Pill Strip */}
+            {/* Telemetry Strip with Gilded Numerals */}
             <div
               style={{
                 display: 'flex',
-                gap: '24px',
-                paddingTop: '24px',
-                borderTop: '1px solid #E4DCD0',
+                gap: '32px',
+                paddingTop: '28px',
+                borderTop: '1px solid rgba(197, 160, 89, 0.3)',
                 flexWrap: 'wrap',
               }}
             >
               <div>
-                <span style={{ display: 'block', fontFamily: 'var(--font-serif)', fontSize: '1.8rem', fontWeight: 600, color: '#174A63' }}>
+                <span
+                  style={{
+                    display: 'block',
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '2.2rem',
+                    fontWeight: 600,
+                    color: '#C5A059',
+                    lineHeight: 1,
+                  }}
+                >
                   {settings.tables_available_today || 6}
                 </span>
-                <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#8C8981' }}>
+                <span
+                  style={{
+                    fontSize: '11px',
+                    fontFamily: 'var(--font-mono)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                    color: '#7A7E80',
+                    marginTop: '6px',
+                    display: 'block',
+                  }}
+                >
                   Tables Left Today
                 </span>
               </div>
 
               <div>
-                <span style={{ display: 'block', fontFamily: 'var(--font-serif)', fontSize: '1.8rem', fontWeight: 600, color: '#174A63' }}>
+                <span
+                  style={{
+                    display: 'block',
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '2.2rem',
+                    fontWeight: 600,
+                    color: '#081721',
+                    lineHeight: 1,
+                  }}
+                >
                   {settings.daily_fresh_catches || 8}
                 </span>
-                <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#8C8981' }}>
-                  Daily Fresh Catches
+                <span
+                  style={{
+                    fontSize: '11px',
+                    fontFamily: 'var(--font-mono)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                    color: '#7A7E80',
+                    marginTop: '6px',
+                    display: 'block',
+                  }}
+                >
+                  Daily Sea Catches
                 </span>
               </div>
 
               <div>
-                <span style={{ display: 'block', fontFamily: 'var(--font-serif)', fontSize: '1.8rem', fontWeight: 600, color: '#174A63' }}>
+                <span
+                  style={{
+                    display: 'block',
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: '2.2rem',
+                    fontWeight: 600,
+                    color: '#081721',
+                    lineHeight: 1,
+                  }}
+                >
                   38 yrs
                 </span>
-                <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#8C8981' }}>
-                  Cliffside Heritage
+                <span
+                  style={{
+                    fontSize: '11px',
+                    fontFamily: 'var(--font-mono)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.1em',
+                    color: '#7A7E80',
+                    marginTop: '6px',
+                    display: 'block',
+                  }}
+                >
+                  Villa Heritage
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Right Column: 3D Interactive WebGL Architectural Hero Scene */}
+          {/* Right Column: 3D Architectural Hero Canvas Frame */}
           <div
             style={{
               position: 'relative',
-              height: '540px',
+              height: '580px',
               width: '100%',
-              borderRadius: '24px',
+              borderRadius: '28px',
               overflow: 'hidden',
-              boxShadow: '0 20px 60px rgba(23, 74, 99, 0.12)',
-              border: '1px solid rgba(200, 182, 155, 0.5)',
-              background: '#E8F3F7',
+              boxShadow: '0 25px 70px rgba(8, 23, 33, 0.18)',
+              border: '1px solid rgba(197, 160, 89, 0.45)',
+              background: 'linear-gradient(180deg, #E2EFF4 0%, #D1E5EE 100%)',
             }}
           >
             <HeroScene />
 
-            {/* Overlay Nautical Coordinates Badge */}
+            {/* Floating Top Telemetry Badge */}
             <div
               style={{
                 position: 'absolute',
-                bottom: '18px',
-                left: '20px',
-                background: 'rgba(250, 249, 245, 0.92)',
-                backdropFilter: 'blur(8px)',
-                padding: '8px 14px',
-                borderRadius: '8px',
-                border: '1px solid #D8CCB8',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
-                color: '#174A63',
-              }}
-            >
-              <Anchor size={13} color="#367E94" />
-              <span>{settings.coordinates_display || '40.6281° N, 14.4850° E — Mooring Berth 04'}</span>
-            </div>
-
-            {/* Orbit Hint */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '18px',
+                top: '20px',
                 right: '20px',
-                background: 'rgba(23, 74, 99, 0.8)',
-                color: '#FAF9F5',
-                padding: '6px 12px',
-                borderRadius: '20px',
+                background: 'rgba(8, 23, 33, 0.82)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(197, 160, 89, 0.4)',
+                color: '#DFBA73',
+                padding: '7px 16px',
+                borderRadius: '30px',
                 fontFamily: 'var(--font-mono)',
                 fontSize: '10px',
-                letterSpacing: '0.05em',
+                letterSpacing: '0.12em',
                 textTransform: 'uppercase',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
                 pointerEvents: 'none',
               }}
             >
-              Interactive 3D Villa
+              <Waves size={12} color="#C5A059" />
+              <span>Interactive 3D WebGL Villa</span>
+            </div>
+
+            {/* Floating Bottom Nautical Anchor Badge */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '20px',
+                left: '20px',
+                background: 'rgba(252, 251, 248, 0.94)',
+                backdropFilter: 'blur(10px)',
+                padding: '10px 18px',
+                borderRadius: '12px',
+                border: '1px solid rgba(197, 160, 89, 0.4)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '11px',
+                color: '#081721',
+                boxShadow: '0 8px 25px rgba(0,0,0,0.08)',
+              }}
+            >
+              <Anchor size={14} color="#C5A059" />
+              <span>{settings.coordinates_display || '40.6281° N, 14.4850° E — Mooring Berth 04'}</span>
             </div>
           </div>
         </div>

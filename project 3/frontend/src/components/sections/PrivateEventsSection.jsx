@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Users, CheckCircle2 } from 'lucide-react';
 import { useCMS } from '../../context/CMSContext';
 
 export default function PrivateEventsSection() {
@@ -8,7 +8,7 @@ export default function PrivateEventsSection() {
   const section = data.sections?.events || {};
 
   return (
-    <section id="events" className="section-wrapper" style={{ backgroundColor: '#F8F6F0' }}>
+    <section id="events" className="section-wrapper" style={{ backgroundColor: '#F6F4EE' }}>
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
@@ -16,7 +16,7 @@ export default function PrivateEventsSection() {
             {section.badge || 'EXCLUSIVE GATHERINGS'}
           </div>
           <h2 className="section-title">
-            {section.title || 'PRIVATE CELEBRATIONS & VILLA BUYOUTS'}
+            Private Celebrations & <em>Villa Buyouts</em>
           </h2>
           <p className="section-subtitle">
             {section.subtitle || 'Host unforgettable coastal weddings, intimate anniversaries, and bespoke sommelier dinners perched above the waves.'}
@@ -28,7 +28,7 @@ export default function PrivateEventsSection() {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
-            gap: '32px',
+            gap: '36px',
           }}
         >
           {events.map((ev) => (
@@ -37,7 +37,7 @@ export default function PrivateEventsSection() {
               className="luxury-card"
               style={{ display: 'flex', flexDirection: 'column' }}
             >
-              <div style={{ position: 'relative', height: '250px', overflow: 'hidden' }}>
+              <div style={{ position: 'relative', height: '270px', overflow: 'hidden' }}>
                 <img
                   src={ev.image_url || 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80'}
                   alt={ev.title}
@@ -46,30 +46,33 @@ export default function PrivateEventsSection() {
                 <span
                   style={{
                     position: 'absolute',
-                    top: '16px',
-                    right: '16px',
-                    background: '#174A63',
-                    color: '#FAF9F5',
-                    padding: '4px 12px',
-                    borderRadius: '20px',
+                    top: '18px',
+                    right: '18px',
+                    background: 'rgba(8, 23, 33, 0.92)',
+                    backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(197, 160, 89, 0.4)',
+                    color: '#DFBA73',
+                    padding: '5px 14px',
+                    borderRadius: '30px',
                     fontFamily: 'var(--font-mono)',
                     fontSize: '11px',
-                    letterSpacing: '0.06em',
+                    letterSpacing: '0.08em',
+                    fontWeight: 600,
                   }}
                 >
                   {ev.capacity}
                 </span>
               </div>
 
-              <div style={{ padding: '28px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                <h3 style={{ fontSize: '1.7rem', color: '#174A63', marginBottom: '10px' }}>
+              <div style={{ padding: '30px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <h3 style={{ fontSize: '1.8rem', color: '#081721', marginBottom: '12px' }}>
                   {ev.title}
                 </h3>
-                <p style={{ fontSize: '0.95rem', color: '#4A4E4D', lineHeight: 1.6, marginBottom: '20px' }}>
+                <p style={{ fontSize: '0.96rem', color: '#4A5255', lineHeight: 1.65, marginBottom: '22px' }}>
                   {ev.description}
                 </p>
 
-                <div style={{ marginTop: 'auto', marginBottom: '24px', borderTop: '1px solid #EFEAE0', paddingTop: '16px' }}>
+                <div style={{ marginTop: 'auto', marginBottom: '26px', borderTop: '1px solid rgba(197, 160, 89, 0.25)', paddingTop: '18px' }}>
                   {(ev.features || []).map((feat, idx) => (
                     <div
                       key={idx}
@@ -77,12 +80,12 @@ export default function PrivateEventsSection() {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
-                        fontSize: '12px',
-                        color: '#68765A',
-                        marginBottom: '6px',
+                        fontSize: '12.5px',
+                        color: '#253B2F',
+                        marginBottom: '8px',
                       }}
                     >
-                      <CheckCircle2 size={13} color="#68765A" />
+                      <CheckCircle2 size={13} color="#C5A059" />
                       <span>{feat}</span>
                     </div>
                   ))}
