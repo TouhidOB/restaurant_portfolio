@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Skyline CMS Studio | SKYLINE Rooftop Restaurant{% endblock %}</title>
+    <!-- Google Fonts: Cormorant Garamond, Manrope, DM Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #101C2C;
+            --midnight-dark: #0A121D;
+            --midnight-card: #162438;
+            --midnight-elevated: #1D2E45;
+            --skyline-blue: #263F5A;
+            --champagne: #D8C3A0;
+            --champagne-light: #EFE6D8;
+            --champagne-muted: rgba(216, 195, 160, 0.4);
+            --cloud-ivory: #F3F0E9;
+            --sunset-copper: #C47A56;
+            --sunset-copper-hover: #D78A65;
+            --twilight-slate: #64788A;
+            --deep-charcoal: #171C22;
+            --warm-amber: #E7A75B;
+            --border-skyline: rgba(216, 195, 160, 0.22);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+
+            --font-display: 'Cormorant Garamond', Georgia, serif;
+            --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-accent: 'DM Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--midnight-dark);
+            color: var(--cloud-ivory);
+            font-family: var(--font-body);
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Bar */
+        .topbar {
+            background-color: var(--midnight);
+            border-bottom: 1px solid var(--border-skyline);
+            padding: 0.85rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand-badge {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .brand-crest {
+            width: 42px;
+            height: 42px;
+            border-radius: 4px;
+            background: linear-gradient(135deg, var(--skyline-blue) 0%, var(--midnight-card) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--champagne);
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: 1px solid var(--border-skyline);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+        }
+
+        .brand-text h1 {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--cloud-ivory);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            font-weight: 600;
+            line-height: 1.1;
+        }
+
+        .brand-text span {
+            font-family: var(--font-accent);
+            font-size: 0.72rem;
+            color: var(--champagne);
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .pill-badge {
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-family: var(--font-accent);
+        }
+
+        .pill-live {
+            background: rgba(38, 63, 90, 0.5);
+            color: var(--champagne);
+            border: 1px solid var(--border-skyline);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .pill-live::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: var(--warm-amber);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px var(--warm-amber);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.55rem 1.25rem;
+            border-radius: 3px;
+            font-size: 0.84rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            border: none;
+            font-family: var(--font-accent);
+        }
+
+        .btn-champagne {
+            background: var(--champagne);
+            color: var(--midnight-dark);
+            box-shadow: 0 4px 15px rgba(216, 195, 160, 0.2);
+        }
+        .btn-champagne:hover {
+            background: var(--champagne-light);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(216, 195, 160, 0.3);
+        }
+
+        .btn-copper {
+            background: var(--sunset-copper);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(196, 122, 86, 0.25);
+        }
+        .btn-copper:hover {
+            background: var(--sunset-copper-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--cloud-ivory);
+            border: 1px solid var(--border-skyline);
+        }
+        .btn-outline:hover {
+            background: rgba(216, 195, 160, 0.1);
+            color: var(--champagne);
+            border-color: var(--champagne);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+
+        /* Flash Messages */
+        .messages-container {
+            margin-bottom: 1.5rem;
+        }
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 3px;
+            margin-bottom: 0.75rem;
+            font-size: 0.92rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .alert-success {
+            background: rgba(38, 63, 90, 0.8);
+            border-left: 4px solid var(--champagne);
+            color: var(--champagne-light);
+        }
+        .alert-error {
+            background: rgba(196, 122, 86, 0.2);
+            border-left: 4px solid var(--sunset-copper);
+            color: #FFB59E;
+        }
+        .alert-info {
+            background: rgba(100, 120, 138, 0.25);
+            border-left: 4px solid var(--twilight-slate);
+            color: var(--cloud-ivory);
+        }
+
+        /* Footer */
+        .cms-footer {
+            background: var(--midnight);
+            border-top: 1px solid var(--border-subtle);
+            padding: 1.5rem 2rem;
+            text-align: center;
+            color: var(--twilight-slate);
+            font-size: 0.85rem;
+            margin-top: auto;
+        }
+
+        .cms-footer a {
+            color: var(--champagne);
+            text-decoration: none;
+        }
+
+        @media (max-width: 900px) {
+            .topbar {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <header class="topbar">
+        <a href="{% url 'cms_dashboard' %}" class="brand-badge">
+            <div class="brand-crest">S</div>
+            <div class="brand-text">
+                <h1>SKYLINE</h1>
+                <span>Rooftop Studio • Level 54 • Horizon Tower</span>
+            </div>
+        </a>
+
+        <div class="nav-actions">
+            <span class="pill-badge pill-live">Level 54 Horizon Live</span>
+            <a href="http://127.0.0.1:3000/" target="_blank" class="btn btn-outline">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                View Public Site
+            </a>
+            {% if user.is_authenticated %}
+                <span style="font-size: 0.85rem; color: var(--champagne); font-weight: 600;">
+                    Staff: {{ user.username }}
+                </span>
+                <a href="{% url 'cms_logout' %}" class="btn btn-outline" style="padding: 0.45rem 0.95rem; font-size: 0.8rem;">
+                    Sign Out
+                </a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Main Body Container -->
+    <main class="container">
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        <span>{{ message }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="cms-footer">
+        <p>SKYLINE Architectural Decoupled CMS Studio &copy; 2026. Django REST Backend Port 8001 &bull; React Frontend Port 3000.</p>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

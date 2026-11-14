@@ -1,0 +1,148 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Administrator Authentication | SKYLINE CMS Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+    .login-wrapper {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+
+    .login-card {
+        background: var(--midnight);
+        border: 1px solid var(--border-skyline);
+        border-radius: 4px;
+        width: 100%;
+        max-width: 480px;
+        padding: 2.75rem 2.25rem;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 25px rgba(216, 195, 160, 0.05);
+        position: relative;
+    }
+
+    .login-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--sunset-copper), var(--champagne), var(--skyline-blue));
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .login-header h2 {
+        font-family: var(--font-display);
+        font-size: 2.1rem;
+        color: var(--cloud-ivory);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 0.4rem;
+        font-weight: 600;
+    }
+
+    .login-header p {
+        color: var(--champagne);
+        font-size: 0.88rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-family: var(--font-accent);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--champagne);
+        font-weight: 600;
+        font-family: var(--font-accent);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.85rem 1rem;
+        background: var(--midnight-card);
+        border: 1px solid var(--border-skyline);
+        border-radius: 3px;
+        color: var(--cloud-ivory);
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        transition: all 0.25s ease;
+        outline: none;
+    }
+
+    .form-control:focus {
+        border-color: var(--champagne);
+        box-shadow: 0 0 0 2px rgba(216, 195, 160, 0.2);
+        background: var(--midnight-elevated);
+    }
+
+    .helper-box {
+        margin-top: 2rem;
+        padding: 1.1rem;
+        background: rgba(38, 63, 90, 0.35);
+        border-left: 3px solid var(--champagne);
+        border-radius: 2px;
+        font-size: 0.82rem;
+        color: var(--twilight-slate);
+    }
+    .helper-box strong {
+        color: var(--champagne);
+    }
+    .helper-box code {
+        background: var(--midnight-dark);
+        padding: 0.15rem 0.45rem;
+        border-radius: 2px;
+        color: var(--champagne-light);
+        font-family: monospace;
+        font-size: 0.86rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-header">
+            <h2>Skyline Studio</h2>
+            <p>Administrative Portal • Level 54</p>
+        </div>
+
+        <form method="POST" action="{% url 'cms_login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label" for="username">Staff Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="admin" required autofocus>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Security Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-champagne" style="width: 100%; padding: 0.85rem; margin-top: 0.75rem; font-size: 0.9rem;">
+                Authenticate & Enter Studio
+            </button>
+        </form>
+
+        <div class="helper-box">
+            <p><strong>Rooftop Administrator Credentials:</strong></p>
+            <p style="margin-top: 0.35rem;">Username: <code>admin</code> &nbsp;|&nbsp; Password: <code>adminpassword123</code></p>
+            <p style="margin-top: 0.4rem; font-size: 0.78rem;">Allows full editorial control over all 15 sections, 3D viewpoints, and real-time reservation inquiries.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

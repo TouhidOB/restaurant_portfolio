@@ -1,0 +1,1215 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Admin Dashboard & Section Studio | SKYLINE Rooftop{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Two-column Layout: Sidebar + Main Content */
+    .cms-layout {
+        display: grid;
+        grid-template-columns: 290px 1fr;
+        gap: 2rem;
+        align-items: flex-start;
+        position: relative;
+    }
+
+    /* Sidebar Navigation */
+    .cms-sidebar {
+        position: sticky;
+        top: 5rem;
+        max-height: calc(100vh - 6.5rem);
+        overflow-y: auto;
+        background: var(--midnight);
+        border: 1px solid var(--border-skyline);
+        border-radius: 4px;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    .cms-sidebar::-webkit-scrollbar {
+        width: 4px;
+    }
+    .cms-sidebar::-webkit-scrollbar-thumb {
+        background: var(--sunset-copper);
+    }
+
+    .sidebar-search {
+        width: 100%;
+        padding: 0.65rem 0.85rem;
+        background: var(--midnight-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 3px;
+        color: var(--cloud-ivory);
+        font-family: var(--font-body);
+        font-size: 0.82rem;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+    .sidebar-search:focus {
+        border-color: var(--champagne);
+    }
+
+    .sidebar-group-title {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--champagne);
+        font-weight: 700;
+        margin-bottom: 0.45rem;
+        padding-left: 0.5rem;
+        font-family: var(--font-accent);
+    }
+
+    .sidebar-nav-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+    }
+
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 0.75rem;
+        color: var(--twilight-slate);
+        text-decoration: none;
+        border-radius: 3px;
+        font-size: 0.84rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border-left: 3px solid transparent;
+    }
+
+    .sidebar-link:hover {
+        background: rgba(216, 195, 160, 0.06);
+        color: var(--cloud-ivory);
+        border-left-color: var(--champagne);
+    }
+
+    .sidebar-link.active {
+        background: rgba(38, 63, 90, 0.4);
+        color: var(--champagne);
+        font-weight: 700;
+        border-left-color: var(--sunset-copper);
+    }
+
+    .sidebar-badge {
+        font-size: 0.72rem;
+        padding: 0.15rem 0.45rem;
+        border-radius: 999px;
+        background: var(--midnight-card);
+        color: var(--champagne);
+        border: 1px solid var(--border-subtle);
+    }
+
+    /* Main Content Area */
+    .cms-main {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .section-card {
+        background: var(--midnight);
+        border: 1px solid var(--border-skyline);
+        border-radius: 4px;
+        padding: 1.85rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        transition: all 0.3s ease;
+        scroll-margin-top: 6rem;
+    }
+
+    .section-card.flash-highlight {
+        border-color: var(--champagne);
+        box-shadow: 0 0 25px rgba(216, 195, 160, 0.35);
+    }
+
+    .section-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 1.25rem;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .section-card-title {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+    }
+
+    .section-num {
+        font-family: var(--font-display);
+        font-size: 1.3rem;
+        color: var(--sunset-copper);
+        font-weight: 700;
+    }
+
+    .section-name {
+        font-family: var(--font-display);
+        font-size: 1.45rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--cloud-ivory);
+        font-weight: 600;
+    }
+
+    .section-desc {
+        color: var(--twilight-slate);
+        font-size: 0.85rem;
+        margin-top: 0.2rem;
+    }
+
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem;
+    }
+
+    .form-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1.25rem;
+    }
+
+    .form-grid-4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--champagne);
+        font-weight: 700;
+        font-family: var(--font-accent);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 0.95rem;
+        background: var(--midnight-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 3px;
+        color: var(--cloud-ivory);
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        outline: none;
+    }
+
+    .form-control:focus {
+        border-color: var(--champagne);
+        background: var(--midnight-elevated);
+    }
+
+    textarea.form-control {
+        min-height: 85px;
+        line-height: 1.5;
+        resize: vertical;
+    }
+
+    /* Subcard lists */
+    .subcard-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+        margin-top: 0.5rem;
+    }
+
+    .subcard {
+        background: var(--midnight-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: 3px;
+        padding: 1rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .subcard-info h4 {
+        font-size: 0.95rem;
+        color: var(--cloud-ivory);
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+    .subcard-info p {
+        font-size: 0.82rem;
+        color: var(--twilight-slate);
+    }
+
+    /* Reservations Inbox */
+    .res-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+        text-align: left;
+    }
+
+    .res-table th {
+        background: var(--midnight-card);
+        padding: 0.85rem 1rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--champagne);
+        border-bottom: 1px solid var(--border-subtle);
+        font-family: var(--font-accent);
+    }
+
+    .res-table td {
+        padding: 0.95rem 1rem;
+        border-bottom: 1px solid var(--border-subtle);
+        vertical-align: middle;
+    }
+
+    .res-table tr:hover td {
+        background: rgba(216, 195, 160, 0.03);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .status-pending {
+        background: rgba(231, 167, 91, 0.18);
+        color: var(--warm-amber);
+        border: 1px solid rgba(231, 167, 91, 0.4);
+    }
+
+    .status-confirmed {
+        background: rgba(216, 195, 160, 0.2);
+        color: var(--champagne);
+        border: 1px solid var(--border-skyline);
+    }
+
+    .status-cancelled {
+        background: rgba(196, 122, 86, 0.2);
+        color: var(--sunset-copper);
+        border: 1px solid rgba(196, 122, 86, 0.4);
+    }
+
+    .json-editor-box {
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        font-size: 0.85rem;
+        background: var(--midnight-dark);
+        border: 1px solid var(--border-subtle);
+        border-radius: 3px;
+        color: #A9DC76;
+        padding: 1.25rem;
+        min-height: 480px;
+        width: 100%;
+        line-height: 1.5;
+        white-space: pre;
+    }
+
+    .floating-save-bar {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 2rem;
+        z-index: 990;
+        background: var(--midnight);
+        border: 1px solid var(--border-skyline);
+        padding: 0.75rem 1.5rem;
+        border-radius: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+        .cms-layout {
+            grid-template-columns: 1fr;
+        }
+        .cms-sidebar {
+            position: static;
+            max-height: none;
+        }
+        .form-grid-2, .form-grid-3, .form-grid-4 {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cms-layout">
+
+    <!-- Sticky Navigation Sidebar -->
+    <aside class="cms-sidebar" id="cmsSidebar">
+        <div>
+            <input type="text" class="sidebar-search" id="sidebarSearch" placeholder="Filter sections... (e.g. Menu, 3D, Chef)">
+        </div>
+
+        <nav id="sidebarNav">
+            <!-- Group 1: Brand & Atmosphere -->
+            <div class="sidebar-group" data-nav-group>
+                <div class="sidebar-group-title">01. Brand & Atmosphere</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-hero"><span>S02. Hero & Skyline</span><span class="sidebar-badge">Core</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-story"><span>S03. Brand Story</span><span class="sidebar-badge">Text</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Group 2: Spatial & 3D WebGL -->
+            <div class="sidebar-group" data-nav-group style="margin-top: 0.75rem;">
+                <div class="sidebar-group-title">02. Spatial & 3D Tour</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-tour"><span>S04. 3D Virtual Tour</span><span class="sidebar-badge">WebGL</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-dining"><span>S05. Dining Spaces</span><span class="sidebar-badge">4 Areas</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-architecture"><span>S08. Architecture</span><span class="sidebar-badge">Design</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Group 3: Gastronomy & Wine -->
+            <div class="sidebar-group" data-nav-group style="margin-top: 0.75rem;">
+                <div class="sidebar-group-title">03. Gastronomy & Cellar</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-dishes"><span>S06. Signature Dishes</span><span class="sidebar-badge">5 Items</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-menu"><span>S07. Curated Menus</span><span class="sidebar-badge">Explorer</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-chef"><span>S09. Master Chef</span><span class="sidebar-badge">Profile</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Group 4: Celebrations & Visuals -->
+            <div class="sidebar-group" data-nav-group style="margin-top: 0.75rem;">
+                <div class="sidebar-group-title">04. Moments & Honors</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-experiences"><span>S10. Experiences</span><span class="sidebar-badge">Events</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-gallery"><span>S11. Horizon Gallery</span><span class="sidebar-badge">Photos</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-testimonials"><span>S12. Critical Press</span><span class="sidebar-badge">Accolades</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Group 5: Reservations & Arrival -->
+            <div class="sidebar-group" data-nav-group style="margin-top: 0.75rem;">
+                <div class="sidebar-group-title">05. Guests & Coordinates</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-inbox"><span>Reservations Inbox</span><span class="sidebar-badge" style="background: var(--sunset-copper); color: #fff;">{{ reservations.count }}</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-reservation"><span>S13. Booking Policies</span><span class="sidebar-badge">Rules</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-location"><span>S14. Location & Lift</span><span class="sidebar-badge">Level 54</span></a></li>
+                    <li><a class="sidebar-link" href="#sec-theme"><span>Design Tokens</span><span class="sidebar-badge">Colors</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Group 6: Power Tools -->
+            <div class="sidebar-group" data-nav-group style="margin-top: 0.75rem;">
+                <div class="sidebar-group-title">06. Advanced</div>
+                <ul class="sidebar-nav-list">
+                    <li><a class="sidebar-link" href="#sec-json"><span>Master JSON Editor</span><span class="sidebar-badge">Power</span></a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content Area: 15 Editable Section Cards -->
+    <section class="cms-main">
+
+        <!-- Form for Structured Field Edits -->
+        <form method="POST" action="{% url 'cms_dashboard' %}" id="cmsForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_form_sections">
+
+            <!-- S02: Hero & Brand -->
+            <div class="section-card" id="sec-hero">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">02</span>
+                        <div>
+                            <h3 class="section-name">Hero Canvas & Elevation Header</h3>
+                            <p class="section-desc">Primary visitor landing view, tower elevation badge, and top calls-to-action.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S02</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Restaurant Name</label>
+                        <input type="text" name="hero_name" class="form-control" value="{{ content.hero.restaurant_name|default:'SKYLINE' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Elevation & Altitude Badge</label>
+                        <input type="text" name="hero_elevation" class="form-control" value="{{ content.hero.elevation_badge|default:'Level 54 • 220m Above The City' }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Hero Main Title (Editorial Heading)</label>
+                    <input type="text" name="hero_title" class="form-control" value="{{ content.hero.title|default:'WHERE THE CITY TOUCHES THE SKY' }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tagline & Architecture Badges</label>
+                    <input type="text" name="hero_tagline" class="form-control" value="{{ content.hero.tagline|default:'Elevated Urban Dining • Panoramic Rooftop Terrace • Sunset Cocktails' }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Lead Narrative Description</label>
+                    <textarea name="hero_desc" class="form-control" rows="3">{{ content.hero.lead_description }}</textarea>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Primary Button Text (Reservation)</label>
+                        <input type="text" name="hero_cta_primary" class="form-control" value="{{ content.hero.cta_primary_text|default:'Reserve A Table' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Secondary Button Text (3D Tour)</label>
+                        <input type="text" name="hero_cta_secondary" class="form-control" value="{{ content.hero.cta_secondary_text|default:'Explore Virtual Tour' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- S03: Brand Story -->
+            <div class="section-card" id="sec-story">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">03</span>
+                        <div>
+                            <h3 class="section-name">Brand Story & Sky Narrative</h3>
+                            <p class="section-desc">The philosophy of dining 220 meters above the city, architectural vision, and culinary values.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S03</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Section Eyebrow Subtitle</label>
+                        <input type="text" name="story_subtitle" class="form-control" value="{{ content.brandStory.subtitle|default:'Our Story & Vision' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Section Main Title</label>
+                        <input type="text" name="story_title" class="form-control" value="{{ content.brandStory.title|default:'Culinary Artistry Above the Horizon' }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Narrative Paragraph 1 (Atmosphere & Vision)</label>
+                    <textarea name="story_p1" class="form-control" rows="3">{{ content.brandStory.body_paragraph_1 }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Narrative Paragraph 2 (Twilight Gastronomy)</label>
+                    <textarea name="story_p2" class="form-control" rows="3">{{ content.brandStory.body_paragraph_2 }}</textarea>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Featured Philosophy Quote</label>
+                        <input type="text" name="story_quote" class="form-control" value="{{ content.brandStory.quote }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quote Attributed Author</label>
+                        <input type="text" name="story_quote_author" class="form-control" value="{{ content.brandStory.quote_author }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- S04: 3D Virtual Tour -->
+            <div class="section-card" id="sec-tour">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">04</span>
+                        <div>
+                            <h3 class="section-name">3D Rooftop Virtual Tour</h3>
+                            <p class="section-desc">Interactive Three.js / WebGL architectural ascent through 5 viewpoints.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S04</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Section Eyebrow</label>
+                        <input type="text" name="tour_subtitle" class="form-control" value="{{ content.virtualTour.subtitle|default:'Ascend Through 5 Architectural Viewpoints' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tour Title</label>
+                        <input type="text" name="tour_title" class="form-control" value="{{ content.virtualTour.title|default:'Skyline Rooftop Virtual Tour' }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tour Description</label>
+                    <textarea name="tour_desc" class="form-control" rows="2">{{ content.virtualTour.description }}</textarea>
+                </div>
+
+                <div class="subcard-list">
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>01. Level 54 Cantilevered Terrace Exterior</h4>
+                            <p>Cantilevered glass deck, architectural bronze fins, sunset sky horizon.</p>
+                        </div>
+                        <span class="sidebar-badge">Pos: [0, 4.2, 11.5]</span>
+                    </div>
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>02. Rooftop Arrival & Concierge Vestibule</h4>
+                            <p>Backlit champagne onyx portal, express high-speed sky lift, host reception.</p>
+                        </div>
+                        <span class="sidebar-badge">Pos: [-3.5, 2.2, 6.0]</span>
+                    </div>
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>03. Open-Air Sunset Dining Terrace</h4>
+                            <p>Frameless acoustic windbreaks, heated teak deck, glowing linear fire pits.</p>
+                        </div>
+                        <span class="sidebar-badge">Pos: [0, 2.0, 5.5]</span>
+                    </div>
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>04. Indoor Glasshouse Dining Lounge</h4>
+                            <p>Double-height low-iron glazing, curved velvet banquettes, champagne acoustic ceiling.</p>
+                        </div>
+                        <span class="sidebar-badge">Pos: [3.2, 2.2, 4.8]</span>
+                    </div>
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>05. Horizon Onyx Bar & Sunset Alcove</h4>
+                            <p>12-meter backlit golden onyx counter, rare spirits cellar, prime sunset skyline alcove.</p>
+                        </div>
+                        <span class="sidebar-badge">Pos: [-3.8, 2.0, 4.0]</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- S05: Dining Experience -->
+            <div class="section-card" id="sec-dining">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">05</span>
+                        <div>
+                            <h3 class="section-name">Dining Experiences & Spatial Dimensions</h3>
+                            <p class="section-desc">Four distinct atmospheres: Open-Air Terrace, Glasshouse Sky Lounge, Private Horizon Suite, and Twilight Cocktail Terrace.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S05</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Section Eyebrow</label>
+                        <input type="text" name="exp_subtitle" class="form-control" value="{{ content.diningExperience.subtitle|default:'Atmosphere & Architecture' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Section Title</label>
+                        <input type="text" name="exp_title" class="form-control" value="{{ content.diningExperience.title|default:'Distinct Rooftop Dining Dimensions' }}">
+                    </div>
+                </div>
+
+                <div class="subcard-list">
+                    {% for space in content.diningExperience.spaces %}
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>{{ space.name }} ({{ space.tag }})</h4>
+                            <p>{{ space.desc }}</p>
+                        </div>
+                        <span class="sidebar-badge">Area {{ forloop.counter }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- S06: Signature Dishes -->
+            <div class="section-card" id="sec-dishes">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">06</span>
+                        <div>
+                            <h3 class="section-name">Signature Skyline Culinary Creations</h3>
+                            <p class="section-desc">Interactive culinary showcase featuring Wagyu, Chilean Seabass, Caviar Scallop Crudo, and Gold Chocolate Orb.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S06</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Subtitle</label>
+                        <input type="text" name="sig_subtitle" class="form-control" value="{{ content.signatureDishes.subtitle|default:'Crafted By Master Chefs at 220 Meters' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="sig_title" class="form-control" value="{{ content.signatureDishes.title|default:'Signature Skyline Culinary Creations' }}">
+                    </div>
+                </div>
+
+                <div class="subcard-list">
+                    {% for dish in content.signatureDishes.dishes %}
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>{{ dish.name }} &bull; <span style="color: var(--champagne);">{{ dish.price }}</span> ({{ dish.badge }})</h4>
+                            <p>{{ dish.description|truncatewords:15 }}</p>
+                        </div>
+                        <span class="sidebar-badge">{{ dish.category }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- S07: Menu -->
+            <div class="section-card" id="sec-menu">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">07</span>
+                        <div>
+                            <h3 class="section-name">Curated Seasonal Menus</h3>
+                            <p class="section-desc">Interactive tabs for 7-Course Twilight Tasting, À La Carte, Artisan Cocktails, and Grand Reserve Cellar.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S07</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Menu Subtitle</label>
+                        <input type="text" name="menu_subtitle" class="form-control" value="{{ content.menu.subtitle|default:'Tasting Menus, À La Carte & Rare Reserve Cellar' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Menu Title</label>
+                        <input type="text" name="menu_title" class="form-control" value="{{ content.menu.title|default:'Curated Seasonal Menus' }}">
+                    </div>
+                </div>
+
+                <div class="subcard-list">
+                    {% for cat in content.menu.categories %}
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>{{ cat.name }} {% if cat.price %}&bull; <span style="color: var(--champagne);">{{ cat.price }}</span>{% endif %}</h4>
+                            <p>{{ cat.items|length }} dishes / beverages listed in this category</p>
+                        </div>
+                        <span class="sidebar-badge">Category {{ forloop.counter }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- S08: Architecture -->
+            <div class="section-card" id="sec-architecture">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">08</span>
+                        <div>
+                            <h3 class="section-name">Architectural Design & Engineering</h3>
+                            <p class="section-desc">Cantilevered Glass Skydeck, Aerodynamic Glass Windbreaks, Climate Pergolas, and Acoustic Engineering.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S08</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Subtitle</label>
+                        <input type="text" name="arch_subtitle" class="form-control" value="{{ content.architecture.subtitle|default:'Cantilevered Glass & Panoramic Vistas' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="arch_title" class="form-control" value="{{ content.architecture.title|default:'Architectural Design & Engineering' }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Architectural Statement Quote</label>
+                    <textarea name="arch_quote" class="form-control" rows="2">{{ content.architecture.quote }}</textarea>
+                </div>
+            </div>
+
+            <!-- S09: Master Chef -->
+            <div class="section-card" id="sec-chef">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">09</span>
+                        <div>
+                            <h3 class="section-name">Master Chef & Culinary Director</h3>
+                            <p class="section-desc">Biography, Michelin accolades, culinary philosophy, and signature quote.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S09</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Chef Full Name</label>
+                        <input type="text" name="chef_name" class="form-control" value="{{ content.chef.name|default:'Chef Julian Moreau' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Chef Professional Title</label>
+                        <input type="text" name="chef_title" class="form-control" value="{{ content.chef.title|default:'Executive Chef & Culinary Director' }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Biography & Heritage</label>
+                    <textarea name="chef_bio" class="form-control" rows="3">{{ content.chef.bio }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Culinary Quote</label>
+                    <input type="text" name="chef_quote" class="form-control" value="{{ content.chef.quote }}">
+                </div>
+            </div>
+
+            <!-- S10: Special Experiences -->
+            <div class="section-card" id="sec-experiences">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">10</span>
+                        <div>
+                            <h3 class="section-name">Curated Horizon Celebrations</h3>
+                            <p class="section-desc">Sunset Aperitivo, Level 54 Exclusive Buyout, Stargazing Tastings, and Chef's Table.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S10</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Subtitle</label>
+                        <input type="text" name="spec_subtitle" class="form-control" value="{{ content.specialExperiences.subtitle|default:'From Sunset Aperitivo to Stargazing Buyouts' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="spec_title" class="form-control" value="{{ content.specialExperiences.title|default:'Curated Horizon Celebrations' }}">
+                    </div>
+                </div>
+
+                <div class="subcard-list">
+                    {% for exp in content.specialExperiences.experiences %}
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>{{ exp.title }} &bull; <span style="color: var(--champagne);">{{ exp.price }}</span></h4>
+                            <p>{{ exp.desc }} ({{ exp.time }})</p>
+                        </div>
+                        <span class="sidebar-badge">Experience {{ forloop.counter }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- S11: Gallery -->
+            <div class="section-card" id="sec-gallery">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">11</span>
+                        <div>
+                            <h3 class="section-name">Panoramic Visual Gallery</h3>
+                            <p class="section-desc">Curated high-resolution photography of rooftop views, fine dishes, and sunset ambiance.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S11</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Subtitle</label>
+                        <input type="text" name="gal_subtitle" class="form-control" value="{{ content.gallery.subtitle|default:'Moments Captured in the Clouds' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="gal_title" class="form-control" value="{{ content.gallery.title|default:'Panoramic Visual Gallery' }}">
+                    </div>
+                </div>
+
+                <p style="font-size: 0.85rem; color: var(--twilight-slate); margin-top: 0.5rem;">
+                    {{ content.gallery.images|length }} active gallery plates displayed in public lightbox. Edit individual image URLs directly in the Master JSON Editor.
+                </p>
+            </div>
+
+            <!-- S12: Testimonials -->
+            <div class="section-card" id="sec-testimonials">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">12</span>
+                        <div>
+                            <h3 class="section-name">Critical Acclaim & Press</h3>
+                            <p class="section-desc">Reviews from Michelin Guide, Architectural Digest, Condé Nast Traveler, and diners.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S12</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Subtitle</label>
+                        <input type="text" name="test_subtitle" class="form-control" value="{{ content.testimonials.subtitle|default:'Global Hospitality Recognition' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Title</label>
+                        <input type="text" name="test_title" class="form-control" value="{{ content.testimonials.title|default:'Critical Acclaim & Guest Honors' }}">
+                    </div>
+                </div>
+
+                <div class="subcard-list">
+                    {% for rev in content.testimonials.reviews %}
+                    <div class="subcard">
+                        <div class="subcard-info">
+                            <h4>{{ rev.author }} &bull; <span style="color: var(--champagne);">{{ rev.role }}</span></h4>
+                            <p>"{{ rev.quote|truncatewords:18 }}"</p>
+                        </div>
+                        <span class="sidebar-badge">5 &starf;</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- S13: Reservation Info -->
+            <div class="section-card" id="sec-reservation">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">13</span>
+                        <div>
+                            <h3 class="section-name">Table Reservation Info & Policies</h3>
+                            <p class="section-desc">Booking rules, dress code, seating options, and cancellation policies.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S13</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Section Subtitle</label>
+                        <input type="text" name="res_subtitle" class="form-control" value="{{ content.reservation.subtitle|default:'Secure Your Place Above the City' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Section Title</label>
+                        <input type="text" name="res_title" class="form-control" value="{{ content.reservation.title|default:'Table Reservations' }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Booking Lead Description</label>
+                    <textarea name="res_desc" class="form-control" rows="2">{{ content.reservation.description }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Dress Code & Cancellation Policy</label>
+                    <input type="text" name="res_policy" class="form-control" value="{{ content.reservation.policy }}">
+                </div>
+            </div>
+
+            <!-- S14: Location & Arrival -->
+            <div class="section-card" id="sec-location">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">14</span>
+                        <div>
+                            <h3 class="section-name">Location, Arrival & Skyline Coordinates</h3>
+                            <p class="section-desc">Address, express sky lift instructions, concierge phone, email, and operating hours.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Section S14</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Location Subtitle</label>
+                        <input type="text" name="loc_subtitle" class="form-control" value="{{ content.location.subtitle|default:'Crown of Horizon Tower' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location Title</label>
+                        <input type="text" name="loc_title" class="form-control" value="{{ content.location.title|default:'Location, Arrival & Skyline Coordinates' }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tower Address</label>
+                    <input type="text" name="loc_address" class="form-control" value="{{ content.location.address }}">
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Concierge Telephone</label>
+                        <input type="text" name="loc_phone" class="form-control" value="{{ content.location.phone }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Concierge Email</label>
+                        <input type="email" name="loc_email" class="form-control" value="{{ content.location.email }}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Operating & Sunset Hours</label>
+                    <input type="text" name="loc_hours" class="form-control" value="{{ content.location.hours }}">
+                </div>
+            </div>
+
+            <!-- Theme Color Tokens -->
+            <div class="section-card" id="sec-theme">
+                <div class="section-card-header">
+                    <div class="section-card-title">
+                        <span class="section-num">&bull;</span>
+                        <div>
+                            <h3 class="section-name">Skyline Architectural Palette</h3>
+                            <p class="section-desc">Brand colors synchronized across the 3D canvas and frontend interface.</p>
+                        </div>
+                    </div>
+                    <span class="sidebar-badge">Design Tokens</span>
+                </div>
+
+                <div class="form-grid-4">
+                    <div class="form-group">
+                        <label class="form-label">Midnight Navy</label>
+                        <input type="text" name="theme_midnight" class="form-control" value="{{ content.theme.colors.midnight|default:'#101C2C' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Skyline Blue</label>
+                        <input type="text" name="theme_skyline_blue" class="form-control" value="{{ content.theme.colors.skyline_blue|default:'#263F5A' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Champagne Sand</label>
+                        <input type="text" name="theme_champagne" class="form-control" value="{{ content.theme.colors.champagne|default:'#D8C3A0' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sunset Copper</label>
+                        <input type="text" name="theme_sunset_copper" class="form-control" value="{{ content.theme.colors.sunset_copper|default:'#C47A56' }}">
+                    </div>
+                </div>
+
+                <div class="form-grid-4" style="margin-top: 1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Cloud Ivory</label>
+                        <input type="text" name="theme_cloud_ivory" class="form-control" value="{{ content.theme.colors.cloud_ivory|default:'#F3F0E9' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Twilight Slate</label>
+                        <input type="text" name="theme_twilight_slate" class="form-control" value="{{ content.theme.colors.twilight_slate|default:'#64788A' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Deep Charcoal</label>
+                        <input type="text" name="theme_deep_charcoal" class="form-control" value="{{ content.theme.colors.deep_charcoal|default:'#171C22' }}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Warm Amber</label>
+                        <input type="text" name="theme_warm_amber" class="form-control" value="{{ content.theme.colors.warm_amber|default:'#E7A75B' }}">
+                    </div>
+                </div>
+
+                <div style="margin-top: 1.5rem; text-align: right;">
+                    <button type="submit" class="btn btn-champagne">
+                        Publish Form Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Reservations Inbox Section -->
+        <div class="section-card" id="sec-inbox">
+            <div class="section-card-header">
+                <div class="section-card-title">
+                    <span class="section-num">&bull;</span>
+                    <div>
+                        <h3 class="section-name">Live Table Reservations Inbox</h3>
+                        <p class="section-desc">Incoming booking inquiries received from the public website & reservation modal.</p>
+                    </div>
+                </div>
+                <span class="sidebar-badge" style="background: var(--sunset-copper); color: #fff;">{{ reservations.count }} Total Inquiries</span>
+            </div>
+
+            {% if reservations %}
+                <div style="overflow-x: auto;">
+                    <table class="res-table">
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Guest Name</th>
+                                <th>Party Size</th>
+                                <th>Seating Preference</th>
+                                <th>Contact</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for res in reservations %}
+                            <tr>
+                                <td>
+                                    <strong>{{ res.date }}</strong><br>
+                                    <span style="color: var(--champagne); font-size: 0.8rem;">{{ res.time }}</span>
+                                </td>
+                                <td>
+                                    <strong>{{ res.full_name }}</strong><br>
+                                    <span style="color: var(--twilight-slate); font-size: 0.78rem;">{{ res.occasion }}</span>
+                                </td>
+                                <td>{{ res.guests }}</td>
+                                <td>
+                                    <span style="color: var(--champagne); font-weight: 600;">{{ res.get_seating_preference_display }}</span>
+                                    {% if res.special_requests %}
+                                        <br><span style="font-size: 0.75rem; color: var(--twilight-slate);">"{{ res.special_requests|truncatewords:6 }}"</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ res.phone }}<br>
+                                    <span style="color: var(--twilight-slate); font-size: 0.8rem;">{{ res.email }}</span>
+                                </td>
+                                <td>
+                                    <span class="status-badge status-{{ res.status }}">{{ res.status|title }}</span>
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 0.4rem; align-items: center;">
+                                        <!-- Status Update Form -->
+                                        <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            {% if res.status == 'pending' %}
+                                                <input type="hidden" name="status" value="confirmed">
+                                                <button type="submit" class="btn btn-champagne" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Confirm</button>
+                                            {% else %}
+                                                <input type="hidden" name="status" value="pending">
+                                                <button type="submit" class="btn btn-outline" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">Set Pending</button>
+                                            {% endif %}
+                                        </form>
+
+                                        <!-- Delete Form -->
+                                        <form method="POST" action="{% url 'cms_reservation_delete' res.id %}" style="display: inline;" onsubmit="return confirm('Remove reservation for {{ res.full_name }}?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; color: #ff9e9e; border-color: rgba(255,100,100,0.3);">Del</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p style="color: var(--twilight-slate); text-align: center; padding: 2rem;">No reservation inquiries received yet. Submit an inquiry through the public website or modal to test live intake.</p>
+            {% endif %}
+        </div>
+
+        <!-- Master Raw JSON Editor -->
+        <div class="section-card" id="sec-json">
+            <div class="section-card-header">
+                <div class="section-card-title">
+                    <span class="section-num">&bull;</span>
+                    <div>
+                        <h3 class="section-name">Master JSON Power Editor</h3>
+                        <p class="section-desc">Direct schema editor for complete control over all 15 sections, nested menus, 3D viewpoints, and camera coordinates.</p>
+                    </div>
+                </div>
+                <span class="sidebar-badge" style="background: var(--skyline-blue); color: var(--champagne);">Power Tool</span>
+            </div>
+
+            <form method="POST" action="{% url 'cms_dashboard' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_raw_json">
+
+                <div class="form-group">
+                    <textarea name="raw_json" class="json-editor-box" id="rawJsonEditor">{{ pretty_json }}</textarea>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
+                    <span style="font-size: 0.8rem; color: var(--twilight-slate);">All edits validated as strict JSON before saving to SQLite database and published to `/api/content/`.</span>
+                    <button type="submit" class="btn btn-champagne">
+                        Save &amp; Deploy JSON Schema
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </section>
+</div>
+
+<!-- Floating Quick Save Pill -->
+<div class="floating-save-bar">
+    <span style="font-size: 0.82rem; color: var(--champagne); font-weight: 600;">Level 54 CMS Studio</span>
+    <button type="button" onclick="document.getElementById('cmsForm').submit();" class="btn btn-champagne" style="padding: 0.45rem 1rem; font-size: 0.8rem;">
+        Publish Form Changes
+    </button>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Live Sidebar Search Filtering
+    const searchInput = document.getElementById('sidebarSearch');
+    const navLinks = document.querySelectorAll('.sidebar-link');
+    const navGroups = document.querySelectorAll('[data-nav-group]');
+    const sectionCards = document.querySelectorAll('.section-card');
+
+    searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase().trim();
+
+        navLinks.forEach(link => {
+            const text = link.textContent.toLowerCase();
+            const parentLi = link.closest('li');
+            if (!query || text.includes(query)) {
+                parentLi.style.display = 'block';
+            } else {
+                parentLi.style.display = 'none';
+            }
+        });
+
+        navGroups.forEach(group => {
+            const visibleItems = group.querySelectorAll('li[style="display: block;"], li:not([style*="display: none"])');
+            if (visibleItems.length > 0) {
+                group.style.display = 'block';
+            } else {
+                group.style.display = 'none';
+            }
+        });
+
+        if (query) {
+            sectionCards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        } else {
+            sectionCards.forEach(card => card.style.display = 'block');
+        }
+    });
+
+    // Smooth Scroll & Flash Highlight for Sidebar Links
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href').substring(1);
+            const targetCard = document.getElementById(targetId);
+            if (targetCard) {
+                // remove active from other links
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+
+                // targetCard flash
+                targetCard.classList.add('flash-highlight');
+                setTimeout(() => {
+                    targetCard.classList.remove('flash-highlight');
+                }, 1500);
+            }
+        });
+    });
+</script>
+{% endblock %}
