@@ -1,0 +1,596 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Operations Studio | {{ config.restaurant_name }}{% endblock %}
+
+{% block body_content %}
+<div class="cms-container">
+  <!-- PERSISTENT SIDEBAR -->
+  <aside class="cms-sidebar">
+    <div class="cms-sidebar-header">
+      <div class="cms-brand-logo">
+        CHARRED <span>&</span> PRIME
+      </div>
+      <div class="cms-badge">Dark Luxury CMS Studio</div>
+    </div>
+
+    <!-- Live Search Filter -->
+    <div class="cms-search-box">
+      <input type="text" id="sidebarFilter" class="cms-search-input" placeholder="Search sections & tools...">
+    </div>
+
+    <div class="cms-nav-group" id="sidebarNav">
+      <div class="cms-nav-heading">Operations</div>
+      <a href="#sec-overview" class="cms-nav-item" data-filter="overview metrics kpi dashboard">
+        <span>Overview & Metrics</span>
+        <span class="tag">KPIs</span>
+      </a>
+      <a href="#sec-reservations" class="cms-nav-item" data-filter="reservations bookings triage inbox guest inquiries">
+        <span>Reservation Inbox</span>
+        <span class="tag" style="background: rgba(216, 154, 75, 0.2); color: #f3be7a;">{{ metrics.pending_reservations }} pending</span>
+      </a>
+
+      <div class="cms-nav-heading" style="margin-top: 10px;">Brand & Core</div>
+      <a href="#sec-general" class="cms-nav-item" data-filter="general branding theme typography colors contact phone email address">
+        <span>General & Theme</span>
+        <span class="tag">Core</span>
+      </a>
+      <a href="#sec-hero" class="cms-nav-item" data-filter="s02 hero 3d exterior facade entrance headline cta">
+        <span>S02 Hero & 3D Exterior</span>
+        <span class="tag">3D WebGL</span>
+      </a>
+      <a href="#sec-story" class="cms-nav-item" data-filter="s03 brand story narrative tradition history quote">
+        <span>S03 Brand Story</span>
+        <span class="tag">Editorial</span>
+      </a>
+      <a href="#sec-tour" class="cms-nav-item" data-filter="s04 virtual tour 5 viewpoints 3d camera panorama spaces">
+        <span>S04 Virtual Tour</span>
+        <span class="tag">{{ viewpoints.count }} Spaces</span>
+      </a>
+
+      <div class="cms-nav-heading" style="margin-top: 10px;">Culinary & Menus</div>
+      <a href="#sec-philosophy" class="cms-nav-item" data-filter="s05 culinary philosophy sourcing dry-aged wagyu ingredient selection">
+        <span>S05 Philosophy</span>
+        <span class="tag">Pillars</span>
+      </a>
+      <a href="#sec-signature" class="cms-nav-item" data-filter="s06 signature steaks prime ribeye filet mignon tomahawk cuts">
+        <span>S06 Signature Steaks</span>
+        <span class="tag">Showcase</span>
+      </a>
+      <a href="#sec-menu" class="cms-nav-item" data-filter="s07 complete menu explorer categories dishes starters seafood sides desserts">
+        <span>S07 Menu Explorer</span>
+        <span class="tag">{{ menu_items.count }} Dishes</span>
+      </a>
+      <a href="#sec-fire" class="cms-nav-item" data-filter="s08 open-fire kitchen wood grill charcoal embers open flame">
+        <span>S08 Open-Fire Kitchen</span>
+        <span class="tag">Craft</span>
+      </a>
+      <a href="#sec-team" class="cms-nav-item" data-filter="s09 chef team culinary master grillers pitmaster portraits">
+        <span>S09 Culinary Team</span>
+        <span class="tag">Team</span>
+      </a>
+
+      <div class="cms-nav-heading" style="margin-top: 10px;">Hospitality & Media</div>
+      <a href="#sec-experiences" class="cms-nav-item" data-filter="s10 private dining exclusive experiences celebration corporate salons">
+        <span>S10 Private Dining</span>
+        <span class="tag">Salons</span>
+      </a>
+      <a href="#sec-gallery" class="cms-nav-item" data-filter="s11 architecture food gallery photography lightbox categories">
+        <span>S11 Gallery</span>
+        <span class="tag">{{ gallery_items.count }} Photos</span>
+      </a>
+      <a href="#sec-testimonials" class="cms-nav-item" data-filter="s12 reviews press features michelin critics testimonials">
+        <span>S12 Reviews & Press</span>
+        <span class="tag">Social Proof</span>
+      </a>
+      <a href="#sec-location" class="cms-nav-item" data-filter="s14 location opening hours directions map address phone">
+        <span>S14 Location & Hours</span>
+        <span class="tag">Map</span>
+      </a>
+      <a href="#sec-footer" class="cms-nav-item" data-filter="s15 brand footer tagline copyright links">
+        <span>S15 Brand Footer</span>
+        <span class="tag">Footer</span>
+      </a>
+
+      <div class="cms-nav-heading" style="margin-top: 10px;">Developer Tools</div>
+      <a href="#sec-json" class="cms-nav-item" data-filter="master json power editor raw schema settings override">
+        <span>Master JSON Editor</span>
+        <span class="tag">JSON</span>
+      </a>
+    </div>
+
+    <div class="cms-sidebar-footer">
+      <div>
+        <strong style="color: var(--ivory);">{{ request.user.username }}</strong>
+        <div style="color: var(--taupe); font-size: 11px;">Administrator</div>
+      </div>
+      <a href="{% url 'cms_logout' %}" class="btn btn-outline" style="padding: 4px 10px; font-size: 11px;">Exit</a>
+    </div>
+  </aside>
+
+  <!-- MAIN DASHBOARD CONTENT -->
+  <main class="cms-main">
+    <div class="cms-topbar">
+      <div>
+        <h1 class="cms-title">Operations Studio</h1>
+        <p style="color: var(--taupe); font-size: 13px; margin-top: 4px;">
+          Live Editorial Control Center & Reservation Desk for <strong style="color: var(--champagne);">{{ config.restaurant_name }}</strong>
+        </p>
+      </div>
+      <div class="cms-actions">
+        <a href="http://localhost:3000/" target="_blank" class="btn btn-outline">
+          &nearr; View Guest Site
+        </a>
+        <a href="#sec-reservations" class="btn btn-bronze">
+          Triage Inquiries ({{ metrics.pending_reservations }})
+        </a>
+      </div>
+    </div>
+
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert {% if msg.tags == 'error' %}alert-error{% endif %}">
+          {{ msg }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- SEC: OVERVIEW & METRICS -->
+    <section id="sec-overview" class="cms-card">
+      <div class="cms-card-header">
+        <h2 class="cms-card-title">System Overview & Live Metrics</h2>
+        <span class="badge-status status-confirmed">Live System Healthy</span>
+      </div>
+      <div class="grid-4">
+        <div style="background: var(--graphite); padding: 18px; border-radius: 3px; border: 1px solid var(--border-dark);">
+          <div style="font-family: var(--font-heading); font-size: 11px; text-transform: uppercase; color: var(--taupe); letter-spacing: 1px;">Total Inquiries</div>
+          <div style="font-family: var(--font-display); font-size: 32px; color: var(--ivory); font-weight: 700; margin-top: 4px;">{{ metrics.total_reservations }}</div>
+          <div style="font-size: 12px; color: #f3be7a; margin-top: 2px;">{{ metrics.pending_reservations }} awaiting confirmation</div>
+        </div>
+        <div style="background: var(--graphite); padding: 18px; border-radius: 3px; border: 1px solid var(--border-dark);">
+          <div style="font-family: var(--font-heading); font-size: 11px; text-transform: uppercase; color: var(--taupe); letter-spacing: 1px;">Confirmed Guests</div>
+          <div style="font-family: var(--font-display); font-size: 32px; color: #68d391; font-weight: 700; margin-top: 4px;">{{ metrics.confirmed_reservations }}</div>
+          <div style="font-size: 12px; color: var(--taupe); margin-top: 2px;">Active seating ledger</div>
+        </div>
+        <div style="background: var(--graphite); padding: 18px; border-radius: 3px; border: 1px solid var(--border-dark);">
+          <div style="font-family: var(--font-heading); font-size: 11px; text-transform: uppercase; color: var(--taupe); letter-spacing: 1px;">Dishes on Menu</div>
+          <div style="font-family: var(--font-display); font-size: 32px; color: var(--champagne); font-weight: 700; margin-top: 4px;">{{ metrics.total_menu_items }}</div>
+          <div style="font-size: 12px; color: var(--taupe); margin-top: 2px;">Across {{ metrics.active_categories }} categories</div>
+        </div>
+        <div style="background: var(--graphite); padding: 18px; border-radius: 3px; border: 1px solid var(--border-dark);">
+          <div style="font-family: var(--font-heading); font-size: 11px; text-transform: uppercase; color: var(--taupe); letter-spacing: 1px;">Virtual Tour Viewpoints</div>
+          <div style="font-family: var(--font-display); font-size: 32px; color: var(--bronze); font-weight: 700; margin-top: 4px;">{{ metrics.active_viewpoints }}</div>
+          <div style="font-size: 12px; color: var(--taupe); margin-top: 2px;">3D WebGL / Photographic</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEC: RESERVATIONS INBOX -->
+    <section id="sec-reservations" class="cms-card">
+      <div class="cms-card-header">
+        <h2 class="cms-card-title">Reservation Inquiries & Dining Desk</h2>
+        <span class="badge-status status-pending">{{ metrics.pending_reservations }} Pending Inquiries</span>
+      </div>
+      <p style="color: var(--taupe); font-size: 13px; margin-bottom: 16px;">
+        All guest inquiries submitted through Section 13 or navigation modals are triaged here. Per luxury dining compliance, online inquiries require staff confirmation.
+      </p>
+
+      {% if reservations %}
+      <div style="overflow-x: auto;">
+        <table class="cms-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Guest Name</th>
+              <th>Phone & Email</th>
+              <th>Date & Time</th>
+              <th>Party</th>
+              <th>Experience & Requests</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for res in reservations %}
+            <tr>
+              <td>#{{ res.id }}</td>
+              <td><strong style="color: var(--ivory);">{{ res.full_name }}</strong></td>
+              <td>
+                <div>{{ res.phone }}</div>
+                <div style="font-size: 11px; color: var(--taupe);">{{ res.email|default:"-" }}</div>
+              </td>
+              <td>
+                <div style="color: var(--champagne);">{{ res.preferred_date }}</div>
+                <div style="font-size: 11px; color: var(--taupe);">{{ res.preferred_time }}</div>
+              </td>
+              <td>{{ res.guests }} Guests</td>
+              <td>
+                {% if res.selected_experience %}
+                  <div style="color: var(--bronze); font-weight: 600; font-size: 11px;">{{ res.selected_experience }}</div>
+                {% endif %}
+                <div style="font-size: 12px; color: var(--taupe); max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  {{ res.special_requests|default:"No special notes" }}
+                </div>
+              </td>
+              <td>
+                <span class="badge-status status-{{ res.status }}">{{ res.status }}</span>
+              </td>
+              <td>
+                <div style="display: flex; gap: 6px;">
+                  {% if res.status != 'confirmed' %}
+                  <form method="POST" action="{% url 'cms_res_status' res.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="confirmed">
+                    <button type="submit" class="btn btn-outline" style="padding: 2px 8px; font-size: 11px; color: #68d391; border-color: #38a169;">Confirm</button>
+                  </form>
+                  {% endif %}
+                  {% if res.status != 'cancelled' %}
+                  <form method="POST" action="{% url 'cms_res_status' res.id %}" style="display: inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="cancelled">
+                    <button type="submit" class="btn btn-outline" style="padding: 2px 8px; font-size: 11px; color: #fc8181; border-color: #e53e3e;">Cancel</button>
+                  </form>
+                  {% endif %}
+                  <form method="POST" action="{% url 'cms_del_res' res.id %}" onsubmit="return confirm('Delete this reservation inquiry permanently?');" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline" style="padding: 2px 8px; font-size: 11px; color: #a59a8c;">&times;</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div style="padding: 30px; text-align: center; color: var(--taupe); background: var(--graphite); border-radius: 4px;">
+        No guest reservation inquiries received yet. Test the booking form on the public site!
+      </div>
+      {% endif %}
+    </section>
+
+    <!-- SEC: GENERAL SETTINGS & HERO EDITORS -->
+    <form method="POST" action="{% url 'cms_update_config' %}">
+      {% csrf_token %}
+
+      <!-- GENERAL BRANDING -->
+      <section id="sec-general" class="cms-card">
+        <div class="cms-card-header">
+          <h2 class="cms-card-title">General Brand Configuration & Theme</h2>
+          <button type="submit" class="btn btn-bronze">Save Brand Settings</button>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Restaurant Name</label>
+            <input type="text" name="restaurant_name" class="form-control" value="{{ config.restaurant_name }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Phone</label>
+            <input type="text" name="phone" class="form-control" value="{{ config.content_json.site.phone|default:'+1 (212) 840-7832' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Email</label>
+            <input type="email" name="email" class="form-control" value="{{ config.content_json.site.email|default:'concierge@charredandprime.com' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Physical Address</label>
+            <input type="text" name="address" class="form-control" value="{{ config.content_json.site.address|default:'482 Lexington Avenue, Manhattan, NY 10017' }}">
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label">Operating Hours</label>
+            <input type="text" name="hours" class="form-control" value="{{ config.content_json.site.hours|default:'Tuesday – Sunday: 5:00 PM – 11:30 PM (Grill till 11:00 PM)' }}">
+          </div>
+        </div>
+      </section>
+
+      <!-- S02: HERO & 3D EXTERIOR -->
+      <section id="sec-hero" class="cms-card">
+        <div class="cms-card-header">
+          <h2 class="cms-card-title">Section 02: Hero & 3D Architectural Exterior</h2>
+          <button type="submit" class="btn btn-bronze">Update Hero</button>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Eyebrow Badge</label>
+            <input type="text" name="hero_eyebrow" class="form-control" value="{{ config.content_json.hero.eyebrow|default:'A REFINED CONTEMPORARY STEAKHOUSE' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hero Headline</label>
+            <input type="text" name="hero_title" class="form-control" value="{{ config.content_json.hero.title|default:'THE ART OF THE STEAKHOUSE.' }}">
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label">Hero Narrative Description</label>
+            <textarea name="hero_description" class="form-control">{{ config.content_json.hero.description|default:'An intimate dining destination where exceptional prime beef, custom wood-fired embers, sculptural dark architecture, and refined hospitality converge.' }}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Primary CTA Button</label>
+            <input type="text" name="hero_primaryCta" class="form-control" value="{{ config.content_json.hero.primaryCta|default:'EXPLORE THE MENU' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Secondary CTA Button</label>
+            <input type="text" name="hero_secondaryCta" class="form-control" value="{{ config.content_json.hero.secondaryCta|default:'DISCOVER OUR SPACE' }}">
+          </div>
+        </div>
+      </section>
+
+      <!-- S03: BRAND STORY -->
+      <section id="sec-story" class="cms-card">
+        <div class="cms-card-header">
+          <h2 class="cms-card-title">Section 03: Brand Introduction & Culinary Tradition</h2>
+          <button type="submit" class="btn btn-bronze">Update Brand Story</button>
+        </div>
+        <div class="grid-2">
+          <div class="form-group">
+            <label class="form-label">Eyebrow</label>
+            <input type="text" name="story_eyebrow" class="form-control" value="{{ config.content_json.brand_story.eyebrow|default:'A TRADITION OF EXCEPTIONAL DINING' }}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Heading</label>
+            <input type="text" name="story_heading" class="form-control" value="{{ config.content_json.brand_story.heading|default:'BEYOND THE ORDINARY DINING EXPERIENCE.' }}">
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label">Main Narrative</label>
+            <textarea name="story_main_text" class="form-control">{{ config.content_json.brand_story.main_text|default:'Charred & Prime was conceived as an architectural sanctuary for carnivorous connoisseurs. Combining bespoke 45-day Himalayan salt dry-aging with custom white-oak Argentine parrillaworks, we celebrate the purity of heritage cattle and prime cuts in an environment of quiet, commanding luxury.' }}</textarea>
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label">Culinary Quote</label>
+            <input type="text" name="story_quote" class="form-control" value="{{ config.content_json.brand_story.quote|default:'In fine beef, perfection is not an accident of flame; it is the patient intersection of heritage breeding, bespoke dry-aging, and exact thermal mastery.' }}">
+          </div>
+        </div>
+      </section>
+
+      <!-- S08: OPEN-FIRE KITCHEN -->
+      <section id="sec-fire" class="cms-card">
+        <div class="cms-card-header">
+          <h2 class="cms-card-title">Section 08: The Art of Fire & Open-Grill Cooking</h2>
+          <button type="submit" class="btn btn-bronze">Save Fire Narrative</button>
+        </div>
+        <div class="grid-2">
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label">Section Headline</label>
+            <input type="text" name="fire_heading" class="form-control" value="{{ config.content_json.open_fire_kitchen.heading|default:'CRAFTED OVER FIRE. SERVED WITH PURPOSE.' }}">
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label">Grill & Flame Narrative</label>
+            <textarea name="fire_description" class="form-control">{{ config.content_json.open_fire_kitchen.description|default:'Our hearth burns seasoned post oak, binchotan charcoal, and aged applewood. Every steak is seared at over 1,200 degrees to produce an impeccably caramelized Maillard crust while protecting the tender, buttery core within.' }}</textarea>
+          </div>
+        </div>
+      </section>
+    </form>
+
+    <!-- S04: VIRTUAL TOUR VIEWPOINTS MANAGER -->
+    <section id="sec-tour" class="cms-card">
+      <div class="cms-card-header">
+        <h2 class="cms-card-title">Section 04: Five-Viewpoint Virtual Tour Manager</h2>
+      </div>
+      <p style="color: var(--taupe); font-size: 13px; margin-bottom: 16px;">
+        Configure the 5 interactive architectural viewpoints. The frontend 3D canvas smoothly interpolates the camera between these coordinates.
+      </p>
+
+      <div style="overflow-x: auto; margin-bottom: 24px;">
+        <table class="cms-table">
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Viewpoint Title</th>
+              <th>Subtitle</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for vp in viewpoints %}
+            <tr>
+              <td>#{{ vp.sort_order }}</td>
+              <td><strong style="color: var(--champagne);">{{ vp.title }}</strong></td>
+              <td>{{ vp.subtitle }}</td>
+              <td style="max-width: 280px; font-size: 12px; color: var(--taupe);">{{ vp.description }}</td>
+              <td><span class="badge-status status-confirmed">Active</span></td>
+              <td>
+                <form method="POST" action="{% url 'cms_delete_viewpoint' vp.id %}" onsubmit="return confirm('Remove viewpoint?');">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline" style="padding: 2px 8px; font-size: 11px; color: #fc8181; border-color: #e53e3e;">Delete</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add viewpoint form -->
+      <form method="POST" action="{% url 'cms_add_viewpoint' %}" style="background: var(--graphite); padding: 18px; border-radius: 4px; border: 1px solid var(--border-dark);">
+        {% csrf_token %}
+        <div style="font-family: var(--font-heading); font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--champagne); margin-bottom: 12px;">
+          Add New Virtual Tour Viewpoint
+        </div>
+        <div class="grid-3">
+          <div class="form-group">
+            <label class="form-label">Viewpoint Title</label>
+            <input type="text" name="title" class="form-control" placeholder="e.g. Sommelier Wine Vault" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Subtitle</label>
+            <input type="text" name="subtitle" class="form-control" placeholder="e.g. 2,000 Rare Vintages">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Sort Order</label>
+            <input type="number" name="sort_order" class="form-control" value="6">
+          </div>
+          <div class="form-group" style="grid-column: span 3;">
+            <label class="form-label">Description</label>
+            <input type="text" name="description" class="form-control" placeholder="Architectural and spatial overview of this dining area...">
+          </div>
+          <div class="form-group" style="grid-column: span 3;">
+            <button type="submit" class="btn btn-bronze">Create Viewpoint</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- S06 & S07: MENU EXPLORER & DISHES MANAGER -->
+    <section id="sec-menu" class="cms-card">
+      <div class="cms-card-header">
+        <h2 class="cms-card-title">Sections 06 & 07: Menu Explorer & Steaks Manager</h2>
+      </div>
+      <p style="color: var(--taupe); font-size: 13px; margin-bottom: 16px;">
+        Manage all cuts, starters, seafood, and sides. Items marked as <strong>Featured</strong> appear in the Section 06 Signature Steak Collection.
+      </p>
+
+      <div style="overflow-x: auto; margin-bottom: 24px;">
+        <table class="cms-table">
+          <thead>
+            <tr>
+              <th>Dish Name</th>
+              <th>Category</th>
+              <th>Cut / Style</th>
+              <th>Price</th>
+              <th>Featured</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in menu_items %}
+            <tr>
+              <td>
+                <strong style="color: var(--ivory);">{{ item.name }}</strong>
+                <div style="font-size: 11px; color: var(--taupe);">{{ item.serving_size|default:"" }}</div>
+              </td>
+              <td><span class="tag">{{ item.category.name }}</span></td>
+              <td>{{ item.cut_type|default:"-" }}</td>
+              <td style="color: var(--champagne); font-weight: 600;">{{ item.currency }}{{ item.price }}</td>
+              <td>
+                {% if item.is_featured %}
+                  <span style="color: #68d391; font-size: 11px; font-weight: 700;">★ S06 Spotlight</span>
+                {% else %}
+                  <span style="color: var(--taupe); font-size: 11px;">Standard</span>
+                {% endif %}
+              </td>
+              <td><span class="badge-status status-confirmed">Available</span></td>
+              <td>
+                <form method="POST" action="{% url 'cms_delete_menu_item' item.id %}" onsubmit="return confirm('Delete this menu item?');">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline" style="padding: 2px 8px; font-size: 11px; color: #fc8181; border-color: #e53e3e;">Delete</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add dish form -->
+      <form method="POST" action="{% url 'cms_add_menu_item' %}" style="background: var(--graphite); padding: 18px; border-radius: 4px; border: 1px solid var(--border-dark);">
+        {% csrf_token %}
+        <div style="font-family: var(--font-heading); font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--champagne); margin-bottom: 12px;">
+          Add New Culinary Creation or Steak Cut
+        </div>
+        <div class="grid-3">
+          <div class="form-group">
+            <label class="form-label">Dish Name</label>
+            <input type="text" name="name" class="form-control" placeholder="e.g. Porterhouse 32oz" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Menu Category</label>
+            <select name="category_id" class="form-control" required>
+              {% for cat in categories %}
+                <option value="{{ cat.id }}">{{ cat.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Price (USD)</label>
+            <input type="number" step="0.01" name="price" class="form-control" placeholder="135.00" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cut Type</label>
+            <input type="text" name="cut_type" class="form-control" placeholder="e.g. 45-Day Dry Aged Prime Bone-In">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Serving Size</label>
+            <input type="text" name="serving_size" class="form-control" placeholder="e.g. Serves 2 | 32 oz / 900g">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Image URL</label>
+            <input type="text" name="image_url" class="form-control" placeholder="https://images.unsplash.com/...">
+          </div>
+          <div class="form-group" style="grid-column: span 3;">
+            <label class="form-label">Tasting Description</label>
+            <textarea name="description" class="form-control" placeholder="Describe wood flame caramelization, marbling texture, and accompaniments..."></textarea>
+          </div>
+          <div class="form-group" style="grid-column: span 3; display: flex; align-items: center; gap: 10px;">
+            <input type="checkbox" id="is_featured" name="is_featured" style="width: 18px; height: 18px; accent-color: var(--bronze);">
+            <label for="is_featured" style="color: var(--ivory); font-size: 13px; cursor: pointer;">
+              Feature in Section 06 Signature Steak Collection
+            </label>
+          </div>
+          <div class="form-group" style="grid-column: span 3;">
+            <button type="submit" class="btn btn-bronze">Save & Publish Dish</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- SEC: MASTER JSON POWER EDITOR -->
+    <section id="sec-json" class="cms-card">
+      <div class="cms-card-header">
+        <h2 class="cms-card-title">Master JSON Power Editor</h2>
+        <span class="tag">Raw Schema Override</span>
+      </div>
+      <p style="color: var(--taupe); font-size: 13px; margin-bottom: 14px;">
+        Advanced power console for editing design tokens, typography, 3D WebGL camera offsets, and all 15 editorial sections in one unified document.
+      </p>
+
+      <form method="POST" action="{% url 'cms_update_json' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <textarea name="raw_json" class="form-control" style="font-family: monospace; font-size: 12px; line-height: 1.5; min-height: 380px; background: #0c0c0c; color: #68d391;">{{ content_str }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-bronze" onclick="return confirm('Publish raw JSON updates to the live site?');">
+          Save & Publish Master JSON
+        </button>
+      </form>
+    </section>
+  </main>
+</div>
+
+<script>
+  // Real-time Sidebar Search Filter
+  const filterInput = document.getElementById('sidebarFilter');
+  const navItems = document.querySelectorAll('#sidebarNav .cms-nav-item');
+
+  filterInput.addEventListener('input', function(e) {
+    const query = e.target.value.toLowerCase().trim();
+    navItems.forEach(item => {
+      const filterData = (item.getAttribute('data-filter') || '').toLowerCase();
+      const text = item.innerText.toLowerCase();
+      if (!query || filterData.includes(query) || text.includes(query)) {
+        item.style.display = 'flex';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  });
+
+  // Smooth scroll and flash highlight on click
+  navItems.forEach(item => {
+    item.addEventListener('click', function(e) {
+      navItems.forEach(i => i.classList.remove('active'));
+      this.classList.add('active');
+
+      const targetId = this.getAttribute('href');
+      if (targetId && targetId.startsWith('#')) {
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          targetEl.classList.remove('flash-highlight');
+          void targetEl.offsetWidth; // Trigger reflow
+          targetEl.classList.add('flash-highlight');
+          setTimeout(() => targetEl.classList.remove('flash-highlight'), 1800);
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}
