@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Coastal Restaurant CMS Studio — Aura Marina{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --med-blue: #174A63;
+            --med-blue-dark: #0F3142;
+            --ocean-blue: #367E94;
+            --sea-mist: #C9DDE0;
+            --sea-mist-light: #F0F6F7;
+            --coastal-white: #FAF9F5;
+            --warm-sand: #E8D9C2;
+            --travertine: #C8B69B;
+            --travertine-border: #D8CCB8;
+            --olive-green: #68765A;
+            --terracotta: #B86E50;
+            --charcoal: #292B29;
+            --muted-stone: #8C8981;
+            --card-bg: #FFFFFF;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #F6F4EE;
+            color: var(--charcoal);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4, .serif-font {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            letter-spacing: -0.01em;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Layout */
+        .cms-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .cms-sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--med-blue-dark);
+            color: var(--coastal-white);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(201, 221, 224, 0.15);
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-brand h1 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #FFFFFF;
+        }
+
+        .sidebar-brand p {
+            font-size: 11px;
+            color: var(--sea-mist);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+
+        .sidebar-search {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-search input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(201, 221, 224, 0.2);
+            color: #FFFFFF;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .sidebar-search input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--sea-mist);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 12px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--travertine);
+            padding: 12px 14px 6px;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            color: #D2DEE2;
+            text-decoration: none;
+            font-size: 13px;
+            border-radius: 6px;
+            margin-bottom: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #FFFFFF;
+        }
+
+        .nav-link .badge {
+            background: var(--ocean-blue);
+            color: white;
+            font-size: 10px;
+            padding: 2px 7px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-live-site {
+            display: block;
+            text-align: center;
+            background: var(--travertine);
+            color: var(--med-blue-dark);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 6px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: background 0.2s;
+        }
+
+        .btn-live-site:hover {
+            background: #E8D9C2;
+        }
+
+        /* Main Content */
+        .cms-main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 32px 40px;
+            max-width: 1440px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--travertine-border);
+        }
+
+        .topbar-title h2 {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--med-blue-dark);
+        }
+
+        .topbar-title p {
+            color: var(--muted-stone);
+            font-size: 13px;
+        }
+
+        .topbar-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .user-tag {
+            font-size: 12px;
+            background: var(--coastal-white);
+            border: 1px solid var(--travertine-border);
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: var(--med-blue);
+            font-weight: 500;
+        }
+
+        .btn-logout {
+            font-size: 12px;
+            color: var(--terracotta);
+            text-decoration: none;
+            padding: 6px 12px;
+            border: 1px solid rgba(184, 110, 80, 0.3);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-logout:hover {
+            background: var(--terracotta);
+            color: white;
+        }
+
+        /* Alert notifications */
+        .messages {
+            margin-bottom: 24px;
+        }
+
+        .alert {
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .alert-success {
+            background-color: #EBF7EE;
+            color: #276738;
+            border: 1px solid #C3E6CB;
+        }
+
+        .alert-error, .alert-danger {
+            background-color: #FDF2F2;
+            color: #9B1C1C;
+            border: 1px solid #F8B4B4;
+        }
+
+        .alert-info {
+            background-color: #EFF8FA;
+            color: #174A63;
+            border: 1px solid #C9DDE0;
+        }
+
+        /* Metric Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--travertine-border);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .kpi-label {
+            font-size: 11px;
+            color: var(--muted-stone);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 6px;
+        }
+
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--med-blue-dark);
+            line-height: 1;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .kpi-sub {
+            font-size: 12px;
+            color: var(--olive-green);
+            margin-top: 6px;
+        }
+
+        /* Section Cards */
+        .cms-card {
+            background: var(--card-bg);
+            border: 1px solid var(--travertine-border);
+            border-radius: 12px;
+            margin-bottom: 32px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.02);
+        }
+
+        .cms-card-header {
+            padding: 20px 24px;
+            background: #FAFAF7;
+            border-bottom: 1px solid var(--travertine-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .cms-card-header h3 {
+            font-size: 20px;
+            color: var(--med-blue-dark);
+            font-weight: 600;
+        }
+
+        .cms-card-header span {
+            font-size: 12px;
+            color: var(--muted-stone);
+        }
+
+        .cms-card-body {
+            padding: 24px;
+        }
+
+        /* Form styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-grid-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--med-blue-dark);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 13px;
+            border: 1px solid var(--travertine-border);
+            border-radius: 6px;
+            background: #FFFFFF;
+            color: var(--charcoal);
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--med-blue);
+            box-shadow: 0 0 0 3px rgba(23, 74, 99, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .btn-primary {
+            background: var(--med-blue);
+            color: #FFFFFF;
+            border: none;
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--med-blue-dark);
+        }
+
+        .btn-secondary {
+            background: var(--warm-sand);
+            color: var(--charcoal);
+            border: 1px solid var(--travertine);
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        /* Data Tables */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .cms-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .cms-table th {
+            padding: 12px 16px;
+            background: #F9F8F5;
+            color: var(--muted-stone);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            border-bottom: 1px solid var(--travertine-border);
+        }
+
+        .cms-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #EFECE4;
+            color: var(--charcoal);
+            vertical-align: middle;
+        }
+
+        .cms-table tr:hover {
+            background-color: #FAFAF6;
+        }
+
+        .status-pill {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .status-pending { background: #FEF3C7; color: #92400E; }
+        .status-confirmed { background: #DEF7EC; color: #03543F; }
+        .status-seated { background: #E1EFFE; color: #1E429F; }
+        .status-declined { background: #FDE8E8; color: #9B1C1C; }
+
+        /* Highlight animation for search filter */
+        .filter-highlight {
+            animation: pulse-border 1.5s ease;
+            box-shadow: 0 0 0 3px rgba(54, 126, 148, 0.4);
+        }
+
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 4px rgba(54, 126, 148, 0.8); }
+            100% { box-shadow: 0 0 0 0 rgba(54, 126, 148, 0); }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <div class="cms-layout">
+        {% block sidebar %}
+        <!-- CMS Persistent Sidebar -->
+        <aside class="cms-sidebar">
+            <div class="sidebar-brand">
+                <h1>AURA MARINA</h1>
+                <p>Coastal CMS Studio • v2.0</p>
+            </div>
+            
+            <div class="sidebar-search">
+                <input type="text" id="sidebarFilter" placeholder="Filter sections, dishes, tour..." autocomplete="off">
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-label">Overview & Sections</div>
+                <a href="#overview" class="nav-link"><span>Telemetry & KPI</span></a>
+                <a href="#settings-section" class="nav-link"><span>Architectural Settings</span></a>
+                <a href="#tour-section" class="nav-link"><span>3D Tour Viewpoints</span> <span class="badge">5</span></a>
+                
+                <div class="nav-label">Culinary & Dining</div>
+                <a href="#menu-section" class="nav-link"><span>Menu & Signatures</span></a>
+                <a href="#reservations-section" class="nav-link"><span>Reservation Desk</span></a>
+                <a href="#spaces-section" class="nav-link"><span>Dining Spaces</span></a>
+                <a href="#gallery-section" class="nav-link"><span>Media Gallery</span></a>
+
+                <div class="nav-label">Developer & System</div>
+                <a href="#master-json-section" class="nav-link"><span>Master JSON Config</span></a>
+                <a href="/admin/" target="_blank" class="nav-link"><span>Django Admin Core ↗</span></a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="http://127.0.0.1:3000/" target="_blank" class="btn-live-site">
+                    View Public Website ↗
+                </a>
+            </div>
+        </aside>
+        {% endblock %}
+
+        <main class="cms-main">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Quick live search filter script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterInput = document.getElementById('sidebarFilter');
+            if (filterInput) {
+                filterInput.addEventListener('input', function(e) {
+                    const query = e.target.value.toLowerCase().trim();
+                    if (!query) return;
+
+                    const cards = document.querySelectorAll('.cms-card, .kpi-card');
+                    cards.forEach(card => {
+                        const text = card.textContent.toLowerCase();
+                        if (text.includes(query)) {
+                            card.classList.add('filter-highlight');
+                            setTimeout(() => card.classList.remove('filter-highlight'), 1600);
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

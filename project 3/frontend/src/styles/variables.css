@@ -1,0 +1,38 @@
+:root {
+  /* Mediterranean Riviera Luxury Palette */
+  --color-med-deep: #174A63;
+  --color-med-dark: #0F3142;
+  --color-ocean: #367E94;
+  --color-azure: #25617D;
+  --color-sea-mist: #C9DDE0;
+  --color-sea-mist-soft: #F2F7F8;
+  --color-coastal-white: #FAF9F5;
+  --color-sand: #E8D9C2;
+  --color-sand-light: #F6F1EA;
+  --color-travertine: #C8B69B;
+  --color-travertine-border: #E0D6C5;
+  --color-olive: #68765A;
+  --color-olive-dark: #4B5640;
+  --color-terracotta: #B86E50;
+  --color-charcoal: #292B29;
+  --color-muted-stone: #8C8981;
+  --color-gold: #D6A854;
+
+  /* Typography */
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Transitions */
+  --transition-smooth: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: all 0.2s ease-out;
+
+  /* Shadows */
+  --shadow-subtle: 0 4px 20px rgba(23, 74, 99, 0.05);
+  --shadow-elevated: 0 12px 35px rgba(23, 74, 99, 0.08);
+  --shadow-float: 0 20px 50px rgba(15, 49, 66, 0.12);
+
+  /* Container */
+  --max-width: 1360px;
+  --section-pad-y: 110px;
+}

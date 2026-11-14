@@ -1,0 +1,337 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Studio Dashboard — Aura Marina Coastal CMS{% endblock %}
+
+{% block content %}
+<!-- Topbar -->
+<header class="topbar">
+    <div class="topbar-title">
+        <h2>Coastal Restaurant CMS Studio</h2>
+        <p>Operational control center for 3D digital experience, architectural spatial tour, menu, and reservations.</p>
+    </div>
+    <div class="topbar-actions">
+        <span class="user-tag">Staff: {{ request.user.username }}</span>
+        <a href="{% url 'cms_logout' %}" class="btn-logout">Sign Out</a>
+    </div>
+</header>
+
+<!-- Flash Messages -->
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- Telemetry KPIs -->
+<section id="overview" class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-label">Reservation Inquiries</div>
+        <div class="kpi-value">{{ all_reservations_count }}</div>
+        <div class="kpi-sub">{{ pending_reservations_count }} pending concierge review</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Active Dishes</div>
+        <div class="kpi-value">{{ menu_items|length }}</div>
+        <div class="kpi-sub">Across {{ categories|length }} tasting categories</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">3D Spatial Viewpoints</div>
+        <div class="kpi-value">{{ viewpoints|length }}</div>
+        <div class="kpi-sub">Exterior, arches, terrace, hearth</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Tables Available Today</div>
+        <div class="kpi-value">{{ settings.tables_available_today|default:"6" }}</div>
+        <div class="kpi-sub">Sunset & evening seatings</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">Daily Catches</div>
+        <div class="kpi-value">{{ settings.daily_fresh_catches|default:"8" }}</div>
+        <div class="kpi-sub">Salerno & Capri artisanal fishers</div>
+    </div>
+</section>
+
+<!-- SECTION 1: ARCHITECTURAL & RESTAURANT SETTINGS -->
+<section id="settings-section" class="cms-card">
+    <div class="cms-card-header">
+        <div>
+            <h3>Architectural & Restaurant Settings</h3>
+            <span>Brand identity, hero messaging, coastal coordinates, and guest policies</span>
+        </div>
+        <span class="mono-font" style="font-size: 11px; background: #EFF8FA; color: var(--med-blue); padding: 4px 8px; border-radius: 4px;">S01 — S03 CONFIG</span>
+    </div>
+    <div class="cms-card-body">
+        <form method="POST" action="{% url 'cms_update_settings' %}">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Brand Name</label>
+                    <input type="text" name="brand_name" class="form-control" value="{{ settings.brand_name }}">
+                </div>
+                <div class="form-group">
+                    <label>Tagline</label>
+                    <input type="text" name="tagline" class="form-control" value="{{ settings.tagline }}">
+                </div>
+                <div class="form-group form-grid-full">
+                    <label>Hero Headline (S02)</label>
+                    <input type="text" name="hero_headline" class="form-control" value="{{ settings.hero_headline }}">
+                </div>
+                <div class="form-group form-grid-full">
+                    <label>Hero Subheadline (S02)</label>
+                    <textarea name="hero_subheadline" class="form-control">{{ settings.hero_subheadline }}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Address Line</label>
+                    <input type="text" name="address_line1" class="form-control" value="{{ settings.address_line1 }}">
+                </div>
+                <div class="form-group">
+                    <label>City & Region</label>
+                    <input type="text" name="city_region" class="form-control" value="{{ settings.city_region }}">
+                </div>
+                <div class="form-group">
+                    <label>Nautical Coordinates / Mooring</label>
+                    <input type="text" name="coordinates_display" class="form-control" value="{{ settings.coordinates_display }}">
+                </div>
+                <div class="form-group">
+                    <label>Concierge Phone</label>
+                    <input type="text" name="phone" class="form-control" value="{{ settings.phone }}">
+                </div>
+                <div class="form-group">
+                    <label>Direct Inquiries Email</label>
+                    <input type="email" name="email" class="form-control" value="{{ settings.email }}">
+                </div>
+                <div class="form-group">
+                    <label>Michelin Distinction</label>
+                    <input type="text" name="michelin_distinction" class="form-control" value="{{ settings.michelin_distinction }}">
+                </div>
+                <div class="form-group">
+                    <label>Tables Available Today (Live Metric)</label>
+                    <input type="number" name="tables_available_today" class="form-control" value="{{ settings.tables_available_today }}">
+                </div>
+                <div class="form-group form-grid-full">
+                    <label>Dress Code Policy</label>
+                    <input type="text" name="dress_code" class="form-control" value="{{ settings.dress_code }}">
+                </div>
+                <div class="form-group form-grid-full">
+                    <label>Boat Mooring & Tender Service</label>
+                    <input type="text" name="boat_access_notes" class="form-control" value="{{ settings.boat_access_notes }}">
+                </div>
+            </div>
+            <div style="margin-top: 10px;">
+                <button type="submit" class="btn-primary">Save Settings</button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- SECTION 2: 3D TOUR VIEWPOINTS -->
+<section id="tour-section" class="cms-card">
+    <div class="cms-card-header">
+        <div>
+            <h3>3D Spatial Tour Viewpoints</h3>
+            <span>Configurable camera coordinates, spatial transitions, and interactive architectural hotspots</span>
+        </div>
+        <span class="mono-font" style="font-size: 11px; background: #EFF8FA; color: var(--med-blue); padding: 4px 8px; border-radius: 4px;">S04 3D WEBGL</span>
+    </div>
+    <div class="cms-card-body">
+        <div class="table-responsive">
+            <table class="cms-table">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Viewpoint Title</th>
+                        <th>Space Name</th>
+                        <th>Camera Position [X, Y, Z]</th>
+                        <th>LookAt Target [X, Y, Z]</th>
+                        <th>Hotspot Detail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for vp in viewpoints %}
+                    <tr>
+                        <td class="mono-font">{{ vp.sort_order }}</td>
+                        <td><strong>{{ vp.title }}</strong><br><small style="color: var(--muted-stone);">{{ vp.subtitle }}</small></td>
+                        <td>{{ vp.space_name }}</td>
+                        <td class="mono-font" style="font-size: 12px; color: var(--med-blue);">{{ vp.camera_position }}</td>
+                        <td class="mono-font" style="font-size: 12px; color: var(--med-blue);">{{ vp.camera_target }}</td>
+                        <td><strong>{{ vp.hotspot_title }}</strong><br><small style="color: var(--muted-stone);">{{ vp.hotspot_description|truncatewords:8 }}</small></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: var(--muted-stone);">No tour viewpoints defined. Run seed script.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 3: MENU & SIGNATURE DISHES -->
+<section id="menu-section" class="cms-card">
+    <div class="cms-card-header">
+        <div>
+            <h3>Culinary Offerings & Signature Dishes</h3>
+            <span>Manage prices, local origin stories, wine pairings, and live availability</span>
+        </div>
+        <span class="mono-font" style="font-size: 11px; background: #EFF8FA; color: var(--med-blue); padding: 4px 8px; border-radius: 4px;">S06 — S07 MENU</span>
+    </div>
+    <div class="cms-card-body">
+        <div class="table-responsive">
+            <table class="cms-table">
+                <thead>
+                    <tr>
+                        <th>Dish Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Provenance & Pairing</th>
+                        <th>Dietary Flags</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in menu_items %}
+                    <tr>
+                        <td>
+                            <strong>{{ item.name }}</strong>
+                            {% if item.is_signature %}
+                            <span style="font-size: 10px; background: #E8D9C2; color: #174A63; padding: 2px 6px; border-radius: 10px; margin-left: 6px; font-weight: 600;">SIGNATURE</span>
+                            {% endif %}
+                            <br><small style="color: var(--muted-stone);">{{ item.english_name }}</small>
+                        </td>
+                        <td>{{ item.category.name }}</td>
+                        <td class="mono-font" style="font-weight: 600; color: var(--med-blue);">{{ item.currency_symbol }}{{ item.price }}</td>
+                        <td>
+                            <small><strong>Origin:</strong> {{ item.origin }}</small><br>
+                            <small style="color: var(--olive-green);"><strong>Wine:</strong> {{ item.wine_pairing }}</small>
+                        </td>
+                        <td>
+                            {% for tag in item.dietary_tags %}
+                            <span style="display: inline-block; font-size: 10px; background: #F0F6F7; color: var(--med-blue); padding: 2px 6px; border-radius: 4px; margin-right: 2px;">{{ tag }}</span>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% if item.is_available %}
+                            <span class="status-pill status-confirmed">Available</span>
+                            {% else %}
+                            <span class="status-pill status-declined">Sold Out</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="POST" action="{% url 'cms_toggle_menu_item' item.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-secondary" style="font-size: 11px; padding: 4px 8px;">
+                                    {% if item.is_available %}Mark Sold Out{% else %}Mark Available{% endif %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--muted-stone);">No menu items found. Run database seeder.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 4: RESERVATION & DINING INQUIRY DESK -->
+<section id="reservations-section" class="cms-card">
+    <div class="cms-card-header">
+        <div>
+            <h3>Reservation & Dining Inquiry Desk</h3>
+            <span>Guest reservation requests from S13 with contact, seating preference, and concierge workflow</span>
+        </div>
+        <span class="mono-font" style="font-size: 11px; background: #FEF3C7; color: #92400E; padding: 4px 8px; border-radius: 4px;">S13 INQUIRIES</span>
+    </div>
+    <div class="cms-card-body">
+        <div class="table-responsive">
+            <table class="cms-table">
+                <thead>
+                    <tr>
+                        <th>Ref Code</th>
+                        <th>Guest Details</th>
+                        <th>Date & Time</th>
+                        <th>Party</th>
+                        <th>Seating & Occasion</th>
+                        <th>Status</th>
+                        <th>Concierge Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in reservations %}
+                    <tr>
+                        <td class="mono-font" style="font-weight: 600; color: var(--med-blue);">{{ res.reference_code }}</td>
+                        <td>
+                            <strong>{{ res.guest_name }}</strong><br>
+                            <small>{{ res.email }}</small><br>
+                            <small class="mono-font">{{ res.phone }}</small>
+                        </td>
+                        <td>
+                            <strong>{{ res.reservation_date|date:"M d, Y" }}</strong><br>
+                            <small class="mono-font">{{ res.reservation_time }}</small>
+                        </td>
+                        <td class="mono-font" style="font-weight: 600;">{{ res.party_size }} Guests</td>
+                        <td>
+                            <strong>{{ res.seating_preference }}</strong><br>
+                            <small style="color: var(--muted-stone);">{{ res.occasion }}</small>
+                            {% if res.special_requests %}
+                            <br><small style="color: var(--terracotta);">"{{ res.special_requests|truncatewords:6 }}"</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="status-pill status-{{ res.status }}">{{ res.get_status_display }}</span>
+                        </td>
+                        <td>
+                            <form method="POST" action="{% url 'cms_update_reservation_status' res.id %}" style="display: flex; gap: 4px; align-items: center;">
+                                {% csrf_token %}
+                                <select name="status" class="form-control" style="font-size: 11px; padding: 4px 6px; width: 110px;">
+                                    <option value="pending" {% if res.status == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="confirmed" {% if res.status == 'confirmed' %}selected{% endif %}>Confirm</option>
+                                    <option value="seated" {% if res.status == 'seated' %}selected{% endif %}>Seated</option>
+                                    <option value="declined" {% if res.status == 'declined' %}selected{% endif %}>Decline</option>
+                                    <option value="archived" {% if res.status == 'archived' %}selected{% endif %}>Archive</option>
+                                </select>
+                                <button type="submit" class="btn-primary" style="font-size: 11px; padding: 5px 8px;">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: var(--muted-stone); padding: 30px;">
+                            No reservation inquiries received yet. Submit an inquiry through the public website!
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- SECTION 5: MASTER JSON POWER EDITOR -->
+<section id="master-json-section" class="cms-card">
+    <div class="cms-card-header">
+        <div>
+            <h3>Master JSON Configuration Editor</h3>
+            <span>Direct low-level content payload configuration for developers and power managers</span>
+        </div>
+        <span class="mono-font" style="font-size: 11px; background: #EFF8FA; color: var(--med-blue); padding: 4px 8px; border-radius: 4px;">RAW CONFIG</span>
+    </div>
+    <div class="cms-card-body">
+        <form method="POST" action="{% url 'cms_save_master_json' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label>JSON Configuration Payload</label>
+                <textarea name="master_json_text" class="form-control mono-font" style="min-height: 220px; font-size: 12px; background: #FAFAF7; color: #174A63;">{{ master_json_str }}</textarea>
+            </div>
+            <button type="submit" class="btn-primary">Apply Master JSON Updates</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
