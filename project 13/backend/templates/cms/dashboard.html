@@ -1,0 +1,588 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}Dashboard Studio — SEOUL STREET CMS{% endblock %}
+
+{% block layout %}
+  <!-- Sidebar Navigation -->
+  <aside class="cms-sidebar">
+    <div class="sidebar-search">
+      <input type="text" id="sidebarFilter" placeholder="Filter sections...">
+    </div>
+
+    <div>
+      <div class="sidebar-group-title">Navigation & Sections</div>
+      <ul class="nav-list">
+        <li class="nav-item active"><a href="#sec-overview"><span>📊</span> Dashboard Overview</a></li>
+        <li class="nav-item"><a href="#sec-hero"><span>🏮</span> S02: Hero & Neon Brand</a></li>
+        <li class="nav-item"><a href="#sec-story"><span>🍜</span> S03: Brand Story & Seoul Energy</a></li>
+        <li class="nav-item"><a href="#sec-tour"><span>🌐</span> S04: 3D Tour Viewpoints <span class="nav-badge">{{ viewpoints.count }}</span></a></li>
+        <li class="nav-item"><a href="#sec-culture"><span>🥢</span> S05: Street Food 3 Pillars</a></li>
+        <li class="nav-item"><a href="#sec-signature"><span>🍗</span> S06: Signature Dishes</a></li>
+        <li class="nav-item"><a href="#sec-menu"><span>📋</span> S07: Menu Explorer & Items</a></li>
+        <li class="nav-item"><a href="#sec-kitchen"><span>🔥</span> S08: Open Kitchen & Sizzle</a></li>
+        <li class="nav-item"><a href="#sec-team"><span>👨‍🍳</span> S09: Chef & Kitchen Brigade</a></li>
+        <li class="nav-item"><a href="#sec-experiences"><span>🍶</span> S10: Pocha Experiences</a></li>
+        <li class="nav-item"><a href="#sec-gallery"><span>📸</span> S11: Food & Nightlife Gallery</a></li>
+        <li class="nav-item"><a href="#sec-reviews"><span>🌟</span> S12: Reviews & Social Proof</a></li>
+        <li class="nav-item"><a href="#sec-reservations"><span>📬</span> S13: Reservation Inbox <span class="nav-badge">{{ pending_reservations }}</span></a></li>
+        <li class="nav-item"><a href="#sec-location"><span>📍</span> S14: Location, Hours & Map</a></li>
+        <li class="nav-item"><a href="#sec-json"><span>⚡</span> Master JSON Editor</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="cms-content">
+    {% if messages %}
+      <div class="messages-container">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- S01: Overview Metrics -->
+    <section id="sec-overview" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>📊</span> Seoul Street Operations Desk</h2>
+          <p class="card-desc">Live status of pocha dining reservations, WebGL tour viewpoints, and menu inventory.</p>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px;">
+        <div style="background: var(--color-midnight); padding: 18px; border-radius: 10px; border: 1px solid var(--color-border);">
+          <div style="font-family: var(--font-condensed); font-size: 11px; text-transform: uppercase; color: var(--color-concrete); font-weight: 700; letter-spacing: 0.1em;">Total Inquiries</div>
+          <div style="font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--color-white);">{{ total_reservations }}</div>
+          <div style="font-size: 12px; color: var(--color-amber); margin-top: 4px;">{{ pending_reservations }} pending action</div>
+        </div>
+        <div style="background: var(--color-midnight); padding: 18px; border-radius: 10px; border: 1px solid var(--color-border);">
+          <div style="font-family: var(--font-condensed); font-size: 11px; text-transform: uppercase; color: var(--color-concrete); font-weight: 700; letter-spacing: 0.1em;">Menu Categories</div>
+          <div style="font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--color-cyan);">{{ categories.count }}</div>
+          <div style="font-size: 12px; color: var(--color-silver); margin-top: 4px;">Active Street Food sections</div>
+        </div>
+        <div style="background: var(--color-midnight); padding: 18px; border-radius: 10px; border: 1px solid var(--color-border);">
+          <div style="font-family: var(--font-condensed); font-size: 11px; text-transform: uppercase; color: var(--color-concrete); font-weight: 700; letter-spacing: 0.1em;">3D Viewpoints</div>
+          <div style="font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--color-magenta);">{{ viewpoints.count }}</div>
+          <div style="font-size: 12px; color: var(--color-silver); margin-top: 4px;">Configurable WebGL scenes</div>
+        </div>
+        <div style="background: var(--color-midnight); padding: 18px; border-radius: 10px; border: 1px solid var(--color-border);">
+          <div style="font-family: var(--font-condensed); font-size: 11px; text-transform: uppercase; color: var(--color-concrete); font-weight: 700; letter-spacing: 0.1em;">Pocha Experiences</div>
+          <div style="font-family: var(--font-display); font-size: 32px; font-weight: 700; color: var(--color-coral);">{{ experiences.count }}</div>
+          <div style="font-size: 12px; color: var(--color-silver); margin-top: 4px;">Late-night street packages</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S02: Hero & Neon Brand Config -->
+    <section id="sec-hero" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>🏮</span> S02: Hero & Core Neon Identity</h2>
+          <p class="card-desc">Restaurant name, pocha tagline, and 3D hero introduction statements.</p>
+        </div>
+      </div>
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="update_config">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Restaurant Name & Korean Monogram</label>
+            <input type="text" name="restaurant_name" value="{{ config.restaurant_name }}" required>
+          </div>
+          <div class="form-group">
+            <label>Tagline</label>
+            <input type="text" name="tagline" value="{{ config.tagline }}" required>
+          </div>
+          <div class="form-group full-width">
+            <label>Hero Subtitle & Night Vibe Atmosphere</label>
+            <textarea name="hero_subtitle" rows="3">{{ config.hero_subtitle }}</textarea>
+          </div>
+        </div>
+        <div style="margin-top: 20px;">
+          <button type="submit" class="btn btn-magenta">Save Hero Settings</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- S03: Brand Story & Philosophy -->
+    <section id="sec-story" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>🍜</span> S03: Brand Story & Seoul Energy</h2>
+          <p class="card-desc">Contemporary Korean street culture manifesto and night pocha narrative.</p>
+        </div>
+      </div>
+      <p style="font-size: 14px; color: var(--color-silver); margin-bottom: 12px;">
+        The complete storytelling copy (Korean phrases, chapter headlines, and narrative paragraphs) can be adjusted directly in the Master JSON Power Editor below.
+      </p>
+    </section>
+
+    <!-- S04: 3D Tour Viewpoints -->
+    <section id="sec-tour" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>🌐</span> S04: 3D Virtual Tour Viewpoints</h2>
+          <p class="card-desc">Configure WebGL camera targets, neon lighting ambiance, and hotspots.</p>
+        </div>
+      </div>
+      
+      <div class="table-container" style="margin-bottom: 24px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Viewpoint Title</th>
+              <th>Slug</th>
+              <th>Atmosphere</th>
+              <th>Camera Position / Target</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for vp in viewpoints %}
+              <tr>
+                <td><strong style="color: var(--color-magenta);">#{{ vp.sort_order }}</strong></td>
+                <td>{{ vp.title }}<br><small style="color: var(--color-silver);">{{ vp.subtitle }}</small></td>
+                <td><code>{{ vp.slug }}</code></td>
+                <td>{{ vp.atmosphere }}</td>
+                <td style="font-family: monospace; font-size: 11.5px; color: var(--color-cyan);">{{ vp.camera_position }}</td>
+                <td>
+                  <form method="POST" style="display: inline;" onsubmit="return confirm('Delete viewpoint?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_viewpoint">
+                    <input type="hidden" name="viewpoint_id" value="{{ vp.id }}">
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6" style="text-align: center; color: var(--color-concrete);">No viewpoints configured.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add Viewpoint Form -->
+      <div style="background: var(--color-midnight); padding: 20px; border-radius: 8px; border: 1px dashed var(--color-border);">
+        <h4 style="margin-bottom: 12px; color: var(--color-cyan);">Add New Tour Viewpoint</h4>
+        <form method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_viewpoint">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Scene Title</label>
+              <input type="text" name="title" placeholder="Food Counter & Sizzling Wok" required>
+            </div>
+            <div class="form-group">
+              <label>Slug Identifier</label>
+              <input type="text" name="slug" placeholder="kitchen-counter" required>
+            </div>
+            <div class="form-group">
+              <label>Atmosphere / Mood</label>
+              <input type="text" name="atmosphere" placeholder="Rising steam, sizzling pans, neon glow">
+            </div>
+            <div class="form-group">
+              <label>Sort Order</label>
+              <input type="number" name="sort_order" value="{{ viewpoints.count|add:1 }}">
+            </div>
+            <div class="form-group full-width">
+              <label>Description</label>
+              <textarea name="description" placeholder="A direct look into the bustling wok station where spicy tteokbokki is made..."></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-cyan" style="margin-top: 14px;">Add Viewpoint</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- S05: Street Food Culture & 3 Pillars -->
+    <section id="sec-culture" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>🥢</span> S05: Street Food Culture & 3 Pillars</h2>
+          <p class="card-desc">1. Bold Korean Flavors, 2. Freshly Prepared, 3. Street Food Atmosphere.</p>
+        </div>
+      </div>
+      <p style="font-size: 14px; color: var(--color-silver);">
+        These pillars drive the educational story of Korean pocha culture and are fully customizable in the Master JSON Editor.
+      </p>
+    </section>
+
+    <!-- S06: Signature Dishes -->
+    <section id="sec-signature" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>🍗</span> S06: Featured Signature Dishes</h2>
+          <p class="card-desc">Showcase items: Tteokbokki, Korean Fried Chicken, Kimbap, Mandu.</p>
+        </div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Dish Name</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Spicy Level</th>
+              <th>Dietary Tags</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cat in categories %}
+              {% for item in cat.items.all %}
+                {% if item.is_featured %}
+                  <tr>
+                    <td>
+                      <strong style="color: var(--color-white);">{{ item.name }}</strong>
+                      <span style="color: var(--color-magenta); font-family: var(--font-korean); margin-left: 6px;">{{ item.korean_name }}</span>
+                    </td>
+                    <td><span class="status-badge" style="background: rgba(33, 212, 232, 0.15); color: var(--color-cyan);">{{ cat.name }}</span></td>
+                    <td><strong style="color: var(--color-amber);">{{ item.price }}</strong></td>
+                    <td>
+                      {% if item.spicy_level == 3 %}🔥 Fire
+                      {% elif item.spicy_level == 2 %}🌶️ Hot
+                      {% elif item.spicy_level == 1 %}🌶️ Mild
+                      {% else %}Mild{% endif %}
+                    </td>
+                    <td><small style="color: var(--color-silver);">{{ item.dietary_tags }}</small></td>
+                  </tr>
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- S07: Menu Explorer & Items -->
+    <section id="sec-menu" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>📋</span> S07: Menu Categories & Dishes</h2>
+          <p class="card-desc">Browse and manage all dishes in the active Korean street food repertoire.</p>
+        </div>
+      </div>
+
+      <div class="table-container" style="margin-bottom: 24px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Dish</th>
+              <th>Price</th>
+              <th>Featured?</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for cat in categories %}
+              {% for item in cat.items.all %}
+                <tr>
+                  <td><span class="status-badge" style="background: rgba(255, 46, 136, 0.15); color: var(--color-magenta);">{{ cat.name }}</span></td>
+                  <td>
+                    <strong>{{ item.name }}</strong> <small style="color: var(--color-concrete);">({{ item.korean_name }})</small>
+                    <div style="font-size: 12px; color: var(--color-silver);">{{ item.short_description|truncatewords:8 }}</div>
+                  </td>
+                  <td><strong>{{ item.price }}</strong></td>
+                  <td>{% if item.is_featured %}⭐ Yes{% else %}—{% endif %}</td>
+                  <td>
+                    <form method="POST" style="display:inline;" onsubmit="return confirm('Delete {{ item.name }}?');">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="delete_menu_item">
+                      <input type="hidden" name="item_id" value="{{ item.id }}">
+                      <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              {% endfor %}
+            {% empty %}
+              <tr><td colspan="5" style="text-align:center;">No dishes available.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Add Menu Item Form -->
+      <div style="background: var(--color-midnight); padding: 20px; border-radius: 8px; border: 1px dashed var(--color-border);">
+        <h4 style="margin-bottom: 12px; color: var(--color-magenta);">Add New Korean Dish</h4>
+        <form method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_menu_item">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Category</label>
+              <select name="category_id" required>
+                {% for cat in categories %}
+                  <option value="{{ cat.id }}">{{ cat.name }} ({{ cat.korean_name }})</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Dish Name (English)</label>
+              <input type="text" name="name" placeholder="Honey Butter Crispy Chicken" required>
+            </div>
+            <div class="form-group">
+              <label>Korean Name (Hangul)</label>
+              <input type="text" name="korean_name" placeholder="허니버터 치킨">
+            </div>
+            <div class="form-group">
+              <label>Price</label>
+              <input type="text" name="price" placeholder="₩18,000" required>
+            </div>
+            <div class="form-group">
+              <label>Dietary Tags</label>
+              <input type="text" name="dietary_tags" placeholder="Halal Friendly, Crispy">
+            </div>
+            <div class="form-group">
+              <label>Spicy Level (0 to 3)</label>
+              <select name="spicy_level">
+                <option value="0">0 — No Spice</option>
+                <option value="1" selected>1 — Medium</option>
+                <option value="2">2 — Hot</option>
+                <option value="3">3 — Fire (Buldak)</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label>Short Description</label>
+              <input type="text" name="short_description" placeholder="Double-fried crunchy chicken glazed in sweet honey butter sauce.">
+            </div>
+            <div class="form-group">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: var(--color-white);">
+                <input type="checkbox" name="is_featured">
+                <span>Feature as Signature Showcase Item</span>
+              </label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-magenta" style="margin-top: 14px;">Add Dish</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- S08: Open Kitchen & Sizzle -->
+    <section id="sec-kitchen" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>🔥</span> S08: Open Kitchen & Food Preparation</h2>
+          <p class="card-desc">"MADE FRESH. SERVED HOT." Sizzling wok cooking and street pocha techniques.</p>
+        </div>
+      </div>
+      <p style="font-size: 14px; color: var(--color-silver);">
+        Storytelling headlines and sizzling wok details are configured in Section 08 and editable via the Master JSON Editor.
+      </p>
+    </section>
+
+    <!-- S09: Meet the Chef & Team -->
+    <section id="sec-team" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>👨‍🍳</span> S09: Meet the Chef & Kitchen Brigade</h2>
+          <p class="card-desc">Executive Street Chef Min-jun Park and culinary artisans.</p>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
+        {% for member in team_members %}
+          <div style="background: var(--color-midnight); padding: 18px; border-radius: 8px; border: 1px solid var(--color-border);">
+            <h4 style="color: var(--color-white);">{{ member.name }} <small style="color: var(--color-magenta);">{{ member.korean_name }}</small></h4>
+            <div style="font-family: var(--font-condensed); font-size: 12px; color: var(--color-cyan); font-weight: 700; text-transform: uppercase;">{{ member.role }}</div>
+            <p style="font-size: 13px; color: var(--color-silver); margin-top: 8px;">{{ member.bio }}</p>
+            {% if member.quote %}
+              <div style="margin-top: 8px; font-size: 12px; color: var(--color-amber); font-style: italic;">“{{ member.quote }}”</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- S10: Pocha Experiences -->
+    <section id="sec-experiences" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>🍶</span> S10: Group Dining & Pocha Experiences</h2>
+          <p class="card-desc">Pocha Night Table, Late Night Soju Tasting, Korean BBQ & Street Feast.</p>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
+        {% for exp in experiences %}
+          <div style="background: var(--color-midnight); padding: 20px; border-radius: 8px; border: 1px solid var(--color-border);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+              <h4 style="color: var(--color-white);">{{ exp.title }}</h4>
+              <span class="status-badge" style="background: rgba(255, 46, 136, 0.2); color: var(--color-magenta);">{{ exp.price }}</span>
+            </div>
+            <p style="font-size: 13.5px; color: var(--color-silver); margin: 10px 0;">{{ exp.description }}</p>
+            <div style="font-size: 12px; color: var(--color-concrete);">👥 {{ exp.capacity }} | ⏰ {{ exp.timing }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- S11: Photography Gallery -->
+    <section id="sec-gallery" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>📸</span> S11: Food & Nightlife Gallery</h2>
+          <p class="card-desc">Visual documentation of street dishes, glowing neon exterior, and pocha nights.</p>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px;">
+        {% for item in gallery_items %}
+          <div style="background: var(--color-midnight); border-radius: 8px; overflow: hidden; border: 1px solid var(--color-border);">
+            <div style="height: 110px; background: #2A2D35; display: flex; align-items: center; justify-content: center; font-size: 28px;">
+              📸
+            </div>
+            <div style="padding: 10px;">
+              <div style="font-size: 11px; text-transform: uppercase; color: var(--color-cyan); font-weight: 700; font-family: var(--font-condensed);">{{ item.category }}</div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--color-white);">{{ item.title }}</div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- S12: Reviews & Social Proof -->
+    <section id="sec-reviews" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>🌟</span> S12: Guest Reviews & Social Proof</h2>
+          <p class="card-desc">Authentic customer reviews and verified street foodie feedback.</p>
+        </div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+        {% for t in testimonials %}
+          <div style="background: var(--color-midnight); padding: 18px; border-radius: 8px; border: 1px solid var(--color-border);">
+            <div style="color: var(--color-amber); margin-bottom: 6px;">★★★★★</div>
+            <p style="font-size: 14px; font-style: italic; color: var(--color-white); margin-bottom: 10px;">"{{ t.quote }}"</p>
+            <div style="font-size: 12px; font-weight: 700; color: var(--color-cyan);">{{ t.author }}</div>
+            <div style="font-size: 11.5px; color: var(--color-concrete);">{{ t.source }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- S13: Reservation Inbox -->
+    <section id="sec-reservations" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>📬</span> S13: Table Reservation & Visit Inquiries</h2>
+          <p class="card-desc">Real-time table booking inquiries submitted through the public website.</p>
+        </div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Guest Name</th>
+              <th>Party</th>
+              <th>Experience</th>
+              <th>Contact</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for res in reservations %}
+              <tr>
+                <td><strong>{{ res.preferred_date }}</strong><br><small style="color: var(--color-silver);">{{ res.preferred_time }}</small></td>
+                <td>
+                  <strong>{{ res.full_name }}</strong>
+                  {% if res.special_requests %}
+                    <div style="font-size: 11.5px; color: var(--color-coral);">Note: {{ res.special_requests|truncatechars:40 }}</div>
+                  {% endif %}
+                </td>
+                <td>{{ res.guests }} Guests</td>
+                <td>{{ res.selected_experience|default:"Street Pocha" }}</td>
+                <td>
+                  <small>{{ res.phone }}</small><br>
+                  <small style="color: var(--color-silver);">{{ res.email }}</small>
+                </td>
+                <td>
+                  <span class="status-badge status-{{ res.status }}">{{ res.status }}</span>
+                </td>
+                <td>
+                  <div style="display: flex; gap: 6px; align-items: center;">
+                    <form method="POST" style="display: inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="update_reservation_status">
+                      <input type="hidden" name="reservation_id" value="{{ res.id }}">
+                      <select name="new_status" onchange="this.form.submit()" style="padding: 4px 8px; font-size: 12px; border-radius: 4px; background: var(--color-midnight); color: var(--color-white); border: 1px solid var(--color-border);">
+                        <option value="pending" {% if res.status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="confirmed" {% if res.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                        <option value="cancelled" {% if res.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                      </select>
+                    </form>
+                    <form method="POST" style="display: inline;" onsubmit="return confirm('Delete this inquiry?');">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="delete_reservation">
+                      <input type="hidden" name="reservation_id" value="{{ res.id }}">
+                      <button type="submit" class="btn btn-danger btn-sm" style="padding: 3px 8px;">✕</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="7" style="text-align: center; color: var(--color-concrete); padding: 24px;">No reservations in inbox.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- S14: Location & Opening Hours -->
+    <section id="sec-location" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>📍</span> S14: Location, Opening Hours & Directions</h2>
+          <p class="card-desc">Street address, phone, contact email, and late-night opening schedule.</p>
+        </div>
+      </div>
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="update_config">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Physical Street Address</label>
+            <input type="text" name="address" value="{{ config.address }}" required>
+          </div>
+          <div class="form-group">
+            <label>Contact Phone / Kakao</label>
+            <input type="text" name="contact_phone" value="{{ config.contact_phone }}" required>
+          </div>
+          <div class="form-group">
+            <label>Contact Email</label>
+            <input type="email" name="contact_email" value="{{ config.contact_email }}" required>
+          </div>
+          <div class="form-group full-width">
+            <label>Operating Hours & Late Night Pocha Schedule</label>
+            <input type="text" name="opening_hours" value="{{ config.opening_hours }}" required>
+          </div>
+        </div>
+        <div style="margin-top: 20px;">
+          <button type="submit" class="btn btn-cyan">Update Contact & Location</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- S15: Master JSON Power Editor -->
+    <section id="sec-json" class="cms-card">
+      <div class="card-header">
+        <div>
+          <h2 class="card-title"><span>⚡</span> Master JSON Power Editor</h2>
+          <p class="card-desc">Direct granular control over all 15 editorial frontend sections in real time.</p>
+        </div>
+      </div>
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="update_raw_json">
+        <div class="form-group">
+          <label>Raw JSON Configuration</label>
+          <textarea name="content_json" rows="18" style="font-family: monospace; font-size: 13px; background: #0C0E10; color: #21D4E8; line-height: 1.5; padding: 16px; border: 1px solid var(--color-border);">{{ formatted_json }}</textarea>
+        </div>
+        <div style="margin-top: 18px; display: flex; justify-content: flex-end;">
+          <button type="submit" class="btn btn-magenta" style="padding: 12px 28px;">Save Master JSON</button>
+        </div>
+      </form>
+    </section>
+  </main>
+{% endblock %}

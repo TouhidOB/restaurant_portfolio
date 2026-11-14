@@ -1,0 +1,246 @@
+:root {
+  /* Seoul Neon Street Food Palette */
+  --color-midnight: #111316;
+  --color-charcoal: #1B1D22;
+  --color-charcoal-light: #252830;
+  --color-magenta: #FF2E88;
+  --color-magenta-hover: #E01E74;
+  --color-magenta-glow: rgba(255, 46, 136, 0.4);
+  --color-cyan: #21D4E8;
+  --color-cyan-hover: #19BDCF;
+  --color-cyan-glow: rgba(33, 212, 232, 0.35);
+  --color-coral: #FF594D;
+  --color-amber: #FFB347;
+  --color-concrete: #777B83;
+  --color-white: #F6F4F0;
+  --color-silver: #B6BAC2;
+  --color-burgundy: #571B36;
+  --color-border: rgba(246, 244, 240, 0.12);
+  --color-border-bright: rgba(255, 46, 136, 0.5);
+
+  /* Typography */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-condensed: 'Barlow Condensed', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-korean: 'Noto Sans KR', sans-serif;
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--color-midnight);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  overflow-x: hidden;
+  background-color: var(--color-midnight);
+  color: var(--color-white);
+  line-height: 1.6;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-midnight);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-charcoal-light);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-magenta);
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-white);
+}
+
+.text-eyebrow {
+  font-family: var(--font-condensed);
+  font-size: 0.85rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--color-magenta);
+}
+
+.font-korean {
+  font-family: var(--font-korean);
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.25rem;
+  }
+}
+
+/* Section Wrapper */
+.editorial-section {
+  padding: 6.5rem 0;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .editorial-section {
+    padding: 4.5rem 0;
+  }
+}
+
+/* Buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background-color: var(--color-magenta);
+  color: #FFFFFF;
+  padding: 0.95rem 2.2rem;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-magenta);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  box-shadow: 0 4px 18px rgba(255, 46, 136, 0.35);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-magenta-hover);
+  border-color: var(--color-magenta-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255, 46, 136, 0.55);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background-color: transparent;
+  color: var(--color-cyan);
+  padding: 0.95rem 2.2rem;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid var(--color-cyan);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(33, 212, 232, 0.15);
+  box-shadow: 0 0 16px rgba(33, 212, 232, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-outline-white {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--color-white);
+  padding: 0.95rem 2.2rem;
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(246, 244, 240, 0.3);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-outline-white:hover {
+  background-color: #FFFFFF;
+  color: var(--color-midnight);
+  border-color: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+/* Badges */
+.badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--font-condensed);
+  background: var(--color-charcoal);
+  color: var(--color-cyan);
+  border: 1px solid rgba(33, 212, 232, 0.35);
+}
+
+/* Keyframes */
+@keyframes neonFlicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 0.85; }
+  94% { opacity: 1; }
+  96% { opacity: 0.75; }
+  98% { opacity: 1; }
+}
+
+@keyframes steamDrift {
+  0% { transform: translateY(0) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-15px) scale(1.1); opacity: 0.8; }
+  100% { transform: translateY(-30px) scale(1.2); opacity: 0; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-smooth) forwards;
+}
+
+.animate-slide-up {
+  animation: slideUp var(--transition-smooth) forwards;
+}
