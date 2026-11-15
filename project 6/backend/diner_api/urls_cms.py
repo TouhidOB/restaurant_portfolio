@@ -6,6 +6,8 @@ from .views import (
     cms_update_settings,
     cms_update_reservation_status,
     cms_toggle_menu_item,
+    cms_add_menu_item,
+    cms_delete_menu_item,
     cms_update_section,
     cms_save_master_json,
 )
@@ -17,6 +19,8 @@ urlpatterns = [
     path('update-settings/', cms_update_settings, name='cms_update_settings'),
     path('reservations/<int:pk>/status/', cms_update_reservation_status, name='cms_update_reservation_status'),
     path('menu/<int:pk>/toggle/', cms_toggle_menu_item, name='cms_toggle_menu_item'),
+    path('menu/add/', cms_add_menu_item, name='cms_add_menu_item'),
+    path('menu/<int:pk>/delete/', cms_delete_menu_item, name='cms_delete_menu_item'),
     path('sections/<int:pk>/update/', cms_update_section, name='cms_update_section'),
     path('save-master-json/', cms_save_master_json, name='cms_save_master_json'),
 ]

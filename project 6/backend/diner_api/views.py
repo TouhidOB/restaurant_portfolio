@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
+from django.utils.text import slugify
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
@@ -262,6 +263,65 @@ def cms_toggle_menu_item(request, pk):
     item.is_available = not item.is_available
     item.save()
     messages.success(request, f"'{item.name}' availability toggled to {item.is_available}.")
+    return redirect('cms_dashboard')
+
+
+@login_required(login_url='/cms/login/')
+def cms_add_menu_item(request):
+    if request.method == 'POST':
+        category_id = request.POST.get('category_id')
+        name = request.POST.get('name', '').strip()
+        price = request.POST.get('price', '0.00').strip()
+        currency_symbol = request.POST.get('currency_symbol', '$').strip()
+        short_desc = request.POST.get('short_description', '').strip()
+        full_desc = request.POST.get('full_description', '').strip()
+        image_url = request.POST.get('image_url', '').strip()
+        allergens = request.POST.get('allergens', '').strip()
+        dietary_str = request.POST.get('dietary_information', '').strip()
+        is_featured = request.POST.get('is_featured') == 'on'
+
+        dietary_info = [d.strip() for d in dietary_str.split(',') if d.strip()] if dietary_str else []
+
+        category = get_object_or_404(MenuCategory, pk=category_id)
+        base_slug = slugify(name)
+        slug = base_slug
+        count = 1
+        while MenuItem.objects.filter(slug=slug).exists():
+            slug = f"{base_slug}-{count}"
+            count += 1
+
+        item = MenuItem.objects.create(
+            category=category,
+            name=name,
+            slug=slug,
+            short_description=short_desc,
+            full_description=full_desc,
+            price=price,
+            currency_symbol=currency_symbol,
+            image_url=image_url,
+            dietary_information=dietary_info,
+            allergens=allergens,
+            is_featured=is_featured,
+            is_available=True,
+            display_order=category.items.count() + 1
+        )
+
+        # Handle file upload if present
+        if 'image' in request.FILES:
+            item.image = request.FILES['image']
+            item.save()
+
+        messages.success(request, f"Meal item '{item.name}' added successfully to {category.name}!")
+    return redirect('cms_dashboard')
+
+
+@login_required(login_url='/cms/login/')
+def cms_delete_menu_item(request, pk):
+    if request.method == 'POST':
+        item = get_object_or_404(MenuItem, pk=pk)
+        name = item.name
+        item.delete()
+        messages.success(request, f"Meal item '{name}' deleted successfully.")
     return redirect('cms_dashboard')
 
 

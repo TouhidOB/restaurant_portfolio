@@ -196,8 +196,75 @@
 <!-- MODULE 4: Menu Items & Real-time Availability -->
 <section id="section-menu" class="cms-card">
   <div class="cms-card-header">
-    <h2>🍔 Menu Repertoire & Instant Availability Toggle</h2>
+    <h2>🍔 Menu Repertoire & Meal Management</h2>
     <span class="badge badge-confirmed">{{ kpis.total_menu_items }} TOTAL ITEMS</span>
+  </div>
+
+  <!-- Add New Meal Item Form -->
+  <div style="background-color: var(--bg-midnight); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--neon-cyan); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span>✦</span> Upload / Add New Meal Item
+    </h3>
+    <form method="POST" action="{% url 'cms_add_menu_item' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Dish Name *</label>
+          <input type="text" name="name" class="form-control" placeholder="e.g. Cosmic Truffle Smash Deluxe" required>
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select name="category_id" class="form-control" required>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Price ($) *</label>
+          <input type="number" step="0.01" name="price" class="form-control" placeholder="18.50" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Short Description *</label>
+        <input type="text" name="short_description" class="form-control" placeholder="Crispy smashed beef, caramelized onions, smoked brisket jam..." required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Photo Image URL</label>
+          <input type="url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/photo-...">
+        </div>
+        <div class="form-group">
+          <label>Or Upload Image File</label>
+          <input type="file" name="image" class="form-control" accept="image/*">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; align-items: center;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Dietary Tags (comma-separated)</label>
+          <input type="text" name="dietary_information" class="form-control" placeholder="Gluten-Free, House Favorite, Spicy">
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Allergens Notice</label>
+          <input type="text" name="allergens" class="form-control" placeholder="Dairy, Peanuts">
+        </div>
+        <div style="padding-top: 1.25rem;">
+          <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--atomic-yellow); font-size: 0.85rem; font-weight: 600;">
+            <input type="checkbox" name="is_featured" style="width: 16px; height: 16px;">
+            Feature as Signature Star (★)
+          </label>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.25rem;">
+        <button type="submit" class="btn btn-cherry">
+          <span>+ UPLOAD & ADD TO LIVE MENU</span>
+        </button>
+      </div>
+    </form>
   </div>
 
   {% for cat in categories %}
@@ -214,7 +281,7 @@
             <th>Dietary Tags</th>
             <th>Featured</th>
             <th>Availability Status</th>
-            <th>Toggle Control</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -249,12 +316,20 @@
                 {% endif %}
               </td>
               <td>
-                <form method="POST" action="{% url 'cms_toggle_menu_item' item.pk %}">
-                  {% csrf_token %}
-                  <button type="submit" class="btn {% if item.is_available %}btn-cherry{% else %}btn-cyan{% endif %}" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
-                    {% if item.is_available %}Mark Sold Out{% else %}Make Available{% endif %}
-                  </button>
-                </form>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                  <form method="POST" action="{% url 'cms_toggle_menu_item' item.pk %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn {% if item.is_available %}btn-cherry{% else %}btn-cyan{% endif %}" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
+                      {% if item.is_available %}Mark Sold Out{% else %}Make Available{% endif %}
+                    </button>
+                  </form>
+                  <form method="POST" action="{% url 'cms_delete_menu_item' item.pk %}" onsubmit="return confirm('Delete dish {{ item.name }}?');">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; color: #ff5555; cursor: pointer; font-size: 0.85rem;" title="Delete Item">
+                      ✕
+                    </button>
+                  </form>
+                </div>
               </td>
             </tr>
           {% endfor %}
