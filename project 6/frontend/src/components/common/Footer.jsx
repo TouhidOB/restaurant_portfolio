@@ -1,7 +1,7 @@
 import React from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Footer() {
+export default function Footer({ onNavigate }) {
   const { content, openReservation } = useCMS();
   const restaurant = content?.restaurant || {};
   const footerSection = content?.sections?.footer || {};
@@ -121,18 +121,23 @@ export default function Footer() {
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', padding: 0 }}>
               {[
-                { label: 'Diner Philosophy', href: '#philosophy' },
-                { label: 'Signature Dishes', href: '#signatures' },
-                { label: 'Full Menu Explorer', href: '#menu' },
-                { label: 'The Diner Story', href: '#story' },
-                { label: 'Diner Architecture', href: '#architecture' },
-                { label: '3D Spatial Tour', href: '#tour' },
-                { label: 'Atomic Photo Archive', href: '#gallery' },
-                { label: 'Frequently Asked Questions', href: '#faqs' },
+                { label: 'Diner Philosophy', path: '/philosophy' },
+                { label: 'Signature Dishes', path: '/signatures' },
+                { label: 'Full Menu Explorer', path: '/menu' },
+                { label: 'The Diner Story', path: '/story' },
+                { label: 'Diner Architecture', path: '/architecture' },
+                { label: '3D Spatial Tour', path: '/tour' },
+                { label: 'The Diner Experience', path: '/experience' },
+                { label: 'Location & Contact', path: '/contact' },
               ].map((item) => (
                 <li key={item.label}>
                   <a
-                    href={item.href}
+                    href={item.path}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (onNavigate) onNavigate(item.path);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
                     style={{
                       fontSize: '0.9rem',
                       color: 'var(--text-cream)',

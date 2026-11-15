@@ -9,10 +9,20 @@ import ReservationModal from './components/common/ReservationModal';
 import Lightbox from './components/common/Lightbox';
 import Footer from './components/common/Footer';
 
+// Dedicated Navbar Pages
+import PhilosophyPage from './components/pages/PhilosophyPage';
+import SignaturesPage from './components/pages/SignaturesPage';
+import MenuPage from './components/pages/MenuPage';
+import StoryPage from './components/pages/StoryPage';
+import ArchitecturePage from './components/pages/ArchitecturePage';
+import TourPage from './components/pages/TourPage';
+import ExperiencePage from './components/pages/ExperiencePage';
+import ContactPage from './components/pages/ContactPage';
+
 // Dynamic Standalone Page Builder Component
 import CustomPageView from './components/pages/CustomPageView';
 
-// 14 Section Components
+// 14 Complete Landing Page Sections
 import HeroSection from './components/sections/HeroSection';
 import IntroSection from './components/sections/IntroSection';
 import PhilosophySection from './components/sections/PhilosophySection';
@@ -28,48 +38,104 @@ import ReservationSection from './components/sections/ReservationSection';
 import LocationContactSection from './components/sections/LocationContactSection';
 import FAQSection from './components/sections/FAQSection';
 
-function getInitialPageSlug() {
-  const path = window.location.pathname;
-  const match = path.match(/^\/page\/([a-zA-Z0-9_-]+)/);
-  return match ? match[1] : null;
+function getNormalizedPath() {
+  const p = window.location.pathname.replace(/\/+$/, '') || '/';
+  return p;
 }
 
 export default function App() {
-  const [activePageSlug, setActivePageSlug] = useState(getInitialPageSlug);
+  const [currentPath, setCurrentPath] = useState(getNormalizedPath);
 
   useEffect(() => {
     const handlePopState = () => {
-      setActivePageSlug(getInitialPageSlug());
+      setCurrentPath(getNormalizedPath());
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  const navigateToPage = (slug) => {
-    setActivePageSlug(slug);
-    window.history.pushState({}, '', `/page/${slug}`);
+  const navigateTo = (path) => {
+    const normalized = path.replace(/\/+$/, '') || '/';
+    setCurrentPath(normalized);
+    window.history.pushState({}, '', normalized);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const navigateToHome = () => {
-    setActivePageSlug(null);
-    window.history.pushState({}, '', '/');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    navigateTo('/');
   };
+
+  const navigateToPageKey = (key) => {
+    navigateTo(`/${key}`);
+  };
+
+  const navigateToCustomPage = (slug) => {
+    navigateTo(`/page/${slug}`);
+  };
+
+  // Determine active custom page slug if on /page/:slug
+  const customPageMatch = currentPath.match(/^\/page\/([a-zA-Z0-9_-]+)/);
+  const activeCustomSlug = customPageMatch ? customPageMatch[1] : null;
 
   return (
     <CMSProvider>
       <Preloader />
       <Navigation
-        activePageSlug={activePageSlug}
+        currentPath={currentPath}
+        activePageSlug={activeCustomSlug}
+        onNavigate={navigateTo}
         onNavigateHome={navigateToHome}
-        onNavigatePage={navigateToPage}
+        onNavigatePage={navigateToCustomPage}
       />
 
       <main>
-        {activePageSlug ? (
-          <CustomPageView slug={activePageSlug} onNavigateHome={navigateToHome} />
-        ) : (
+        {/* Route 01: Dedicated Philosophy Page */}
+        {currentPath === '/philosophy' && (
+          <PhilosophyPage onNavigateHome={navigateToHome} onNavigatePage={navigateToPageKey} />
+        )}
+
+        {/* Route 02: Dedicated Signatures Page */}
+        {currentPath === '/signatures' && (
+          <SignaturesPage onNavigateHome={navigateToHome} onNavigatePage={navigateToPageKey} />
+        )}
+
+        {/* Route 03: Dedicated Full Menu Page */}
+        {currentPath === '/menu' && (
+          <MenuPage onNavigateHome={navigateToHome} onNavigatePage={navigateToPageKey} />
+        )}
+
+        {/* Route 04: Dedicated Diner Story Page */}
+        {currentPath === '/story' && (
+          <StoryPage onNavigateHome={navigateToHome} onNavigatePage={navigateToPageKey} />
+        )}
+
+        {/* Route 05: Dedicated Architecture & Design Page */}
+        {currentPath === '/architecture' && (
+          <ArchitecturePage onNavigateHome={navigateToHome} onNavigatePage={navigateToPageKey} />
+        )}
+
+        {/* Route 06: Dedicated 3D Spatial Tour Page */}
+        {currentPath === '/tour' && (
+          <TourPage onNavigateHome={navigateToHome} onNavigatePage={navigateToPageKey} />
+        )}
+
+        {/* Route 07: Dedicated Diner Experience Page */}
+        {currentPath === '/experience' && (
+          <ExperiencePage onNavigateHome={navigateToHome} onNavigatePage={navigateToPageKey} />
+        )}
+
+        {/* Route 08: Dedicated Contact & Location Page */}
+        {(currentPath === '/contact' || currentPath === '/location') && (
+          <ContactPage onNavigateHome={navigateToHome} onNavigatePage={navigateToPageKey} />
+        )}
+
+        {/* Route 09: Dynamic Custom Standalone CMS Page */}
+        {activeCustomSlug && (
+          <CustomPageView slug={activeCustomSlug} onNavigateHome={navigateToHome} />
+        )}
+
+        {/* Route 10: Complete Landing Page (All 14 Sections Uninterrupted) */}
+        {currentPath === '/' && (
           <>
             {/* Section 01: Hero */}
             <HeroSection />
@@ -117,7 +183,7 @@ export default function App() {
       </main>
 
       {/* Section 15: Colophon & Logistics Footer */}
-      <Footer />
+      <Footer onNavigate={navigateTo} />
 
       {/* Interactive Global Modals */}
       <DishDetailModal />

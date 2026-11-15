@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Navigation({ activePageSlug, onNavigateHome, onNavigatePage }) {
+export default function Navigation({ currentPath = '/', activePageSlug, onNavigate, onNavigateHome, onNavigatePage }) {
   const { content, openReservation } = useCMS();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -14,18 +14,33 @@ export default function Navigation({ activePageSlug, onNavigateHome, onNavigateP
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const customPages = (content?.custom_pages || []).filter(p => p.show_in_navigation);
+  const customPages = (content?.custom_pages || []).filter((p) => p.show_in_navigation);
 
-  const navLinks = [
-    { label: 'PHILOSOPHY', href: '#philosophy' },
-    { label: 'SIGNATURES', href: '#signatures' },
-    { label: 'MENU', href: '#menu' },
-    { label: 'STORY', href: '#story' },
-    { label: 'ARCHITECTURE', href: '#architecture' },
-    { label: '3D TOUR', href: '#tour' },
-    { label: 'EXPERIENCE', href: '#experience' },
-    { label: 'CONTACT', href: '#location' },
+  const dedicatedNavLinks = [
+    { label: 'PHILOSOPHY', path: '/philosophy' },
+    { label: 'SIGNATURES', path: '/signatures' },
+    { label: 'MENU', path: '/menu' },
+    { label: 'STORY', path: '/story' },
+    { label: 'ARCHITECTURE', path: '/architecture' },
+    { label: '3D TOUR', path: '/tour' },
+    { label: 'EXPERIENCE', path: '/experience' },
+    { label: 'CONTACT', path: '/contact' },
   ];
+
+  const handleLinkClick = (e, path) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    if (onNavigate) {
+      onNavigate(path);
+    }
+  };
+
+  const isLinkActive = (path) => {
+    if (path === '/contact') {
+      return currentPath === '/contact' || currentPath === '/location';
+    }
+    return currentPath === path;
+  };
 
   return (
     <>
@@ -38,10 +53,10 @@ export default function Navigation({ activePageSlug, onNavigateHome, onNavigateP
           height: 'var(--header-height)',
           zIndex: 1000,
           transition: 'background-color 0.28s ease, backdrop-filter 0.28s ease, border-color 0.28s ease',
-          backgroundColor: scrolled ? 'rgba(9, 15, 27, 0.95)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
-          borderBottom: scrolled ? '1px solid rgba(36, 53, 82, 0.8)' : '1px solid transparent',
+          backgroundColor: scrolled ? 'rgba(9, 15, 27, 0.96)' : 'rgba(9, 15, 27, 0.75)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          borderBottom: scrolled ? '1px solid rgba(67, 217, 232, 0.3)' : '1px solid rgba(36, 53, 82, 0.6)',
           display: 'flex',
           alignItems: 'center',
         }}
@@ -55,13 +70,14 @@ export default function Navigation({ activePageSlug, onNavigateHome, onNavigateP
             width: '100%',
           }}
         >
-          {/* Brand Logo */}
+          {/* Brand Logo - Returns to Home (All Sections) */}
           <a
             href="/"
             onClick={(e) => {
               e.preventDefault();
               if (onNavigateHome) onNavigateHome();
             }}
+            title="Return to Complete Landing Page (All Sections)"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -117,85 +133,101 @@ export default function Navigation({ activePageSlug, onNavigateHome, onNavigateP
             </div>
           </a>
 
-          {/* Desktop Nav Links */}
+          {/* Desktop Dedicated Page Links */}
           <nav
             style={{
               display: 'none',
               alignItems: 'center',
-              gap: '1.4rem',
+              gap: '1.15rem',
             }}
             className="desktop-nav"
           >
-            {activePageSlug ? (
-              <button
-                onClick={onNavigateHome}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '0.82rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.08em',
-                  color: 'var(--neon-cyan)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                }}
-              >
-                ← BACK TO HOMEPAGE
-              </button>
-            ) : (
-              navLinks.map((link) => (
+            {/* Optional Home link */}
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                if (onNavigateHome) onNavigateHome();
+              }}
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '0.8rem',
+                fontWeight: 600,
+                letterSpacing: '0.08em',
+                color: currentPath === '/' ? 'var(--atomic-yellow)' : 'var(--text-cream)',
+                textDecoration: 'none',
+                padding: '0.35rem 0',
+                borderBottom: currentPath === '/' ? '2px solid var(--atomic-yellow)' : '2px solid transparent',
+                transition: 'all var(--transition-fast)',
+              }}
+            >
+              HOME
+            </a>
+
+            {/* 8 Dedicated Page Navbar Links */}
+            {dedicatedNavLinks.map((link) => {
+              const active = isLinkActive(link.path);
+              return (
                 <a
                   key={link.label}
-                  href={link.href}
+                  href={link.path}
+                  onClick={(e) => handleLinkClick(e, link.path)}
                   style={{
                     fontFamily: 'var(--font-display)',
-                    fontSize: '0.82rem',
+                    fontSize: '0.8rem',
                     fontWeight: 600,
                     letterSpacing: '0.08em',
-                    color: 'var(--text-cream)',
+                    color: active ? 'var(--neon-cyan)' : 'var(--text-cream)',
                     textDecoration: 'none',
-                    transition: 'color var(--transition-fast)',
+                    padding: '0.35rem 0',
+                    borderBottom: active ? '2px solid var(--neon-cyan)' : '2px solid transparent',
+                    textShadow: active ? '0 0 10px rgba(67, 217, 232, 0.5)' : 'none',
+                    transition: 'all var(--transition-fast)',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--neon-cyan)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-cream)')}
+                  onMouseEnter={(e) => {
+                    if (!active) e.currentTarget.style.color = 'var(--neon-cyan)';
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!active) e.currentTarget.style.color = 'var(--text-cream)';
+                  }}
                 >
                   {link.label}
                 </a>
-              ))
-            )}
+              );
+            })}
 
-            {/* Custom Dynamic Pages from Page Builder */}
-            {customPages.map((page) => (
-              <a
-                key={page.slug}
-                href={`/page/${page.slug}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (onNavigatePage) onNavigatePage(page.slug);
-                }}
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '0.82rem',
-                  fontWeight: 700,
-                  letterSpacing: '0.08em',
-                  color: activePageSlug === page.slug ? 'var(--atomic-yellow)' : 'var(--neon-cyan)',
-                  textDecoration: 'none',
-                  padding: '0.25rem 0.65rem',
-                  border: `1px solid ${activePageSlug === page.slug ? 'var(--atomic-yellow)' : 'rgba(67, 217, 232, 0.4)'}`,
-                  borderRadius: '4px',
-                  backgroundColor: 'rgba(67, 217, 232, 0.08)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.3rem',
-                }}
-              >
-                <span>★</span>
-                <span>{page.title.toUpperCase()}</span>
-              </a>
-            ))}
+            {/* Custom Standalone Pages from CMS */}
+            {customPages.map((page) => {
+              const isActive = activePageSlug === page.slug;
+              return (
+                <a
+                  key={page.slug}
+                  href={`/page/${page.slug}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onNavigatePage) onNavigatePage(page.slug);
+                  }}
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.08em',
+                    color: isActive ? 'var(--atomic-yellow)' : 'var(--neon-cyan)',
+                    textDecoration: 'none',
+                    padding: '0.2rem 0.55rem',
+                    border: `1px solid ${isActive ? 'var(--atomic-yellow)' : 'rgba(67, 217, 232, 0.4)'}`,
+                    borderRadius: '4px',
+                    backgroundColor: isActive ? 'rgba(242, 201, 76, 0.15)' : 'rgba(67, 217, 232, 0.08)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.25rem',
+                  }}
+                >
+                  <span>★</span>
+                  <span>{page.title.toUpperCase()}</span>
+                </a>
+              );
+            })}
           </nav>
 
           {/* Action CTAs */}
@@ -208,7 +240,7 @@ export default function Navigation({ activePageSlug, onNavigateHome, onNavigateP
           >
             {/* Direct CMS Studio Link */}
             <a
-              href="/cms/"
+              href="http://127.0.0.1:8001/cms/"
               target="_blank"
               rel="noopener noreferrer"
               title="Access Decoupled Django CMS Studio"
@@ -316,46 +348,76 @@ export default function Navigation({ activePageSlug, onNavigateHome, onNavigateP
           backgroundColor: '#090F1B',
           borderLeft: '1px solid var(--border-diner)',
           zIndex: 999,
-          padding: '6rem 2.5rem 3rem',
+          padding: '5.5rem 2.25rem 2.5rem',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
           transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
           transition: 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
           boxShadow: mobileMenuOpen ? '-12px 0 32px rgba(0, 0, 0, 0.65)' : 'none',
+          overflowY: 'auto',
         }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           <div
             style={{
               fontFamily: 'var(--font-mono)',
               fontSize: '0.7rem',
               color: 'var(--neon-cyan)',
               letterSpacing: '0.12em',
-              marginBottom: '0.5rem',
+              marginBottom: '0.25rem',
             }}
           >
-            ATOMIC DINER INDEX
+            DEDICATED PAGES // ATOMIC INDEX
           </div>
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={() => {
-                setMobileMenuOpen(false);
-                if (onNavigateHome) onNavigateHome();
-              }}
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.65rem',
-                color: 'var(--text-ivory)',
-                textDecoration: 'none',
-                transition: 'color var(--transition-fast)',
-              }}
-            >
-              {link.label}
-            </a>
-          ))}
+
+          {/* Mobile Home Link */}
+          <a
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              setMobileMenuOpen(false);
+              if (onNavigateHome) onNavigateHome();
+            }}
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.4rem',
+              color: currentPath === '/' ? 'var(--atomic-yellow)' : 'var(--text-ivory)',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <span>★</span>
+            <span>HOME (ALL SECTIONS)</span>
+          </a>
+
+          {/* Dedicated Navbar Pages */}
+          {dedicatedNavLinks.map((link) => {
+            const active = isLinkActive(link.path);
+            return (
+              <a
+                key={link.label}
+                href={link.path}
+                onClick={(e) => handleLinkClick(e, link.path)}
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '1.4rem',
+                  color: active ? 'var(--neon-cyan)' : 'var(--text-ivory)',
+                  textDecoration: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
+                <span style={{ fontSize: '0.85rem', color: active ? 'var(--neon-cyan)' : 'var(--text-muted)' }}>
+                  {active ? '●' : '○'}
+                </span>
+                <span>{link.label}</span>
+              </a>
+            );
+          })}
 
           {/* Mobile Custom Standalone Pages */}
           {customPages.map((page) => (
@@ -369,7 +431,7 @@ export default function Navigation({ activePageSlug, onNavigateHome, onNavigateP
               }}
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.45rem',
+                fontSize: '1.3rem',
                 color: 'var(--neon-cyan)',
                 textDecoration: 'none',
                 display: 'flex',
@@ -377,13 +439,13 @@ export default function Navigation({ activePageSlug, onNavigateHome, onNavigateP
                 gap: '0.5rem',
               }}
             >
-              <span style={{ color: 'var(--atomic-yellow)', fontSize: '1rem' }}>★</span>
+              <span style={{ color: 'var(--atomic-yellow)', fontSize: '0.9rem' }}>★</span>
               <span>{page.title}</span>
             </a>
           ))}
         </div>
 
-        <div style={{ borderTop: '1px solid var(--border-diner)', paddingTop: '2rem' }}>
+        <div style={{ borderTop: '1px solid var(--border-diner)', paddingTop: '1.5rem', marginTop: '1.5rem' }}>
           <p
             style={{
               fontFamily: 'var(--font-mono)',
@@ -398,7 +460,7 @@ export default function Navigation({ activePageSlug, onNavigateHome, onNavigateP
             {content?.restaurant?.opening_hours_summary || 'MON — SUN / 08:00 — 02:00'}
           </p>
           <a
-            href="/cms/"
+            href="http://127.0.0.1:8001/cms/"
             target="_blank"
             rel="noopener noreferrer"
             style={{
