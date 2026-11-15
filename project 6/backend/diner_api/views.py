@@ -297,10 +297,30 @@ def cms_dashboard_view(request):
     # Reservation Filtering & Maitre D' Concierge
     today = timezone.localdate()
     tomorrow = today + datetime.timedelta(days=1)
-    res_filter = request.GET.get('res_filter', 'all')
+    res_filter = request.GET.get('res_filter', 'all').lower()
+    shift_param = request.GET.get('shift', request.GET.get('shift_filter', '')).lower()
     res_search = request.GET.get('res_search', '').strip()
 
+    # Support res_filter='lunch' or res_filter='dinner' directly, or separate shift parameter
+    if res_filter in ['lunch', 'dinner']:
+        active_shift = res_filter
+        res_filter = 'all'
+    elif shift_param in ['lunch', 'dinner']:
+        active_shift = shift_param
+    else:
+        active_shift = 'all'
+
     filtered_reservations = all_reservations
+
+    # 1. Apply Shift Filter (Lunch / Dinner / All)
+    if active_shift == 'lunch':
+        lunch_ids = [r.id for r in filtered_reservations if not r.is_dinner_shift]
+        filtered_reservations = filtered_reservations.filter(id__in=lunch_ids)
+    elif active_shift == 'dinner':
+        dinner_ids = [r.id for r in filtered_reservations if r.is_dinner_shift]
+        filtered_reservations = filtered_reservations.filter(id__in=dinner_ids)
+
+    # 2. Apply Status / Date Filter
     if res_filter == 'today':
         filtered_reservations = filtered_reservations.filter(reservation_date=today)
     elif res_filter == 'tomorrow':
@@ -312,14 +332,22 @@ def cms_dashboard_view(request):
     elif res_filter == 'seated':
         filtered_reservations = filtered_reservations.filter(status='seated')
 
+    # 3. Apply Search Filter
     if res_search:
-        filtered_reservations = filtered_reservations.filter(
+        search_q = (
             Q(reference_code__icontains=res_search) |
             Q(full_name__icontains=res_search) |
             Q(phone__icontains=res_search) |
             Q(email__icontains=res_search) |
-            Q(table_number__icontains=res_search)
+            Q(table_number__icontains=res_search) |
+            Q(seating_area__icontains=res_search)
         )
+        filtered_reservations = filtered_reservations.filter(search_q)
+
+    # Global and shift telemetry
+    all_res_list = list(all_reservations)
+    lunch_reservations_count = sum(1 for r in all_res_list if not r.is_dinner_shift)
+    dinner_reservations_count = sum(1 for r in all_res_list if r.is_dinner_shift)
 
     today_reservations = all_reservations.filter(reservation_date=today)
     today_covers = sum(r.guest_count for r in today_reservations.filter(status__in=['confirmed', 'seated', 'completed']))
@@ -330,6 +358,8 @@ def cms_dashboard_view(request):
         'pending_reservations': all_reservations.filter(status='pending').count(),
         'confirmed_reservations': all_reservations.filter(status='confirmed').count(),
         'seated_reservations': all_reservations.filter(status='seated').count(),
+        'lunch_reservations': lunch_reservations_count,
+        'dinner_reservations': dinner_reservations_count,
         'today_reservations_count': today_reservations.count(),
         'today_covers': today_covers,
         'total_menu_items': MenuItem.objects.count(),
@@ -361,6 +391,8 @@ def cms_dashboard_view(request):
         'reservations': filtered_reservations,
         'all_reservations_count': all_reservations.count(),
         'res_filter': res_filter,
+        'active_shift': active_shift,
+        'shift_filter': active_shift,
         'res_search': res_search,
         'viewpoints': viewpoints,
         'gallery_images': gallery_images,

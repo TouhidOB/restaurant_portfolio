@@ -309,10 +309,27 @@ class Reservation(models.Model):
     @property
     def is_dinner_shift(self):
         try:
-            hour = int(self.reservation_time.split(':')[0])
+            raw = str(self.reservation_time).strip().upper()
+            if 'PM' in raw:
+                parts = raw.replace('PM', '').strip().split(':')
+                h = int(parts[0])
+                if h != 12:
+                    h += 12
+                return h >= 16
+            if 'AM' in raw:
+                return False
+            hour = int(raw.split(':')[0])
             return hour >= 16
         except Exception:
             return True
+
+    @property
+    def is_lunch_shift(self):
+        return not self.is_dinner_shift
+
+    @property
+    def shift_name(self):
+        return 'Dinner' if self.is_dinner_shift else 'Lunch'
 
     def __str__(self):
         return f"{self.reference_code} — {self.full_name} ({self.guest_count} guests) [{self.status}]"

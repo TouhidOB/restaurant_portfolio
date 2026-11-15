@@ -916,7 +916,15 @@
       <!-- Tab 2: Host Desk / My Bookings View -->
       <div id="modalDeskContent" style="display: none;">
         <h3 style="font-size: 1.4rem; margin-bottom: 0.35rem; color: var(--primary); font-family: var(--font-heading);">Host Concierge & Approvals Desk</h3>
-        <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 1.25rem;">Live view of reservation requests. Restaurant hosts can review incoming requests, approve and assign tables, or decline bookings.</p>
+        <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 1rem;">Live view of reservation requests. Filter by Lunch or Dinner, approve and allocate tables, or decline bookings.</p>
+
+        <!-- Service Shift Filter Bar -->
+        <div style="display: flex; gap: 0.4rem; margin-bottom: 0.85rem; align-items: center; flex-wrap: wrap;">
+          <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-family: monospace;">FILTER SHIFT:</span>
+          <button type="button" class="desk-shift-pill active" data-shift="all" style="background: var(--primary); color: #000; border: none; padding: 0.25rem 0.65rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">🍽️ All Shifts</button>
+          <button type="button" class="desk-shift-pill" data-shift="lunch" style="background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid rgba(255,255,255,0.15); padding: 0.25rem 0.65rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">☀️ Lunch Shift</button>
+          <button type="button" class="desk-shift-pill" data-shift="dinner" style="background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid rgba(255,255,255,0.15); padding: 0.25rem 0.65rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">🌙 Dinner Shift</button>
+        </div>
 
         <div id="deskListContainer" style="max-height: 280px; overflow-y: auto; margin-bottom: 1rem;">
           <!-- Populated from localStorage -->
@@ -1057,13 +1065,33 @@
       saveBookingList(list);
     }
 
+    let activeDeskShift = 'all';
+
+    function isBookingLunch(b) {
+      try {
+        const raw = (b.time || '19:15').trim();
+        const hour = parseInt(raw.split(':')[0], 10);
+        return hour < 16;
+      } catch (e) {
+        return false;
+      }
+    }
+
     function renderDeskList() {
       const container = document.getElementById('deskListContainer');
-      const list = getSavedBookings();
+      let list = getSavedBookings();
+
+      if (activeDeskShift === 'lunch') {
+        list = list.filter(b => isBookingLunch(b));
+      } else if (activeDeskShift === 'dinner') {
+        list = list.filter(b => !isBookingLunch(b));
+      }
+
       if (!list.length) {
+        const shiftLabel = activeDeskShift === 'all' ? '' : activeDeskShift + ' ';
         container.innerHTML = `
           <div style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.85rem; border: 1px dashed rgba(255,255,255,0.1); border-radius: 6px;">
-            No reservation requests yet. Click "New Request" to create a test booking.
+            No ${shiftLabel}reservation requests found. Click "New Request" to create a test booking.
           </div>
         `;
         return;
@@ -1071,6 +1099,7 @@
       container.innerHTML = list.map(b => {
         const isPending = b.status === 'Pending Approval';
         const isApproved = b.status === 'Approved & Confirmed';
+        const isLunch = isBookingLunch(b);
 
         let badge = '';
         let actionButtons = '';
@@ -1103,7 +1132,7 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem; color: var(--text-muted);">
               <div>Guest: <span style="color: #FFF; font-weight: 600;">${b.name}</span></div>
               <div>Party: <span style="color: var(--primary); font-weight: 600;">${b.party} Guests</span></div>
-              <div>Date: <span style="color: #FFF;">${b.date} @ ${b.time}</span></div>
+              <div>Shift: <span style="color: ${isLunch ? '#FFD700' : 'var(--primary)'}; font-weight: 600;">${isLunch ? '☀️ LUNCH' : '🌙 DINNER'} @ ${b.time}</span></div>
               <div>Zone: <span style="color: #FFF;">${b.zone}</span></div>
               ${b.table ? `<div>Assigned: <span style="color: #10B981; font-weight: 600;">${b.table}</span></div>` : ''}
             </div>
@@ -1157,6 +1186,23 @@
     document.getElementById('btnClearBookings').addEventListener('click', () => {
       localStorage.removeItem(STORAGE_KEY);
       renderDeskList();
+    });
+
+    document.querySelectorAll('.desk-shift-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.desk-shift-pill').forEach(b => {
+          b.style.background = 'rgba(255,255,255,0.06)';
+          b.style.color = 'var(--text)';
+          b.style.border = '1px solid rgba(255,255,255,0.15)';
+          b.classList.remove('active');
+        });
+        btn.classList.add('active');
+        btn.style.background = 'var(--primary)';
+        btn.style.color = '#000';
+        btn.style.border = 'none';
+        activeDeskShift = btn.getAttribute('data-shift');
+        renderDeskList();
+      });
     });
 
     const btnGoToDesk = document.getElementById('btnGoToDesk');

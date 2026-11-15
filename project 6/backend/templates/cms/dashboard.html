@@ -266,6 +266,12 @@
       </p>
     </div>
     <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+      <a href="?res_filter={{ res_filter }}&shift=lunch#section-reservations" class="badge" style="background: rgba(242, 201, 76, 0.15); color: var(--atomic-yellow); border: 1px solid var(--atomic-yellow); text-decoration: none; cursor: pointer;">
+        ☀️ {{ kpis.lunch_reservations }} LUNCH
+      </a>
+      <a href="?res_filter={{ res_filter }}&shift=dinner#section-reservations" class="badge" style="background: rgba(67, 217, 232, 0.15); color: var(--neon-cyan); border: 1px solid var(--neon-cyan); text-decoration: none; cursor: pointer;">
+        🌙 {{ kpis.dinner_reservations }} DINNER
+      </a>
       <span class="badge badge-pending">{{ kpis.pending_reservations }} PENDING</span>
       <span class="badge badge-confirmed">{{ kpis.confirmed_reservations }} CONFIRMED</span>
       <span class="badge badge-seated">{{ kpis.seated_reservations }} SEATED</span>
@@ -279,37 +285,70 @@
   </div>
 
   <!-- Shift & Status Filter Bar -->
-  <div style="background-color: var(--bg-midnight); border: 1px solid var(--border-color); border-radius: 6px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
-    <div style="display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap;">
-      <a href="?res_filter=all#section-reservations" class="btn {% if res_filter == 'all' or not res_filter %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
-        All ({{ all_reservations_count }})
-      </a>
-      <a href="?res_filter=today#section-reservations" class="btn {% if res_filter == 'today' %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
-        ☀️ Today's Shift
-      </a>
-      <a href="?res_filter=tomorrow#section-reservations" class="btn {% if res_filter == 'tomorrow' %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
-        🌙 Tomorrow
-      </a>
-      <a href="?res_filter=pending#section-reservations" class="btn {% if res_filter == 'pending' %}btn-cherry{% else %}btn-outline{% endif %}" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
-        ⏳ Pending ({{ kpis.pending_reservations }})
-      </a>
-      <a href="?res_filter=confirmed#section-reservations" class="btn {% if res_filter == 'confirmed' %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
-        ✓ Confirmed ({{ kpis.confirmed_reservations }})
-      </a>
-      <a href="?res_filter=seated#section-reservations" class="btn {% if res_filter == 'seated' %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;">
-        🍴 Seated ({{ kpis.seated_reservations }})
-      </a>
+  <div style="background-color: var(--bg-midnight); border: 1px solid var(--border-color); border-radius: 6px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.85rem;">
+    
+    <!-- Row 1: Service Shift Filtering + Search -->
+    <div style="display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+      <div style="display: flex; gap: 0.45rem; align-items: center; flex-wrap: wrap;">
+        <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-right: 0.3rem;">
+          SERVICE SHIFT:
+        </span>
+        <a href="?res_filter={{ res_filter }}&shift=all#section-reservations" class="btn {% if active_shift == 'all' %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.35rem 0.75rem; font-size: 0.76rem; font-weight: 700;">
+          🍽️ All Shifts ({{ all_reservations_count }})
+        </a>
+        <a href="?res_filter={{ res_filter }}&shift=lunch#section-reservations" class="btn {% if active_shift == 'lunch' %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.35rem 0.75rem; font-size: 0.76rem; font-weight: 700; {% if active_shift == 'lunch' %}background: var(--atomic-yellow); border-color: var(--atomic-yellow); color: #000; box-shadow: 0 0 12px rgba(242, 201, 76, 0.4);{% endif %}">
+          ☀️ Lunch Shift ({{ kpis.lunch_reservations }})
+        </a>
+        <a href="?res_filter={{ res_filter }}&shift=dinner#section-reservations" class="btn {% if active_shift == 'dinner' %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.35rem 0.75rem; font-size: 0.76rem; font-weight: 700; {% if active_shift == 'dinner' %}background: var(--neon-cyan); border-color: var(--neon-cyan); color: #000; box-shadow: 0 0 12px rgba(67, 217, 232, 0.4);{% endif %}">
+          🌙 Dinner Shift ({{ kpis.dinner_reservations }})
+        </a>
+      </div>
+
+      <!-- Live Search -->
+      <form method="GET" action="#section-reservations" style="display: flex; gap: 0.4rem; align-items: center;">
+        <input type="hidden" name="res_filter" value="{{ res_filter }}">
+        <input type="hidden" name="shift" value="{{ active_shift }}">
+        <input type="text" name="res_search" value="{{ res_search }}" placeholder="Search ref, guest, table, phone..." class="form-control" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; width: 220px;">
+        <button type="submit" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Search</button>
+        {% if res_search %}
+          <a href="?res_filter={{ res_filter }}&shift={{ active_shift }}#section-reservations" class="btn btn-outline" style="padding: 0.35rem 0.5rem; font-size: 0.75rem; color: var(--cherry-red);">✕ Clear</a>
+        {% endif %}
+      </form>
     </div>
 
-    <!-- Live Search -->
-    <form method="GET" action="#section-reservations" style="display: flex; gap: 0.4rem; align-items: center;">
-      <input type="hidden" name="res_filter" value="{{ res_filter }}">
-      <input type="text" name="res_search" value="{{ res_search }}" placeholder="Search ref, guest, table, phone..." class="form-control" style="padding: 0.35rem 0.75rem; font-size: 0.78rem; width: 220px;">
-      <button type="submit" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Search</button>
-      {% if res_search %}
-        <a href="?res_filter={{ res_filter }}#section-reservations" class="btn btn-outline" style="padding: 0.35rem 0.5rem; font-size: 0.75rem; color: var(--cherry-red);">✕ Clear</a>
+    <!-- Divider -->
+    <div style="height: 1px; background: rgba(255, 255, 255, 0.08);"></div>
+
+    <!-- Row 2: Status & Date Filters -->
+    <div style="display: flex; gap: 0.45rem; align-items: center; flex-wrap: wrap;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-right: 0.3rem;">
+        STATUS & DATE:
+      </span>
+      <a href="?res_filter=all&shift={{ active_shift }}#section-reservations" class="btn {% if res_filter == 'all' or not res_filter %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.32rem 0.65rem; font-size: 0.74rem;">
+        All Statuses
+      </a>
+      <a href="?res_filter=today&shift={{ active_shift }}#section-reservations" class="btn {% if res_filter == 'today' %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.32rem 0.65rem; font-size: 0.74rem;">
+        ☀️ Today
+      </a>
+      <a href="?res_filter=tomorrow&shift={{ active_shift }}#section-reservations" class="btn {% if res_filter == 'tomorrow' %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.32rem 0.65rem; font-size: 0.74rem;">
+        🌙 Tomorrow
+      </a>
+      <a href="?res_filter=pending&shift={{ active_shift }}#section-reservations" class="btn {% if res_filter == 'pending' %}btn-cherry{% else %}btn-outline{% endif %}" style="padding: 0.32rem 0.65rem; font-size: 0.74rem;">
+        ⏳ Pending ({{ kpis.pending_reservations }})
+      </a>
+      <a href="?res_filter=confirmed&shift={{ active_shift }}#section-reservations" class="btn {% if res_filter == 'confirmed' %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.32rem 0.65rem; font-size: 0.74rem;">
+        ✓ Confirmed ({{ kpis.confirmed_reservations }})
+      </a>
+      <a href="?res_filter=seated&shift={{ active_shift }}#section-reservations" class="btn {% if res_filter == 'seated' %}btn-cyan{% else %}btn-outline{% endif %}" style="padding: 0.32rem 0.65rem; font-size: 0.74rem;">
+        🍴 Seated ({{ kpis.seated_reservations }})
+      </a>
+      {% if res_filter != 'all' or active_shift != 'all' or res_search %}
+        <a href="?res_filter=all&shift=all#section-reservations" style="margin-left: 0.5rem; font-size: 0.74rem; color: var(--text-muted); text-decoration: underline;">
+          ✕ Reset all filters
+        </a>
       {% endif %}
-    </form>
+    </div>
+
   </div>
 
   <div style="overflow-x: auto;">
@@ -345,9 +384,15 @@
             </td>
             <td>
               <strong style="color: #FFF;">{{ res.reservation_date|date:"D, M d" }}</strong><br>
-              <span class="badge" style="background: rgba(255,255,255,0.06); font-size: 0.72rem; padding: 0.15rem 0.4rem;">
-                {% if res.is_dinner_shift %}🌙 DINNER{% else %}☀️ LUNCH{% endif %} • {{ res.reservation_time }}
-              </span>
+              {% if res.is_dinner_shift %}
+                <span class="badge" style="background: rgba(67, 217, 232, 0.15); color: var(--neon-cyan); border: 1px solid rgba(67, 217, 232, 0.4); font-size: 0.72rem; padding: 0.15rem 0.45rem;">
+                  🌙 DINNER • {{ res.reservation_time }}
+                </span>
+              {% else %}
+                <span class="badge" style="background: rgba(242, 201, 76, 0.15); color: var(--atomic-yellow); border: 1px solid rgba(242, 201, 76, 0.4); font-size: 0.72rem; padding: 0.15rem 0.45rem;">
+                  ☀️ LUNCH • {{ res.reservation_time }}
+                </span>
+              {% endif %}
             </td>
             <td>
               <strong style="font-size: 0.95rem; color: #FFF;">{{ res.guest_count }} PAX</strong><br>
