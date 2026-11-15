@@ -1,0 +1,46 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}GALLERY ARCHIVE // AURELIA Studio{% endblock %}
+
+{% block content %}
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>Visual Gallery Archive</h1>
+    <p>High-resolution imagery of our dining halls, champagne parlour, charcoal kitchens, and signature dishes.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000/#gallery" target="_blank" class="btn btn-gold">
+      <span>VIEW GALLERY</span> ↗
+    </a>
+  </div>
+</header>
+
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>Gallery Photo Collection ({{ gallery|length }} photos)</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Synchronized with frontend masonry grid and modal lightbox.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">ACTIVE ARCHIVE</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem;">
+    {% for img in gallery %}
+      <div style="background: var(--obsidian-deep); border: 1px solid var(--obsidian-border); border-radius: 4px; overflow: hidden;">
+        <img src="{{ img.url }}" alt="{{ img.caption }}" style="width: 100%; height: 180px; object-fit: cover; display: block;">
+        <div style="padding: 1rem;">
+          <strong style="color: #FFF; font-size: 0.88rem; display: block;">{{ img.title }}</strong>
+          <small style="color: var(--text-muted); font-size: 0.78rem; display: block; margin-top: 0.25rem;">{{ img.caption }}</small>
+          <span class="badge" style="margin-top: 0.5rem; background: rgba(18, 59, 53, 0.4); border: 1px solid var(--gold-primary); color: var(--gold-bright);">{{ img.category }}</span>
+        </div>
+      </div>
+    {% empty %}
+      <div style="padding: 3rem; text-align: center; color: var(--text-muted); grid-column: 1 / -1;">
+        No gallery items currently on display.
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

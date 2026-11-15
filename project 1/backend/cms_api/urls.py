@@ -6,6 +6,11 @@ from .views import (
     AdminMeView,
     PublicContentView,
     ReservationViewSet,
+    ReservationLookupView,
+    ReservationAvailabilityView,
+    CustomPageDetailView,
+    BlogPostListView,
+    BlogPostDetailView,
 )
 
 router = DefaultRouter()
@@ -20,6 +25,17 @@ urlpatterns = [
     # CMS Content
     path('content/', PublicContentView.as_view(), name='public_content'),
 
-    # Router (reservations)
+    # Table Reservations Extra Endpoints (must precede router)
+    path('reservations/lookup/', ReservationLookupView.as_view(), name='reservation_lookup'),
+    path('reservations/availability/', ReservationAvailabilityView.as_view(), name='reservation_availability'),
+
+    # Custom Standalone Pages
+    path('pages/<slug:slug>/', CustomPageDetailView.as_view(), name='api_custom_page_detail'),
+
+    # Blog & Editorial Journal
+    path('blog/', BlogPostListView.as_view(), name='api_blog_list'),
+    path('blog/<slug:slug>/', BlogPostDetailView.as_view(), name='api_blog_detail'),
+
+    # Router (reservations CRUD)
     path('', include(router.urls)),
 ]

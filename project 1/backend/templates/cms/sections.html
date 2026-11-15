@@ -1,0 +1,91 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}15-SECTION EDITOR // AURELIA Studio{% endblock %}
+
+{% block content %}
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>15-Section Homepage Editorial Copy</h1>
+    <p>Manage the editorial text, headlines, eyebrows, and CTA prompts across all 15 homepage sections.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000" target="_blank" class="btn btn-gold">
+      <span>VIEW HOMEPAGE</span> ↗
+    </a>
+  </div>
+</header>
+
+<!-- Hero Section Card -->
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>Section 01: Hero Banner</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Top-of-fold grand landing statement and call-to-actions.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">SECTION KEY: hero</span>
+  </div>
+
+  <form method="POST" action="{% url 'cms_update_section' 'hero' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>Eyebrow Tag</label>
+      <input type="text" name="eyebrow" class="form-control" value="{{ content.hero.eyebrow }}">
+    </div>
+    <div class="form-group">
+      <label>Headline Title</label>
+      <input type="text" name="title" class="form-control" value="{{ content.hero.title }}">
+    </div>
+    <div class="form-group">
+      <label>Supporting Description</label>
+      <textarea name="description" rows="2" class="form-control">{{ content.hero.description }}</textarea>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+      <div class="form-group">
+        <label>Primary CTA Text</label>
+        <input type="text" name="primaryCta" class="form-control" value="{{ content.hero.primaryCta }}">
+      </div>
+      <div class="form-group">
+        <label>Secondary CTA Text</label>
+        <input type="text" name="secondaryCta" class="form-control" value="{{ content.hero.secondaryCta }}">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-gold">Save Hero Changes</button>
+  </form>
+</section>
+
+<!-- Brand Intro Section Card -->
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>Section 02: Brand Introduction</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Art Deco narrative and dining philosophy statement.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">SECTION KEY: brandIntro</span>
+  </div>
+
+  <form method="POST" action="{% url 'cms_update_section' 'brandIntro' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label>Eyebrow Tag</label>
+      <input type="text" name="eyebrow" class="form-control" value="{{ content.brandIntro.eyebrow }}">
+    </div>
+    <div class="form-group">
+      <label>Headline Title</label>
+      <input type="text" name="title" class="form-control" value="{{ content.brandIntro.title }}">
+    </div>
+    <div class="form-group">
+      <label>Lead Statement</label>
+      <textarea name="lead" rows="2" class="form-control">{{ content.brandIntro.lead }}</textarea>
+    </div>
+    <div class="form-group">
+      <label>Full Narrative</label>
+      <textarea name="description" rows="3" class="form-control">{{ content.brandIntro.description }}</textarea>
+    </div>
+    <button type="submit" class="btn btn-gold">Save Brand Intro Changes</button>
+  </form>
+</section>
+{% endblock %}

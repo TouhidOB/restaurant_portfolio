@@ -1,0 +1,200 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}OVERVIEW // AURELIA Grand Dining Salon Studio{% endblock %}
+
+{% block content %}
+<!-- Topbar -->
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>Grand Salon Telemetry & Operations</h1>
+    <p>Central management console, real-time dinner & lunch shifts, and administrative launchpad.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000" target="_blank" class="btn btn-gold">
+      <span>PREVIEW PUBLIC EXPERIENCE</span> ↗
+    </a>
+    <a href="/api/v1/content/" target="_blank" class="btn btn-emerald">
+      <span>RAW API PAYLOAD</span> ↗
+    </a>
+  </div>
+</header>
+
+<!-- Shift Operations Bar -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+  <!-- Lunch Shift Card -->
+  <div class="cms-card" style="padding: 1.5rem; border-top: 4px solid var(--gold-primary); margin-bottom: 0; background: linear-gradient(135deg, rgba(214, 184, 121, 0.08) 0%, rgba(13, 15, 16, 0.95) 100%);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div>
+        <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--gold-primary); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
+          ☀️ LUNCH SERVICE SHIFT
+        </span>
+        <div style="font-family: 'Bodoni Moda', serif; font-size: 2.4rem; font-weight: 700; color: #FFFFFF; margin: 0.35rem 0 0.15rem;">
+          {{ kpis.lunch_reservations }} <span style="font-size: 1rem; color: var(--text-muted); font-family: 'Montserrat', sans-serif; font-weight: 400;">Bookings</span>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">
+          Daytime dining service (12:00 PM – 04:00 PM).
+        </p>
+      </div>
+      <a href="{% url 'cms_reservations' %}?shift=lunch" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--gold-primary); border-color: var(--gold-primary);">
+        Lunch Desk ↗
+      </a>
+    </div>
+  </div>
+
+  <!-- Dinner Shift Card -->
+  <div class="cms-card" style="padding: 1.5rem; border-top: 4px solid var(--emerald-light); margin-bottom: 0; background: linear-gradient(135deg, rgba(18, 59, 53, 0.2) 0%, rgba(13, 15, 16, 0.95) 100%);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div>
+        <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--gold-bright); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
+          🌙 DINNER & CHAMPAGNE SHIFT
+        </span>
+        <div style="font-family: 'Bodoni Moda', serif; font-size: 2.4rem; font-weight: 700; color: #FFFFFF; margin: 0.35rem 0 0.15rem;">
+          {{ kpis.dinner_reservations }} <span style="font-size: 1rem; color: var(--text-muted); font-family: 'Montserrat', sans-serif; font-weight: 400;">Bookings</span>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">
+          Evening Grand Salon service (05:00 PM – 11:45 PM).
+        </p>
+      </div>
+      <a href="{% url 'cms_reservations' %}?shift=dinner" class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--gold-bright); border-color: var(--gold-bright);">
+        Dinner Desk ↗
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Telemetry KPIs Grid -->
+<section style="margin-bottom: 2.5rem;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem;">
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--gold-primary); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Pending Inquiries
+      </span>
+      <div style="font-family: 'Bodoni Moda', serif; font-size: 2.2rem; font-weight: 700; color: var(--gold-primary); margin-top: 0.25rem;">
+        {{ kpis.pending_reservations }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">{{ kpis.total_reservations }} total inquiries</span>
+    </div>
+
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--emerald-light); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Haute Cuisine Dishes
+      </span>
+      <div style="font-family: 'Bodoni Moda', serif; font-size: 2.2rem; font-weight: 700; color: var(--gold-bright); margin-top: 0.25rem;">
+        {{ kpis.active_menu_items }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">Across {{ kpis.total_categories }} categories</span>
+    </div>
+
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--gold-primary); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Custom Pages
+      </span>
+      <div style="font-family: 'Bodoni Moda', serif; font-size: 2.2rem; font-weight: 700; color: #FFFFFF; margin-top: 0.25rem;">
+        {{ kpis.total_custom_pages }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">{{ kpis.published_custom_pages }} published live</span>
+    </div>
+
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--emerald-light); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Journal Articles
+      </span>
+      <div style="font-family: 'Bodoni Moda', serif; font-size: 2.2rem; font-weight: 700; color: var(--gold-primary); margin-top: 0.25rem;">
+        {{ kpis.total_blog_posts }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">{{ kpis.published_blog_posts }} published dispatches</span>
+    </div>
+  </div>
+</section>
+
+<!-- Recent Reservations Section -->
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>Recent Table Reservation Inquiries</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Direct table bookings awaiting Maitre D' review and salon assignment.
+      </p>
+    </div>
+    <a href="{% url 'cms_reservations' %}" class="btn btn-outline" style="font-size: 0.75rem;">
+      Full Reservation Desk →
+    </a>
+  </div>
+
+  <table class="cms-table">
+    <thead>
+      <tr>
+        <th>Ref Code</th>
+        <th>Guest Details</th>
+        <th>Date & Time</th>
+        <th>Guests</th>
+        <th>Seating Area</th>
+        <th>Table #</th>
+        <th>Status</th>
+        <th>Quick Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for res in recent_reservations %}
+        <tr>
+          <td>
+            <strong style="color: var(--gold-primary); font-family: 'Space Mono', monospace;">{{ res.reference_code }}</strong>
+          </td>
+          <td>
+            <div style="font-weight: 600; color: #FFF;">{{ res.full_name }}</div>
+            <small style="color: var(--text-muted);">{{ res.phone }}</small>
+          </td>
+          <td>
+            <div style="color: #FFF;">{{ res.date }}</div>
+            <small style="color: var(--gold-primary); font-family: 'Space Mono', monospace;">
+              {{ res.time }} {% if res.is_dinner_shift %}🌙 DINNER{% else %}☀️ LUNCH{% endif %}
+            </small>
+          </td>
+          <td>{{ res.guests }} Pax</td>
+          <td>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">{{ res.seating_area }}</span>
+          </td>
+          <td>
+            {% if res.table_number %}
+              <span class="badge" style="background: rgba(214, 184, 121, 0.15); color: var(--gold-bright); border: 1px solid var(--gold-primary);">{{ res.table_number }}</span>
+            {% else %}
+              <span style="color: var(--text-muted); font-size: 0.78rem;">—</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if res.status == 'confirmed' %}
+              <span class="badge badge-confirmed">Confirmed</span>
+            {% elif res.status == 'seated' %}
+              <span class="badge badge-seated">Seated</span>
+            {% elif res.status == 'pending' %}
+              <span class="badge badge-pending">Pending Approval</span>
+            {% else %}
+              <span class="badge badge-cancelled">{{ res.status }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if res.status == 'pending' %}
+              <form method="POST" action="{% url 'cms_approve_reservation' res.pk %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-gold btn-sm">
+                  ✓ Approve
+                </button>
+              </form>
+            {% else %}
+              <a href="{% url 'cms_reservations' %}?search={{ res.reference_code }}" class="btn btn-outline btn-sm">
+                Inspect ↗
+              </a>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="8" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+            No reservations on file yet.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

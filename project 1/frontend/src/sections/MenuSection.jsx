@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Sparkles, Calendar, Filter } from 'lucide-react';
+import { Search, Sparkles, Calendar, Filter, Star, Clock } from 'lucide-react';
+import { useCMS } from '../context/CMSContext';
 
 export default function MenuSection({ categories, menuItems, currency = '৳', onOpenReservation, sectionData = {} }) {
+  const { openDish } = useCMS();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -182,107 +184,176 @@ export default function MenuSection({ categories, menuItems, currency = '৳', o
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
             gap: '24px',
             marginBottom: '56px',
           }}
         >
-          {filteredItems.map((item) => (
-            <div
-              key={item.id}
-              style={{
-                backgroundColor: '#FFFFFF',
-                border: '1px solid rgba(153, 118, 75, 0.25)',
-                padding: '24px',
-                borderRadius: 'var(--radius-sm)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                transition: 'all 0.25s ease',
-                boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
-              }}
-              className="menu-item-card"
-            >
-              <div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'baseline',
-                    marginBottom: '8px',
-                  }}
-                >
-                  <h3
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '19px',
-                      color: '#123B35',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {item.name}
-                  </h3>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '19px',
-                      fontWeight: 700,
-                      color: '#99764B',
-                      whiteSpace: 'nowrap',
-                      marginLeft: '12px',
-                    }}
-                  >
-                    {currency}{Number(item.price).toLocaleString()}
-                  </span>
-                </div>
-
-                <p
-                  style={{
-                    fontSize: '13px',
-                    lineHeight: 1.6,
-                    color: '#536A5D',
-                    marginBottom: '16px',
-                  }}
-                >
-                  {item.description}
-                </p>
-              </div>
-
+          {filteredItems.map((item) => {
+            const itemImg = item.image || item.resolved_image || 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=900&auto=format&fit=crop';
+            return (
               <div
+                key={item.id}
+                onClick={() => openDish(item)}
                 style={{
+                  backgroundColor: '#FFFFFF',
+                  border: '1px solid rgba(153, 118, 75, 0.25)',
+                  borderRadius: 'var(--radius-sm)',
                   display: 'flex',
+                  flexDirection: 'column',
                   justifyContent: 'space-between',
-                  alignItems: 'center',
-                  borderTop: '1px dashed rgba(153, 118, 75, 0.2)',
-                  paddingTop: '12px',
+                  transition: 'all 0.25s ease',
+                  boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                }}
+                className="menu-item-card"
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 12px 28px rgba(18, 59, 53, 0.12)';
+                  e.currentTarget.style.borderColor = '#99764B';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(0,0,0,0.03)';
+                  e.currentTarget.style.borderColor = 'rgba(153, 118, 75, 0.25)';
                 }}
               >
-                <span
-                  style={{
-                    fontSize: '10px',
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    color: '#99764B',
-                    fontWeight: 600,
-                  }}
-                >
-                  {item.category}
-                </span>
+                {/* Meal Photo Header */}
+                <div style={{ height: '200px', width: '100%', overflow: 'hidden', position: 'relative', backgroundColor: '#123B35' }}>
+                  <img
+                    src={itemImg}
+                    alt={item.name}
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=900&auto=format&fit=crop';
+                    }}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transition: 'transform 0.4s ease',
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: '12px',
+                      left: '12px',
+                      backgroundColor: 'rgba(18, 59, 53, 0.9)',
+                      border: '1px solid #D6B879',
+                      color: '#D6B879',
+                      padding: '3px 8px',
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {item.tag || item.category}
+                  </div>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: '12px',
+                      right: '12px',
+                      backgroundColor: 'rgba(13, 15, 16, 0.85)',
+                      color: '#F3EDE1',
+                      padding: '3px 8px',
+                      fontSize: '11px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      borderRadius: '2px',
+                    }}
+                  >
+                    <Clock size={11} /> {item.prepTime || '15-20 min'}
+                  </div>
+                </div>
 
-                <span
-                  style={{
-                    fontSize: '11px',
-                    color: '#718C7D',
-                    backgroundColor: 'rgba(113, 140, 125, 0.12)',
-                    padding: '3px 8px',
-                    borderRadius: '2px',
-                  }}
-                >
-                  {item.dietary}
-                </span>
+                {/* Dish Details */}
+                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
+                  <div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'baseline',
+                        marginBottom: '8px',
+                      }}
+                    >
+                      <h3
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: '18px',
+                          color: '#123B35',
+                          fontWeight: 600,
+                        }}
+                      >
+                        {item.name}
+                      </h3>
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: '18px',
+                          fontWeight: 700,
+                          color: '#99764B',
+                          whiteSpace: 'nowrap',
+                          marginLeft: '12px',
+                        }}
+                      >
+                        {currency}{Number(item.price).toLocaleString()}
+                      </span>
+                    </div>
+
+                    <p
+                      style={{
+                        fontSize: '13px',
+                        lineHeight: 1.6,
+                        color: '#536A5D',
+                        marginBottom: '16px',
+                      }}
+                    >
+                      {item.description}
+                    </p>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      borderTop: '1px dashed rgba(153, 118, 75, 0.2)',
+                      paddingTop: '12px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '10px',
+                        letterSpacing: '0.12em',
+                        textTransform: 'uppercase',
+                        color: '#99764B',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {item.category}
+                    </span>
+
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        color: '#718C7D',
+                        backgroundColor: 'rgba(113, 140, 125, 0.12)',
+                        padding: '3px 8px',
+                        borderRadius: '2px',
+                      }}
+                    >
+                      {item.dietary}
+                    </span>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* If no items match search */}

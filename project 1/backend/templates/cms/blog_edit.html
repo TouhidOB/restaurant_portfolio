@@ -1,0 +1,127 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}EDIT: {{ post.title }} // AURELIA Studio{% endblock %}
+
+{% block content %}
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <div style="margin-bottom: 0.35rem;">
+      <a href="{% url 'cms_blog' %}" style="color: var(--gold-primary); text-decoration: none; font-size: 0.82rem; font-family: 'Space Mono', monospace;">
+        ← BACK TO JOURNAL OVERVIEW
+      </a>
+    </div>
+    <h1>Edit Journal Dispatch</h1>
+    <p>Editing story: <strong style="color: var(--gold-bright);">{{ post.title }}</strong></p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000/blog/{{ post.slug }}" target="_blank" class="btn btn-gold">
+      <span>VIEW LIVE ARTICLE</span> ↗
+    </a>
+  </div>
+</header>
+
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>Dispatch Copy & Configuration</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        URL Slug: <code>/blog/{{ post.slug }}</code>
+      </p>
+    </div>
+    <div>
+      {% if post.is_published %}
+        <span class="badge badge-confirmed">LIVE PUBLISHED</span>
+      {% else %}
+        <span class="badge badge-pending">DRAFT</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <form method="POST" action="{% url 'cms_edit_blog_post' post.pk %}" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem;">
+      <div class="form-group">
+        <label>Article Title *</label>
+        <input type="text" name="title" class="form-control" value="{{ post.title }}" required>
+      </div>
+      <div class="form-group">
+        <label>Category *</label>
+        <select name="category_id" class="form-control" required>
+          {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if post.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.25rem;">
+      <div class="form-group">
+        <label>Author Name</label>
+        <input type="text" name="author_name" class="form-control" value="{{ post.author_name }}">
+      </div>
+      <div class="form-group">
+        <label>Author Title / Role</label>
+        <input type="text" name="author_role" class="form-control" value="{{ post.author_role }}">
+      </div>
+      <div class="form-group">
+        <label>Estimated Read Time (Minutes)</label>
+        <input type="number" name="read_time_minutes" class="form-control" value="{{ post.read_time_minutes }}" min="1" max="60">
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+      <div class="form-group">
+        <label>Cover Photo Image URL</label>
+        <input type="url" name="cover_image_url" class="form-control" value="{{ post.cover_image_url }}">
+      </div>
+      <div class="form-group">
+        <label>Or Upload New Cover Image File</label>
+        <input type="file" name="cover_image" class="form-control" accept="image/*">
+      </div>
+    </div>
+
+    {% if post.cover_image or post.cover_image_url %}
+    <div style="margin-bottom: 1.25rem; display: flex; align-items: center; gap: 1rem;">
+      <img 
+        src="{% if post.cover_image %}{{ post.cover_image.url }}{% else %}{{ post.cover_image_url }}{% endif %}" 
+        alt="Current cover preview" 
+        style="width: 120px; height: 75px; object-fit: cover; border-radius: 3px; border: 1px solid var(--obsidian-border);"
+      >
+      <span style="font-size: 0.8rem; color: var(--text-muted);">Current Active Cover Photo Preview</span>
+    </div>
+    {% endif %}
+
+    <div class="form-group">
+      <label>Excerpt / Summary Hook (Appears on card preview) *</label>
+      <textarea name="excerpt" rows="2" class="form-control" required>{{ post.excerpt }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Full Editorial Article Content (Supports HTML tags like &lt;h3&gt;, &lt;p&gt;, &lt;blockquote&gt;) *</label>
+      <textarea name="content" rows="12" class="form-control" required>{{ post.content }}</textarea>
+    </div>
+
+    <div style="display: flex; gap: 2rem; align-items: center; margin-top: 1rem; margin-bottom: 1.5rem;">
+      <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--gold-bright); font-size: 0.88rem; font-weight: 600;">
+        <input type="checkbox" name="is_featured" {% if post.is_featured %}checked{% endif %} style="width: 16px; height: 16px;">
+        ★ Feature as Lead Hero Story
+      </label>
+
+      <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--gold-primary); font-size: 0.88rem; font-weight: 600;">
+        <input type="checkbox" name="is_published" {% if post.is_published %}checked{% endif %} style="width: 16px; height: 16px;">
+        ✓ Publish Live to Website
+      </label>
+    </div>
+
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <button type="submit" class="btn btn-gold" style="padding: 0.85rem 2rem;">
+        <span>SAVE DISPATCH CHANGES</span>
+      </button>
+      <a href="{% url 'cms_blog' %}" class="btn btn-outline" style="padding: 0.85rem 1.5rem;">
+        Cancel
+      </a>
+    </div>
+  </form>
+</section>
+{% endblock %}

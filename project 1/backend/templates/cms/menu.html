@@ -1,0 +1,191 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}MENU MANAGEMENT // AURELIA Studio{% endblock %}
+
+{% block content %}
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>Haute Cuisine & Menu Repertoire</h1>
+    <p>Manage culinary dishes, food photography, availability toggles, prices, and dietary certifications.</p>
+  </div>
+  <div class="topbar-actions">
+    <button onclick="document.getElementById('addDishModal').style.display='flex'" class="btn btn-gold">
+      <span>+ ADD NEW CULINARY DISH</span>
+    </button>
+  </div>
+</header>
+
+<!-- Category Filter Pills -->
+<div class="cms-card" style="padding: 1rem 1.25rem; margin-bottom: 2rem;">
+  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+    <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--gold-primary); text-transform: uppercase; margin-right: 0.5rem;">
+      Filter by Category:
+    </span>
+    {% for cat in categories %}
+      <a href="{% url 'cms_menu' %}?category={{ cat }}" class="btn {% if selected_category == cat %}btn-gold{% else %}btn-outline{% endif %} btn-sm">
+        {{ cat }}
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Dishes Grid / Table -->
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>Active Culinary Portfolio ({{ dishes|length }} items)</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Showing items in category: <strong style="color: var(--gold-bright);">{{ selected_category }}</strong>
+      </p>
+    </div>
+    <span class="badge badge-confirmed">LIVE REPERTOIRE</span>
+  </div>
+
+  <table class="cms-table">
+    <thead>
+      <tr>
+        <th style="width: 80px;">Photo</th>
+        <th>Dish & Description</th>
+        <th>Category</th>
+        <th>Price (BDT)</th>
+        <th>Dietary / Tag</th>
+        <th>Availability</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for dish in dishes %}
+        <tr>
+          <td>
+            <img 
+              src="{{ dish.image|default:'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=120&auto=format&fit=crop' }}" 
+              alt="{{ dish.name }}"
+              onerror="this.src='https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=120&auto=format&fit=crop'"
+              style="width: 64px; height: 64px; object-fit: cover; border-radius: 3px; border: 1px solid var(--obsidian-border); display: block;"
+            >
+          </td>
+          <td style="max-width: 320px;">
+            <strong style="color: #FFF; font-size: 0.98rem; font-family: 'Bodoni Moda', serif;">{{ dish.name }}</strong>
+            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 0.25rem 0 0; line-height: 1.4;">
+              {{ dish.description }}
+            </p>
+          </td>
+          <td>
+            <span class="badge" style="background: rgba(18, 59, 53, 0.4); border: 1px solid var(--gold-primary); color: var(--gold-bright);">
+              {{ dish.category }}
+            </span>
+          </td>
+          <td>
+            <strong style="color: var(--gold-bright); font-family: 'Space Mono', monospace; font-size: 1rem;">
+              ৳{{ dish.price }}
+            </strong>
+          </td>
+          <td>
+            {% if dish.dietary %}
+              <div style="font-size: 0.78rem; color: var(--pearl-ivory);">{{ dish.dietary }}</div>
+            {% endif %}
+            {% if dish.tag %}
+              <small style="color: var(--gold-primary); font-family: 'Space Mono', monospace; font-size: 0.7rem;">★ {{ dish.tag }}</small>
+            {% endif %}
+          </td>
+          <td>
+            {% if dish.is_available or dish.is_available == None %}
+              <span class="badge badge-confirmed">Available</span>
+            {% else %}
+              <span class="badge badge-cancelled">Sold Out</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <form method="POST" action="{% url 'cms_toggle_menu_item' dish.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline btn-sm">
+                  {% if dish.is_available or dish.is_available == None %}Mark Sold Out{% else %}Mark In Stock{% endif %}
+                </button>
+              </form>
+              <form method="POST" action="{% url 'cms_delete_menu_item' dish.id %}" style="display: inline;" onsubmit="return confirm('Remove this dish from the menu?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">
+                  ✕
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            No dishes found in category "{{ selected_category }}".
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<!-- Add Dish Modal -->
+<div id="addDishModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+  <div class="cms-card" style="width: 100%; max-width: 540px; margin: 0; border-color: var(--gold-primary); box-shadow: 0 16px 40px rgba(0,0,0,0.8);">
+    <div class="cms-card-header">
+      <h2>Add New Culinary Creation</h2>
+      <button type="button" onclick="document.getElementById('addDishModal').style.display='none'" style="background: none; border: none; color: var(--text-muted); font-size: 1.25rem; cursor: pointer;">✕</button>
+    </div>
+
+    <form method="POST" action="{% url 'cms_add_menu_item' %}">
+      {% csrf_token %}
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Dish Name *</label>
+          <input type="text" name="name" class="form-control" placeholder="e.g. Saffron Butter Smoked Lamb Chops" required>
+        </div>
+        <div class="form-group">
+          <label>Price (BDT ৳) *</label>
+          <input type="number" name="price" class="form-control" placeholder="1450" required>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Category *</label>
+          <select name="category" class="form-control">
+            {% for cat in categories %}
+              {% if cat != 'All' %}
+                <option value="{{ cat }}">{{ cat }}</option>
+              {% endif %}
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Highlight Tag</label>
+          <input type="text" name="tag" class="form-control" placeholder="Signature, Bestseller, etc.">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Dietary Certification</label>
+          <input type="text" name="dietary" class="form-control" placeholder="Gluten-Free, Halal Prime, etc.">
+        </div>
+        <div class="form-group">
+          <label>Food Image URL</label>
+          <input type="url" name="image" class="form-control" placeholder="https://images.unsplash.com/photo-..." value="https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=900&auto=format&fit=crop">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Culinary Description *</label>
+        <textarea name="description" rows="3" class="form-control" placeholder="Describe the ingredients, cooking method, and flavor profile..." required></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+        <button type="button" onclick="document.getElementById('addDishModal').style.display='none'" class="btn btn-outline">
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-gold">
+          Add Dish To Menu →
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

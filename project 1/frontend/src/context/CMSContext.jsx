@@ -64,22 +64,37 @@ export function CMSProvider({ children }) {
   const [saveStatus, setSaveStatus] = useState('');
   const [reservations, setReservations] = useState([]);
   const [isLoadingBackend, setIsLoadingBackend] = useState(false);
+  const [isReservationOpen, setIsReservationOpen] = useState(false);
+  const [selectedDish, setSelectedDish] = useState(null);
+  const [customPages, setCustomPages] = useState([]);
+  const [blogPosts, setBlogPosts] = useState(restaurantConfig.blog_posts || []);
+  const [blogCategories, setBlogCategories] = useState(restaurantConfig.blog_categories || []);
+
+  const openReservation = () => setIsReservationOpen(true);
+  const closeReservation = () => setIsReservationOpen(false);
+  const openDish = (dish) => setSelectedDish(dish);
+  const closeDish = () => setSelectedDish(null);
 
   // 1. Fetch live published content from Django Backend on initial load
   useEffect(() => {
     async function loadBackendData() {
       const res = await api.getPublicContent();
-      if (res && res.exists && res.content) {
-        setConfig((prev) => ({
-          ...prev,
-          ...res.content,
-          theme: {
-            ...defaultTheme,
-            ...(res.content.theme || {}),
-            colors: { ...defaultTheme.colors, ...(res.content.theme?.colors || {}) },
-            typography: { ...defaultTheme.typography, ...(res.content.theme?.typography || {}) },
-          },
-        }));
+      if (res) {
+        if (res.exists && res.content) {
+          setConfig((prev) => ({
+            ...prev,
+            ...res.content,
+            theme: {
+              ...defaultTheme,
+              ...(res.content.theme || {}),
+              colors: { ...defaultTheme.colors, ...(res.content.theme?.colors || {}) },
+              typography: { ...defaultTheme.typography, ...(res.content.theme?.typography || {}) },
+            },
+          }));
+        }
+        if (res.custom_pages) setCustomPages(res.custom_pages);
+        if (res.blog_posts) setBlogPosts(res.blog_posts);
+        if (res.blog_categories) setBlogCategories(res.blog_categories);
       }
     }
     loadBackendData();
@@ -275,6 +290,7 @@ export function CMSProvider({ children }) {
     <CMSContext.Provider
       value={{
         config,
+        content: config,
         updateSection,
         updateRootField,
         updateTheme,
@@ -297,6 +313,15 @@ export function CMSProvider({ children }) {
         loadReservations,
         updateReservationStatus,
         isLoadingBackend,
+        isReservationOpen,
+        openReservation,
+        closeReservation,
+        selectedDish,
+        openDish,
+        closeDish,
+        customPages,
+        blogPosts,
+        blogCategories,
       }}
     >
       {children}

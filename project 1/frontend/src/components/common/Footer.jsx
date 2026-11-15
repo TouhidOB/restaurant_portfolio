@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { ArrowUp, Instagram, Facebook, Youtube, Send, Check } from 'lucide-react';
 
-export default function Footer({ restaurant }) {
+export default function Footer({ restaurant, onNavigate, onNavigateHome }) {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+
+  const handleLink = (e, path) => {
+    e.preventDefault();
+    if (onNavigate) onNavigate(path);
+    else window.location.href = path;
+  };
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -160,12 +166,14 @@ export default function Footer({ restaurant }) {
               Navigation
             </h5>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px' }}>
-              <li><a href="#hero" style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Home</a></li>
-              <li><a href="#story" style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Our Story</a></li>
-              <li><a href="#tour" style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Virtual Tour</a></li>
-              <li><a href="#signature" style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Signature Dishes</a></li>
-              <li><a href="#menu" style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Full Menu</a></li>
-              <li><a href="#gallery" style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Gallery</a></li>
+              <li><a href="/" onClick={(e) => { e.preventDefault(); if (onNavigateHome) onNavigateHome(); }} style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Home (All Sections)</a></li>
+              <li><a href="/story" onClick={(e) => handleLink(e, '/story')} style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Our Story</a></li>
+              <li><a href="/signatures" onClick={(e) => handleLink(e, '/signatures')} style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Signature Dishes</a></li>
+              <li><a href="/menu" onClick={(e) => handleLink(e, '/menu')} style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Full Menu Repertoire</a></li>
+              <li><a href="/interior" onClick={(e) => handleLink(e, '/interior')} style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Art Deco Architecture</a></li>
+              <li><a href="/tour" onClick={(e) => handleLink(e, '/tour')} style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>3D Virtual Tour</a></li>
+              <li><a href="/blog" onClick={(e) => handleLink(e, '/blog')} style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>The Aurelia Journal</a></li>
+              <li><a href="/contact" onClick={(e) => handleLink(e, '/contact')} style={{ color: 'var(--color-pearl-muted)', textDecoration: 'none' }}>Maitre d' &amp; Location</a></li>
             </ul>
           </div>
 
