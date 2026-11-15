@@ -1,0 +1,68 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}15-SECTION EDITOR // Stardust Retro-Futuristic Diner Studio{% endblock %}
+
+{% block content %}
+<!-- Topbar -->
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>15-Section Editorial Content Controls</h1>
+    <p>Customize headlines, eyebrows, subtitles, and lead marketing copy across all 15 homepage sections.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000" target="_blank" class="btn btn-cyan">
+      <span>PREVIEW HEADLINES</span> ↗
+    </a>
+  </div>
+</header>
+
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>✍ 15-Section Editorial Copy & Headlines</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Changes save immediately to the headless API and sync with the 3D cinematic frontend.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">{{ sections.count }} SECTIONS ACTIVE</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    {% for sec in sections %}
+      <div style="background-color: var(--bg-midnight); padding: 1.25rem; border-radius: 4px; border: 1px solid var(--border-color);">
+        <form method="POST" action="{% url 'cms_update_section' sec.pk %}">
+          {% csrf_token %}
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.75rem;">
+            <strong style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--neon-cyan);">
+              {{ sec.get_section_key_display }}
+            </strong>
+            <button type="submit" class="btn btn-cyan" style="padding: 0.35rem 0.85rem; font-size: 0.75rem;">
+              Update Section
+            </button>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem;">
+            <div class="form-group">
+              <label>Eyebrow Label</label>
+              <input type="text" name="eyebrow" class="form-control" value="{{ sec.eyebrow }}">
+            </div>
+            <div class="form-group">
+              <label>Section Title</label>
+              <input type="text" name="title" class="form-control" value="{{ sec.title }}">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label>Subtitle / Lead Copy</label>
+            <textarea name="subtitle" class="form-control" rows="2">{{ sec.subtitle }}</textarea>
+          </div>
+        </form>
+      </div>
+    {% empty %}
+      <div style="text-align: center; color: var(--text-muted); padding: 2rem;">
+        No sections found.
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}FAQ MANAGER // Stardust Retro-Futuristic Diner Studio{% endblock %}
+
+{% block content %}
+<!-- Topbar -->
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>Frequently Asked Questions (FAQ) Manager</h1>
+    <p>Manage customer knowledge base questions, dietary guidance, reservation policies, and parking directions.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000#faq" target="_blank" class="btn btn-cyan">
+      <span>VIEW PUBLIC FAQ ACCORDION</span> ↗
+    </a>
+  </div>
+</header>
+
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>❓ Frequently Asked Questions (Accordion)</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Questions appear in the responsive animated accordion on the landing page.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">{{ faqs.count }} ITEMS ACTIVE</span>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
+    {% for faq in faqs %}
+      <div style="background-color: var(--bg-midnight); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+          <strong style="color: var(--atomic-yellow); font-size: 1.05rem; display: block;">
+            Q: {{ faq.question }}
+          </strong>
+          <span class="badge" style="background: rgba(255,255,255,0.06); color: var(--text-muted); font-size: 0.7rem;">
+            Order: #{{ faq.display_order }}
+          </span>
+        </div>
+        <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin: 0;">
+          A: {{ faq.answer }}
+        </p>
+      </div>
+    {% empty %}
+      <div style="text-align: center; color: var(--text-muted); padding: 3rem;">
+        No FAQ entries found.
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

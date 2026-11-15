@@ -1,0 +1,48 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}MASTER JSON SCHEMA // Stardust Retro-Futuristic Diner Studio{% endblock %}
+
+{% block content %}
+<!-- Topbar -->
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>Master JSON Schema Direct Editor</h1>
+    <p>Direct low-level headless data inspector and emergency sync tool for all diner modules.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="/api/v1/content/" target="_blank" class="btn btn-cherry">
+      <span>RAW API PAYLOAD</span> ↗
+    </a>
+  </div>
+</header>
+
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>{ } Master JSON Content Payload Direct Editor</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Edit the comprehensive JSON representation directly. Changes are validated and synced across database models.
+      </p>
+    </div>
+    <span class="badge badge-pending">LOW-LEVEL DIRECT ACCESS</span>
+  </div>
+
+  <form method="POST" action="{% url 'cms_save_master_json' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <label style="font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--neon-cyan);">
+        JSON PAYLOAD STRING (REST REPERTOIRE)
+      </label>
+      <textarea name="master_json" class="form-control" rows="22" style="font-family: 'Space Mono', monospace; font-size: 0.82rem; line-height: 1.5; background: #070B14; border: 1px solid rgba(67, 217, 232, 0.25); color: #8BE9FD; padding: 1rem; border-radius: 6px;">{{ master_json_str }}</textarea>
+    </div>
+    <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem;">
+      <button type="submit" class="btn btn-cherry" style="padding: 0.75rem 1.5rem; font-size: 0.88rem;">
+        <span>APPLY & VALIDATE MASTER JSON PAYLOAD</span>
+      </button>
+      <a href="{% url 'cms_schema' %}" class="btn btn-outline" style="padding: 0.75rem 1.25rem; font-size: 0.85rem;">
+        Reset Changes
+      </a>
+    </div>
+  </form>
+</section>
+{% endblock %}

@@ -428,19 +428,41 @@
       <input type="text" id="sidebarFilter" placeholder="Filter sections... (e.g. menu, tour)" autocomplete="off">
     </div>
 
-    <!-- Navigation Anchors -->
+    <!-- Dedicated Page Navigation -->
     <nav class="sidebar-nav" id="sidebarNav">
-      <a href="{% url 'cms_dashboard' %}#overview" class="nav-item active"><span class="icon">⚡</span><span>Overview & KPIs</span></a>
-      <a href="{% url 'cms_dashboard' %}#section-pages" class="nav-item"><span class="icon">📄</span><span>Custom Page Builder</span></a>
-      <a href="{% url 'cms_dashboard' %}#section-settings" class="nav-item"><span class="icon">⚙</span><span>Diner Identity & Hours</span></a>
-      <a href="{% url 'cms_dashboard' %}#section-reservations" class="nav-item"><span class="icon">📅</span><span>Live Reservations</span></a>
-      <a href="{% url 'cms_dashboard' %}#section-menu" class="nav-item"><span class="icon">🍔</span><span>Menu & Availability</span></a>
-      <a href="{% url 'cms_dashboard' %}#section-tour" class="nav-item"><span class="icon">🚀</span><span>3D Spatial Tour</span></a>
-      <a href="{% url 'cms_dashboard' %}#section-editorial" class="nav-item"><span class="icon">✍</span><span>15-Section Editor</span></a>
-      <a href="{% url 'cms_dashboard' %}#section-gallery" class="nav-item"><span class="icon">📸</span><span>Atomic Archive</span></a>
-      <a href="{% url 'cms_dashboard' %}#section-testimonials" class="nav-item"><span class="icon">★</span><span>Guest Reviews</span></a>
-      <a href="{% url 'cms_dashboard' %}#section-faqs" class="nav-item"><span class="icon">❓</span><span>FAQ Manager</span></a>
-      <a href="{% url 'cms_dashboard' %}#section-json" class="nav-item"><span class="icon">{ }</span><span>Master JSON Schema</span></a>
+      <a href="{% url 'cms_overview' %}" class="nav-item {% if active_page == 'overview' %}active{% endif %}">
+        <span class="icon">⚡</span><span>Overview & KPIs</span>
+      </a>
+      <a href="{% url 'cms_pages' %}" class="nav-item {% if active_page == 'pages' %}active{% endif %}">
+        <span class="icon">📄</span><span>Custom Page Builder</span>
+      </a>
+      <a href="{% url 'cms_identity' %}" class="nav-item {% if active_page == 'identity' %}active{% endif %}">
+        <span class="icon">⚙</span><span>Diner Identity & Hours</span>
+      </a>
+      <a href="{% url 'cms_reservations' %}" class="nav-item {% if active_page == 'reservations' %}active{% endif %}">
+        <span class="icon">📅</span><span>Live Reservations</span>
+      </a>
+      <a href="{% url 'cms_menu' %}" class="nav-item {% if active_page == 'menu' %}active{% endif %}">
+        <span class="icon">🍔</span><span>Menu & Availability</span>
+      </a>
+      <a href="{% url 'cms_tour' %}" class="nav-item {% if active_page == 'tour' %}active{% endif %}">
+        <span class="icon">🚀</span><span>3D Spatial Tour</span>
+      </a>
+      <a href="{% url 'cms_sections' %}" class="nav-item {% if active_page == 'sections' %}active{% endif %}">
+        <span class="icon">✍</span><span>15-Section Editor</span>
+      </a>
+      <a href="{% url 'cms_gallery' %}" class="nav-item {% if active_page == 'gallery' %}active{% endif %}">
+        <span class="icon">📸</span><span>Atomic Archive</span>
+      </a>
+      <a href="{% url 'cms_reviews' %}" class="nav-item {% if active_page == 'reviews' %}active{% endif %}">
+        <span class="icon">★</span><span>Guest Reviews</span>
+      </a>
+      <a href="{% url 'cms_faqs' %}" class="nav-item {% if active_page == 'faqs' %}active{% endif %}">
+        <span class="icon">❓</span><span>FAQ Manager</span>
+      </a>
+      <a href="{% url 'cms_schema' %}" class="nav-item {% if active_page == 'schema' %}active{% endif %}">
+        <span class="icon">{ }</span><span>Master JSON Schema</span>
+      </a>
     </nav>
 
     <div class="sidebar-footer">
@@ -482,26 +504,6 @@
         });
       });
     }
-
-    // Active state highlighting on scroll
-    window.addEventListener('scroll', () => {
-      let currentSection = '';
-      const sections = document.querySelectorAll('section[id], div[id]');
-      sections.forEach(sec => {
-        const top = sec.offsetTop - 120;
-        if (window.pageYOffset >= top) {
-          currentSection = sec.getAttribute('id');
-        }
-      });
-      if (currentSection) {
-        navItems.forEach(item => {
-          item.classList.remove('active');
-          if (item.getAttribute('href') === '#' + currentSection) {
-            item.classList.add('active');
-          }
-        });
-      }
-    });
   </script>
 </body>
 </html>

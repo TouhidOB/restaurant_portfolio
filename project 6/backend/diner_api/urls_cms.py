@@ -3,6 +3,17 @@ from .views import (
     cms_login_view,
     cms_logout_view,
     cms_dashboard_view,
+    cms_overview_view,
+    cms_pages_view,
+    cms_identity_view,
+    cms_reservations_view,
+    cms_menu_view,
+    cms_tour_view,
+    cms_sections_view,
+    cms_gallery_view,
+    cms_reviews_view,
+    cms_faqs_view,
+    cms_schema_view,
     cms_update_settings,
     cms_update_reservation_status,
     cms_approve_reservation,
@@ -20,9 +31,25 @@ from .views import (
 )
 
 urlpatterns = [
+    # Auth
     path('login/', cms_login_view, name='cms_login'),
     path('logout/', cms_logout_view, name='cms_logout'),
-    path('', cms_dashboard_view, name='cms_dashboard'),
+
+    # Dedicated Pages for Each Sidebar Item
+    path('', cms_overview_view, name='cms_dashboard'),
+    path('overview/', cms_overview_view, name='cms_overview'),
+    path('pages/', cms_pages_view, name='cms_pages'),
+    path('identity/', cms_identity_view, name='cms_identity'),
+    path('reservations/', cms_reservations_view, name='cms_reservations'),
+    path('menu/', cms_menu_view, name='cms_menu'),
+    path('tour/', cms_tour_view, name='cms_tour'),
+    path('sections/', cms_sections_view, name='cms_sections'),
+    path('gallery/', cms_gallery_view, name='cms_gallery'),
+    path('reviews/', cms_reviews_view, name='cms_reviews'),
+    path('faqs/', cms_faqs_view, name='cms_faqs'),
+    path('schema/', cms_schema_view, name='cms_schema'),
+
+    # Action / Mutation endpoints
     path('update-settings/', cms_update_settings, name='cms_update_settings'),
     path('reservations/<int:pk>/status/', cms_update_reservation_status, name='cms_update_reservation_status'),
     path('reservations/<int:pk>/approve/', cms_approve_reservation, name='cms_approve_reservation'),

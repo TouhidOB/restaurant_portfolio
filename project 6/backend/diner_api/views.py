@@ -277,31 +277,124 @@ def cms_logout_view(request):
     return redirect('cms_login')
 
 
+def get_cms_kpis():
+    all_reservations = Reservation.objects.all()
+    all_res_list = list(all_reservations)
+    today = timezone.localdate()
+    today_reservations = all_reservations.filter(reservation_date=today)
+    today_covers = sum(r.guest_count for r in today_reservations.filter(status__in=['confirmed', 'seated', 'completed']))
+
+    return {
+        'total_reservations': all_reservations.count(),
+        'pending_reservations': all_reservations.filter(status='pending').count(),
+        'confirmed_reservations': all_reservations.filter(status='confirmed').count(),
+        'seated_reservations': all_reservations.filter(status='seated').count(),
+        'lunch_reservations': sum(1 for r in all_res_list if not r.is_dinner_shift),
+        'dinner_reservations': sum(1 for r in all_res_list if r.is_dinner_shift),
+        'today_reservations_count': today_reservations.count(),
+        'today_covers': today_covers,
+        'total_menu_items': MenuItem.objects.count(),
+        'active_menu_items': MenuItem.objects.filter(is_available=True).count(),
+        'total_categories': MenuCategory.objects.count(),
+        'total_viewpoints': VirtualTourViewpoint.objects.count(),
+        'gallery_count': GalleryImage.objects.count(),
+        'testimonials_count': Testimonial.objects.count(),
+        'inquiries_count': ContactInquiry.objects.count(),
+        'total_custom_pages': CustomPage.objects.count(),
+        'published_custom_pages': CustomPage.objects.filter(is_published=True).count(),
+    }
+
+
+def get_master_json_string():
+    restaurant = Restaurant.objects.first()
+    brand_settings = BrandSettings.objects.first()
+    sections = WebsiteSection.objects.all()
+    categories = MenuCategory.objects.all().prefetch_related('items')
+    viewpoints = VirtualTourViewpoint.objects.all()
+    custom_pages = CustomPage.objects.all().order_by('nav_order', '-created_at')
+
+    full_content_data = {
+        'restaurant': RestaurantSerializer(restaurant).data if restaurant else {},
+        'brand_settings': BrandSettingsSerializer(brand_settings).data if brand_settings else {},
+        'sections': {s.section_key: {'eyebrow': s.eyebrow, 'title': s.title, 'subtitle': s.subtitle, 'custom_content': s.custom_content} for s in sections},
+        'categories': MenuCategorySerializer(categories, many=True).data,
+        'viewpoints': VirtualTourViewpointSerializer(viewpoints, many=True).data,
+        'custom_pages': CustomPageNavSerializer(custom_pages, many=True).data,
+    }
+    return json.dumps(full_content_data, indent=2)
+
+
+# =====================================================================
+# DEDICATED CMS PAGES (ONE DEDICATED PAGE PER SIDEBAR ITEM)
+# =====================================================================
+
+@login_required(login_url='/cms/login/')
+def cms_overview_view(request):
+    if not request.user.is_staff:
+        return redirect('cms_login')
+
+    kpis = get_cms_kpis()
+    recent_reservations = Reservation.objects.all().order_by('-created_at')[:8]
+    recent_inquiries = ContactInquiry.objects.all().order_by('-created_at')[:4]
+    recent_pages = CustomPage.objects.all().order_by('-created_at')[:4]
+
+    context = {
+        'active_page': 'overview',
+        'kpis': kpis,
+        'recent_reservations': recent_reservations,
+        'recent_inquiries': recent_inquiries,
+        'recent_pages': recent_pages,
+    }
+    return render(request, 'cms/overview.html', context)
+
+
 @login_required(login_url='/cms/login/')
 def cms_dashboard_view(request):
+    return cms_overview_view(request)
+
+
+@login_required(login_url='/cms/login/')
+def cms_pages_view(request):
+    if not request.user.is_staff:
+        return redirect('cms_login')
+
+    custom_pages = CustomPage.objects.all().order_by('nav_order', '-created_at')
+    context = {
+        'active_page': 'pages',
+        'kpis': get_cms_kpis(),
+        'custom_pages': custom_pages,
+    }
+    return render(request, 'cms/pages.html', context)
+
+
+@login_required(login_url='/cms/login/')
+def cms_identity_view(request):
     if not request.user.is_staff:
         return redirect('cms_login')
 
     restaurant = Restaurant.objects.first()
     brand_settings = BrandSettings.objects.first()
-    sections = WebsiteSection.objects.all()
-    categories = MenuCategory.objects.all().prefetch_related('items')
-    all_reservations = Reservation.objects.all().order_by('-reservation_date', 'reservation_time', '-created_at')
-    viewpoints = VirtualTourViewpoint.objects.all()
-    gallery_images = GalleryImage.objects.all()
-    testimonials = Testimonial.objects.all()
-    faqs = FAQ.objects.all()
-    contact_inquiries = ContactInquiry.objects.all().order_by('-created_at')
-    custom_pages = CustomPage.objects.all().order_by('nav_order', '-created_at')
+    context = {
+        'active_page': 'identity',
+        'kpis': get_cms_kpis(),
+        'restaurant': restaurant,
+        'brand_settings': brand_settings,
+    }
+    return render(request, 'cms/identity.html', context)
 
-    # Reservation Filtering & Maitre D' Concierge
+
+@login_required(login_url='/cms/login/')
+def cms_reservations_view(request):
+    if not request.user.is_staff:
+        return redirect('cms_login')
+
+    all_reservations = Reservation.objects.all().order_by('-reservation_date', 'reservation_time', '-created_at')
     today = timezone.localdate()
     tomorrow = today + datetime.timedelta(days=1)
     res_filter = request.GET.get('res_filter', 'all').lower()
     shift_param = request.GET.get('shift', request.GET.get('shift_filter', '')).lower()
     res_search = request.GET.get('res_search', '').strip()
 
-    # Support res_filter='lunch' or res_filter='dinner' directly, or separate shift parameter
     if res_filter in ['lunch', 'dinner']:
         active_shift = res_filter
         res_filter = 'all'
@@ -312,7 +405,7 @@ def cms_dashboard_view(request):
 
     filtered_reservations = all_reservations
 
-    # 1. Apply Shift Filter (Lunch / Dinner / All)
+    # 1. Apply Shift Filter
     if active_shift == 'lunch':
         lunch_ids = [r.id for r in filtered_reservations if not r.is_dinner_shift]
         filtered_reservations = filtered_reservations.filter(id__in=lunch_ids)
@@ -344,67 +437,119 @@ def cms_dashboard_view(request):
         )
         filtered_reservations = filtered_reservations.filter(search_q)
 
-    # Global and shift telemetry
-    all_res_list = list(all_reservations)
-    lunch_reservations_count = sum(1 for r in all_res_list if not r.is_dinner_shift)
-    dinner_reservations_count = sum(1 for r in all_res_list if r.is_dinner_shift)
-
-    today_reservations = all_reservations.filter(reservation_date=today)
-    today_covers = sum(r.guest_count for r in today_reservations.filter(status__in=['confirmed', 'seated', 'completed']))
-
-    # Telemetry KPIs
-    kpis = {
-        'total_reservations': all_reservations.count(),
-        'pending_reservations': all_reservations.filter(status='pending').count(),
-        'confirmed_reservations': all_reservations.filter(status='confirmed').count(),
-        'seated_reservations': all_reservations.filter(status='seated').count(),
-        'lunch_reservations': lunch_reservations_count,
-        'dinner_reservations': dinner_reservations_count,
-        'today_reservations_count': today_reservations.count(),
-        'today_covers': today_covers,
-        'total_menu_items': MenuItem.objects.count(),
-        'active_menu_items': MenuItem.objects.filter(is_available=True).count(),
-        'total_categories': categories.count(),
-        'total_viewpoints': viewpoints.count(),
-        'gallery_count': gallery_images.count(),
-        'testimonials_count': testimonials.count(),
-        'inquiries_count': contact_inquiries.count(),
-        'total_custom_pages': custom_pages.count(),
-        'published_custom_pages': custom_pages.filter(is_published=True).count(),
-    }
-
-    # Full Master JSON representation for editor
-    full_content_data = {
-        'restaurant': RestaurantSerializer(restaurant).data if restaurant else {},
-        'brand_settings': BrandSettingsSerializer(brand_settings).data if brand_settings else {},
-        'sections': {s.section_key: {'eyebrow': s.eyebrow, 'title': s.title, 'subtitle': s.subtitle, 'custom_content': s.custom_content} for s in sections},
-        'categories': MenuCategorySerializer(categories, many=True).data,
-        'viewpoints': VirtualTourViewpointSerializer(viewpoints, many=True).data,
-        'custom_pages': CustomPageNavSerializer(custom_pages, many=True).data,
-    }
-
     context = {
-        'restaurant': restaurant,
-        'brand_settings': brand_settings,
-        'sections': sections,
-        'categories': categories,
+        'active_page': 'reservations',
+        'kpis': get_cms_kpis(),
         'reservations': filtered_reservations,
         'all_reservations_count': all_reservations.count(),
         'res_filter': res_filter,
         'active_shift': active_shift,
         'shift_filter': active_shift,
         'res_search': res_search,
-        'viewpoints': viewpoints,
-        'gallery_images': gallery_images,
-        'testimonials': testimonials,
-        'faqs': faqs,
-        'contact_inquiries': contact_inquiries,
-        'custom_pages': custom_pages,
-        'kpis': kpis,
-        'master_json_str': json.dumps(full_content_data, indent=2),
     }
-    return render(request, 'cms/dashboard.html', context)
+    return render(request, 'cms/reservations.html', context)
 
+
+@login_required(login_url='/cms/login/')
+def cms_menu_view(request):
+    if not request.user.is_staff:
+        return redirect('cms_login')
+
+    categories = MenuCategory.objects.all().prefetch_related('items')
+    context = {
+        'active_page': 'menu',
+        'kpis': get_cms_kpis(),
+        'categories': categories,
+    }
+    return render(request, 'cms/menu.html', context)
+
+
+@login_required(login_url='/cms/login/')
+def cms_tour_view(request):
+    if not request.user.is_staff:
+        return redirect('cms_login')
+
+    viewpoints = VirtualTourViewpoint.objects.all()
+    context = {
+        'active_page': 'tour',
+        'kpis': get_cms_kpis(),
+        'viewpoints': viewpoints,
+    }
+    return render(request, 'cms/tour.html', context)
+
+
+@login_required(login_url='/cms/login/')
+def cms_sections_view(request):
+    if not request.user.is_staff:
+        return redirect('cms_login')
+
+    sections = WebsiteSection.objects.all()
+    context = {
+        'active_page': 'sections',
+        'kpis': get_cms_kpis(),
+        'sections': sections,
+    }
+    return render(request, 'cms/sections.html', context)
+
+
+@login_required(login_url='/cms/login/')
+def cms_gallery_view(request):
+    if not request.user.is_staff:
+        return redirect('cms_login')
+
+    gallery_images = GalleryImage.objects.all()
+    context = {
+        'active_page': 'gallery',
+        'kpis': get_cms_kpis(),
+        'gallery_images': gallery_images,
+    }
+    return render(request, 'cms/gallery.html', context)
+
+
+@login_required(login_url='/cms/login/')
+def cms_reviews_view(request):
+    if not request.user.is_staff:
+        return redirect('cms_login')
+
+    testimonials = Testimonial.objects.all()
+    context = {
+        'active_page': 'reviews',
+        'kpis': get_cms_kpis(),
+        'testimonials': testimonials,
+    }
+    return render(request, 'cms/reviews.html', context)
+
+
+@login_required(login_url='/cms/login/')
+def cms_faqs_view(request):
+    if not request.user.is_staff:
+        return redirect('cms_login')
+
+    faqs = FAQ.objects.all()
+    context = {
+        'active_page': 'faqs',
+        'kpis': get_cms_kpis(),
+        'faqs': faqs,
+    }
+    return render(request, 'cms/faqs.html', context)
+
+
+@login_required(login_url='/cms/login/')
+def cms_schema_view(request):
+    if not request.user.is_staff:
+        return redirect('cms_login')
+
+    context = {
+        'active_page': 'schema',
+        'kpis': get_cms_kpis(),
+        'master_json_str': get_master_json_string(),
+    }
+    return render(request, 'cms/schema.html', context)
+
+
+# =====================================================================
+# CMS ACTION HANDLERS (REDIRECT BACK TO DEDICATED PAGES)
+# =====================================================================
 
 @login_required(login_url='/cms/login/')
 def cms_update_settings(request):
@@ -421,7 +566,7 @@ def cms_update_settings(request):
             restaurant.coordinates_display = request.POST.get('coordinates_display', restaurant.coordinates_display)
             restaurant.save()
             messages.success(request, "Diner settings updated successfully!")
-    return redirect('cms_dashboard')
+    return redirect('cms_identity')
 
 
 @login_required(login_url='/cms/login/')
@@ -440,7 +585,7 @@ def cms_update_reservation_status(request, pk):
             request,
             f"Reservation {res.reference_code} updated: [{res.get_status_display()}] Table: '{res.table_number or 'Unassigned'}'."
         )
-    return redirect(f"{reverse('cms_dashboard')}#section-reservations")
+    return redirect('cms_reservations')
 
 
 @login_required(login_url='/cms/login/')
@@ -458,7 +603,7 @@ def cms_approve_reservation(request, pk):
             request,
             f"🎉 APPROVED reservation #{res.reference_code} for {res.full_name}! Allocated table: '{res.table_number}'."
         )
-    return redirect(f"{reverse('cms_dashboard')}#section-reservations")
+    return redirect('cms_reservations')
 
 
 @login_required(login_url='/cms/login/')
@@ -474,7 +619,7 @@ def cms_decline_reservation(request, pk):
             request,
             f"Declined reservation #{res.reference_code} for {res.full_name}."
         )
-    return redirect(f"{reverse('cms_dashboard')}#section-reservations")
+    return redirect('cms_reservations')
 
 
 @login_required(login_url='/cms/login/')
@@ -483,7 +628,7 @@ def cms_toggle_menu_item(request, pk):
     item.is_available = not item.is_available
     item.save()
     messages.success(request, f"'{item.name}' availability toggled to {item.is_available}.")
-    return redirect('cms_dashboard')
+    return redirect('cms_menu')
 
 
 @login_required(login_url='/cms/login/')
@@ -532,7 +677,7 @@ def cms_add_menu_item(request):
             item.save()
 
         messages.success(request, f"Meal item '{item.name}' added successfully to {category.name}!")
-    return redirect('cms_dashboard')
+    return redirect('cms_menu')
 
 
 @login_required(login_url='/cms/login/')
@@ -542,7 +687,7 @@ def cms_delete_menu_item(request, pk):
         name = item.name
         item.delete()
         messages.success(request, f"Meal item '{name}' deleted successfully.")
-    return redirect('cms_dashboard')
+    return redirect('cms_menu')
 
 
 @login_required(login_url='/cms/login/')
@@ -554,7 +699,7 @@ def cms_update_section(request, pk):
         section.subtitle = request.POST.get('subtitle', section.subtitle)
         section.save()
         messages.success(request, f"Section '{section.title}' updated successfully.")
-    return redirect('cms_dashboard')
+    return redirect('cms_sections')
 
 
 @login_required(login_url='/cms/login/')
@@ -574,7 +719,7 @@ def cms_save_master_json(request):
             messages.success(request, "Master JSON updated and applied successfully.")
         except Exception as e:
             messages.error(request, f"Failed to parse JSON: {e}")
-    return redirect('cms_dashboard')
+    return redirect('cms_schema')
 
 
 # ==============================================================================
@@ -592,7 +737,7 @@ def cms_create_page(request):
 
         if not title:
             messages.error(request, "Page title cannot be empty.")
-            return redirect('cms_dashboard')
+            return redirect('cms_pages')
 
         if not slug:
             slug = slugify(title)
@@ -673,7 +818,7 @@ def cms_create_page(request):
         )
         messages.success(request, f"Custom Page '{page.title}' created! Opening Elementor-style Visual Builder...")
         return redirect('cms_page_builder', pk=page.pk)
-    return redirect('cms_dashboard')
+    return redirect('cms_pages')
 
 
 @login_required(login_url='/cms/login/')
@@ -735,7 +880,7 @@ def cms_toggle_page_publish(request, pk):
     page.save()
     status_str = "Published" if page.is_published else "Draft"
     messages.success(request, f"Page '{page.title}' is now set to {status_str}.")
-    return redirect('cms_dashboard')
+    return redirect('cms_pages')
 
 
 @login_required(login_url='/cms/login/')
@@ -745,4 +890,4 @@ def cms_delete_page(request, pk):
         title = page.title
         page.delete()
         messages.success(request, f"Custom Page '{title}' deleted successfully.")
-    return redirect('cms_dashboard')
+    return redirect('cms_pages')

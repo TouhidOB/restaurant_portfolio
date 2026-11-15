@@ -1,0 +1,81 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}3D SPATIAL TOUR // Stardust Retro-Futuristic Diner Studio{% endblock %}
+
+{% block content %}
+<!-- Topbar -->
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>3D Spatial Viewpoints Manager</h1>
+    <p>Manage WebGL 3D architectural camera angles, seating zones, and interactive information hotspots.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000#tour" target="_blank" class="btn btn-cyan">
+      <span>LAUNCH 3D TOUR</span> ↗
+    </a>
+  </div>
+</header>
+
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>🚀 3D Spatial Viewpoints & Camera Positions</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        These coordinates drive the Three.js cinematic camera transitions in the interactive digital diner tour.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">{{ viewpoints.count }} ATOMIC VENUE ANGLES</span>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table class="cms-table">
+      <thead>
+        <tr>
+          <th>Index</th>
+          <th>Viewpoint Name</th>
+          <th>Zone Specification</th>
+          <th>Camera Position [X, Y, Z]</th>
+          <th>Hotspot Overlay</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for vp in viewpoints %}
+          <tr>
+            <td><strong style="color: var(--cherry-red); font-size: 1rem;">0{{ forloop.counter }}</strong></td>
+            <td>
+              <strong style="color: #FFF; font-size: 0.95rem;">{{ vp.title }}</strong><br>
+              <small style="color: var(--text-muted);">{{ vp.description|truncatewords:15 }}</small>
+            </td>
+            <td>
+              <span style="color: var(--neon-cyan); font-size: 0.85rem;">{{ vp.materials_spec }}</span>
+            </td>
+            <td>
+              <code style="font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--neon-cyan); background: rgba(67, 217, 232, 0.1); padding: 0.2rem 0.5rem; border-radius: 4px;">
+                {{ vp.camera_position }}
+              </code>
+            </td>
+            <td>
+              {% if vp.hotspot_title %}
+                <strong style="color: var(--atomic-yellow);">{{ vp.hotspot_title }}</strong><br>
+                <small style="color: var(--text-muted);">{{ vp.hotspot_detail|truncatewords:8 }}</small>
+              {% else %}
+                <span style="color: var(--text-muted);">None</span>
+              {% endif %}
+            </td>
+            <td>
+              <span class="badge badge-confirmed">ONLINE & SYNCED</span>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+              No 3D viewpoints configured.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

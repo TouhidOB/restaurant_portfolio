@@ -1,0 +1,58 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}GUEST REVIEWS // Stardust Retro-Futuristic Diner Studio{% endblock %}
+
+{% block content %}
+<!-- Topbar -->
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>Guest Reviews & Critic Ratings</h1>
+    <p>Curate authentic dining testimonials, food critic reviews, and publication quotes featured on the site.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000#testimonials" target="_blank" class="btn btn-cyan">
+      <span>VIEW REVIEWS SECTION</span> ↗
+    </a>
+  </div>
+</header>
+
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>★ Verified Dining Reviews & Accolades</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Customer reviews syndicated into the atomic testimonial carousel.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">{{ testimonials.count }} REVIEWS APPROVED</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1.25rem;">
+    {% for test in testimonials %}
+      <div style="background-color: var(--bg-midnight); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.25rem; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <div style="color: var(--atomic-yellow); font-size: 1.1rem; letter-spacing: 0.1em;">
+              {% if test.rating == 5 %}★★★★★{% elif test.rating == 4 %}★★★★☆{% else %}★★★☆☆{% endif %}
+            </div>
+            <span class="badge" style="background: rgba(67, 217, 232, 0.1); color: var(--neon-cyan); font-size: 0.68rem;">
+              {{ test.review_date }}
+            </span>
+          </div>
+          <p style="font-size: 0.88rem; font-style: italic; color: var(--text-main); line-height: 1.6; margin-bottom: 1rem;">
+            "{{ test.review_text }}"
+          </p>
+        </div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.75rem;">
+          <strong style="display: block; font-size: 0.92rem; color: #FFF;">{{ test.guest_name }}</strong>
+          <small style="color: var(--neon-cyan); font-family: 'Space Mono', monospace; font-size: 0.75rem;">{{ test.source }}</small>
+        </div>
+      </div>
+    {% empty %}
+      <div style="grid-column: 1 / -1; text-align: center; color: var(--text-muted); padding: 3rem;">
+        No testimonials found.
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
