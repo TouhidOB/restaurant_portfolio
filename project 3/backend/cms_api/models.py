@@ -283,8 +283,10 @@ class ReservationInquiry(models.Model):
     occasion = models.CharField(max_length=100, default="Dinner")
     special_requests = models.TextField(blank=True)
     dietary_notes = models.TextField(blank=True)
+    table_number = models.CharField(max_length=50, blank=True, default='')
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending')
     staff_notes = models.TextField(blank=True)
+    admin_notes = models.TextField(blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -293,9 +295,43 @@ class ReservationInquiry(models.Model):
         verbose_name = "Reservation Inquiry"
         verbose_name_plural = "Reservation Inquiries"
 
+    @property
+    def full_name(self):
+        return self.guest_name
+
+    @property
+    def date(self):
+        return self.reservation_date
+
+    @property
+    def time(self):
+        return self.reservation_time
+
+    @property
+    def guest_count(self):
+        return self.party_size
+
+    @property
+    def is_dinner_shift(self):
+        t = str(self.reservation_time or '').strip().lower()
+        if 'pm' in t:
+            try:
+                hour = int(t.replace('pm', '').split(':')[0].strip())
+                # 12 PM, 1 PM, 2 PM, 3 PM are lunch
+                if hour == 12 or (1 <= hour <= 4):
+                    return False
+                return True
+            except:
+                pass
+        try:
+            hour = int(t.split(':')[0].strip())
+            return hour >= 17 or hour < 5
+        except:
+            return True
+
     def save(self, *args, **kwargs):
         if not self.reference_code:
-            self.reference_code = f"MED-{timezone.now().strftime('%y%m%d')}-{uuid.uuid4().hex[:4].upper()}"
+            self.reference_code = f"AUM-{timezone.now().strftime('%y%m%d')}-{uuid.uuid4().hex[:4].upper()}"
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -317,3 +353,72 @@ class OpeningHour(models.Model):
 
     def __str__(self):
         return self.day_of_week
+
+
+# ==============================================================================
+# ELEMENTOR-STYLE STANDALONE CUSTOM PAGE BUILDER
+# ==============================================================================
+
+class CustomPage(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+    meta_description = models.TextField(blank=True, default='')
+    theme_style = models.CharField(max_length=100, default='mediterranean-azure')
+    is_published = models.BooleanField(default=True)
+    show_in_navigation = models.BooleanField(default=True)
+    nav_order = models.IntegerField(default=0)
+    blocks = models.JSONField(default=list, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['nav_order', '-created_at']
+        verbose_name = "Custom Standalone Page"
+        verbose_name_plural = "Custom Standalone Pages"
+
+    def __str__(self):
+        return f"{self.title} (/page/{self.slug})"
+
+
+# ==============================================================================
+# EDITORIAL BLOG & MEDITERRANEAN JOURNAL
+# ==============================================================================
+
+class BlogCategory(models.Model):
+    name = models.CharField(max_length=150)
+    slug = models.SlugField(max_length=150, unique=True)
+    description = models.TextField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = "Blog Category"
+        verbose_name_plural = "Blog Categories"
+
+    def __str__(self):
+        return self.name
+
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+    category = models.ForeignKey(BlogCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='posts')
+    author_name = models.CharField(max_length=150, default="Chef Matteo Bellini")
+    author_role = models.CharField(max_length=150, default="Culinary Director & Executive Chef")
+    cover_image_url = models.URLField(max_length=1000, blank=True, default='')
+    excerpt = models.TextField(blank=True, default='')
+    content = models.TextField(help_text="Markdown or rich editorial content")
+    read_time_minutes = models.IntegerField(default=5)
+    is_featured = models.BooleanField(default=False)
+    is_published = models.BooleanField(default=True)
+    published_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-published_at', '-created_at']
+        verbose_name = "Blog Post"
+        verbose_name_plural = "Blog Posts"
+
+    def __str__(self):
+        return self.title

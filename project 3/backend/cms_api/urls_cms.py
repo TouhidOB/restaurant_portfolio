@@ -1,16 +1,89 @@
 from django.urls import path
-from .views import (
-    cms_login_view, cms_logout_view, cms_dashboard_view,
-    cms_update_settings, cms_update_reservation_status,
-    cms_toggle_menu_item, cms_save_master_json
+from .cms_views import (
+    cms_login_view,
+    cms_logout_view,
+    cms_overview_view,
+    cms_pages_view,
+    cms_create_page,
+    cms_page_builder,
+    cms_save_page_builder,
+    cms_toggle_page_publish,
+    cms_delete_page,
+    cms_identity_view,
+    cms_reservations_view,
+    cms_update_reservation_status,
+    cms_approve_reservation,
+    cms_delete_reservation,
+    cms_menu_view,
+    cms_add_menu_item,
+    cms_toggle_menu_item,
+    cms_delete_menu_item,
+    cms_tour_view,
+    cms_sections_view,
+    cms_update_section,
+    cms_gallery_view,
+    cms_reviews_view,
+    cms_faqs_view,
+    cms_schema_view,
+    cms_save_schema,
+    cms_blog_view,
+    cms_create_blog_post,
+    cms_edit_blog_post,
+    cms_toggle_blog_publish,
+    cms_delete_blog_post,
 )
 
 urlpatterns = [
-    path('', cms_dashboard_view, name='cms_dashboard'),
+    # Auth
     path('login/', cms_login_view, name='cms_login'),
     path('logout/', cms_logout_view, name='cms_logout'),
-    path('settings/update/', cms_update_settings, name='cms_update_settings'),
-    path('reservations/<int:inquiry_id>/status/', cms_update_reservation_status, name='cms_update_reservation_status'),
-    path('menu-items/<int:item_id>/toggle/', cms_toggle_menu_item, name='cms_toggle_menu_item'),
-    path('master-json/save/', cms_save_master_json, name='cms_save_master_json'),
+
+    # Dedicated Pages for Each Sidebar Item
+    path('', cms_overview_view, name='cms_dashboard'),
+    path('overview/', cms_overview_view, name='cms_overview'),
+    
+    # Elementor-style Custom Pages & Visual Builder
+    path('pages/', cms_pages_view, name='cms_pages'),
+    path('pages/create/', cms_create_page, name='cms_create_page'),
+    path('pages/<int:pk>/builder/', cms_page_builder, name='cms_page_builder'),
+    path('pages/<int:pk>/save-builder/', cms_save_page_builder, name='cms_save_page_builder'),
+    path('pages/<int:pk>/toggle-publish/', cms_toggle_page_publish, name='cms_toggle_page_publish'),
+    path('pages/<int:pk>/delete/', cms_delete_page, name='cms_delete_page'),
+
+    # Restaurant Identity & Logistics
+    path('identity/', cms_identity_view, name='cms_identity'),
+
+    # Table Reservations & Host Desk
+    path('reservations/', cms_reservations_view, name='cms_reservations'),
+    path('reservations/<int:pk>/status/', cms_update_reservation_status, name='cms_update_reservation_status'),
+    path('reservations/<int:pk>/status/<str:new_status>/', cms_update_reservation_status, name='cms_update_reservation_status'),
+    path('reservations/<int:pk>/approve/', cms_approve_reservation, name='cms_approve_reservation'),
+    path('reservations/<int:pk>/delete/', cms_delete_reservation, name='cms_delete_reservation'),
+
+    # Menu Repertoire & Food Photography
+    path('menu/', cms_menu_view, name='cms_menu'),
+    path('menu/add/', cms_add_menu_item, name='cms_add_menu_item'),
+    path('menu/<int:item_id>/toggle/', cms_toggle_menu_item, name='cms_toggle_menu_item'),
+    path('menu/<int:item_id>/delete/', cms_delete_menu_item, name='cms_delete_menu_item'),
+
+    # 3D Tour Viewpoints
+    path('tour/', cms_tour_view, name='cms_tour'),
+
+    # 15-Section Landing Page Manager
+    path('sections/', cms_sections_view, name='cms_sections'),
+    path('sections/<str:section_key>/update/', cms_update_section, name='cms_update_section'),
+
+    # Gallery, Reviews, FAQs & Master Schema
+    path('gallery/', cms_gallery_view, name='cms_gallery'),
+    path('reviews/', cms_reviews_view, name='cms_reviews'),
+    path('faqs/', cms_faqs_view, name='cms_faqs'),
+    path('schema/', cms_schema_view, name='cms_schema'),
+    path('schema/save/', cms_save_schema, name='cms_save_schema'),
+
+    # Editorial Blog / Mediterranean Journal
+    path('blog/', cms_blog_view, name='cms_blog'),
+    path('blog/create/', cms_create_blog_post, name='cms_create_blog_post'),
+    path('blog/<int:pk>/edit/', cms_edit_blog_post, name='cms_edit_blog_post'),
+    path('blog/<int:pk>/toggle-publish/', cms_toggle_blog_publish, name='cms_toggle_blog_publish'),
+    path('blog/<int:pk>/delete/', cms_delete_blog_post, name='cms_delete_blog_post'),
 ]

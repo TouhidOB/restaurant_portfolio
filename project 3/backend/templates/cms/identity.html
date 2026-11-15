@@ -1,0 +1,136 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Restaurant Identity & Coastal Logistics — AURA MARINA CMS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+    <div class="topbar-title">
+        <h2>Restaurant Identity & Coastal Logistics</h2>
+        <p>Core brand parameters, cliffside GPS coordinates, boat tender access, and service hours.</p>
+    </div>
+    <div class="topbar-actions">
+        <a href="http://127.0.0.1:3000/contact" target="_blank" class="btn-secondary">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Contact Page
+        </a>
+    </div>
+</div>
+
+<div class="cms-card">
+    <div class="cms-card-header">
+        <h3>Brand Identity & Dining Room Parameters</h3>
+    </div>
+
+    <form method="POST" action="{% url 'cms_identity' %}">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group">
+                <label for="brand_name">Brand Name</label>
+                <input type="text" id="brand_name" name="brand_name" class="form-control" value="{{ settings.brand_name }}">
+            </div>
+            <div class="form-group">
+                <label for="tagline">Tagline</label>
+                <input type="text" id="tagline" name="tagline" class="form-control" value="{{ settings.tagline }}">
+            </div>
+            <div class="form-group">
+                <label for="michelin_distinction">Michelin Distinction</label>
+                <input type="text" id="michelin_distinction" name="michelin_distinction" class="form-control" value="{{ settings.michelin_distinction }}">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="hero_headline">Hero Headline</label>
+                <input type="text" id="hero_headline" name="hero_headline" class="form-control" value="{{ settings.hero_headline }}">
+            </div>
+            <div class="form-group">
+                <label for="hero_subheadline">Hero Subheadline</label>
+                <input type="text" id="hero_subheadline" name="hero_subheadline" class="form-control" value="{{ settings.hero_subheadline }}">
+            </div>
+            <div class="form-group">
+                <label for="tables_available_today">Max Tables per Shift</label>
+                <input type="number" id="tables_available_today" name="tables_available_today" class="form-control mono-font" value="{{ settings.tables_available_today }}">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="phone">Phone / WhatsApp Concierge</label>
+                <input type="text" id="phone" name="phone" class="form-control mono-font" value="{{ settings.phone }}">
+            </div>
+            <div class="form-group">
+                <label for="email">Concierge Email</label>
+                <input type="email" id="email" name="email" class="form-control" value="{{ settings.email }}">
+            </div>
+            <div class="form-group">
+                <label for="dress_code">Guest Dress Code</label>
+                <input type="text" id="dress_code" name="dress_code" class="form-control" value="{{ settings.dress_code }}">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="address_line1">Physical Address</label>
+                <input type="text" id="address_line1" name="address_line1" class="form-control" value="{{ settings.address_line1 }}">
+            </div>
+            <div class="form-group">
+                <label for="city_region">City & Region</label>
+                <input type="text" id="city_region" name="city_region" class="form-control" value="{{ settings.city_region }}">
+            </div>
+            <div class="form-group">
+                <label for="coordinates_display">GPS Coordinates</label>
+                <input type="text" id="coordinates_display" name="coordinates_display" class="form-control mono-font" value="{{ settings.coordinates_display }}">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="boat_access_notes">Private Boat & Yacht Access Notes</label>
+            <textarea id="boat_access_notes" name="boat_access_notes" class="form-control">{{ settings.boat_access_notes }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 8px;">
+            <i class="fa-solid fa-floppy-disk"></i> Save Identity & Logistics
+        </button>
+    </form>
+</div>
+
+<div class="cms-card">
+    <div class="cms-card-header">
+        <h3>Service Shifts & Opening Hours</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="cms-table">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Lunch Service</th>
+                    <th>Dinner Service</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in hours %}
+                <tr>
+                    <td><strong>{{ h.day_of_week }}</strong></td>
+                    <td class="mono-font">{{ h.lunch_hours|default:"12:00 – 15:30" }}</td>
+                    <td class="mono-font">{{ h.dinner_hours|default:"19:00 – 23:30" }}</td>
+                    <td>
+                        {% if h.is_closed %}
+                        <span class="status-pill status-declined">Closed</span>
+                        {% else %}
+                        <span class="status-pill status-confirmed">Active</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td><strong>Monday — Sunday</strong></td>
+                    <td class="mono-font">12:00 – 15:30</td>
+                    <td class="mono-font">19:00 – 23:30</td>
+                    <td><span class="status-pill status-confirmed">Continuous Coastal Service</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

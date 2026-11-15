@@ -1,0 +1,57 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Coastal Gallery & Visual Archive — AURA MARINA CMS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+    <div class="topbar-title">
+        <h2>Coastal Gallery & Visual Archive</h2>
+        <p>Curate architectural imagery, cliffside panoramas, wine cellar vaults, and plating art.</p>
+    </div>
+    <div class="topbar-actions">
+        <a href="http://127.0.0.1:3000/#gallery" target="_blank" class="btn-secondary">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Gallery
+        </a>
+    </div>
+</div>
+
+<div class="cms-card">
+    <div class="cms-card-header">
+        <h3>Gallery Archive</h3>
+        <span style="font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--gold-dark);">
+            {{ gallery_items.count }} Media Assets
+        </span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px;">
+        {% for item in gallery_items %}
+        <div style="background: #FAF8F4; border: 1px solid var(--travertine-border); border-radius: 8px; overflow: hidden;">
+            <div style="height: 160px; background: #E5E7EB; overflow: hidden;">
+                {% if item.image_url %}
+                <img src="{{ item.image_url }}" alt="{{ item.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% elif item.image %}
+                <img src="{{ item.image.url }}" alt="{{ item.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <div style="height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; color: var(--muted-stone);">No Image</div>
+                {% endif %}
+            </div>
+            <div style="padding: 12px 14px;">
+                <div style="font-weight: 700; color: var(--med-midnight); font-size: 13.5px;">{{ item.title }}</div>
+                <div style="font-size: 11px; color: var(--ocean-blue); font-family: 'JetBrains Mono', monospace; text-transform: uppercase;">
+                    {{ item.category }}
+                </div>
+                {% if item.caption %}
+                <p style="font-size: 12px; color: var(--muted-stone); margin-top: 4px; margin-bottom: 0;">
+                    {{ item.caption|truncatewords:10 }}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p style="color: var(--muted-stone); font-size: 13px; grid-column: 1 / -1; padding: 24px; text-align: center;">
+            No gallery items loaded.
+        </p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

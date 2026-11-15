@@ -1,0 +1,199 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Overview & KPIs — AURA MARINA CMS Studio{% endblock %}
+
+{% block content %}
+<div class="topbar">
+    <div class="topbar-title">
+        <h2>Coastal Operations & Telemetry</h2>
+        <p>Operational control center for AURA MARINA cliffside dining sanctuary in Positano.</p>
+    </div>
+    <div class="topbar-actions">
+        <a href="{% url 'cms_pages' %}" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> New Custom Page
+        </a>
+        <a href="http://127.0.0.1:3000/" target="_blank" class="btn-secondary">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Guest Portal
+        </a>
+    </div>
+</div>
+
+<!-- Shift Operations Bar -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 18px; margin-bottom: 28px;">
+    <!-- Lunch Shift Card -->
+    <div class="cms-card" style="margin-bottom: 0; border-top: 4px solid var(--gold); background: linear-gradient(135deg, rgba(197, 160, 89, 0.08) 0%, #FFFFFF 100%);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold-dark); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
+                    ☀️ Lunch Service Shift
+                </span>
+                <div style="font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; color: var(--med-midnight); margin: 6px 0 2px;">
+                    12:00 — 15:30
+                </div>
+                <p style="font-size: 12.5px; color: var(--muted-stone); margin: 0;">
+                    Sun-drenched terrace lunch & crudo bar overlooking Positano bay.
+                </p>
+            </div>
+            <a href="{% url 'cms_reservations' %}?res_filter=lunch" class="btn-secondary" style="font-size: 11px;">
+                Lunch Desk →
+            </a>
+        </div>
+    </div>
+
+    <!-- Sunset & Dinner Shift Card -->
+    <div class="cms-card" style="margin-bottom: 0; border-top: 4px solid var(--ocean-blue); background: linear-gradient(135deg, rgba(42, 111, 133, 0.08) 0%, #FFFFFF 100%);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--ocean-blue); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
+                    🌙 Sunset & Dinner Service Shift
+                </span>
+                <div style="font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; color: var(--med-midnight); margin: 6px 0 2px;">
+                    19:00 — 23:30
+                </div>
+                <p style="font-size: 12.5px; color: var(--muted-stone); margin: 0;">
+                    Candlelit cliffside dining, signature pairings & Amalfi catch of the day.
+                </p>
+            </div>
+            <a href="{% url 'cms_reservations' %}?res_filter=dinner" class="btn-secondary" style="font-size: 11px;">
+                Dinner Desk →
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Telemetry KPIs -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px;">
+    <div class="cms-card" style="margin-bottom: 0; border-left: 4px solid #F59E0B;">
+        <span style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted-stone); text-transform: uppercase;">
+            Pending Inquiries
+        </span>
+        <div style="font-size: 32px; font-weight: 700; color: #D97706; font-family: 'Cormorant Garamond', serif; margin: 4px 0;">
+            {{ pending_reservations }}
+        </div>
+        <span style="font-size: 12px; color: var(--muted-stone);">{{ total_reservations }} total inquiries</span>
+    </div>
+
+    <div class="cms-card" style="margin-bottom: 0; border-left: 4px solid #10B981;">
+        <span style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted-stone); text-transform: uppercase;">
+            Confirmed Bookings
+        </span>
+        <div style="font-size: 32px; font-weight: 700; color: #059669; font-family: 'Cormorant Garamond', serif; margin: 4px 0;">
+            {{ confirmed_reservations }}
+        </div>
+        <span style="font-size: 12px; color: var(--muted-stone);">{{ seated_reservations }} seated / completed</span>
+    </div>
+
+    <div class="cms-card" style="margin-bottom: 0; border-left: 4px solid var(--gold);">
+        <span style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted-stone); text-transform: uppercase;">
+            Menu Dishes
+        </span>
+        <div style="font-size: 32px; font-weight: 700; color: var(--med-midnight); font-family: 'Cormorant Garamond', serif; margin: 4px 0;">
+            {{ available_menu_items }}
+        </div>
+        <span style="font-size: 12px; color: var(--muted-stone);">{{ total_menu_items }} total in repertoire</span>
+    </div>
+
+    <div class="cms-card" style="margin-bottom: 0; border-left: 4px solid var(--ocean-blue);">
+        <span style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted-stone); text-transform: uppercase;">
+            Custom Pages
+        </span>
+        <div style="font-size: 32px; font-weight: 700; color: var(--ocean-blue); font-family: 'Cormorant Garamond', serif; margin: 4px 0;">
+            {{ published_pages }}
+        </div>
+        <span style="font-size: 12px; color: var(--muted-stone);">{{ total_pages }} total built</span>
+    </div>
+
+    <div class="cms-card" style="margin-bottom: 0; border-left: 4px solid var(--terracotta);">
+        <span style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--muted-stone); text-transform: uppercase;">
+            Journal Articles
+        </span>
+        <div style="font-size: 32px; font-weight: 700; color: var(--terracotta); font-family: 'Cormorant Garamond', serif; margin: 4px 0;">
+            {{ published_posts }}
+        </div>
+        <span style="font-size: 12px; color: var(--muted-stone);">{{ total_posts }} total published</span>
+    </div>
+</div>
+
+<!-- Recent Inquiries Section -->
+<div class="cms-card">
+    <div class="cms-card-header">
+        <h3>Recent Reservation Requests & Host Desk</h3>
+        <a href="{% url 'cms_reservations' %}" class="btn-secondary" style="font-size: 11px;">
+            View All Desk Operations →
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="cms-table">
+            <thead>
+                <tr>
+                    <th>Ref Code</th>
+                    <th>Guest Details</th>
+                    <th>Date & Shift</th>
+                    <th>Party</th>
+                    <th>Zone Preference</th>
+                    <th>Dietary Notes</th>
+                    <th>Table</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in recent_reservations %}
+                <tr>
+                    <td class="mono-font" style="font-weight: 600; color: var(--ocean-blue);">
+                        {{ res.reference_code }}
+                    </td>
+                    <td>
+                        <div style="font-weight: 600; color: var(--med-midnight);">{{ res.guest_name }}</div>
+                        <div style="font-size: 11px; color: var(--muted-stone);">{{ res.phone }} • {{ res.email }}</div>
+                    </td>
+                    <td>
+                        <div>{{ res.reservation_date }}</div>
+                        <div style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--gold-dark);">
+                            {{ res.reservation_time }} {% if res.is_dinner_shift %}(🌙 Dinner){% else %}(☀️ Lunch){% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <strong>{{ res.party_size }} Guests</strong>
+                        <div style="font-size: 11px; color: var(--muted-stone);">{{ res.occasion }}</div>
+                    </td>
+                    <td>{{ res.seating_preference|default:"Sea Terrace" }}</td>
+                    <td>
+                        {% if res.dietary_notes %}
+                        <span style="color: var(--terracotta); font-size: 11px;">{{ res.dietary_notes }}</span>
+                        {% else %}
+                        <span style="color: var(--muted-stone); font-size: 11px;">None</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="mono-font">{{ res.table_number|default:"Unassigned" }}</span>
+                    </td>
+                    <td>
+                        <span class="status-pill status-{{ res.status }}">{{ res.get_status_display }}</span>
+                    </td>
+                    <td>
+                        {% if res.status == 'pending' %}
+                        <form method="POST" action="{% url 'cms_approve_reservation' res.pk %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-success">Approve</button>
+                        </form>
+                        {% else %}
+                        <a href="{% url 'cms_reservations' %}?q={{ res.reference_code }}" class="btn-secondary" style="padding: 4px 8px; font-size: 11px;">
+                            Manage
+                        </a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--muted-stone); padding: 30px;">
+                        No reservation inquiries currently recorded.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

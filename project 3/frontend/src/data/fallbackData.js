@@ -583,4 +583,137 @@ export const fallbackData = {
     { id: 6, day_of_week: "Saturday", lunch_hours: "12:00 — 16:00", dinner_hours: "19:00 — 00:00", is_closed: false, note: "Sunset acoustic session 18:30" },
     { id: 7, day_of_week: "Sunday", lunch_hours: "12:00 — 16:30", dinner_hours: "19:00 — 23:00", is_closed: false, note: "Extended coastal Sunday lunch" },
   ],
+  custom_pages: [
+    {
+      id: 1,
+      title: "Private Cliffside Gala",
+      slug: "private-cliffside-gala",
+      meta_description: "Exclusive full-estate buyout and coastal gala dining above the Tyrrhenian Sea in Positano.",
+      theme_style: "mediterranean-azure",
+      is_published: true,
+      show_in_navigation: true,
+      nav_order: 1,
+      blocks: [
+        {
+          id: "hero-gala",
+          type: "hero",
+          title: "Private Cliffside Gala & Villa Buyouts",
+          subtitle: "Architectural Grandeur Suspended Above Positano Waters",
+          badge: "AURA MARINA • EXCLUSIVE HIRE",
+          description: "An extraordinary coastal sanctuary reserved entirely for your private gala, yacht celebration, or bespoke wedding feast.",
+          primaryCta: { text: "Inquire Private Gala", href: "#inquiry" },
+          secondaryCta: { text: "Explore Dining Spaces", href: "/interior" },
+          backgroundImage: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1600&auto=format&fit=crop"
+        },
+        {
+          id: "split-gala",
+          type: "split",
+          eyebrow: "THE ESTATE ARCHITECTURE",
+          title: "Hand-Hewn Limestone Terraces & Private Mooring Pier",
+          description: "Perched dramatically above the azure waters of Positano, AURA MARINA offers secluded terraces, centuries-old olive pergolas, and direct private yacht tender transfers.",
+          bulletPoints: [
+            "Full exclusivity for up to 90 seated dining guests",
+            "Custom 7-course seafood banquet curated by Executive Chef Matteo Bellini",
+            "Sommelier-curated rare volcanic vintages and vintage Champagne service",
+            "Dedicated boat concierge coordinating arrival from superyachts and Amalfi ports"
+          ],
+          cta: { text: "View 3D Spatial Tour", href: "/tour" },
+          image: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop",
+          imagePosition: "right"
+        },
+        {
+          id: "features-gala",
+          type: "features",
+          eyebrow: "BESPOKE ELEMENTS",
+          title: "Unrivaled Mediterranean Hospitality",
+          description: "Every element of your private gathering is meticulously orchestrated by our concierge brigade.",
+          columns: 3,
+          items: [
+            { icon: "fa-anchor", title: "Direct Yacht Mooring", description: "Seamless tender transfers directly onto our limestone reception jetty." },
+            { icon: "fa-champagne-glasses", title: "Master Sommelier Service", description: "Curated pairings from our 1,400-bottle volcanic and coastal cellar." },
+            { icon: "fa-music", title: "Acoustic Serenade", description: "Italian classical guitarists and ambient evening jazz under the stars." }
+          ]
+        },
+        {
+          id: "gallery-gala",
+          type: "gallery",
+          title: "Gala Ambiance & Setting",
+          subtitle: "A glimpse of twilight celebrations at AURA MARINA.",
+          images: [
+            { url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop", caption: "Twilight on Belvedere Terrace" },
+            { url: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop", caption: "Amalfi Red Prawn Plating" },
+            { url: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=800&auto=format&fit=crop", caption: "Handmade Sea Urchin Pasta" }
+          ]
+        },
+        {
+          id: "cta-gala",
+          type: "cta",
+          title: "Plan Your Private Positano Evening",
+          description: "Contact our head concierge directly to reserve private dates and tailor bespoke menus.",
+          primaryCta: { text: "Request Table or Gala", href: "#reserve" },
+          secondaryCta: { text: "Contact Concierge", href: "/contact" },
+          backgroundImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop"
+        }
+      ]
+    }
+  ],
+  blog_categories: [
+    { id: 1, name: "Adriatic Harvest", slug: "adriatic-harvest", description: "Daily seafood procurement, crudo traditions, and artisanal fisherman chronicles." },
+    { id: 2, name: "Cliffside Architecture", slug: "cliffside-architecture", description: "Handcrafted limestone arches, terracotta restoration, and sea-view design." },
+    { id: 3, name: "Coastal Terroir & Wine", slug: "coastal-terroir", description: "Volcanic soils of Campania, Mount Vesuvius vineyards, and rare maritime vintages." },
+    { id: 4, name: "Amalfi Culture", slug: "amalfi-culture", description: "Living heritage, lemon groves, and timeless coastal culinary art." },
+  ],
+  blog_posts: [
+    {
+      id: 1,
+      title: "Dawn at Amalfi: The Art Behind Our Red Prawn Crudo",
+      slug: "dawn-at-amalfi-red-prawns",
+      category: 1,
+      category_name: "Adriatic Harvest",
+      category_slug: "adriatic-harvest",
+      author_name: "Chef Matteo Bellini",
+      author_role: "Culinary Director & Executive Chef",
+      cover_image_url: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop",
+      excerpt: "Every morning before sunrise, our wooden tender meets the artisan fishing boats off the Li Galli islands to select wild Mazara red prawns.",
+      content: "Full editorial story.",
+      read_time_minutes: 5,
+      is_featured: true,
+      is_published: true,
+      published_at: "2026-05-12T07:00:00Z"
+    },
+    {
+      id: 2,
+      title: "Carving Sanctuary: Architecture Suspended Between Cliff and Sea",
+      slug: "carving-sanctuary-architecture",
+      category: 2,
+      category_name: "Cliffside Architecture",
+      category_slug: "cliffside-architecture",
+      author_name: "Elena Rossi",
+      author_role: "Architectural Conservator",
+      cover_image_url: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1200&auto=format&fit=crop",
+      excerpt: "How 18th-century limestone arches and reclaimed terracotta tile were harmonized with contemporary panoramic cantilevers.",
+      content: "Full editorial story.",
+      read_time_minutes: 6,
+      is_featured: false,
+      is_published: true,
+      published_at: "2026-04-28T10:30:00Z"
+    },
+    {
+      id: 3,
+      title: "Volcanic Salinity: The Rare White Vintages of Mount Vesuvius",
+      slug: "volcanic-salinity-rare-vintages",
+      category: 3,
+      category_name: "Coastal Terroir & Wine",
+      category_slug: "coastal-terroir",
+      author_name: "Marco Donati",
+      author_role: "Head Sommelier",
+      cover_image_url: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?q=80&w=1200&auto=format&fit=crop",
+      excerpt: "Exploring the pre-phylloxera ungrafted vines that thrive on volcanic ash and sea winds along the Campania coastline.",
+      content: "Full editorial story.",
+      read_time_minutes: 7,
+      is_featured: false,
+      is_published: true,
+      published_at: "2026-04-15T16:00:00Z"
+    }
+  ],
 };

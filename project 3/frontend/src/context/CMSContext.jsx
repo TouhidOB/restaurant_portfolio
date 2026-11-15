@@ -18,6 +18,11 @@ export function CMSProvider({ children }) {
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [lightboxImage, setLightboxImage] = useState(null);
 
+  const openReservation = () => setIsReservationModalOpen(true);
+  const closeReservation = () => setIsReservationModalOpen(false);
+  const openDish = (dish) => setSelectedDish(dish);
+  const closeDish = () => setSelectedDish(null);
+
   const loadData = async () => {
     try {
       const content = await fetchFullContent();
@@ -33,13 +38,20 @@ export function CMSProvider({ children }) {
     loadData();
   }, []);
 
-  const viewpoints = data.tour_viewpoints || fallbackData.tour_viewpoints;
+  const viewpoints = data.tour_viewpoints || fallbackData.tour_viewpoints || [];
   const currentViewpoint = viewpoints[activeTourIndex] || viewpoints[0];
+
+  const customPages = data.custom_pages || fallbackData.custom_pages || [];
+  const blogPosts = data.blog_posts || fallbackData.blog_posts || [];
+  const blogCategories = data.blog_categories || fallbackData.blog_categories || [];
 
   const value = {
     data,
     loading,
     reloadContent: loadData,
+    customPages,
+    blogPosts,
+    blogCategories,
     // Tour
     viewpoints,
     activeTourIndex,
@@ -52,8 +64,12 @@ export function CMSProvider({ children }) {
     // Modals
     selectedDish,
     setSelectedDish,
+    openDish,
+    closeDish,
     isReservationModalOpen,
     setIsReservationModalOpen,
+    openReservation,
+    closeReservation,
     lightboxImage,
     setLightboxImage,
   };

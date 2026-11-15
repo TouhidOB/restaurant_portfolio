@@ -1,0 +1,38 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Master JSON Schema Power Editor — AURA MARINA CMS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+    <div class="topbar-title">
+        <h2>Master JSON Schema Power Editor</h2>
+        <p>Direct low-level configuration editor for core system parameters and JSON synchronisation.</p>
+    </div>
+    <div class="topbar-actions">
+        <a href="/api/v1/content/" target="_blank" class="btn-secondary">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Raw API Feed
+        </a>
+    </div>
+</div>
+
+<div class="cms-card">
+    <div class="cms-card-header">
+        <h3>Master JSON Payload</h3>
+        <span style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--gold-dark);">
+            Direct Settings Mapping
+        </span>
+    </div>
+
+    <form method="POST" action="{% url 'cms_save_schema' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="master_json_text">Configuration JSON</label>
+            <textarea id="master_json_text" name="master_json_text" class="form-control mono-font" style="min-height: 400px; font-size: 12.5px; line-height: 1.5; background: #1C2022; color: #7DD3FC; border-color: #334155;">{{ master_json_str }}</textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 10px;">
+            <i class="fa-solid fa-floppy-disk"></i> Validate & Apply Master JSON
+        </button>
+    </form>
+</div>
+{% endblock %}

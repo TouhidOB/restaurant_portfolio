@@ -1,0 +1,61 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Concierge FAQs & Guest Policy — AURA MARINA CMS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+    <div class="topbar-title">
+        <h2>Concierge FAQs & Guest Policy</h2>
+        <p>Curate standard concierge answers for boat transfers, dress code, dietary protocols, and cancellation terms.</p>
+    </div>
+    <div class="topbar-actions">
+        <a href="http://127.0.0.1:3000/contact" target="_blank" class="btn-secondary">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Guest FAQs
+        </a>
+    </div>
+</div>
+
+<div class="cms-card">
+    <div class="cms-card-header">
+        <h3>Standard Concierge Knowledgebase</h3>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="background: #FCFBF8; border: 1px solid var(--travertine-border); border-radius: 8px; padding: 18px;">
+            <h4 style="font-size: 15px; color: var(--med-midnight); margin-bottom: 6px;">
+                How do we access AURA MARINA by private boat or yacht tender?
+            </h4>
+            <p style="font-size: 13px; color: var(--muted-stone); margin: 0;">
+                Our private tender operates continuously throughout lunch and dinner shifts between Positano main harbour, private yacht anchorages, and our cliffside reception dock. Please hail VHF Channel 72 or WhatsApp our concierge 20 minutes prior to arrival.
+            </p>
+        </div>
+
+        <div style="background: #FCFBF8; border: 1px solid var(--travertine-border); border-radius: 8px; padding: 18px;">
+            <h4 style="font-size: 15px; color: var(--med-midnight); margin-bottom: 6px;">
+                What is the dress code for lunch and dinner services?
+            </h4>
+            <p style="font-size: 13px; color: var(--muted-stone); margin: 0;">
+                We recommend Elegant Coastal Casual for lunch (linen shirts, sundresses, tailored shorts). For dinner and sunset services, Smart Elegant attire is requested (collared shirts, trousers or elegant dresses). Swimwear and beach footwear are not permitted in dining areas.
+            </p>
+        </div>
+
+        <div style="background: #FCFBF8; border: 1px solid var(--travertine-border); border-radius: 8px; padding: 18px;">
+            <h4 style="font-size: 15px; color: var(--med-midnight); margin-bottom: 6px;">
+                How are dietary restrictions and allergies accommodated?
+            </h4>
+            <p style="font-size: 13px; color: var(--muted-stone); margin: 0;">
+                Executive Chef Matteo Bellini and our culinary brigade tailor bespoke multi-course menus for celiac, vegetarian, pescatarian, and shell-fish sensitive guests. Please inform us at least 24 hours in advance during reservation submission.
+            </p>
+        </div>
+
+        <div style="background: #FCFBF8; border: 1px solid var(--travertine-border); border-radius: 8px; padding: 18px;">
+            <h4 style="font-size: 15px; color: var(--med-midnight); margin-bottom: 6px;">
+                What is the reservation cancellation policy?
+            </h4>
+            <p style="font-size: 13px; color: var(--muted-stone); margin: 0;">
+                Given our intimate 12-table capacity, cancellations made less than 24 hours prior to service are subject to a late cancellation fee of €100 per guest. Weather-related boat transfer adjustments are accommodated without penalty.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

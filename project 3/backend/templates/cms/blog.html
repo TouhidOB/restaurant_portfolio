@@ -1,0 +1,191 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Editorial Journal & Mediterranean Chronicles — AURA MARINA CMS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+    <div class="topbar-title">
+        <h2>Editorial Journal & Mediterranean Chronicles</h2>
+        <p>Author and publish culinary stories, harvest reports, wine terroir essays, and architectural reflections.</p>
+    </div>
+    <div class="topbar-actions">
+        <a href="#newArticleCard" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Compose New Article
+        </a>
+        <a href="http://127.0.0.1:3000/blog" target="_blank" class="btn-secondary">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Public Journal
+        </a>
+    </div>
+</div>
+
+<!-- Published Articles List -->
+<div class="cms-card">
+    <div class="cms-card-header">
+        <h3>Journal Articles Roster</h3>
+        <span style="font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--gold-dark);">
+            {{ posts.count }} Stories Recorded
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="cms-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Cover</th>
+                    <th>Article Title & Slug</th>
+                    <th>Category</th>
+                    <th>Author & Read Time</th>
+                    <th>Featured</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr>
+                    <td>
+                        <div style="width: 72px; height: 50px; border-radius: 6px; overflow: hidden; background: #EEE; border: 1px solid var(--travertine-border);">
+                            {% if post.cover_image_url %}
+                            <img src="{{ post.cover_image_url }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--muted-stone);">No Image</div>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <strong style="color: var(--med-midnight); font-size: 14.5px;">{{ post.title }}</strong>
+                        <div style="font-size: 11.5px; margin-top: 2px;">
+                            <a href="http://127.0.0.1:3000/blog/{{ post.slug }}" target="_blank" class="mono-font" style="color: var(--ocean-blue); text-decoration: none; font-weight: 600;">
+                                /blog/{{ post.slug }} ↗
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                        {% if post.category %}
+                        <span style="background: #FAF8F4; padding: 2px 8px; border-radius: 4px; font-size: 11px; border: 1px solid var(--travertine-border); font-weight: 600;">
+                            {{ post.category.name }}
+                        </span>
+                        {% else %}
+                        <span style="color: var(--muted-stone); font-size: 11px;">Uncategorized</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="font-size: 12.5px; font-weight: 600; color: var(--charcoal);">{{ post.author_name }}</div>
+                        <div style="font-size: 11px; color: var(--muted-stone);">{{ post.read_time_minutes }} min read</div>
+                    </td>
+                    <td>
+                        {% if post.is_featured %}
+                        <span style="color: #F59E0B; font-size: 12px; font-weight: 700;">★ Featured</span>
+                        {% else %}
+                        <span style="color: var(--muted-stone); font-size: 12px;">Standard</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if post.is_published %}
+                        <span class="status-pill status-confirmed">Published</span>
+                        {% else %}
+                        <span class="status-pill status-pending">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <a href="{% url 'cms_edit_blog_post' post.pk %}" class="btn-primary" style="padding: 4px 8px; font-size: 11px;">
+                                <i class="fa-solid fa-pen"></i> Edit
+                            </a>
+                            <form method="POST" action="{% url 'cms_toggle_blog_publish' post.pk %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-secondary" style="padding: 4px 7px; font-size: 11px;">
+                                    {% if post.is_published %}Draft{% else %}Publish{% endif %}
+                                </button>
+                            </form>
+                            <form method="POST" action="{% url 'cms_delete_blog_post' post.pk %}" style="display: inline;" onsubmit="return confirm('Delete article {{ post.title }}?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-danger" style="padding: 4px 7px; font-size: 11px;">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--muted-stone); padding: 36px;">
+                        No journal articles published yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Compose New Article Card -->
+<div class="cms-card" id="newArticleCard">
+    <div class="cms-card-header">
+        <h3>Compose New Mediterranean Journal Article</h3>
+    </div>
+
+    <form method="POST" action="{% url 'cms_create_blog_post' %}">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group">
+                <label for="title">Article Title *</label>
+                <input type="text" id="title" name="title" class="form-control" placeholder="e.g. Dawn at Amalfi: The Story Behind Our Red Prawn Crudo" required>
+            </div>
+            <div class="form-group">
+                <label for="slug">URL Slug (leave blank to auto-slugify)</label>
+                <input type="text" id="slug" name="slug" class="form-control" placeholder="e.g. dawn-at-amalfi-red-prawns">
+            </div>
+            <div class="form-group">
+                <label for="category_id">Journal Category</label>
+                <select id="category_id" name="category_id" class="form-control">
+                    <option value="">-- Select Category --</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="author_name">Author Name</label>
+                <input type="text" id="author_name" name="author_name" class="form-control" value="Chef Matteo Bellini">
+            </div>
+            <div class="form-group">
+                <label for="author_role">Author Title</label>
+                <input type="text" id="author_role" name="author_role" class="form-control" value="Culinary Director & Executive Chef">
+            </div>
+            <div class="form-group">
+                <label for="cover_image_url">Cover Image URL</label>
+                <input type="url" id="cover_image_url" name="cover_image_url" class="form-control" placeholder="https://images.unsplash.com/photo-...">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="excerpt">Brief Article Excerpt</label>
+            <textarea id="excerpt" name="excerpt" class="form-control" style="min-height: 70px;" placeholder="Short synopsis displayed on the blog listing grid..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="content">Full Article Content (Markdown or HTML)</label>
+            <textarea id="content" name="content" class="form-control mono-font" style="min-height: 220px;" placeholder="Full narrative text..."></textarea>
+        </div>
+
+        <div style="display: flex; gap: 24px; align-items: center; margin-bottom: 16px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                <input type="checkbox" name="is_published" checked>
+                <span>Publish Immediately</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                <input type="checkbox" name="is_featured">
+                <span>Featured Hero Story</span>
+            </label>
+        </div>
+
+        <button type="submit" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Save and Open Full Article Studio
+        </button>
+    </form>
+</div>
+{% endblock %}

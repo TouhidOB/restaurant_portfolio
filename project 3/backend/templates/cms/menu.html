@@ -1,0 +1,197 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Menu Repertoire & Haute Food Photography — AURA MARINA CMS{% endblock %}
+
+{% block content %}
+<div class="topbar">
+    <div class="topbar-title">
+        <h2>Menu Repertoire & Haute Food Photography</h2>
+        <p>Curate culinary creations with high-resolution food photography, origin terroir, pairings, and availability toggles.</p>
+    </div>
+    <div class="topbar-actions">
+        <a href="#addDishCard" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Add New Dish
+        </a>
+        <a href="http://127.0.0.1:3000/menu" target="_blank" class="btn-secondary">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Preview Guest Menu
+        </a>
+    </div>
+</div>
+
+<!-- Category Tabs -->
+<div class="filter-tabs">
+    <a href="{% url 'cms_menu' %}" class="filter-tab {% if not cat_filter %}active{% endif %}">
+        All Courses ({{ items|length }})
+    </a>
+    {% for cat in categories %}
+    <a href="{% url 'cms_menu' %}?category={{ cat.slug }}" class="filter-tab {% if cat_filter == cat.slug %}active{% endif %}">
+        {{ cat.name }} ({{ cat.items.count }})
+    </a>
+    {% endfor %}
+</div>
+
+<!-- Menu Catalog Table -->
+<div class="cms-card">
+    <div class="cms-card-header">
+        <h3>Mediterranean Gastronomy Catalog</h3>
+        <span style="font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--gold-dark);">
+            {{ items|length }} Items Listed
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="cms-table">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Photo</th>
+                    <th>Dish Details & Origin</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Wine Pairing</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        <div style="width: 72px; height: 56px; border-radius: 8px; overflow: hidden; background: #EEE; border: 1px solid var(--travertine-border);">
+                            {% if item.image_url %}
+                            <img src="{{ item.image_url }}" alt="{{ item.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% elif item.image %}
+                            <img src="{{ item.image.url }}" alt="{{ item.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--muted-stone); font-size: 11px;">
+                                No Photo
+                            </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-weight: 700; color: var(--med-midnight); font-size: 15px;">
+                            {{ item.name }}
+                            {% if item.is_signature %}
+                            <span style="background: rgba(197, 160, 89, 0.2); color: var(--gold-dark); font-size: 10px; padding: 1px 6px; border-radius: 4px; margin-left: 6px; font-family: 'JetBrains Mono', monospace;">
+                                ★ SIGNATURE
+                            </span>
+                            {% endif %}
+                        </div>
+                        <div style="font-size: 12.5px; color: var(--muted-stone); margin-top: 2px;">
+                            {{ item.description|truncatewords:14 }}
+                        </div>
+                        {% if item.origin %}
+                        <div style="font-size: 11px; color: var(--ocean-blue); margin-top: 2px; font-family: 'JetBrains Mono', monospace;">
+                            📍 {{ item.origin }}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span style="background: #FAF8F4; padding: 3px 8px; border-radius: 4px; font-size: 11.5px; border: 1px solid var(--travertine-border); font-weight: 600;">
+                            {{ item.category.name }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="mono-font" style="font-weight: 700; color: var(--med-midnight); font-size: 14px;">
+                            €{{ item.price }}
+                        </span>
+                    </td>
+                    <td style="font-size: 11.5px; color: var(--muted-stone); max-width: 180px;">
+                        {{ item.wine_pairing|default:"Sommelier Choice" }}
+                    </td>
+                    <td>
+                        {% if item.is_available %}
+                        <span class="status-pill status-confirmed">Available</span>
+                        {% else %}
+                        <span class="status-pill status-declined">Sold Out</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <form method="POST" action="{% url 'cms_toggle_menu_item' item.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-secondary" style="padding: 4px 8px; font-size: 11px;">
+                                    {% if item.is_available %}Toggle Sold Out{% else %}Make Available{% endif %}
+                                </button>
+                            </form>
+                            <form method="POST" action="{% url 'cms_delete_menu_item' item.id %}" style="display: inline;" onsubmit="return confirm('Delete dish {{ item.name }}?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-danger" style="padding: 4px 7px; font-size: 11px;">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--muted-stone); padding: 36px;">
+                        No dishes found for this category filter.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add New Dish Form -->
+<div class="cms-card" id="addDishCard">
+    <div class="cms-card-header">
+        <h3>Add New Mediterranean Dish to Menu Repertoire</h3>
+    </div>
+
+    <form method="POST" action="{% url 'cms_add_menu_item' %}">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group">
+                <label for="name">Dish Name *</label>
+                <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Risotto ai Frutti di Mare" required>
+            </div>
+            <div class="form-group">
+                <label for="category_id">Menu Category *</label>
+                <select id="category_id" name="category_id" class="form-control" required>
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="price">Price (€) *</label>
+                <input type="number" id="price" name="price" class="form-control mono-font" placeholder="48" required>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="origin">Ingredient Origin / Terroir</label>
+                <input type="text" id="origin" name="origin" class="form-control" placeholder="e.g. Positano Morning Catch & Carnaroli Rice">
+            </div>
+            <div class="form-group">
+                <label for="wine_pairing">Sommelier Wine Pairing</label>
+                <input type="text" id="wine_pairing" name="wine_pairing" class="form-control" placeholder="e.g. Marisa Cuomo Furore Bianco 2021">
+            </div>
+            <div class="form-group">
+                <label for="image_url">High-Res Meal Photo URL</label>
+                <input type="url" id="image_url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/photo-...">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Culinary Description</label>
+            <textarea id="description" name="description" class="form-control" placeholder="Detailed presentation of culinary technique, sauces, and garnishes..."></textarea>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                <input type="checkbox" name="is_signature">
+                <span>Feature as Executive Chef Signature Creation</span>
+            </label>
+        </div>
+
+        <button type="submit" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Add Dish to Menu Repertoire
+        </button>
+    </form>
+</div>
+{% endblock %}

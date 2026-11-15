@@ -1,0 +1,137 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Custom Standalone Page Builder — AURA MARINA CMS Studio{% endblock %}
+
+{% block content %}
+<div class="topbar">
+    <div class="topbar-title">
+        <h2>Standalone Custom Pages & Page Builder</h2>
+        <p>Create and compose dynamic landing pages with our visual block editor — like WordPress Elementor.</p>
+    </div>
+    <div class="topbar-actions">
+        <a href="#createPageCard" class="btn-primary">
+            <i class="fa-solid fa-plus"></i> Create Brand New Page
+        </a>
+    </div>
+</div>
+
+<div class="cms-card">
+    <div class="cms-card-header">
+        <h3>Existing Custom Standalone Pages</h3>
+        <span style="font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--gold-dark);">
+            {{ pages.count }} Pages Configured
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="cms-table">
+            <thead>
+                <tr>
+                    <th>Page Title</th>
+                    <th>Frontend URL Path</th>
+                    <th>Theme Style</th>
+                    <th>Blocks Count</th>
+                    <th>Navigation</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for page in pages %}
+                <tr>
+                    <td>
+                        <strong style="color: var(--med-midnight); font-size: 15px;">{{ page.title }}</strong>
+                        <div style="font-size: 11px; color: var(--muted-stone);">Created: {{ page.created_at|date:"M d, Y" }}</div>
+                    </td>
+                    <td>
+                        <a href="http://127.0.0.1:3000/page/{{ page.slug }}" target="_blank" class="mono-font" style="color: var(--ocean-blue); font-size: 12.5px; text-decoration: none; font-weight: 600;">
+                            /page/{{ page.slug }} ↗
+                        </a>
+                    </td>
+                    <td>
+                        <span class="mono-font" style="font-size: 11px; background: #FAF8F4; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--travertine-border);">
+                            {{ page.theme_style }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="mono-font" style="font-weight: 700;">{{ page.blocks|length }}</span> blocks
+                    </td>
+                    <td>
+                        {% if page.show_in_navigation %}
+                        <span style="color: #059669; font-size: 12px; font-weight: 600;">✓ In Nav</span>
+                        {% else %}
+                        <span style="color: var(--muted-stone); font-size: 12px;">Hidden</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if page.is_published %}
+                        <span class="status-pill status-confirmed">Live</span>
+                        {% else %}
+                        <span class="status-pill status-pending">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            <a href="{% url 'cms_page_builder' page.pk %}" class="btn-primary" style="padding: 5px 10px; font-size: 11px;">
+                                <i class="fa-solid fa-pen-ruler"></i> Builder
+                            </a>
+                            <form method="POST" action="{% url 'cms_toggle_page_publish' page.pk %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-secondary" style="padding: 5px 8px; font-size: 11px;">
+                                    {% if page.is_published %}Unpublish{% else %}Publish{% endif %}
+                                </button>
+                            </form>
+                            <form method="POST" action="{% url 'cms_delete_page' page.pk %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this custom page?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-danger" style="padding: 5px 8px; font-size: 11px;">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: var(--muted-stone); padding: 36px;">
+                        No custom pages created yet. Use the form below to create your first Elementor-style page.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="cms-card" id="createPageCard">
+    <div class="cms-card-header">
+        <h3>Create Brand New Standalone Page</h3>
+    </div>
+
+    <form method="POST" action="{% url 'cms_create_page' %}">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group">
+                <label for="title">Page Title *</label>
+                <input type="text" id="title" name="title" class="form-control" placeholder="e.g. Private Cliffside Gala" required>
+            </div>
+            <div class="form-group">
+                <label for="slug">URL Slug (leave blank to auto-generate)</label>
+                <input type="text" id="slug" name="slug" class="form-control" placeholder="e.g. private-cliffside-gala">
+            </div>
+            <div class="form-group">
+                <label for="theme_style">Theme Palette</label>
+                <select id="theme_style" name="theme_style" class="form-control">
+                    <option value="mediterranean-azure">Mediterranean Azure (Default)</option>
+                    <option value="amalfi-terracotta">Amalfi Terracotta & Olive</option>
+                    <option value="positano-gold">Positano Sun-drenched Gold</option>
+                    <option value="limestone-minimal">Limestone Architectural Minimal</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 8px;">
+            <i class="fa-solid fa-plus"></i> Initialize Page & Open Visual Builder
+        </button>
+    </form>
+</div>
+{% endblock %}

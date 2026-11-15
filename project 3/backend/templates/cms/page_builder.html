@@ -1,0 +1,364 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Visual Page Builder: {{ page.title }} — AURA MARINA CMS{% endblock %}
+
+{% block extra_head %}
+<style>
+    .builder-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 24px;
+        align-items: start;
+    }
+    .widget-btn {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 12px 14px;
+        background: #FAF8F4;
+        border: 1px solid var(--travertine-border);
+        border-radius: 8px;
+        color: var(--med-midnight);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: left;
+        margin-bottom: 8px;
+    }
+    .widget-btn:hover {
+        background: #FFFFFF;
+        border-color: var(--gold);
+        transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(197, 160, 89, 0.15);
+    }
+    .widget-btn i {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        background: rgba(197, 160, 89, 0.2);
+        color: var(--gold-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+    }
+    .block-card {
+        background: #FFFFFF;
+        border: 1px solid var(--travertine-border);
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+        transition: all 0.2s;
+    }
+    .block-card:hover {
+        border-color: var(--ocean-blue);
+        box-shadow: 0 4px 15px rgba(42, 111, 133, 0.08);
+    }
+    .block-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .block-tag {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        text-transform: uppercase;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 4px;
+        background: #E8F0F3;
+        color: var(--ocean-blue);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{% url 'cms_save_page_builder' page.pk %}" id="pageBuilderForm">
+    {% csrf_token %}
+
+    <div class="topbar">
+        <div class="topbar-title">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <a href="{% url 'cms_pages' %}" style="color: var(--muted-stone); text-decoration: none; font-size: 20px;">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <h2>Visual Page Builder</h2>
+            </div>
+            <p>Editing standalone dynamic page: <span class="mono-font" style="color: var(--ocean-blue); font-weight: 600;">/page/{{ page.slug }}</span></p>
+        </div>
+        <div class="topbar-actions">
+            <a href="http://127.0.0.1:3000/page/{{ page.slug }}" target="_blank" class="btn-secondary">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Live Preview
+            </a>
+            <button type="submit" class="btn-primary">
+                <i class="fa-solid fa-floppy-disk"></i> Save Page Changes
+            </button>
+        </div>
+    </div>
+
+    <!-- Page Metadata Header -->
+    <div class="cms-card" style="padding: 20px 24px; margin-bottom: 24px;">
+        <div class="form-row">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="title">Page Title</label>
+                <input type="text" id="title" name="title" class="form-control" value="{{ page.title }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="slug">URL Slug (/page/:slug)</label>
+                <input type="text" id="slug" name="slug" class="form-control mono-font" value="{{ page.slug }}" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="theme_style">Theme Palette</label>
+                <select id="theme_style" name="theme_style" class="form-control">
+                    <option value="mediterranean-azure" {% if page.theme_style == 'mediterranean-azure' %}selected{% endif %}>Mediterranean Azure</option>
+                    <option value="amalfi-terracotta" {% if page.theme_style == 'amalfi-terracotta' %}selected{% endif %}>Amalfi Terracotta</option>
+                    <option value="positano-gold" {% if page.theme_style == 'positano-gold' %}selected{% endif %}>Positano Gold</option>
+                    <option value="limestone-minimal" {% if page.theme_style == 'limestone-minimal' %}selected{% endif %}>Limestone Minimal</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 24px; margin-top: 14px; align-items: center; border-top: 1px solid #F0ECE4; padding-top: 14px;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                <input type="checkbox" name="is_published" {% if page.is_published %}checked{% endif %}>
+                <span>Publish Page Live</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                <input type="checkbox" name="show_in_navigation" {% if page.show_in_navigation %}checked{% endif %}>
+                <span>Include in Main Navigation Dropdown</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Workspace Grid -->
+    <div class="builder-grid">
+        <!-- Sidebar Widget Library -->
+        <div class="cms-card" style="padding: 20px;">
+            <div class="cms-card-header" style="margin-bottom: 14px; padding-bottom: 10px;">
+                <h3 style="font-size: 16px;">Block Library</h3>
+            </div>
+            <p style="font-size: 12px; color: var(--muted-stone); margin-bottom: 14px;">
+                Click any widget below to append a pre-configured block to your page layout.
+            </p>
+
+            <button type="button" class="widget-btn" onclick="appendWidget('hero')">
+                <i class="fa-solid fa-image"></i>
+                <div>
+                    <div>Hero Header</div>
+                    <small style="color: var(--muted-stone); font-size: 11px;">Full-bleed coastal banner</small>
+                </div>
+            </button>
+
+            <button type="button" class="widget-btn" onclick="appendWidget('story_split')">
+                <i class="fa-solid fa-columns"></i>
+                <div>
+                    <div>50/50 Story Split</div>
+                    <small style="color: var(--muted-stone); font-size: 11px;">Editorial text & cliffside image</small>
+                </div>
+            </button>
+
+            <button type="button" class="widget-btn" onclick="appendWidget('features_grid')">
+                <i class="fa-solid fa-table-cells-large"></i>
+                <div>
+                    <div>Features Grid</div>
+                    <small style="color: var(--muted-stone); font-size: 11px;">3 or 4 culinary pillars</small>
+                </div>
+            </button>
+
+            <button type="button" class="widget-btn" onclick="appendWidget('cta_banner')">
+                <i class="fa-solid fa-bullhorn"></i>
+                <div>
+                    <div>Call To Action</div>
+                    <small style="color: var(--muted-stone); font-size: 11px;">High-impact reservation banner</small>
+                </div>
+            </button>
+
+            <button type="button" class="widget-btn" onclick="appendWidget('culinary_gallery')">
+                <i class="fa-regular fa-images"></i>
+                <div>
+                    <div>Culinary Gallery</div>
+                    <small style="color: var(--muted-stone); font-size: 11px;">Curated food & space photos</small>
+                </div>
+            </button>
+
+            <button type="button" class="widget-btn" onclick="appendWidget('reservation_block')">
+                <i class="fa-solid fa-calendar-check"></i>
+                <div>
+                    <div>Reservation Booking</div>
+                    <small style="color: var(--muted-stone); font-size: 11px;">Live shift reservation launcher</small>
+                </div>
+            </button>
+
+            <button type="button" class="widget-btn" onclick="appendWidget('faq_accordion')">
+                <i class="fa-regular fa-circle-question"></i>
+                <div>
+                    <div>FAQ Accordion</div>
+                    <small style="color: var(--muted-stone); font-size: 11px;">Concierge answers & boat policy</small>
+                </div>
+            </button>
+
+            <button type="button" class="widget-btn" onclick="appendWidget('inquiry_form')">
+                <i class="fa-regular fa-envelope"></i>
+                <div>
+                    <div>Inquiry Form</div>
+                    <small style="color: var(--muted-stone); font-size: 11px;">Private event & buyout lead form</small>
+                </div>
+            </button>
+        </div>
+
+        <!-- Main Blocks Canvas & JSON Editor -->
+        <div>
+            <div class="cms-card">
+                <div class="cms-card-header">
+                    <h3>Page Block Hierarchy & Live JSON Payload</h3>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" class="btn-secondary" onclick="formatBlocksJSON()" style="font-size: 11px; padding: 5px 10px;">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Validate JSON
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="clearAllBlocks()" style="font-size: 11px; padding: 5px 10px; color: #DC2626;">
+                            <i class="fa-solid fa-trash"></i> Reset Blocks
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="blocksJsonInput">JSON Blocks Configuration</label>
+                    <textarea id="blocksJsonInput" name="blocks_json" class="form-control mono-font" style="min-height: 440px; font-size: 12.5px; line-height: 1.5; background: #1C2022; color: #7DD3FC; border-color: #334155;">{{ blocks_json_str }}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const WIDGET_TEMPLATES = {
+    hero: {
+        id: "hero-" + Date.now(),
+        type: "hero",
+        title: "Exclusive Private Gala on Positano Waters",
+        subtitle: "Architectural Cliffside Dining Experience",
+        badge: "AURA MARINA • BESPOKE CELEBRATION",
+        description: "Immerse your guests in Michelin-caliber Amalfi gastronomy, rare vintages, and Mediterranean sea breezes.",
+        primaryCta: { text: "Request Gala Booking", href: "#inquiry" },
+        secondaryCta: { text: "Download Brochure", href: "#menu" },
+        backgroundImage: "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1600&auto=format&fit=crop"
+    },
+    story_split: {
+        id: "split-" + Date.now(),
+        type: "split",
+        eyebrow: "ARCHITECTURE & PANORAMA",
+        title: "Carved into Positano’s Sheer Limestone Terraces",
+        description: "Every vantage point at AURA MARINA frames the open Tyrrhenian Sea. Handcrafted limestone arches, terracotta floors, and bespoke olive wood seating create an unrivaled coastal haven.",
+        bulletPoints: [
+            "Direct private yacht docking and boat shuttle service",
+            "Custom 8-course Mediterranean tasting menu with sommelier pairings",
+            "Dedicated acoustic soundscape and private ambient lighting"
+        ],
+        cta: { text: "Explore Dining Spaces", href: "/interior" },
+        image: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1200&auto=format&fit=crop",
+        imagePosition: "right"
+    },
+    features_grid: {
+        id: "features-" + Date.now(),
+        type: "features",
+        eyebrow: "THE SANCTUARY ADVANTAGE",
+        title: "Uncompromising Gastronomic Craft",
+        description: "Four hallmarks that define every moment spent at AURA MARINA.",
+        columns: 3,
+        items: [
+            { icon: "fa-fish", title: "Adriatic Daily Catch", description: "Wild red prawns, sea bass, and crudo harvested at dawn by local Amalfi fishermen." },
+            { icon: "fa-wine-bottle", title: "Volcanic Terroir Vintages", description: "A 1,400-bottle cellar featuring rare Campania, Mount Vesuvius, and Super Tuscan vintages." },
+            { icon: "fa-anchor", title: "Private Boat Concierge", description: "Seamless tender transfers from your superyacht directly to our cliffside reception dock." }
+        ]
+    },
+    cta_banner: {
+        id: "cta-" + Date.now(),
+        type: "cta",
+        title: "Reserve Your Private Cliffside Evening",
+        description: "Limited to 12 bespoke tables per shift. Advance inquiries strongly recommended for sunset seatings.",
+        primaryCta: { text: "Book Table Online", href: "#reserve" },
+        secondaryCta: { text: "Contact Concierge Desk", href: "/contact" },
+        backgroundImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop"
+    },
+    culinary_gallery: {
+        id: "gallery-" + Date.now(),
+        type: "gallery",
+        title: "Moments of Coastal Opulence",
+        subtitle: "A photographic glimpse into our culinary and architectural haven.",
+        images: [
+            { url: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=800&auto=format&fit=crop", caption: "Amalfi Red Prawn Crudo" },
+            { url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop", caption: "Cliffside Sunset Terrace" },
+            { url: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=800&auto=format&fit=crop", caption: "Handmade Tagliolini al Limone" }
+        ]
+    },
+    reservation_block: {
+        id: "reservation-" + Date.now(),
+        type: "reservation",
+        title: "Instant Shift Booking & Table Request",
+        description: "Select between Lunch (12:00 - 15:30) or Sunset Dinner (19:00 - 23:30) shifts.",
+        shiftOptions: ["Lunch Service (12:00 - 15:30)", "Sunset & Dinner Service (19:00 - 23:30)"],
+        zoneOptions: ["Cliffside Sea Terrace", "Limestone Vault Bar", "Captain's Private Alcove"]
+    },
+    faq_accordion: {
+        id: "faq-" + Date.now(),
+        type: "faq",
+        title: "Frequently Asked Questions",
+        subtitle: "Everything you need to know about arrival, dress code, and reservations.",
+        items: [
+            { question: "How do we arrive by boat or yacht?", answer: "Our private tender operates continuously between 11:30 and 23:30, offering direct dock-to-table transfers from Positano harbour and offshore moorings." },
+            { question: "What is the dress code at AURA MARINA?", answer: "We celebrate Elegant Resort Casual. Collared shirts or linen attire are recommended for dinner; swimwear is not permitted in dining areas." },
+            { question: "Can we book exclusive full-venue buyouts?", answer: "Yes, our cliffside estate accommodates buyouts for up to 90 seated guests. Contact our concierge desk for tailored proposals." }
+        ]
+    },
+    inquiry_form: {
+        id: "inquiry-" + Date.now(),
+        type: "inquiry_form",
+        title: "Private Gala & Event Inquiry",
+        description: "Tell us about your upcoming celebration. Our head concierge will respond with availability and bespoke menus.",
+        fields: ["name", "email", "phone", "event_date", "guest_count", "special_notes"]
+    }
+};
+
+function appendWidget(type) {
+    const template = WIDGET_TEMPLATES[type];
+    if (!template) return;
+
+    const textarea = document.getElementById('blocksJsonInput');
+    try {
+        let currentBlocks = JSON.parse(textarea.value || '[]');
+        if (!Array.isArray(currentBlocks)) currentBlocks = [];
+        
+        // Clone template with new unique id
+        const newBlock = JSON.parse(JSON.stringify(template));
+        newBlock.id = type + '-' + Date.now();
+        currentBlocks.push(newBlock);
+        
+        textarea.value = JSON.stringify(currentBlocks, null, 2);
+    } catch(e) {
+        alert("Invalid JSON in blocks editor. Please fix syntax before adding new widgets.");
+    }
+}
+
+function formatBlocksJSON() {
+    const textarea = document.getElementById('blocksJsonInput');
+    try {
+        const parsed = JSON.parse(textarea.value);
+        textarea.value = JSON.stringify(parsed, null, 2);
+        alert("JSON syntax is valid! (" + (Array.isArray(parsed) ? parsed.length : 0) + " blocks defined)");
+    } catch (e) {
+        alert("JSON syntax error: " + e.message);
+    }
+}
+
+function clearAllBlocks() {
+    if (confirm("Are you sure you want to clear all blocks? This cannot be undone until saved.")) {
+        document.getElementById('blocksJsonInput').value = '[]';
+    }
+}
+</script>
+{% endblock %}
