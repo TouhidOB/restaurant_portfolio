@@ -1,0 +1,194 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}OVERVIEW // ENSO 圓相 Japanese Zen Studio{% endblock %}
+
+{% block content %}
+<!-- Topbar -->
+<header class="page-header">
+  <div class="page-header-title">
+    <h1>Zen Sanctuary Telemetry & Operations</h1>
+    <p>Central management console, lunch & omakase dinner shifts, and administrative launchpad.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000" target="_blank" class="btn btn-bamboo">
+      <span>PREVIEW PUBLIC EXPERIENCE</span> ↗
+    </a>
+    <a href="/api/v1/content/" target="_blank" class="btn btn-moss">
+      <span>RAW API PAYLOAD</span> ↗
+    </a>
+  </div>
+</header>
+
+<!-- Shift Operations Bar -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+  <!-- Lunch Shift Card -->
+  <div class="cms-card" style="padding: 1.5rem; border-top: 4px solid var(--bamboo-gold); margin-bottom: 0; background: linear-gradient(135deg, rgba(182, 161, 123, 0.08) 0%, rgba(20, 23, 21, 0.95) 100%);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div>
+        <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--bamboo-gold); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
+          ☀️ LUNCH SERVICE SHIFT
+        </span>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 700; color: #FFFFFF; margin: 0.35rem 0 0.15rem;">
+          {{ kpis.lunch_reservations }} <span style="font-size: 1rem; color: var(--text-muted); font-family: 'Noto Sans', sans-serif; font-weight: 400;">Bookings</span>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">
+          Daytime Kaiseki & Tea service (12:30 PM – 03:30 PM).
+        </p>
+      </div>
+      <a href="{% url 'cms_reservations' %}?shift=lunch" class="btn btn-outline btn-sm" style="color: var(--bamboo-gold); border-color: var(--bamboo-gold);">
+        Lunch Desk ↗
+      </a>
+    </div>
+  </div>
+
+  <!-- Dinner Shift Card -->
+  <div class="cms-card" style="padding: 1.5rem; border-top: 4px solid var(--moss-green); margin-bottom: 0; background: linear-gradient(135deg, rgba(105, 116, 91, 0.15) 0%, rgba(20, 23, 21, 0.95) 100%);">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+      <div>
+        <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--bamboo-light); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
+          🌙 DINNER & OMAKASE SHIFT
+        </span>
+        <div style="font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 700; color: #FFFFFF; margin: 0.35rem 0 0.15rem;">
+          {{ kpis.dinner_reservations }} <span style="font-size: 1rem; color: var(--text-muted); font-family: 'Noto Sans', sans-serif; font-weight: 400;">Bookings</span>
+        </div>
+        <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">
+          Evening Omakase Counter & Dining (06:30 PM – 11:00 PM).
+        </p>
+      </div>
+      <a href="{% url 'cms_reservations' %}?shift=dinner" class="btn btn-outline btn-sm" style="color: var(--bamboo-light); border-color: var(--bamboo-light);">
+        Dinner Desk ↗
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Telemetry KPIs Grid -->
+<section style="margin-bottom: 2.5rem;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem;">
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--bamboo-gold); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Pending Inquiries
+      </span>
+      <div style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: var(--bamboo-gold); margin-top: 0.25rem;">
+        {{ kpis.pending_reservations }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">{{ kpis.total_reservations }} total inquiries</span>
+    </div>
+
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--moss-green); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Zen Gastronomy Dishes
+      </span>
+      <div style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: var(--bamboo-light); margin-top: 0.25rem;">
+        {{ kpis.active_menu_items }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">Across {{ kpis.total_categories }} categories</span>
+    </div>
+
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--bamboo-gold); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Custom Pages
+      </span>
+      <div style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: #FFFFFF; margin-top: 0.25rem;">
+        {{ kpis.total_custom_pages }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">{{ kpis.published_custom_pages }} published live</span>
+    </div>
+
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--moss-green); margin-bottom: 0;">
+      <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
+        Journal Articles
+      </span>
+      <div style="font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: #FFFFFF; margin-top: 0.25rem;">
+        {{ kpis.total_blog_posts }}
+      </div>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">{{ kpis.published_blog_posts }} published live</span>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Action Shortcuts -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <h3 class="cms-card-title">Recent Inquiries & Seating</h3>
+      <a href="{% url 'cms_reservations' %}" class="btn btn-outline btn-sm">All Bookings →</a>
+    </div>
+    {% if recent_reservations %}
+    <div class="table-responsive">
+      <table class="cms-table">
+        <thead>
+          <tr>
+            <th>Ref</th>
+            <th>Guest</th>
+            <th>Date & Shift</th>
+            <th>Party</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for res in recent_reservations %}
+          <tr>
+            <td><code style="color: var(--bamboo-gold);">{{ res.reference_code }}</code></td>
+            <td><strong>{{ res.full_name }}</strong></td>
+            <td>
+              {{ res.date|date:"M d" }}
+              <span class="badge {% if res.is_dinner_shift %}badge-confirmed{% else %}badge-pending{% endif %}">
+                {% if res.is_dinner_shift %}Dinner{% else %}Lunch{% endif %}
+              </span>
+            </td>
+            <td>{{ res.guest_count }} PAX</td>
+            <td>
+              <span class="badge badge-{{ res.status }}">{{ res.get_status_display }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted); font-size: 0.85rem;">No reservation inquiries yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <h3 class="cms-card-title">Custom Pages & Journal Articles</h3>
+      <a href="{% url 'cms_pages' %}" class="btn btn-outline btn-sm">Page Builder →</a>
+    </div>
+    <div style="margin-bottom: 1.5rem;">
+      <h4 style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--bamboo-gold); text-transform: uppercase; margin-bottom: 0.75rem;">
+        Standalone Pages
+      </h4>
+      {% for p in recent_pages %}
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--charcoal-border);">
+        <div>
+          <strong>{{ p.title }}</strong>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">/page/{{ p.slug }}</span>
+        </div>
+        <a href="{% url 'cms_page_builder' pk=p.pk %}" class="btn btn-outline btn-sm">Edit Blocks</a>
+      </div>
+      {% empty %}
+      <p style="color: var(--text-muted); font-size: 0.85rem;">No custom pages created yet.</p>
+      {% endfor %}
+    </div>
+
+    <div>
+      <h4 style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--moss-green); text-transform: uppercase; margin-bottom: 0.75rem;">
+        Recent Editorial Articles
+      </h4>
+      {% for post in recent_posts %}
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid var(--charcoal-border);">
+        <div>
+          <strong>{{ post.title }}</strong>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">by {{ post.author_name }}</span>
+        </div>
+        <a href="{% url 'cms_edit_blog_post' pk=post.pk %}" class="btn btn-outline btn-sm">Edit</a>
+      </div>
+      {% empty %}
+      <p style="color: var(--text-muted); font-size: 0.85rem;">No blog articles yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

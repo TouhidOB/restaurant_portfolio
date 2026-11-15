@@ -1,0 +1,50 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}GUEST REVIEWS // ENSO 圓相 Studio{% endblock %}
+
+{% block content %}
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>Guest Testimonials & Reflections</h1>
+    <p>Curated reviews from food critics, diplomats, culinary patrons, and evening guests.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000/#testimonials" target="_blank" class="btn btn-bamboo">
+      <span>VIEW TESTIMONIALS</span> ↗
+    </a>
+  </div>
+</header>
+
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>Verified Critic & Guest Reviews ({{ reviews|length }} reviews)</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Published on the social proof carousel and dedicated guest review panels.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">CURATED TESTIMONIALS</span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+    {% for rev in reviews %}
+      <div style="background: var(--charcoal-bg); border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 1.5rem;">
+        <div style="color: var(--bamboo-gold); font-size: 0.95rem; margin-bottom: 0.75rem;">
+          ★★★★★
+        </div>
+        <p style="color: var(--rice-paper); font-size: 0.88rem; line-height: 1.6; font-style: italic; margin-bottom: 1rem;">
+          "{{ rev.quote }}"
+        </p>
+        <div style="border-top: 1px solid var(--charcoal-border); padding-top: 0.75rem;">
+          <strong style="color: #FFF; font-size: 0.85rem; display: block;">{{ rev.author }}</strong>
+          <small style="color: var(--bamboo-gold); font-family: 'Space Mono', monospace; font-size: 0.72rem;">{{ rev.title }}</small>
+        </div>
+      </div>
+    {% empty %}
+      <div style="padding: 3rem; text-align: center; color: var(--text-muted); grid-column: 1 / -1;">
+        No guest reviews currently registered.
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -7,6 +7,16 @@ const CMSContext = createContext(null);
 export function CMSProvider({ children }) {
   const [config, setConfig] = useState(fallbackData);
   const [isLoading, setIsLoading] = useState(true);
+  const [customPages, setCustomPages] = useState(fallbackData.custom_pages || []);
+  const [blogPosts, setBlogPosts] = useState(fallbackData.blog_posts || []);
+  const [blogCategories, setBlogCategories] = useState(fallbackData.blog_categories || []);
+  const [isReservationOpen, setIsReservationOpen] = useState(false);
+  const [selectedDish, setSelectedDish] = useState(null);
+
+  const openReservation = () => setIsReservationOpen(true);
+  const closeReservation = () => setIsReservationOpen(false);
+  const openDish = (dish) => setSelectedDish(dish);
+  const closeDish = () => setSelectedDish(null);
 
   // Hydrate from Django REST API
   useEffect(() => {
@@ -25,6 +35,9 @@ export function CMSProvider({ children }) {
             },
           }));
         }
+        if (data?.custom_pages) setCustomPages(data.custom_pages);
+        if (data?.blog_posts) setBlogPosts(data.blog_posts);
+        if (data?.blog_categories) setBlogCategories(data.blog_categories);
       } catch (e) {
         console.warn('API hydration error, staying on fallback data:', e);
       } finally {
@@ -60,7 +73,21 @@ export function CMSProvider({ children }) {
   }, [config]);
 
   return (
-    <CMSContext.Provider value={{ config, isLoading }}>
+    <CMSContext.Provider
+      value={{
+        config,
+        isLoading,
+        customPages,
+        blogPosts,
+        blogCategories,
+        isReservationOpen,
+        openReservation,
+        closeReservation,
+        selectedDish,
+        openDish,
+        closeDish,
+      }}
+    >
       {children}
     </CMSContext.Provider>
   );

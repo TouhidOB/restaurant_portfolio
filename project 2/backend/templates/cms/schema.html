@@ -1,0 +1,42 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}MASTER JSON SCHEMA // ENSO 圓相 Studio{% endblock %}
+
+{% block content %}
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>Master JSON Content Schema</h1>
+    <p>Complete structured telemetry and content tree powering all 15 sections of ENSO.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="/api/v1/content/" target="_blank" class="btn btn-moss">
+      <span>RAW API PAYLOAD</span> ↗
+    </a>
+  </div>
+</header>
+
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>Master Database JSON Payload</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        You can inspect or directly update the entire website schema configuration below.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">LIVE CONFIGURATION</span>
+  </div>
+
+  <form method="POST" action="{% url 'cms_save_schema' %}">
+    {% csrf_token %}
+    <div class="form-group">
+      <textarea name="schema_json" rows="24" class="form-control" style="font-family: 'Space Mono', monospace; font-size: 0.78rem; line-height: 1.5; color: var(--bamboo-light); background: rgba(10, 31, 26, 0.4); border-color: var(--charcoal-border);">{{ schema_json }}</textarea>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; gap: 1rem;">
+      <button type="submit" class="btn btn-bamboo">
+        <span>💾 VALIDATE & SAVE MASTER SCHEMA</span>
+      </button>
+    </div>
+  </form>
+</section>
+{% endblock %}

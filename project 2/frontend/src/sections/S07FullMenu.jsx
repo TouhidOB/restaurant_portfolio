@@ -198,19 +198,27 @@ export default function S07FullMenu({ categories, onSelectDish, onOpenReservatio
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
-                  <h4 style={{ fontSize: '18px', color: 'var(--color-charcoal)', fontWeight: 600 }}>
-                    {item.name}
-                  </h4>
-                  <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-charcoal)' }}>
-                    {item.price}
-                  </span>
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '6px' }}>
+                    <h4 style={{ fontSize: '18px', color: 'var(--color-charcoal)', fontWeight: 600 }}>
+                      {item.name}
+                    </h4>
+                    <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-charcoal)' }}>
+                      {item.price}
+                    </span>
+                  </div>
+
+                  <p style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--color-charcoal)', opacity: 0.8, marginBottom: '12px' }}>
+                    {item.description}
+                  </p>
                 </div>
 
-                <p style={{ fontSize: '13px', lineHeight: 1.6, color: 'var(--color-charcoal)', opacity: 0.8, marginBottom: '12px' }}>
-                  {item.description}
-                </p>
+                {item.image && (
+                  <div style={{ width: '84px', height: '84px', borderRadius: '2px', overflow: 'hidden', flexShrink: 0, border: '1px solid var(--color-border)' }}>
+                    <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                )}
               </div>
 
               {item.tags && item.tags.length > 0 && (

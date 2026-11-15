@@ -1,0 +1,192 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}MAITRE D' RESERVATIONS // ENSO 圓相 Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+  @media print {
+    #cmsSidebar, .cms-topbar, .filter-bar, .table-action-col, .print-hide {
+      display: none !important;
+    }
+    .cms-main {
+      margin-left: 0 !important;
+      padding: 0 !important;
+      background: #FFF !important;
+      color: #000 !important;
+    }
+    .cms-table th, .cms-table td {
+      color: #000 !important;
+      border-color: #CCC !important;
+      background: #FFF !important;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>Maitre D' Table Reservation & Host Desk</h1>
+    <p>Manage bookings, seat allocations, guest shift preferences, dietary requirements, and live arrivals.</p>
+  </div>
+  <div class="topbar-actions">
+    <button onclick="window.print()" class="btn btn-outline">
+      <span>🖨️ PRINT SHIFT RUN-SHEET</span>
+    </button>
+  </div>
+</header>
+
+<!-- Filter & Search Bar -->
+<div class="filter-bar cms-card" style="padding: 1.25rem; margin-bottom: 2rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+    <!-- Shift and Status Filter Tabs -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+      <a href="{% url 'cms_reservations' %}" class="btn {% if status_filter == 'all' and shift_filter == 'all' %}btn-bamboo{% else %}btn-outline{% endif %} btn-sm">
+        ALL ({{ kpis.total_reservations }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?shift=lunch" class="btn {% if shift_filter == 'lunch' %}btn-bamboo{% else %}btn-outline{% endif %} btn-sm">
+        ☀️ LUNCH SHIFT ({{ kpis.lunch_reservations }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?shift=dinner" class="btn {% if shift_filter == 'dinner' %}btn-bamboo{% else %}btn-outline{% endif %} btn-sm">
+        🌙 DINNER SHIFT ({{ kpis.dinner_reservations }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?status=pending" class="btn {% if status_filter == 'pending' %}btn-bamboo{% else %}btn-outline{% endif %} btn-sm" style="color: #F39C12;">
+        PENDING APPROVAL ({{ kpis.pending_reservations }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?status=confirmed" class="btn {% if status_filter == 'confirmed' %}btn-bamboo{% else %}btn-outline{% endif %} btn-sm" style="color: #2ECC71;">
+        CONFIRMED ({{ kpis.confirmed_reservations }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?status=seated" class="btn {% if status_filter == 'seated' %}btn-bamboo{% else %}btn-outline{% endif %} btn-sm" style="color: #5EEAD4;">
+        SEATED ({{ kpis.seated_reservations }})
+      </a>
+    </div>
+
+    <!-- Search Form -->
+    <form method="GET" action="{% url 'cms_reservations' %}" style="display: flex; gap: 0.5rem;">
+      {% if shift_filter != 'all' %}<input type="hidden" name="shift" value="{{ shift_filter }}">{% endif %}
+      {% if status_filter != 'all' %}<input type="hidden" name="status" value="{{ status_filter }}">{% endif %}
+      <input type="text" name="search" value="{{ search_query }}" placeholder="Search ref, guest, phone, table..." class="form-control" style="width: 260px; padding: 0.45rem 0.85rem; font-size: 0.82rem;">
+      <button type="submit" class="btn btn-outline btn-sm">Search</button>
+      {% if search_query %}
+        <a href="{% url 'cms_reservations' %}" class="btn btn-outline btn-sm">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+</div>
+
+<!-- Reservations Table Section -->
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>Master Table Manifest</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Showing {{ reservations|length }} reservation entries.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">LIVE GUEST ROSTER</span>
+  </div>
+
+  <table class="cms-table">
+    <thead>
+      <tr>
+        <th>Ref Code</th>
+        <th>Guest Details</th>
+        <th>Date & Shift</th>
+        <th>Guests & Occasion</th>
+        <th>Zone Preference</th>
+        <th>Dietary / Notes</th>
+        <th>Table #</th>
+        <th>Status & Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for res in reservations %}
+        <tr>
+          <td>
+            <strong style="color: var(--bamboo-gold); font-family: 'Space Mono', monospace; font-size: 0.88rem;">{{ res.reference_code }}</strong><br>
+            <small style="color: var(--text-muted); font-size: 0.72rem;">{{ res.created_at|date:"M d, H:i" }}</small>
+          </td>
+          <td>
+            <div style="font-weight: 600; color: #FFF; font-size: 0.95rem;">{{ res.full_name }}</div>
+            <div style="color: var(--text-muted); font-size: 0.78rem;">{{ res.phone }}</div>
+            {% if res.email %}
+              <div style="color: var(--bamboo-gold); font-size: 0.75rem; font-family: 'Space Mono', monospace;">{{ res.email }}</div>
+            {% endif %}
+          </td>
+          <td>
+            <div style="font-weight: 500; color: #FFF;">{{ res.date }}</div>
+            <div style="font-family: 'Space Mono', monospace; font-size: 0.78rem; margin-top: 0.2rem; color: {% if res.is_dinner_shift %}var(--bamboo-light){% else %}var(--bamboo-gold){% endif %};">
+              {% if res.is_dinner_shift %}🌙 DINNER • {{ res.time }}{% else %}☀️ LUNCH • {{ res.time }}{% endif %}
+            </div>
+          </td>
+          <td>
+            <strong style="color: #FFF;">{{ res.guests }} Guests</strong>
+            <small style="display: block; color: var(--text-muted); font-size: 0.75rem;">{{ res.occasion }}</small>
+          </td>
+          <td>
+            <span style="font-size: 0.8rem; color: var(--rice-paper);">{{ res.seating_area }}</span>
+          </td>
+          <td style="max-width: 180px;">
+            {% if res.dietary_notes %}
+              <div style="color: #F39C12; font-size: 0.78rem; font-weight: 500;">⚠️ {{ res.dietary_notes }}</div>
+            {% endif %}
+            {% if res.special_requests %}
+              <div style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.2rem;">{{ res.special_requests }}</div>
+            {% endif %}
+            {% if not res.dietary_notes and not res.special_requests %}
+              <span style="color: var(--text-muted); font-size: 0.75rem;">None</span>
+            {% endif %}
+          </td>
+          <td>
+            <!-- Table Assignment Form -->
+            <form method="POST" action="{% url 'cms_update_reservation_status' res.pk %}" style="display: flex; gap: 0.35rem; align-items: center;">
+              {% csrf_token %}
+              <input type="text" name="table_number" value="{{ res.table_number|default:'' }}" placeholder="Table #" class="form-control" style="width: 75px; padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+              <input type="hidden" name="status" value="{{ res.status }}">
+              <button type="submit" class="btn btn-outline btn-sm" style="padding: 0.25rem 0.45rem;" title="Save Table #">✓</button>
+            </form>
+          </td>
+          <td class="table-action-col">
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <div style="display: flex; gap: 0.4rem; align-items: center;">
+                {% if res.status == 'pending' %}
+                  <span class="badge badge-pending">PENDING</span>
+                  <form method="POST" action="{% url 'cms_approve_reservation' res.pk %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-bamboo btn-sm" style="padding: 0.25rem 0.6rem;">✓ APPROVE</button>
+                  </form>
+                {% elif res.status == 'confirmed' %}
+                  <span class="badge badge-confirmed">CONFIRMED</span>
+                {% elif res.status == 'seated' %}
+                  <span class="badge badge-seated">SEATED</span>
+                {% else %}
+                  <span class="badge badge-cancelled">{{ res.status|upper }}</span>
+                {% endif %}
+              </div>
+
+              <!-- Quick Status Selector -->
+              <form method="POST" action="{% url 'cms_update_reservation_status' res.pk %}" style="display: flex; gap: 0.35rem; align-items: center;">
+                {% csrf_token %}
+                <select name="status" class="form-control" style="padding: 0.2rem 0.4rem; font-size: 0.72rem; width: 110px;">
+                  <option value="pending" {% if res.status == 'pending' %}selected{% endif %}>Pending</option>
+                  <option value="confirmed" {% if res.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                  <option value="seated" {% if res.status == 'seated' %}selected{% endif %}>Seated</option>
+                  <option value="completed" {% if res.status == 'completed' %}selected{% endif %}>Completed</option>
+                  <option value="cancelled" {% if res.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+                <button type="submit" class="btn btn-outline btn-sm" style="padding: 0.2rem 0.45rem;">Set</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="8" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            No reservation inquiries match your selected filters.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}3D SPATIAL TOUR // ENSO 圓相 Studio{% endblock %}
+
+{% block content %}
+<header class="cms-topbar">
+  <div class="topbar-title">
+    <h1>3D Spatial Virtual Tour Viewpoints</h1>
+    <p>Manage salon camera coordinates, 3D spatial camera targets, and viewpoint photo fallbacks.</p>
+  </div>
+  <div class="topbar-actions">
+    <a href="http://127.0.0.1:3000/#tour" target="_blank" class="btn btn-bamboo">
+      <span>LAUNCH 3D TOUR</span> ↗
+    </a>
+  </div>
+</header>
+
+<section class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>Active Spatial Viewpoints ({{ viewpoints|length }} viewpoints)</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Camera trajectories, lighting moods, and spatial coordinates for Three.js R3F engine.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">3D TELEMETRY ACTIVE</span>
+  </div>
+
+  <table class="cms-table">
+    <thead>
+      <tr>
+        <th style="width: 80px;">Preview</th>
+        <th>Viewpoint Name</th>
+        <th>Number</th>
+        <th>Scene Mood</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for vp in viewpoints %}
+        <tr>
+          <td>
+            <img 
+              src="{{ vp.image|default:'https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=120' }}" 
+              alt="{{ vp.name }}" 
+              style="width: 64px; height: 64px; object-fit: cover; border-radius: 3px; border: 1px solid var(--charcoal-border);"
+            >
+          </td>
+          <td>
+            <strong style="color: #FFF; font-family: 'Cormorant Garamond', serif; font-size: 1rem;">{{ vp.name }}</strong>
+            <small style="display: block; color: var(--bamboo-gold); font-family: 'Space Mono', monospace; margin-top: 0.2rem;">
+              {{ vp.caption }}
+            </small>
+          </td>
+          <td>
+            <span class="badge" style="background: rgba(18, 59, 53, 0.4); border: 1px solid var(--bamboo-gold); color: var(--bamboo-light);">
+              {{ vp.number }}
+            </span>
+          </td>
+          <td>
+            <span style="font-family: 'Space Mono', monospace; font-size: 0.8rem; color: var(--rice-paper);">
+              {{ vp.sceneMood }}
+            </span>
+          </td>
+          <td style="max-width: 320px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.4;">
+            {{ vp.description }}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            No 3D viewpoints configured.
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endblock %}
