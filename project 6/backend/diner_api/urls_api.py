@@ -6,6 +6,8 @@ from .views import (
     ContactCreateView,
     MenuItemViewSet,
     VirtualTourViewpointViewSet,
+    CustomPageListView,
+    CustomPageDetailView,
 )
 
 router = DefaultRouter()
@@ -15,6 +17,8 @@ router.register(r'virtual-tour/viewpoints', VirtualTourViewpointViewSet, basenam
 urlpatterns = [
     path('content/', FullDinerContentView.as_view(), name='api_full_content'),
     path('homepage/', FullDinerContentView.as_view(), name='api_homepage'),
+    path('pages/', CustomPageListView.as_view(), name='api_custom_pages_list'),
+    path('pages/<slug:slug>/', CustomPageDetailView.as_view(), name='api_custom_page_detail'),
     path('reservations/', ReservationCreateView.as_view(), name='api_reservation_create'),
     path('contact/', ContactCreateView.as_view(), name='api_contact_create'),
     path('', include(router.urls)),

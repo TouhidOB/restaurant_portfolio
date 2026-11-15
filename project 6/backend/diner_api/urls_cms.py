@@ -10,6 +10,11 @@ from .views import (
     cms_delete_menu_item,
     cms_update_section,
     cms_save_master_json,
+    cms_create_page,
+    cms_page_builder,
+    cms_save_page_builder,
+    cms_toggle_page_publish,
+    cms_delete_page,
 )
 
 urlpatterns = [
@@ -21,6 +26,11 @@ urlpatterns = [
     path('menu/<int:pk>/toggle/', cms_toggle_menu_item, name='cms_toggle_menu_item'),
     path('menu/add/', cms_add_menu_item, name='cms_add_menu_item'),
     path('menu/<int:pk>/delete/', cms_delete_menu_item, name='cms_delete_menu_item'),
+    path('pages/create/', cms_create_page, name='cms_create_page'),
+    path('pages/<int:pk>/builder/', cms_page_builder, name='cms_page_builder'),
+    path('pages/<int:pk>/save-builder/', cms_save_page_builder, name='cms_save_page_builder'),
+    path('pages/<int:pk>/toggle-publish/', cms_toggle_page_publish, name='cms_toggle_page_publish'),
+    path('pages/<int:pk>/delete/', cms_delete_page, name='cms_delete_page'),
     path('sections/<int:pk>/update/', cms_update_section, name='cms_update_section'),
     path('save-master-json/', cms_save_master_json, name='cms_save_master_json'),
 ]

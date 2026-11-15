@@ -1,0 +1,876 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}VISUAL PAGE BUILDER // {{ page.title }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .builder-header {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.25rem 1.75rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .builder-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+    min-width: 280px;
+  }
+  .builder-page-title-input {
+    background: transparent;
+    border: none;
+    border-bottom: 2px dashed var(--neon-cyan);
+    color: #FFFFFF;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    padding: 0.2rem 0;
+    outline: none;
+    width: 100%;
+  }
+  .builder-slug-preview {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .builder-slug-input {
+    background: var(--bg-midnight);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--neon-cyan);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.2rem 0.5rem;
+    width: 160px;
+    outline: none;
+  }
+
+  /* Two Column Elementor Layout */
+  .builder-workspace {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  /* Left Panel: Block Library */
+  .block-library-panel {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    position: sticky;
+    top: 2rem;
+  }
+  .library-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.05rem;
+    color: var(--atomic-yellow);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .library-subtitle {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.4;
+  }
+  .widget-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .widget-card {
+    background-color: var(--bg-midnight);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .widget-card:hover {
+    border-color: var(--neon-cyan);
+    background-color: rgba(67, 217, 232, 0.06);
+    transform: translateX(4px);
+  }
+  .widget-card-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .widget-icon {
+    font-size: 1.25rem;
+    width: 28px;
+    text-align: center;
+  }
+  .widget-name {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #FFFFFF;
+    display: block;
+  }
+  .widget-desc {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+  .btn-add-widget {
+    background: rgba(67, 217, 232, 0.15);
+    border: 1px solid var(--neon-cyan);
+    color: var(--neon-cyan);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.3rem 0.6rem;
+  }
+  .btn-add-widget:hover {
+    background: var(--neon-cyan);
+    color: #000;
+  }
+
+  /* Center Canvas */
+  .canvas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .canvas-empty {
+    background: var(--bg-card);
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: var(--text-muted);
+  }
+
+  /* Block Editor Card */
+  .block-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .block-card:hover {
+    border-color: var(--neon-cyan);
+  }
+  .block-card-header {
+    background-color: var(--bg-midnight);
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .block-type-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .type-hero_banner { background: rgba(216, 58, 69, 0.2); color: var(--cherry-red); border: 1px solid var(--cherry-red); }
+  .type-split_content { background: rgba(67, 217, 232, 0.2); color: var(--neon-cyan); border: 1px solid var(--neon-cyan); }
+  .type-features_grid { background: rgba(242, 201, 76, 0.2); color: var(--atomic-yellow); border: 1px solid var(--atomic-yellow); }
+  .type-call_to_action { background: rgba(39, 125, 161, 0.3); color: #FFF; border: 1px solid var(--electric-blue); }
+  .type-image_gallery { background: rgba(162, 181, 168, 0.2); color: #C2D1C5; border: 1px solid #71866A; }
+  .type-faq_accordion { background: rgba(255, 255, 255, 0.1); color: #FFF; border: 1px solid rgba(255, 255, 255, 0.3); }
+  .type-contact_form { background: rgba(216, 58, 69, 0.2); color: #FF9B9B; border: 1px solid #D83A45; }
+  .type-rich_text { background: rgba(255, 255, 255, 0.08); color: var(--text-muted); border: 1px solid var(--border-color); }
+
+  .block-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .btn-tool {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+  .btn-tool:hover {
+    color: #FFFFFF;
+    border-color: #FFFFFF;
+  }
+  .btn-tool.btn-delete:hover {
+    border-color: var(--cherry-red);
+    color: var(--cherry-red);
+  }
+
+  .block-card-body {
+    padding: 1.5rem;
+  }
+
+  /* Toast Notification */
+  #saveToast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--bg-card);
+    border: 1px solid var(--neon-cyan);
+    color: #FFFFFF;
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    display: none;
+    z-index: 1000;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Page Builder Header Deck -->
+<div class="builder-header">
+  <div class="builder-title-group">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="{% url 'cms_dashboard' %}#section-pages" style="color: var(--text-muted); text-decoration: none; font-size: 0.85rem;">
+        ← Dashboard
+      </a>
+      <span style="color: var(--text-muted);">/</span>
+      <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--atomic-yellow); letter-spacing: 0.1em; font-family: 'Space Mono', monospace;">
+        ELEMENTOR VISUAL PAGE BUILDER
+      </span>
+    </div>
+    <input type="text" id="pageTitleInput" class="builder-page-title-input" value="{{ page.title }}" placeholder="Enter Page Title...">
+    <div class="builder-slug-preview">
+      <span>Live Route:</span>
+      <span style="color: var(--text-muted);">http://127.0.0.1:3000/page/</span>
+      <input type="text" id="pageSlugInput" class="builder-slug-input" value="{{ page.slug }}">
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+    <!-- Aesthetic Theme -->
+    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+      <label style="font-size: 0.68rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.1em;">Theme</label>
+      <select id="pageThemeSelect" class="form-control" style="padding: 0.35rem 0.6rem; font-size: 0.78rem; width: 140px;">
+        <option value="retro-neon" {% if page.theme_style == 'retro-neon' %}selected{% endif %}>Retro Neon</option>
+        <option value="cream-editorial" {% if page.theme_style == 'cream-editorial' %}selected{% endif %}>Cream Theme</option>
+        <option value="midnight-luxury" {% if page.theme_style == 'midnight-luxury' %}selected{% endif %}>Dark Charcoal</option>
+      </select>
+    </div>
+
+    <!-- Show in Navbar -->
+    <div style="display: flex; align-items: center; gap: 0.4rem; padding-top: 1rem;">
+      <input type="checkbox" id="pageNavCheck" {% if page.show_in_navigation %}checked{% endif %} style="width: 16px; height: 16px;">
+      <label for="pageNavCheck" style="font-size: 0.78rem; color: var(--neon-cyan); cursor: pointer;">In Navbar</label>
+    </div>
+
+    <!-- Status Toggle -->
+    <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+      <label style="font-size: 0.68rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.1em;">Status</label>
+      <select id="pagePublishSelect" class="form-control" style="padding: 0.35rem 0.6rem; font-size: 0.78rem; width: 120px;">
+        <option value="1" {% if page.is_published %}selected{% endif %}>Published</option>
+        <option value="0" {% if not page.is_published %}selected{% endif %}>Draft</option>
+      </select>
+    </div>
+
+    <!-- Actions -->
+    <div style="display: flex; gap: 0.5rem; padding-top: 1rem;">
+      <button type="button" id="btnSaveBuilder" class="btn btn-cherry" style="padding: 0.55rem 1.25rem;">
+        <span>💾 SAVE PAGE</span>
+      </button>
+      <a href="{{ frontend_url }}" target="_blank" id="btnFrontendPreview" class="btn btn-cyan" style="padding: 0.55rem 1rem; text-decoration: none;">
+        <span>👁️ LIVE PREVIEW ↗</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Two-Column Elementor Workspace -->
+<div class="builder-workspace">
+  <!-- Left Side: Elementor Widget Inserter -->
+  <aside class="block-library-panel">
+    <h3 class="library-title">
+      <span>✦</span> Elementor Block Library
+    </h3>
+    <p class="library-subtitle">
+      Click any widget to insert a modular block into this standalone page.
+    </p>
+
+    <div class="widget-grid">
+      <div class="widget-card" onclick="addBlock('hero_banner')">
+        <div class="widget-card-left">
+          <span class="widget-icon">🌟</span>
+          <div>
+            <span class="widget-name">Hero Banner</span>
+            <span class="widget-desc">Headline, background image & CTAs</span>
+          </div>
+        </div>
+        <button class="btn-add-widget">+ Add</button>
+      </div>
+
+      <div class="widget-card" onclick="addBlock('split_content')">
+        <div class="widget-card-left">
+          <span class="widget-icon">🌓</span>
+          <div>
+            <span class="widget-name">50/50 Split Showcase</span>
+            <span class="widget-desc">Image + narrative side-by-side</span>
+          </div>
+        </div>
+        <button class="btn-add-widget">+ Add</button>
+      </div>
+
+      <div class="widget-card" onclick="addBlock('features_grid')">
+        <div class="widget-card-left">
+          <span class="widget-icon">▦</span>
+          <div>
+            <span class="widget-name">Features Grid</span>
+            <span class="widget-desc">3 or 4 cards with icons</span>
+          </div>
+        </div>
+        <button class="btn-add-widget">+ Add</button>
+      </div>
+
+      <div class="widget-card" onclick="addBlock('call_to_action')">
+        <div class="widget-card-left">
+          <span class="widget-icon">📣</span>
+          <div>
+            <span class="widget-name">CTA Conversion Box</span>
+            <span class="widget-desc">High-impact banner & button</span>
+          </div>
+        </div>
+        <button class="btn-add-widget">+ Add</button>
+      </div>
+
+      <div class="widget-card" onclick="addBlock('image_gallery')">
+        <div class="widget-card-left">
+          <span class="widget-icon">📸</span>
+          <div>
+            <span class="widget-name">Image Gallery Grid</span>
+            <span class="widget-desc">Masonry photo showcase</span>
+          </div>
+        </div>
+        <button class="btn-add-widget">+ Add</button>
+      </div>
+
+      <div class="widget-card" onclick="addBlock('faq_accordion')">
+        <div class="widget-card-left">
+          <span class="widget-icon">❓</span>
+          <div>
+            <span class="widget-name">FAQ Accordion</span>
+            <span class="widget-desc">Expandable questions & answers</span>
+          </div>
+        </div>
+        <button class="btn-add-widget">+ Add</button>
+      </div>
+
+      <div class="widget-card" onclick="addBlock('contact_form')">
+        <div class="widget-card-left">
+          <span class="widget-icon">✉️</span>
+          <div>
+            <span class="widget-name">Inquiry & Booking Form</span>
+            <span class="widget-desc">Dedicated event lead form</span>
+          </div>
+        </div>
+        <button class="btn-add-widget">+ Add</button>
+      </div>
+
+      <div class="widget-card" onclick="addBlock('rich_text')">
+        <div class="widget-card-left">
+          <span class="widget-icon">📝</span>
+          <div>
+            <span class="widget-name">Rich Editorial Text</span>
+            <span class="widget-desc">Prose, headings & quotes</span>
+          </div>
+        </div>
+        <button class="btn-add-widget">+ Add</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Center Canvas: Active Modular Blocks Stack -->
+  <main class="canvas-container" id="canvasContainer">
+    <!-- Populated by JavaScript -->
+  </main>
+</div>
+
+<!-- Save Toast Notification -->
+<div id="saveToast">
+  <span style="color: var(--neon-cyan); margin-right: 0.5rem;">✓</span>
+  <span id="toastMessage">Page saved successfully!</span>
+</div>
+
+<script>
+  // Initial Page Blocks from Django
+  let blocks = {{ blocks_json|safe }} || [];
+  const pageId = {{ page.pk }};
+  const saveUrl = "{% url 'cms_save_page_builder' page.pk %}";
+
+  // Render Canvas Blocks
+  function renderCanvas() {
+    const container = document.getElementById('canvasContainer');
+    if (!blocks || blocks.length === 0) {
+      container.innerHTML = `
+        <div class="canvas-empty">
+          <h3 style="font-size: 1.3rem; color: #FFF; margin-bottom: 0.5rem;">Canvas Is Currently Empty</h3>
+          <p style="font-size: 0.85rem;">Click any widget from the left panel to insert your first block.</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = blocks.map((block, idx) => {
+      const typeLabel = block.type.replace('_', ' ');
+      return `
+        <div class="block-card" id="card-${block.id}" data-id="${block.id}" data-index="${idx}">
+          <div class="block-card-header">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span class="block-type-badge type-${block.type}">${typeLabel}</span>
+              <strong style="font-family: 'Space Grotesk', sans-serif; font-size: 0.95rem; color: #FFF;">
+                ${block.title || block.data?.headline || 'Block #' + (idx + 1)}
+              </strong>
+            </div>
+            <div class="block-toolbar">
+              <button type="button" class="btn-tool" onclick="moveBlock(${idx}, -1)" ${idx === 0 ? 'disabled style="opacity:0.3"' : ''} title="Move Up">↑</button>
+              <button type="button" class="btn-tool" onclick="moveBlock(${idx}, 1)" ${idx === blocks.length - 1 ? 'disabled style="opacity:0.3"' : ''} title="Move Down">↓</button>
+              <button type="button" class="btn-tool" onclick="duplicateBlock(${idx})" title="Duplicate Block">📋</button>
+              <button type="button" class="btn-tool btn-delete" onclick="deleteBlock(${idx})" title="Delete Block">✕</button>
+            </div>
+          </div>
+          <div class="block-card-body">
+            ${renderBlockFields(block, idx)}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Render Form Fields Based on Block Type
+  function renderBlockFields(block, idx) {
+    const d = block.data || {};
+    
+    if (block.type === 'hero_banner') {
+      return `
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; margin-bottom: 1rem;">
+          <div class="form-group">
+            <label>Eyebrow Label</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.eyebrow || '')}" onchange="updateBlockField(${idx}, 'eyebrow', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Main Headline *</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.headline || '')}" onchange="updateBlockField(${idx}, 'headline', this.value)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Lead Paragraph</label>
+          <textarea class="form-control" rows="2" onchange="updateBlockField(${idx}, 'lead', this.value)">${escapeHtml(d.lead || '')}</textarea>
+        </div>
+        <div class="form-group">
+          <label>Background Image URL</label>
+          <input type="url" class="form-control" value="${escapeHtml(d.bg_image || '')}" onchange="updateBlockField(${idx}, 'bg_image', this.value)">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Primary CTA Text</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.cta_text || 'Inquire Now')}" onchange="updateBlockField(${idx}, 'cta_text', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Primary CTA Link</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.cta_link || '#contact')}" onchange="updateBlockField(${idx}, 'cta_link', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Secondary CTA Text</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.secondary_text || 'Learn More')}" onchange="updateBlockField(${idx}, 'secondary_text', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Secondary CTA Link</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.secondary_link || '#details')}" onchange="updateBlockField(${idx}, 'secondary_link', this.value)">
+          </div>
+        </div>
+      `;
+    }
+
+    if (block.type === 'split_content') {
+      return `
+        <div style="display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+          <div class="form-group">
+            <label>Eyebrow Tag</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.eyebrow || '')}" onchange="updateBlockField(${idx}, 'eyebrow', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Headline *</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.headline || '')}" onchange="updateBlockField(${idx}, 'headline', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Image Position</label>
+            <select class="form-control" onchange="updateBlockField(${idx}, 'image_position', this.value)">
+              <option value="right" ${d.image_position === 'right' ? 'selected' : ''}>Right</option>
+              <option value="left" ${d.image_position === 'left' ? 'selected' : ''}>Left</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Narrative Content</label>
+          <textarea class="form-control" rows="3" onchange="updateBlockField(${idx}, 'content', this.value)">${escapeHtml(d.content || '')}</textarea>
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Showcase Photo Image URL</label>
+            <input type="url" class="form-control" value="${escapeHtml(d.image_url || '')}" onchange="updateBlockField(${idx}, 'image_url', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Badge Highlight (e.g. Capacity)</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.badge || '')}" onchange="updateBlockField(${idx}, 'badge', this.value)">
+          </div>
+        </div>
+      `;
+    }
+
+    if (block.type === 'features_grid') {
+      const items = d.items || [
+        {"title": "Custom Experience", "desc": "Tailored culinary menus", "icon": "✦"},
+        {"title": "VIP Service", "desc": "Dedicated hospitality team", "icon": "★"},
+        {"title": "Atmospheric Design", "desc": "Retro-futuristic interior vibes", "icon": "⚡"}
+      ];
+      return `
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; margin-bottom: 1rem;">
+          <div class="form-group">
+            <label>Eyebrow</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.eyebrow || '')}" onchange="updateBlockField(${idx}, 'eyebrow', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Grid Section Headline</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.headline || '')}" onchange="updateBlockField(${idx}, 'headline', this.value)">
+          </div>
+        </div>
+        <label style="font-size: 0.8rem; text-transform: uppercase; color: var(--neon-cyan); margin-bottom: 0.5rem; display: block;">Feature Cards</label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          ${items.map((it, itemIdx) => `
+            <div style="background: var(--bg-midnight); padding: 1rem; border-radius: 4px; border: 1px solid var(--border-color);">
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <label>Icon / Emoji</label>
+                <input type="text" class="form-control" value="${escapeHtml(it.icon || '✦')}" onchange="updateFeatureItem(${idx}, ${itemIdx}, 'icon', this.value)">
+              </div>
+              <div class="form-group" style="margin-bottom: 0.5rem;">
+                <label>Card Title</label>
+                <input type="text" class="form-control" value="${escapeHtml(it.title || '')}" onchange="updateFeatureItem(${idx}, ${itemIdx}, 'title', this.value)">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label>Description</label>
+                <input type="text" class="form-control" value="${escapeHtml(it.desc || '')}" onchange="updateFeatureItem(${idx}, ${itemIdx}, 'desc', this.value)">
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    if (block.type === 'call_to_action') {
+      return `
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; margin-bottom: 1rem;">
+          <div class="form-group">
+            <label>Eyebrow Callout</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.eyebrow || '')}" onchange="updateBlockField(${idx}, 'eyebrow', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Banner Headline *</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.headline || '')}" onchange="updateBlockField(${idx}, 'headline', this.value)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Lead Prompt Text</label>
+          <input type="text" class="form-control" value="${escapeHtml(d.lead || '')}" onchange="updateBlockField(${idx}, 'lead', this.value)">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Action Button Text</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.button_text || 'Reserve Now')}" onchange="updateBlockField(${idx}, 'button_text', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Action Button Link / Anchor</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.button_link || '#contact')}" onchange="updateBlockField(${idx}, 'button_link', this.value)">
+          </div>
+        </div>
+      `;
+    }
+
+    if (block.type === 'contact_form') {
+      return `
+        <div class="form-group">
+          <label>Form Header Title</label>
+          <input type="text" class="form-control" value="${escapeHtml(d.headline || 'Request VIP Event Booking')}" onchange="updateBlockField(${idx}, 'headline', this.value)">
+        </div>
+        <div class="form-group">
+          <label>Form Subtitle Instructions</label>
+          <input type="text" class="form-control" value="${escapeHtml(d.subtitle || 'Fill out the form below and our banquet manager will confirm your date within 24 hours.')}" onchange="updateBlockField(${idx}, 'subtitle', this.value)">
+        </div>
+        <div class="form-group">
+          <label>Submit Button Text</label>
+          <input type="text" class="form-control" value="${escapeHtml(d.submit_text || 'Submit Event Inquiry')}" onchange="updateBlockField(${idx}, 'submit_text', this.value)">
+        </div>
+      `;
+    }
+
+    if (block.type === 'faq_accordion') {
+      const qas = d.items || [
+        {"q": "What is the private dining room capacity?", "a": "Our VIP rooms accommodate from 10 to 45 seated guests comfortably."},
+        {"q": "Is customized catering available?", "a": "Yes, our executive chefs create bespoke menus tailored to your occasion."}
+      ];
+      return `
+        <div class="form-group">
+          <label>FAQ Section Headline</label>
+          <input type="text" class="form-control" value="${escapeHtml(d.headline || 'Frequently Asked Questions')}" onchange="updateBlockField(${idx}, 'headline', this.value)">
+        </div>
+        ${qas.map((qa, qIdx) => `
+          <div style="background: var(--bg-midnight); padding: 0.85rem; border-radius: 4px; border: 1px solid var(--border-color); margin-bottom: 0.75rem;">
+            <div class="form-group" style="margin-bottom: 0.5rem;">
+              <label>Question ${qIdx + 1}</label>
+              <input type="text" class="form-control" value="${escapeHtml(qa.q || '')}" onchange="updateFaqItem(${idx}, ${qIdx}, 'q', this.value)">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label>Answer</label>
+              <textarea class="form-control" rows="2" onchange="updateFaqItem(${idx}, ${qIdx}, 'a', this.value)">${escapeHtml(qa.a || '')}</textarea>
+            </div>
+          </div>
+        `).join('')}
+      `;
+    }
+
+    if (block.type === 'image_gallery') {
+      const imgs = d.images || [
+        "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=800&q=80"
+      ];
+      return `
+        <div class="form-group">
+          <label>Gallery Section Headline</label>
+          <input type="text" class="form-control" value="${escapeHtml(d.headline || 'Atmosphere & Spaces')}" onchange="updateBlockField(${idx}, 'headline', this.value)">
+        </div>
+        <div class="form-group">
+          <label>Image URLs (one per line)</label>
+          <textarea class="form-control" rows="3" onchange="updateGalleryImages(${idx}, this.value)">${imgs.join('\n')}</textarea>
+        </div>
+      `;
+    }
+
+    // Default Rich Text
+    return `
+      <div class="form-group">
+        <label>Section Heading</label>
+        <input type="text" class="form-control" value="${escapeHtml(d.headline || '')}" onchange="updateBlockField(${idx}, 'headline', this.value)">
+      </div>
+      <div class="form-group">
+        <label>Editorial Body Content</label>
+        <textarea class="form-control" rows="5" onchange="updateBlockField(${idx}, 'content', this.value)">${escapeHtml(d.content || '')}</textarea>
+      </div>
+    `;
+  }
+
+  // Helper function to escape HTML
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // Update Field Handler
+  function updateBlockField(blockIdx, field, value) {
+    if (!blocks[blockIdx].data) blocks[blockIdx].data = {};
+    blocks[blockIdx].data[field] = value;
+  }
+
+  function updateFeatureItem(blockIdx, itemIdx, field, value) {
+    if (!blocks[blockIdx].data) blocks[blockIdx].data = {};
+    if (!blocks[blockIdx].data.items) blocks[blockIdx].data.items = [];
+    if (!blocks[blockIdx].data.items[itemIdx]) blocks[blockIdx].data.items[itemIdx] = {};
+    blocks[blockIdx].data.items[itemIdx][field] = value;
+  }
+
+  function updateFaqItem(blockIdx, qIdx, field, value) {
+    if (!blocks[blockIdx].data) blocks[blockIdx].data = {};
+    if (!blocks[blockIdx].data.items) blocks[blockIdx].data.items = [];
+    if (!blocks[blockIdx].data.items[qIdx]) blocks[blockIdx].data.items[qIdx] = {};
+    blocks[blockIdx].data.items[qIdx][field] = value;
+  }
+
+  function updateGalleryImages(blockIdx, text) {
+    if (!blocks[blockIdx].data) blocks[blockIdx].data = {};
+    blocks[blockIdx].data.images = text.split('\n').map(s => s.trim()).filter(Boolean);
+  }
+
+  // Add Block from Library
+  function addBlock(type) {
+    const id = 'block_' + Date.now();
+    let title = type.replace('_', ' ').toUpperCase();
+    let data = {};
+
+    if (type === 'hero_banner') {
+      data = {
+        eyebrow: "FEATURED BANQUET EXPERIENCE",
+        headline: "Welcome to Our New Exclusive Space",
+        lead: "Reserve private booths and custom tasting repertoires.",
+        bg_image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=80",
+        cta_text: "Reserve Date",
+        cta_link: "#contact"
+      };
+    } else if (type === 'split_content') {
+      data = {
+        eyebrow: "SPACE SHOWCASE",
+        headline: "Artisanal Food & Custom Cocktails",
+        content: "Experience tailor-made dining crafted by our head chefLaurent with vintage jukebox music.",
+        image_url: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+        image_position: "right"
+      };
+    } else if (type === 'features_grid') {
+      data = {
+        eyebrow: "CURATED AMENITIES",
+        headline: "Everything You Need",
+        items: [
+          { "icon": "🍔", "title": "Gourmet Bites", "desc": "Custom sliders and smash bites" },
+          { "icon": "🍸", "title": "Private Mixology", "desc": "Cocktail bartender dedicated to your room" },
+          { "icon": "⚡", "title": "Neon Vibe", "desc": "Authentic retro sci-fi dining atmosphere" }
+        ]
+      };
+    } else if (type === 'call_to_action') {
+      data = {
+        eyebrow: "BOOK TODAY",
+        headline: "Ready to Plan Your Gathering?",
+        lead: "Dates are limited. Contact our dining concierge now.",
+        button_text: "Contact VIP Concierge",
+        button_link: "#contact"
+      };
+    } else if (type === 'contact_form') {
+      data = {
+        headline: "Send an Event Inquiry",
+        subtitle: "Leave your contact details and our host will get in touch shortly.",
+        submit_text: "Submit Inquiry"
+      };
+    } else if (type === 'faq_accordion') {
+      data = {
+        headline: "Common Questions",
+        items: [
+          { "q": "What is the minimum group size?", "a": "We host parties starting from 8 guests up to 50." },
+          { "q": "Can we bring outside cakes?", "a": "Yes, cake service is complimentary for private events." }
+        ]
+      };
+    } else if (type === 'image_gallery') {
+      data = {
+        headline: "Atmospheric Gallery",
+        images: [
+          "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+          "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
+          "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=800&q=80"
+        ]
+      };
+    } else {
+      data = {
+        headline: "Editorial Narrative",
+        content: "Write your custom story or announcement here..."
+      };
+    }
+
+    blocks.push({ id, type, title, data });
+    renderCanvas();
+
+    // Scroll to new block
+    setTimeout(() => {
+      const el = document.getElementById('card-' + id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }
+
+  // Move Block Up/Down
+  function moveBlock(index, direction) {
+    const targetIdx = index + direction;
+    if (targetIdx < 0 || targetIdx >= blocks.length) return;
+    const temp = blocks[index];
+    blocks[index] = blocks[targetIdx];
+    blocks[targetIdx] = temp;
+    renderCanvas();
+  }
+
+  // Duplicate Block
+  function duplicateBlock(index) {
+    const original = blocks[index];
+    const clone = JSON.parse(JSON.stringify(original));
+    clone.id = 'block_' + Date.now();
+    clone.title = (clone.title || 'Block') + ' (Copy)';
+    blocks.splice(index + 1, 0, clone);
+    renderCanvas();
+  }
+
+  // Delete Block
+  function deleteBlock(index) {
+    if (confirm('Delete this block?')) {
+      blocks.splice(index, 1);
+      renderCanvas();
+    }
+  }
+
+  // Save Page Builder Changes
+  document.getElementById('btnSaveBuilder').addEventListener('click', async () => {
+    const btn = document.getElementById('btnSaveBuilder');
+    const origText = btn.innerHTML;
+    btn.innerHTML = '<span>⏳ SAVING...</span>';
+
+    const payload = {
+      title: document.getElementById('pageTitleInput').value,
+      slug: document.getElementById('pageSlugInput').value,
+      theme_style: document.getElementById('pageThemeSelect').value,
+      show_in_navigation: document.getElementById('pageNavCheck').checked,
+      is_published: document.getElementById('pagePublishSelect').value === '1',
+      blocks: blocks
+    };
+
+    try {
+      const resp = await fetch(saveUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const res = await resp.json();
+      if (res.success) {
+        showToast(res.message);
+        // Update slug preview if changed
+        document.getElementById('pageSlugInput').value = res.slug;
+        document.getElementById('btnFrontendPreview').href = res.preview_url;
+      } else {
+        alert('Save Error: ' + (res.error || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Network Error while saving: ' + err.message);
+    } finally {
+      btn.innerHTML = origText;
+    }
+  });
+
+  function showToast(msg) {
+    const toast = document.getElementById('saveToast');
+    document.getElementById('toastMessage').textContent = msg;
+    toast.style.display = 'block';
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 3500);
+  }
+
+  // Initial Render
+  renderCanvas();
+</script>
+{% endblock %}

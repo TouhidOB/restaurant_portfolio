@@ -14,6 +14,7 @@ from .models import (
     Reservation,
     FAQ,
     ContactInquiry,
+    CustomPage,
 )
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -146,3 +147,27 @@ class ContactInquirySerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactInquiry
         fields = '__all__'
+
+
+class CustomPageNavSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomPage
+        fields = ['id', 'title', 'slug', 'show_in_navigation', 'nav_order']
+
+
+class CustomPageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomPage
+        fields = [
+            'id',
+            'title',
+            'slug',
+            'meta_description',
+            'theme_style',
+            'is_published',
+            'show_in_navigation',
+            'nav_order',
+            'blocks',
+            'created_at',
+            'updated_at',
+        ]

@@ -52,15 +52,148 @@
       <span style="font-size: 0.75rem; color: var(--text-muted);">3D WebGL Camera Angles</span>
     </div>
 
-    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--atomic-yellow); margin-bottom: 0;">
+    <div class="cms-card" style="padding: 1.25rem; border-left: 4px solid var(--neon-cyan); margin-bottom: 0;">
       <span style="font-family: 'Space Mono', monospace; font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase;">
-        Atomic Archive Photos
+        Custom Pages
       </span>
-      <div style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: #FFFFFF; margin-top: 0.25rem;">
-        {{ kpis.gallery_count }}
+      <div style="font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; color: var(--neon-cyan); margin-top: 0.25rem;">
+        {{ kpis.total_custom_pages|default:"0" }}
       </div>
-      <span style="font-size: 0.75rem; color: var(--text-muted);">Curated Gallery Items</span>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">{{ kpis.published_custom_pages|default:"0" }} Published Live</span>
     </div>
+  </div>
+</section>
+
+<!-- MODULE 1.5: Custom Standalone Pages & Visual Elementor Builder -->
+<section id="section-pages" class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2>📄 Standalone Pages Builder (Elementor-Style)</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.25rem;">
+        Create brand-new standalone pages on the site with modular visual drag-and-drop blocks.
+      </p>
+    </div>
+    <span class="badge badge-confirmed">{{ kpis.total_custom_pages|default:"0" }} PAGES CONFIGURED</span>
+  </div>
+
+  <!-- Create New Page Form -->
+  <div style="background-color: var(--bg-midnight); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; color: var(--atomic-yellow); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+      <span>✦</span> Create Brand New Standalone Page
+    </h3>
+    <form method="POST" action="{% url 'cms_create_page' %}">
+      {% csrf_token %}
+      <div style="display: grid; grid-template-columns: 2fr 1.5fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Page Title *</label>
+          <input type="text" name="title" class="form-control" placeholder="e.g. VIP Private Dining & Galactic Banquets" required id="newPageTitle">
+        </div>
+        <div class="form-group">
+          <label>URL Slug (Route: /page/&lt;slug&gt;) *</label>
+          <input type="text" name="slug" class="form-control" placeholder="private-dining" id="newPageSlug">
+        </div>
+        <div class="form-group">
+          <label>Aesthetic Theme</label>
+          <select name="theme_style" class="form-control">
+            <option value="retro-neon">Retro Neon (Midnight & Cyan)</option>
+            <option value="cream-editorial">Cream Editorial (Cherry & Cream)</option>
+            <option value="midnight-luxury">Deep Midnight Charcoal</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; align-items: center;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Meta SEO Description</label>
+          <input type="text" name="meta_description" class="form-control" placeholder="Discover exclusive private dining salons and VIP catering at Stardust...">
+        </div>
+        <div style="padding-top: 1.25rem;">
+          <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--neon-cyan); font-size: 0.85rem; font-weight: 600;">
+            <input type="checkbox" name="show_in_navigation" checked style="width: 16px; height: 16px;">
+            Show Link in Main Website Navigation Bar
+          </label>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.25rem;">
+        <button type="submit" class="btn btn-cherry">
+          <span>+ CREATE & LAUNCH VISUAL PAGE BUILDER</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Custom Pages Directory Table -->
+  <div style="overflow-x: auto;">
+    <table class="cms-table">
+      <thead>
+        <tr>
+          <th>Page Title & URL</th>
+          <th>Blocks Count</th>
+          <th>Theme Style</th>
+          <th>Navbar Menu</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for page in custom_pages %}
+          <tr>
+            <td>
+              <strong style="color: #FFF; font-size: 1rem;">{{ page.title }}</strong><br>
+              <code style="font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--neon-cyan);">
+                /page/{{ page.slug }}
+              </code>
+            </td>
+            <td>
+              <span class="badge" style="background: rgba(255, 255, 255, 0.08); color: #FFF;">
+                {{ page.blocks|length }} Modular Blocks
+              </span>
+            </td>
+            <td>
+              <small style="color: var(--text-muted); text-transform: uppercase;">{{ page.get_theme_style_display }}</small>
+            </td>
+            <td>
+              {% if page.show_in_navigation %}
+                <span style="color: var(--neon-cyan); font-weight: 600; font-size: 0.8rem;">✓ In Navbar</span>
+              {% else %}
+                <span style="color: var(--text-muted); font-size: 0.8rem;">— Hidden</span>
+              {% endif %}
+            </td>
+            <td>
+              <form method="POST" action="{% url 'cms_toggle_page_publish' page.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="badge {% if page.is_published %}badge-confirmed{% else %}badge-pending{% endif %}" style="border: none; cursor: pointer;" title="Click to toggle status">
+                  {% if page.is_published %}PUBLISHED (LIVE){% else %}DRAFT (OFFLINE){% endif %}
+                </button>
+              </form>
+            </td>
+            <td>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <a href="{% url 'cms_page_builder' page.pk %}" class="btn btn-cyan" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; text-decoration: none;">
+                  <span>🎨 Edit Blocks</span>
+                </a>
+                <a href="http://127.0.0.1:3000/page/{{ page.slug }}" target="_blank" class="btn" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; background: rgba(255,255,255,0.06); color: #FFF; border: 1px solid var(--border-color); text-decoration: none;" title="Preview Page on Frontend">
+                  <span>↗ Preview</span>
+                </a>
+                <form method="POST" action="{% url 'cms_delete_page' page.pk %}" onsubmit="return confirm('Permanently delete page {{ page.title }}?');">
+                  {% csrf_token %}
+                  <button type="submit" style="background: none; border: none; color: #ff5555; cursor: pointer; font-size: 0.85rem; padding: 0.2rem 0.5rem;" title="Delete Page">
+                    ✕
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">
+              No custom pages created yet. Use the form above to build your first standalone page!
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </section>
 

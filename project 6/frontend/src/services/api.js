@@ -21,10 +21,22 @@ export async function fetchFullContent() {
       gallery: (data.gallery && data.gallery.length > 0) ? data.gallery : FALLBACK_CONTENT.gallery,
       testimonials: (data.testimonials && data.testimonials.length > 0) ? data.testimonials : FALLBACK_CONTENT.testimonials,
       faqs: (data.faqs && data.faqs.length > 0) ? data.faqs : FALLBACK_CONTENT.faqs,
+      custom_pages: data.custom_pages || [],
     };
   } catch (err) {
     console.warn('[API] Failed to fetch remote content, utilizing fallback.', err);
     return FALLBACK_CONTENT;
+  }
+}
+
+export async function fetchCustomPage(slug) {
+  try {
+    const res = await fetch(`/api/v1/pages/${slug}/`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (err) {
+    console.error(`[API] Failed to fetch custom page '${slug}':`, err);
+    return null;
   }
 }
 

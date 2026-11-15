@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Navigation() {
+export default function Navigation({ activePageSlug, onNavigateHome, onNavigatePage }) {
   const { content, openReservation } = useCMS();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -13,6 +13,8 @@ export default function Navigation() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const customPages = (content?.custom_pages || []).filter(p => p.show_in_navigation);
 
   const navLinks = [
     { label: 'PHILOSOPHY', href: '#philosophy' },
@@ -55,12 +57,17 @@ export default function Navigation() {
         >
           {/* Brand Logo */}
           <a
-            href="#"
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              if (onNavigateHome) onNavigateHome();
+            }}
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '0.85rem',
               textDecoration: 'none',
+              cursor: 'pointer',
             }}
           >
             <div
@@ -115,27 +122,78 @@ export default function Navigation() {
             style={{
               display: 'none',
               alignItems: 'center',
-              gap: '1.5rem',
+              gap: '1.4rem',
             }}
             className="desktop-nav"
           >
-            {navLinks.map((link) => (
+            {activePageSlug ? (
+              <button
+                onClick={onNavigateHome}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '0.82rem',
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  color: 'var(--neon-cyan)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                }}
+              >
+                ← BACK TO HOMEPAGE
+              </button>
+            ) : (
+              navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.08em',
+                    color: 'var(--text-cream)',
+                    textDecoration: 'none',
+                    transition: 'color var(--transition-fast)',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--neon-cyan)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-cream)')}
+                >
+                  {link.label}
+                </a>
+              ))
+            )}
+
+            {/* Custom Dynamic Pages from Page Builder */}
+            {customPages.map((page) => (
               <a
-                key={link.label}
-                href={link.href}
+                key={page.slug}
+                href={`/page/${page.slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (onNavigatePage) onNavigatePage(page.slug);
+                }}
                 style={{
                   fontFamily: 'var(--font-display)',
                   fontSize: '0.82rem',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   letterSpacing: '0.08em',
-                  color: 'var(--text-cream)',
+                  color: activePageSlug === page.slug ? 'var(--atomic-yellow)' : 'var(--neon-cyan)',
                   textDecoration: 'none',
-                  transition: 'color var(--transition-fast)',
+                  padding: '0.25rem 0.65rem',
+                  border: `1px solid ${activePageSlug === page.slug ? 'var(--atomic-yellow)' : 'rgba(67, 217, 232, 0.4)'}`,
+                  borderRadius: '4px',
+                  backgroundColor: 'rgba(67, 217, 232, 0.08)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--neon-cyan)')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-cream)')}
               >
-                {link.label}
+                <span>★</span>
+                <span>{page.title.toUpperCase()}</span>
               </a>
             ))}
           </nav>
@@ -283,7 +341,10 @@ export default function Navigation() {
             <a
               key={link.label}
               href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (onNavigateHome) onNavigateHome();
+              }}
               style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: '1.65rem',
@@ -293,6 +354,31 @@ export default function Navigation() {
               }}
             >
               {link.label}
+            </a>
+          ))}
+
+          {/* Mobile Custom Standalone Pages */}
+          {customPages.map((page) => (
+            <a
+              key={page.slug}
+              href={`/page/${page.slug}`}
+              onClick={(e) => {
+                e.preventDefault();
+                setMobileMenuOpen(false);
+                if (onNavigatePage) onNavigatePage(page.slug);
+              }}
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.45rem',
+                color: 'var(--neon-cyan)',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+              }}
+            >
+              <span style={{ color: 'var(--atomic-yellow)', fontSize: '1rem' }}>★</span>
+              <span>{page.title}</span>
             </a>
           ))}
         </div>

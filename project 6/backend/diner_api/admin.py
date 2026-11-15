@@ -14,7 +14,16 @@ from .models import (
     Reservation,
     FAQ,
     ContactInquiry,
+    CustomPage,
 )
+
+@admin.register(CustomPage)
+class CustomPageAdmin(admin.ModelAdmin):
+    list_display = ('title', 'slug', 'theme_style', 'is_published', 'show_in_navigation', 'nav_order', 'updated_at')
+    list_filter = ('is_published', 'show_in_navigation', 'theme_style')
+    search_fields = ('title', 'slug', 'meta_description')
+    list_editable = ('is_published', 'show_in_navigation', 'nav_order')
+    prepopulated_fields = {'slug': ('title',)}
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):

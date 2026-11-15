@@ -25,6 +25,7 @@ from .models import (
     Reservation,
     FAQ,
     ContactInquiry,
+    CustomPage,
 )
 from .serializers import (
     RestaurantSerializer,
@@ -41,6 +42,8 @@ from .serializers import (
     ReservationSerializer,
     FAQSerializer,
     ContactInquirySerializer,
+    CustomPageSerializer,
+    CustomPageNavSerializer,
 )
 
 # ==============================================================================
@@ -64,6 +67,7 @@ class FullDinerContentView(APIView):
         gallery = GalleryImage.objects.filter(is_active=True)
         testimonials = Testimonial.objects.filter(is_approved=True)
         faqs = FAQ.objects.filter(is_active=True)
+        custom_pages = CustomPage.objects.filter(is_published=True)
 
         sections_dict = {}
         for s in sections:
@@ -87,8 +91,26 @@ class FullDinerContentView(APIView):
             'gallery': GalleryImageSerializer(gallery, many=True, context={'request': request}).data,
             'testimonials': TestimonialSerializer(testimonials, many=True).data,
             'faqs': FAQSerializer(faqs, many=True).data,
+            'custom_pages': CustomPageSerializer(custom_pages, many=True).data,
         }
         return Response(data)
+
+
+class CustomPageListView(generics.ListAPIView):
+    """
+    Returns published custom pages created via the Elementor-style CMS Page Builder.
+    """
+    queryset = CustomPage.objects.filter(is_published=True)
+    serializer_class = CustomPageSerializer
+
+
+class CustomPageDetailView(generics.RetrieveAPIView):
+    """
+    Returns full block data for a specific standalone custom page by slug.
+    """
+    queryset = CustomPage.objects.filter(is_published=True)
+    serializer_class = CustomPageSerializer
+    lookup_field = 'slug'
 
 
 class ReservationCreateView(generics.CreateAPIView):
@@ -185,6 +207,7 @@ def cms_dashboard_view(request):
     testimonials = Testimonial.objects.all()
     faqs = FAQ.objects.all()
     contact_inquiries = ContactInquiry.objects.all().order_by('-created_at')
+    custom_pages = CustomPage.objects.all().order_by('nav_order', '-created_at')
 
     # Telemetry KPIs
     kpis = {
@@ -198,6 +221,8 @@ def cms_dashboard_view(request):
         'gallery_count': gallery_images.count(),
         'testimonials_count': testimonials.count(),
         'inquiries_count': contact_inquiries.count(),
+        'total_custom_pages': custom_pages.count(),
+        'published_custom_pages': custom_pages.filter(is_published=True).count(),
     }
 
     # Full Master JSON representation for editor
@@ -207,6 +232,7 @@ def cms_dashboard_view(request):
         'sections': {s.section_key: {'eyebrow': s.eyebrow, 'title': s.title, 'subtitle': s.subtitle, 'custom_content': s.custom_content} for s in sections},
         'categories': MenuCategorySerializer(categories, many=True).data,
         'viewpoints': VirtualTourViewpointSerializer(viewpoints, many=True).data,
+        'custom_pages': CustomPageNavSerializer(custom_pages, many=True).data,
     }
 
     context = {
@@ -220,6 +246,7 @@ def cms_dashboard_view(request):
         'testimonials': testimonials,
         'faqs': faqs,
         'contact_inquiries': contact_inquiries,
+        'custom_pages': custom_pages,
         'kpis': kpis,
         'master_json_str': json.dumps(full_content_data, indent=2),
     }
@@ -354,4 +381,175 @@ def cms_save_master_json(request):
             messages.success(request, "Master JSON updated and applied successfully.")
         except Exception as e:
             messages.error(request, f"Failed to parse JSON: {e}")
+    return redirect('cms_dashboard')
+
+
+# ==============================================================================
+# ELEMENTOR-STYLE CUSTOM PAGE BUILDER VIEWS
+# ==============================================================================
+
+@login_required(login_url='/cms/login/')
+def cms_create_page(request):
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        slug = request.POST.get('slug', '').strip()
+        meta_desc = request.POST.get('meta_description', '').strip()
+        theme_style = request.POST.get('theme_style', 'retro-neon')
+        show_in_nav = request.POST.get('show_in_navigation') == 'on'
+
+        if not title:
+            messages.error(request, "Page title cannot be empty.")
+            return redirect('cms_dashboard')
+
+        if not slug:
+            slug = slugify(title)
+
+        base_slug = slug
+        count = 1
+        while CustomPage.objects.filter(slug=slug).exists():
+            slug = f"{base_slug}-{count}"
+            count += 1
+
+        # Default starter Elementor-like blocks
+        starter_blocks = [
+            {
+                "id": "block_1",
+                "type": "hero_banner",
+                "title": "Hero Banner Block",
+                "data": {
+                    "eyebrow": "EXCLUSIVE DINING & VIP RECEPTIONS",
+                    "headline": title,
+                    "lead": meta_desc or f"Welcome to the dedicated {title} experience at Stardust Retro-Futuristic Diner.",
+                    "bg_image": "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=80",
+                    "cta_text": "Inquire / Book Now",
+                    "cta_link": "#contact-block",
+                    "secondary_text": "View Highlights",
+                    "secondary_link": "#features-block"
+                }
+            },
+            {
+                "id": "block_2",
+                "type": "split_content",
+                "title": "50/50 Split Showcase",
+                "data": {
+                    "eyebrow": "BESPOKE ATMOSPHERE",
+                    "headline": "Crafted For Memorable Occasions",
+                    "content": "Our private spaces combine atomic age chrome, plush red vinyl booths, analog vinyl jukebox acoustics, and private mixology bar service tailored to your guests.",
+                    "image_url": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+                    "image_position": "right",
+                    "badge": "Capacity: Up to 50 Guests"
+                }
+            },
+            {
+                "id": "block_3",
+                "type": "features_grid",
+                "title": "Features Grid",
+                "data": {
+                    "eyebrow": "VIP PRIVILEGES",
+                    "headline": "Curated Amenities Included",
+                    "items": [
+                        {"title": "Custom Smash Menus", "desc": "Artisan smash sliders, prime pastrami melts, and atomic sides tailored to your taste.", "icon": "🍔"},
+                        {"title": "Dedicated Mixologist", "desc": "Private bar service with smoking dry-ice cocktails and craft spiked shakes.", "icon": "🍸"},
+                        {"title": "Hi-Fi Jukebox Access", "desc": "Curated analog rock-and-roll or futuristic synthwave playlist control.", "icon": "🎵"}
+                    ]
+                }
+            },
+            {
+                "id": "block_4",
+                "type": "call_to_action",
+                "title": "Call To Action Banner",
+                "data": {
+                    "eyebrow": "RESERVE YOUR DATE",
+                    "headline": "Ready To Create An Unforgettable Night?",
+                    "lead": "Submit an event inquiry and our VIP dining concierge will respond within 4 hours.",
+                    "button_text": "Request Event Date",
+                    "button_link": "#contact-block"
+                }
+            }
+        ]
+
+        page = CustomPage.objects.create(
+            title=title,
+            slug=slug,
+            meta_description=meta_desc,
+            theme_style=theme_style,
+            is_published=True,
+            show_in_navigation=show_in_nav,
+            nav_order=CustomPage.objects.count() + 1,
+            blocks=starter_blocks
+        )
+        messages.success(request, f"Custom Page '{page.title}' created! Opening Elementor-style Visual Builder...")
+        return redirect('cms_page_builder', pk=page.pk)
+    return redirect('cms_dashboard')
+
+
+@login_required(login_url='/cms/login/')
+def cms_page_builder(request, pk):
+    page = get_object_or_404(CustomPage, pk=pk)
+    context = {
+        'page': page,
+        'blocks_json': json.dumps(page.blocks, indent=2),
+        'frontend_url': f"http://127.0.0.1:3000/page/{page.slug}",
+    }
+    return render(request, 'cms/page_builder.html', context)
+
+
+@login_required(login_url='/cms/login/')
+def cms_save_page_builder(request, pk):
+    page = get_object_or_404(CustomPage, pk=pk)
+    if request.method == 'POST':
+        try:
+            if request.content_type == 'application/json':
+                payload = json.loads(request.body.decode('utf-8'))
+            else:
+                raw = request.POST.get('page_data', '')
+                payload = json.loads(raw) if raw else {}
+
+            if 'title' in payload:
+                page.title = payload['title'].strip()
+            if 'slug' in payload:
+                new_slug = slugify(payload['slug'])
+                if CustomPage.objects.filter(slug=new_slug).exclude(pk=page.pk).exists():
+                    new_slug = f"{new_slug}-{page.pk}"
+                page.slug = new_slug
+            if 'meta_description' in payload:
+                page.meta_description = payload['meta_description']
+            if 'theme_style' in payload:
+                page.theme_style = payload['theme_style']
+            if 'is_published' in payload:
+                page.is_published = bool(payload['is_published'])
+            if 'show_in_navigation' in payload:
+                page.show_in_navigation = bool(payload['show_in_navigation'])
+            if 'blocks' in payload:
+                page.blocks = payload['blocks']
+
+            page.save()
+            return JsonResponse({
+                'success': True,
+                'message': f"Page '{page.title}' saved successfully!",
+                'slug': page.slug,
+                'preview_url': f"http://127.0.0.1:3000/page/{page.slug}"
+            })
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)}, status=400)
+    return JsonResponse({'success': False, 'error': 'POST required'}, status=405)
+
+
+@login_required(login_url='/cms/login/')
+def cms_toggle_page_publish(request, pk):
+    page = get_object_or_404(CustomPage, pk=pk)
+    page.is_published = not page.is_published
+    page.save()
+    status_str = "Published" if page.is_published else "Draft"
+    messages.success(request, f"Page '{page.title}' is now set to {status_str}.")
+    return redirect('cms_dashboard')
+
+
+@login_required(login_url='/cms/login/')
+def cms_delete_page(request, pk):
+    if request.method == 'POST':
+        page = get_object_or_404(CustomPage, pk=pk)
+        title = page.title
+        page.delete()
+        messages.success(request, f"Custom Page '{title}' deleted successfully.")
     return redirect('cms_dashboard')

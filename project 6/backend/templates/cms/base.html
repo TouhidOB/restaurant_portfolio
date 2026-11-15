@@ -415,16 +415,17 @@
 
     <!-- Navigation Anchors -->
     <nav class="sidebar-nav" id="sidebarNav">
-      <a href="#overview" class="nav-item active"><span class="icon">⚡</span><span>Overview & KPIs</span></a>
-      <a href="#section-settings" class="nav-item"><span class="icon">⚙</span><span>Diner Identity & Hours</span></a>
-      <a href="#section-reservations" class="nav-item"><span class="icon">📅</span><span>Live Reservations</span></a>
-      <a href="#section-menu" class="nav-item"><span class="icon">🍔</span><span>Menu & Availability</span></a>
-      <a href="#section-tour" class="nav-item"><span class="icon">🚀</span><span>3D Spatial Tour</span></a>
-      <a href="#section-editorial" class="nav-item"><span class="icon">✍</span><span>15-Section Editor</span></a>
-      <a href="#section-gallery" class="nav-item"><span class="icon">📸</span><span>Atomic Archive</span></a>
-      <a href="#section-testimonials" class="nav-item"><span class="icon">★</span><span>Guest Reviews</span></a>
-      <a href="#section-faqs" class="nav-item"><span class="icon">❓</span><span>FAQ Manager</span></a>
-      <a href="#section-json" class="nav-item"><span class="icon">{ }</span><span>Master JSON Schema</span></a>
+      <a href="{% url 'cms_dashboard' %}#overview" class="nav-item active"><span class="icon">⚡</span><span>Overview & KPIs</span></a>
+      <a href="{% url 'cms_dashboard' %}#section-pages" class="nav-item"><span class="icon">📄</span><span>Custom Page Builder</span></a>
+      <a href="{% url 'cms_dashboard' %}#section-settings" class="nav-item"><span class="icon">⚙</span><span>Diner Identity & Hours</span></a>
+      <a href="{% url 'cms_dashboard' %}#section-reservations" class="nav-item"><span class="icon">📅</span><span>Live Reservations</span></a>
+      <a href="{% url 'cms_dashboard' %}#section-menu" class="nav-item"><span class="icon">🍔</span><span>Menu & Availability</span></a>
+      <a href="{% url 'cms_dashboard' %}#section-tour" class="nav-item"><span class="icon">🚀</span><span>3D Spatial Tour</span></a>
+      <a href="{% url 'cms_dashboard' %}#section-editorial" class="nav-item"><span class="icon">✍</span><span>15-Section Editor</span></a>
+      <a href="{% url 'cms_dashboard' %}#section-gallery" class="nav-item"><span class="icon">📸</span><span>Atomic Archive</span></a>
+      <a href="{% url 'cms_dashboard' %}#section-testimonials" class="nav-item"><span class="icon">★</span><span>Guest Reviews</span></a>
+      <a href="{% url 'cms_dashboard' %}#section-faqs" class="nav-item"><span class="icon">❓</span><span>FAQ Manager</span></a>
+      <a href="{% url 'cms_dashboard' %}#section-json" class="nav-item"><span class="icon">{ }</span><span>Master JSON Schema</span></a>
     </nav>
 
     <div class="sidebar-footer">

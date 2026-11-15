@@ -324,3 +324,31 @@ class ContactInquiry(models.Model):
 
     def __str__(self):
         return f"{self.name} — {self.subject}"
+
+
+class CustomPage(models.Model):
+    """
+    Dynamic Standalone Page with Elementor-like modular block schema.
+    """
+    THEME_CHOICES = [
+        ('retro-neon', 'Retro Neon (Midnight & Cyan)'),
+        ('cream-editorial', 'Cream Editorial (Cherry & Cream)'),
+        ('midnight-luxury', 'Deep Midnight Charcoal'),
+    ]
+
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
+    meta_description = models.TextField(blank=True)
+    theme_style = models.CharField(max_length=40, choices=THEME_CHOICES, default='retro-neon')
+    is_published = models.BooleanField(default=True)
+    show_in_navigation = models.BooleanField(default=True)
+    nav_order = models.IntegerField(default=0)
+    blocks = models.JSONField(default=list, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['nav_order', '-created_at']
+
+    def __str__(self):
+        return f"{self.title} (/{self.slug}) [Published: {self.is_published}]"
