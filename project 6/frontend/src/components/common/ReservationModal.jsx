@@ -273,18 +273,18 @@ export default function ReservationModal() {
                 width: '64px',
                 height: '64px',
                 borderRadius: '50%',
-                backgroundColor: 'rgba(67, 217, 232, 0.2)',
-                border: '2px solid var(--neon-cyan)',
-                color: 'var(--neon-cyan)',
+                backgroundColor: 'rgba(242, 201, 76, 0.2)',
+                border: '2px solid var(--atomic-yellow)',
+                color: 'var(--atomic-yellow)',
                 fontSize: '2rem',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 margin: '0 auto 1.25rem',
-                boxShadow: '0 0 24px rgba(67, 217, 232, 0.4)',
+                boxShadow: '0 0 24px rgba(242, 201, 76, 0.4)',
               }}
             >
-              ✓
+              ⏳
             </div>
             <h3
               style={{
@@ -294,17 +294,17 @@ export default function ReservationModal() {
                 marginBottom: '0.25rem',
               }}
             >
-              Table Reserved!
+              Reservation Request Submitted!
             </h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '1.5rem' }}>
-              Your reservation request has been registered in the Maitre D' Concierge system.
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '1.5rem', maxWidth: '520px', marginInline: 'auto' }}>
+              Your table request has been received by our Maitre D'. Our restaurant staff will review seating capacity and approve your booking shortly.
             </p>
 
             {/* Futuristic Boarding Pass Voucher */}
             <div
               style={{
                 backgroundColor: 'var(--bg-midnight-deep)',
-                border: '1px dashed var(--neon-cyan)',
+                border: '1px dashed var(--atomic-yellow)',
                 borderRadius: '8px',
                 padding: '1.5rem',
                 maxWidth: '520px',
@@ -315,7 +315,7 @@ export default function ReservationModal() {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-diner)', paddingBottom: '0.75rem' }}>
                 <div>
-                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>BOOKING PASS CODE</span>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>BOOKING REQUEST CODE</span>
                   <div style={{ fontFamily: 'var(--font-mono)', fontSize: '1.3rem', fontWeight: 700, color: 'var(--neon-cyan)', letterSpacing: '0.08em' }}>
                     #{successResult.reference_code}
                   </div>
@@ -348,7 +348,7 @@ export default function ReservationModal() {
                   <strong style={{ color: '#FFF' }}>{successResult.reservation_date} @ {successResult.reservation_time}</strong>
                 </div>
                 <div>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem', display: 'block' }}>PARTY SIZE</span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem', display: 'block' }}>REQUESTED SEATS</span>
                   <strong style={{ color: 'var(--atomic-yellow)' }}>{successResult.party_size} Guests</strong>
                 </div>
                 <div>
@@ -360,22 +360,29 @@ export default function ReservationModal() {
                   <strong style={{ color: '#FFF' }}>{successResult.occasion_display || successResult.occasion || 'Casual Dining'}</strong>
                 </div>
                 <div>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem', display: 'block' }}>STATUS</span>
-                  <span style={{ color: 'var(--neon-cyan)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 700 }}>
-                    ● {successResult.booking_status_display || 'PENDING REVIEW'}
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem', display: 'block' }}>APPROVAL STATUS</span>
+                  <span style={{ color: 'var(--atomic-yellow)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 700 }}>
+                    ⏳ PENDING APPROVAL
                   </span>
                 </div>
+              </div>
+
+              <div style={{ marginTop: '1rem', paddingTop: '0.75rem', borderTop: '1px solid rgba(255,255,255,0.08)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                ℹ️ <em>Once approved by the restaurant, your table assignment will appear in the "Lookup Existing Booking" tab.</em>
               </div>
             </div>
 
             <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button
                 type="button"
-                onClick={() => downloadICS(successResult)}
+                onClick={() => {
+                  setSuccessResult(null);
+                  setActiveTab('lookup');
+                }}
                 className="btn-cyan"
                 style={{ padding: '0.75rem 1.5rem', fontSize: '0.85rem' }}
               >
-                📅 ADD TO CALENDAR (.ICS)
+                🔍 TRACK APPROVAL STATUS
               </button>
               <button
                 type="button"
@@ -472,19 +479,34 @@ export default function ReservationModal() {
                       fontWeight: 700,
                       padding: '0.25rem 0.6rem',
                       borderRadius: '4px',
-                      backgroundColor: b.status === 'confirmed' ? 'rgba(67, 217, 232, 0.2)' : b.status === 'seated' ? 'rgba(94, 234, 212, 0.2)' : 'rgba(242, 201, 76, 0.2)',
-                      color: b.status === 'confirmed' ? 'var(--neon-cyan)' : b.status === 'seated' ? '#5EEAD4' : 'var(--atomic-yellow)',
+                      backgroundColor: b.status === 'confirmed' ? 'rgba(94, 234, 212, 0.2)' : b.status === 'declined' ? 'rgba(216, 58, 69, 0.2)' : 'rgba(242, 201, 76, 0.2)',
+                      color: b.status === 'confirmed' ? '#5EEAD4' : b.status === 'declined' ? '#FFA5AC' : 'var(--atomic-yellow)',
                       border: '1px solid currentColor',
                     }}
                   >
-                    ● {b.status_display || b.status.toUpperCase()}
+                    ● {b.status === 'confirmed' ? 'APPROVED & CONFIRMED' : b.status_display || b.status.toUpperCase()}
                   </span>
                 </div>
+
+                {b.status === 'confirmed' ? (
+                  <div style={{ backgroundColor: 'rgba(94, 234, 212, 0.1)', border: '1px solid #5EEAD4', borderRadius: '4px', padding: '0.65rem 0.85rem', marginBottom: '0.75rem', fontSize: '0.82rem', color: '#5EEAD4' }}>
+                    🎉 <strong>APPROVED BY RESTAURANT!</strong> Your table request has been approved and confirmed by our host team. Allocated Table: <strong>{b.table_number || 'Booth 4'}</strong>.
+                  </div>
+                ) : b.status === 'declined' ? (
+                  <div style={{ backgroundColor: 'rgba(216, 58, 69, 0.15)', border: '1px solid var(--cherry-red)', borderRadius: '4px', padding: '0.65rem 0.85rem', marginBottom: '0.75rem', fontSize: '0.82rem', color: '#FFA5AC' }}>
+                    ✕ <strong>REQUEST DECLINED.</strong> {b.admin_notes || 'All tables are fully booked for this requested service.'}
+                  </div>
+                ) : (
+                  <div style={{ backgroundColor: 'rgba(242, 201, 76, 0.1)', border: '1px solid var(--atomic-yellow)', borderRadius: '4px', padding: '0.65rem 0.85rem', marginBottom: '0.75rem', fontSize: '0.82rem', color: 'var(--atomic-yellow)' }}>
+                    ⏳ <strong>PENDING RESTAURANT APPROVAL.</strong> The Maitre D\' is reviewing seating capacity. Please check back shortly.
+                  </div>
+                )}
+
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-cream)' }}>
                   <div>Guest: <strong style={{ color: '#FFF' }}>{b.guest_name}</strong></div>
                   <div>Date: <strong style={{ color: '#FFF' }}>{b.reservation_date} @ {b.reservation_time}</strong></div>
                   <div>Party: <strong style={{ color: 'var(--atomic-yellow)' }}>{b.party_size} Guests</strong></div>
-                  <div>Assigned Table: <strong style={{ color: '#5EEAD4' }}>{b.table_number || 'Pending Host Table Allocation'}</strong></div>
+                  <div>Assigned Table: <strong style={{ color: '#5EEAD4' }}>{b.table_number || 'Awaiting Approval'}</strong></div>
                 </div>
                 <button
                   type="button"
@@ -511,7 +533,7 @@ export default function ReservationModal() {
           <div>
             <div style={{ marginBottom: '1.5rem' }}>
               <span className="section-tag" style={{ marginBottom: '0.5rem' }}>
-                TABLE INQUIRY & INSTANT ALLOCATION
+                TABLE INQUIRY & RESTAURANT APPROVAL
               </span>
               <h3
                 style={{
@@ -522,10 +544,10 @@ export default function ReservationModal() {
                   marginBottom: '0.4rem',
                 }}
               >
-                Reserve Your Table
+                Request a Table Reservation
               </h3>
               <p style={{ fontFamily: 'var(--font-sans)', fontSize: '0.88rem', color: 'var(--text-cream)' }}>
-                Select your preferred dining shift, seating zone, and party size.
+                Select your preferred arrival shift and dining zone. Our Maitre D' will review and approve your request.
               </p>
             </div>
 
@@ -935,7 +957,7 @@ export default function ReservationModal() {
                   opacity: loading ? 0.7 : 1,
                 }}
               >
-                <span>{loading ? 'SECURING DINER TABLE...' : 'CONFIRM TABLE RESERVATION'}</span>
+                <span>{loading ? 'SUBMITTING REQUEST...' : 'SUBMIT RESERVATION REQUEST'}</span>
               </button>
             </form>
           </div>

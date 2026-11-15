@@ -131,7 +131,7 @@ class ReservationCreateView(generics.CreateAPIView):
             {
                 'success': True,
                 'status': 'success',
-                'message': 'Your retro diner reservation inquiry has been received.',
+                'message': 'Your table reservation request has been submitted and is currently pending restaurant approval.',
                 'reference_code': reservation.reference_code,
                 'guest_name': reservation.full_name,
                 'reservation_date': str(reservation.reservation_date),
@@ -407,6 +407,40 @@ def cms_update_reservation_status(request, pk):
         messages.success(
             request,
             f"Reservation {res.reference_code} updated: [{res.get_status_display()}] Table: '{res.table_number or 'Unassigned'}'."
+        )
+    return redirect(f"{reverse('cms_dashboard')}#section-reservations")
+
+
+@login_required(login_url='/cms/login/')
+def cms_approve_reservation(request, pk):
+    if request.method == 'POST':
+        res = get_object_or_404(Reservation, pk=pk)
+        res.status = 'confirmed'
+        assigned_table = request.POST.get('table_number', '').strip()
+        if assigned_table:
+            res.table_number = assigned_table
+        elif not res.table_number:
+            res.table_number = 'Booth 4'
+        res.save()
+        messages.success(
+            request,
+            f"🎉 APPROVED reservation #{res.reference_code} for {res.full_name}! Allocated table: '{res.table_number}'."
+        )
+    return redirect(f"{reverse('cms_dashboard')}#section-reservations")
+
+
+@login_required(login_url='/cms/login/')
+def cms_decline_reservation(request, pk):
+    if request.method == 'POST':
+        res = get_object_or_404(Reservation, pk=pk)
+        res.status = 'declined'
+        reason = request.POST.get('admin_notes', '').strip()
+        if reason:
+            res.admin_notes = reason
+        res.save()
+        messages.warning(
+            request,
+            f"Declined reservation #{res.reference_code} for {res.full_name}."
         )
     return redirect(f"{reverse('cms_dashboard')}#section-reservations")
 

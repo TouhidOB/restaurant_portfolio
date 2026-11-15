@@ -410,7 +410,7 @@ export default function CustomPageView({ slug, onNavigateHome }) {
                         {block.data?.headline || 'Reserve Your Table'}
                       </h2>
                       <p style={{ color: '#F6E9D5', opacity: 0.8, fontSize: '0.95rem' }}>
-                        {block.data?.subtitle || 'Select your arrival shift, party size, and dining zone with instant confirmation.'}
+                        {block.data?.subtitle || 'Select your arrival shift, party size, and dining zone. Your request is reviewed and confirmed by our host desk.'}
                       </p>
                     </div>
 
@@ -479,16 +479,19 @@ function InlineTableReservationForm({ defaultZone, submitText }) {
 
   if (success) {
     return (
-      <div style={{ textAlign: 'center', padding: '1.5rem', background: '#090F1B', border: '1px dashed #43D9E8', borderRadius: '8px' }}>
-        <div style={{ color: '#43D9E8', fontSize: '2rem', marginBottom: '0.5rem' }}>✓</div>
+      <div style={{ textAlign: 'center', padding: '1.5rem', background: '#090F1B', border: '1px dashed #FFD700', borderRadius: '8px' }}>
+        <div style={{ color: '#FFD700', fontSize: '2rem', marginBottom: '0.5rem' }}>⏳</div>
         <h3 style={{ color: '#FFF', fontFamily: 'Space Grotesk, sans-serif', fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-          Table Reserved Successfully!
+          Reservation Request Submitted!
         </h3>
+        <div style={{ display: 'inline-block', padding: '0.25rem 0.75rem', background: 'rgba(255, 215, 0, 0.15)', border: '1px solid #FFD700', borderRadius: '4px', color: '#FFD700', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+          ● PENDING RESTAURANT APPROVAL
+        </div>
         <p style={{ color: '#43D9E8', fontFamily: 'Space Mono, monospace', fontSize: '1rem', marginBottom: '0.75rem' }}>
-          BOOKING REF #{success.reference_code}
+          REQUEST REF #{success.reference_code}
         </p>
         <p style={{ color: '#F6E9D5', opacity: 0.8, fontSize: '0.9rem', marginBottom: '1.25rem' }}>
-          Thank you, {success.guest_name}. Your table for {success.party_size} guests on {success.reservation_date} at {success.reservation_time} is logged with our Maitre D'.
+          Thank you, {success.guest_name}. Your reservation request for {success.party_size} guests on {success.reservation_date} at {success.reservation_time} ({success.preferred_zone}) has been received. Our Maitre D' will review and approve your table shortly.
         </p>
         <button
           type="button"
@@ -496,7 +499,7 @@ function InlineTableReservationForm({ defaultZone, submitText }) {
           className="btn-cyan"
           style={{ padding: '0.55rem 1.25rem', fontSize: '0.8rem' }}
         >
-          Book Another Table
+          Submit Another Request
         </button>
       </div>
     );
@@ -621,7 +624,7 @@ function InlineTableReservationForm({ defaultZone, submitText }) {
         className="btn-cherry"
         style={{ width: '100%', padding: '0.9rem', fontWeight: 700, fontSize: '0.9rem', textTransform: 'uppercase', marginTop: '0.5rem' }}
       >
-        {loading ? 'Securing Table...' : (submitText || 'Confirm Table Reservation')}
+        {loading ? 'Submitting Request...' : (submitText || 'Submit Reservation Request')}
       </button>
     </form>
   );

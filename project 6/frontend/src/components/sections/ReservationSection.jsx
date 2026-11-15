@@ -211,18 +211,18 @@ export default function ReservationSection() {
                     width: '60px',
                     height: '60px',
                     borderRadius: '50%',
-                    backgroundColor: 'rgba(67, 217, 232, 0.2)',
-                    border: '2px solid var(--neon-cyan)',
-                    color: 'var(--neon-cyan)',
+                    backgroundColor: 'rgba(242, 201, 76, 0.2)',
+                    border: '2px solid var(--atomic-yellow)',
+                    color: 'var(--atomic-yellow)',
                     fontSize: '1.8rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 1.25rem',
-                    boxShadow: '0 0 20px rgba(67, 217, 232, 0.35)',
+                    boxShadow: '0 0 20px rgba(242, 201, 76, 0.35)',
                   }}
                 >
-                  ✓
+                  ⏳
                 </div>
                 <h3
                   style={{
@@ -232,7 +232,7 @@ export default function ReservationSection() {
                     marginBottom: '0.5rem',
                   }}
                 >
-                  Table Confirmed
+                  Reservation Request Received
                 </h3>
                 <p
                   style={{
@@ -249,7 +249,7 @@ export default function ReservationSection() {
                 <div
                   style={{
                     backgroundColor: 'var(--bg-midnight-deep)',
-                    border: '1px dashed var(--neon-cyan)',
+                    border: '1px dashed var(--atomic-yellow)',
                     borderRadius: '6px',
                     padding: '1.25rem',
                     textAlign: 'left',
@@ -258,7 +258,7 @@ export default function ReservationSection() {
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>MAITRE D' PASS</span>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>MAITRE D' REQUEST PASS</span>
                     <button
                       type="button"
                       onClick={() => handleCopyCode(successResult.reference_code)}
@@ -278,30 +278,25 @@ export default function ReservationSection() {
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', color: 'var(--text-cream)' }}>
                     <div>Guest: <strong style={{ color: '#FFF' }}>{successResult.guest_name}</strong></div>
-                    <div>Party: <strong style={{ color: 'var(--atomic-yellow)' }}>{successResult.party_size} PAX</strong></div>
+                    <div>Requested: <strong style={{ color: 'var(--atomic-yellow)' }}>{successResult.party_size} PAX</strong></div>
                     <div>Date: <strong style={{ color: '#FFF' }}>{successResult.reservation_date}</strong></div>
                     <div>Time: <strong style={{ color: '#FFF' }}>{successResult.reservation_time}</strong></div>
                     <div>Zone: <strong style={{ color: 'var(--neon-cyan)' }}>{successResult.seating_area}</strong></div>
-                    <div>Status: <span style={{ color: 'var(--neon-cyan)', fontWeight: 700 }}>● {successResult.booking_status_display || 'PENDING'}</span></div>
+                    <div>Status: <span style={{ color: 'var(--atomic-yellow)', fontWeight: 700 }}>⏳ PENDING APPROVAL</span></div>
+                  </div>
+                  <div style={{ marginTop: '0.75rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.08)', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Our host team will review and approve your table request. Use your code to track approval status.
                   </div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                   <button
                     type="button"
-                    onClick={() => downloadICS(successResult)}
-                    className="btn-cyan"
-                    style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}
-                  >
-                    📅 ADD TO CALENDAR (.ICS)
-                  </button>
-                  <button
-                    type="button"
                     onClick={() => setSuccessResult(null)}
                     className="btn-outline-diner"
                     style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}
                   >
-                    Submit Another Booking
+                    Submit Another Request
                   </button>
                 </div>
               </div>

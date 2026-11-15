@@ -265,11 +265,12 @@ class Testimonial(models.Model):
 
 class Reservation(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Pending Review'),
-        ('confirmed', 'Confirmed Table'),
+        ('pending', 'Pending Approval'),
+        ('confirmed', 'Approved & Confirmed'),
+        ('declined', 'Declined'),
         ('seated', 'Seated at Table'),
         ('completed', 'Dining Completed'),
-        ('cancelled', 'Cancelled'),
+        ('cancelled', 'Cancelled by Guest'),
         ('no_show', 'No-Show'),
     ]
     OCCASION_CHOICES = [
