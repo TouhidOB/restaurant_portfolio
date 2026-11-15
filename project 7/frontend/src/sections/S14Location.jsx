@@ -71,15 +71,18 @@ export default function S14Location() {
               <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-taupe)', display: 'block', marginBottom: '0.5rem' }}>
                 Horaires d'Ouverture
               </span>
-              {(loc.hours || [
-                { days: 'Mardi au Samedi', hours: '19h00 – 23h30 (Dîner uniquement)' },
-                { days: 'Dimanche & Lundi', hours: 'Fermeture hebdomadaire' },
-              ]).map((h, idx) => (
-                <div key={idx} style={{ fontSize: '0.88rem', color: 'var(--color-ivory-dim)', display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-                  <span>{h.days} :</span>
-                  <span style={{ color: 'var(--color-gold)' }}>{h.hours}</span>
+              {Array.isArray(loc.hours) ? (
+                loc.hours.map((h, idx) => (
+                  <div key={idx} style={{ fontSize: '0.88rem', color: 'var(--color-ivory-dim)', display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                    <span>{h.days || h.day} :</span>
+                    <span style={{ color: 'var(--color-gold)' }}>{h.hours || h.time}</span>
+                  </div>
+                ))
+              ) : (
+                <div style={{ fontSize: '0.88rem', color: 'var(--color-gold)' }}>
+                  {typeof loc.hours === 'string' ? loc.hours : 'Mardi au Samedi : 19h00 – 23h30 (Dîner uniquement)'}
                 </div>
-              ))}
+              )}
             </div>
           </div>
 

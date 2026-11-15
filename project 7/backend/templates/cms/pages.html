@@ -1,0 +1,133 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}L'ÉTOILE ROYALE // 01. PAGES AUTONOMES (ELEMENTOR BUILDER){% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="section-tag">01. CONSTRUCTEUR DE PAGES AUTONOMES</span>
+            <h1 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; margin: 0.35rem 0;">
+                STANDALONE CUSTOM PAGES &bull; VISUAL BUILDER
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--taupe);">
+                Créez de nouvelles pages de salons particuliers, d'événements diplomatiques et de banquets privés sur mesure.
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="#createPageModal" class="btn-gold">
+                + NOUVELLE PAGE AUTONOME
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Pages Table -->
+<div style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 1.5rem; margin-bottom: 2.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.25rem;">REGISTRE DES PAGES CRÉÉES</h2>
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--gold);">
+            {{ total_pages }} PAGES DÉPLOYÉES
+        </span>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.8rem; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--charcoal-border); color: var(--taupe); font-size: 0.7rem; text-transform: uppercase;">
+                    <th style="padding: 0.75rem 1rem;">TITRE DE LA PAGE</th>
+                    <th style="padding: 0.75rem 1rem;">URL ROUTE FRONTEND</th>
+                    <th style="padding: 0.75rem 1rem;">BLOCS MODULAIRES</th>
+                    <th style="padding: 0.75rem 1rem;">STATUT</th>
+                    <th style="padding: 0.75rem 1rem;">DERNIÈRE MODIFICATION</th>
+                    <th style="padding: 0.75rem 1rem; text-align: right;">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for page in pages %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 0.75rem 1rem; color: #fff; font-weight: 600;">
+                        {{ page.title }}
+                        {% if page.meta_description %}
+                        <div style="color: var(--taupe); font-size: 0.7rem; font-weight: normal; margin-top: 0.2rem;">
+                            {{ page.meta_description|truncatechars:70 }}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <a href="http://127.0.0.1:3000/page/{{ page.slug }}" target="_blank" style="color: var(--gold); text-decoration: none;">
+                            /page/{{ page.slug }} ↗
+                        </a>
+                    </td>
+                    <td style="padding: 0.75rem 1rem; color: var(--ivory);">
+                        <span style="background: rgba(197, 164, 109, 0.15); border: 1px solid var(--gold); padding: 2px 8px; border-radius: 3px;">
+                            {{ page.blocks|length }} blocs
+                        </span>
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        {% if page.is_published %}
+                        <span style="color: #4ade80;">● Publiée</span>
+                        {% else %}
+                        <span style="color: #facc15;">○ Brouillon</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem 1rem; color: var(--taupe);">
+                        {{ page.updated_at|date:"d M Y H:i" }}
+                    </td>
+                    <td style="padding: 0.75rem 1rem; text-align: right;">
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <a href="{% url 'cms_page_builder' page.pk %}" class="btn-gold" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                                BUILDER &rarr;
+                            </a>
+                            <form method="post" action="{% url 'cms_page_delete' page.pk %}" onsubmit="return confirm('Confirmer la suppression de cette page ?');" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-outline" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; color: #f87171; border-color: rgba(239, 68, 68, 0.3);">
+                                    ✕
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 2.5rem; text-align: center; color: var(--taupe);">
+                        Aucune page personnalisée créée. Cliquez sur "+ NOUVELLE PAGE AUTONOME" ci-dessous pour démarrer.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Page Section -->
+<div id="createPageModal" style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 2rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem;">CRÉER UNE NOUVELLE PAGE AUTONOME</h3>
+    <p style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--taupe); margin-bottom: 1.5rem;">
+        Définissez le titre et le slug de la route pour initialiser le canevas de blocs.
+    </p>
+
+    <form method="post" action="{% url 'cms_page_create' %}">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+            <div>
+                <label class="form-label" for="pageTitle">Titre de la Page *</label>
+                <input type="text" id="pageTitle" name="title" class="form-input" required placeholder="ex: Soirées Dégustation Caviar &amp; Champagne">
+            </div>
+            <div>
+                <label class="form-label" for="pageSlug">Slug de l'URL * (minuscules, tirets)</label>
+                <input type="text" id="pageSlug" name="slug" class="form-input" required placeholder="ex: soirees-caviar-champagne">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label class="form-label" for="pageMeta">Description SEO (Méta-description)</label>
+            <textarea id="pageMeta" name="meta_description" class="form-textarea" rows="2" placeholder="Brève description pour le référencement et l'en-tête de page..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-gold" style="padding: 0.75rem 1.75rem;">
+            CRÉER LA PAGE &amp; OUVRIR LE BUILDER &rarr;
+        </button>
+    </form>
+</div>
+{% endblock %}

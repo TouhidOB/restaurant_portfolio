@@ -69,7 +69,7 @@ export default function Footer() {
             </button>
           </div>
 
-          {/* Column 2: Opening Hours */}
+          {/* Column 2: Navigation Dédiée */}
           <div>
             <h4
               style={{
@@ -81,22 +81,40 @@ export default function Footer() {
                 marginBottom: '1.25rem',
               }}
             >
-              Horaires des Salons
+              Pages du Salon
             </h4>
-            <div style={{ fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-              <div>
-                <strong style={{ color: 'var(--color-ivory)', display: 'block' }}>Mardi au Samedi</strong>
-                <span>Dîner Gastronomique : 19h00 – 23h30</span>
-              </div>
-              <div>
-                <strong style={{ color: 'var(--color-ivory)', display: 'block' }}>Bar à Champagne</strong>
-                <span>Service continu : 18h00 – 01h00</span>
-              </div>
-              <div>
-                <strong style={{ color: 'var(--color-ivory)', display: 'block' }}>Dimanche & Lundi</strong>
-                <span>Fermeture (Ouverture sur privatisation privée)</span>
-              </div>
-            </div>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.88rem' }}>
+              <li>
+                <a href="/story" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/story'); window.dispatchEvent(new PopStateEvent('popstate')); }} style={{ color: 'var(--color-taupe)', textDecoration: 'none' }}>
+                  Héritage & Histoire 1788
+                </a>
+              </li>
+              <li>
+                <a href="/signatures" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/signatures'); window.dispatchEvent(new PopStateEvent('popstate')); }} style={{ color: 'var(--color-taupe)', textDecoration: 'none' }}>
+                  Créations Emblématiques
+                </a>
+              </li>
+              <li>
+                <a href="/menu" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/menu'); window.dispatchEvent(new PopStateEvent('popstate')); }} style={{ color: 'var(--color-taupe)', textDecoration: 'none' }}>
+                  La Carte & Menus Dégustation
+                </a>
+              </li>
+              <li>
+                <a href="/tour" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/tour'); window.dispatchEvent(new PopStateEvent('popstate')); }} style={{ color: 'var(--color-taupe)', textDecoration: 'none' }}>
+                  Visite Virtuelle Immersive
+                </a>
+              </li>
+              <li>
+                <a href="/chef" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/chef'); window.dispatchEvent(new PopStateEvent('popstate')); }} style={{ color: 'var(--color-taupe)', textDecoration: 'none' }}>
+                  Chef Alexandre de Morbihan
+                </a>
+              </li>
+              <li>
+                <a href="/blog" onClick={(e) => { e.preventDefault(); window.history.pushState({}, '', '/blog'); window.dispatchEvent(new PopStateEvent('popstate')); }} style={{ color: 'var(--color-gold-light)', textDecoration: 'none', fontWeight: 500 }}>
+                  ✦ La Gazette Royale (Journal)
+                </a>
+              </li>
+            </ul>
           </div>
 
           {/* Column 3: Contact & Location */}

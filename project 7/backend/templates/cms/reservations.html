@@ -1,0 +1,165 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}L'ÉTOILE ROYALE // 03. PLAN DE SALLE & MAÎTRE D'{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="section-tag">03. REGISTRE DES CONVIVES &bull; MAÎTRE D'</span>
+            <h1 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; margin: 0.35rem 0;">
+                PLAN DE SALLE &amp; SERVICES DÉJEUNER / DÎNER
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--taupe);">
+                Contrôle des shifts, affectation des tables en salon et suivi des exigences diététiques.
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; background: rgba(250, 204, 21, 0.15); color: #facc15; border: 1px solid #facc15; padding: 0.4rem 0.8rem; border-radius: 4px;">
+                {{ pending_count }} EN ATTENTE
+            </span>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; background: rgba(74, 222, 128, 0.15); color: #4ade80; border: 1px solid #4ade80; padding: 0.4rem 0.8rem; border-radius: 4px;">
+                {{ confirmed_count }} CONFIRMÉES
+            </span>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; background: rgba(96, 165, 250, 0.15); color: #60a5fa; border: 1px solid #60a5fa; padding: 0.4rem 0.8rem; border-radius: 4px;">
+                {{ seated_count }} CONVIVES INSTALLÉS
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- Filters Bar -->
+<div style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 1rem 1.25rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <!-- Shift & Status Filter Pills -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <a href="{% url 'cms_reservations' %}" class="btn-outline" style="padding: 0.45rem 0.9rem; font-size: 0.75rem; font-family: var(--font-mono); {% if shift_filter == 'all' and status_filter == 'all' %}background: var(--burgundy); color: #fff; border-color: var(--gold);{% endif %}">
+            TOUS ({{ total_count }})
+        </a>
+        <a href="{% url 'cms_reservations' %}?shift=lunch" class="btn-outline" style="padding: 0.45rem 0.9rem; font-size: 0.75rem; font-family: var(--font-mono); {% if shift_filter == 'lunch' %}background: var(--gold); color: #000; font-weight: 700; border-color: var(--gold);{% endif %}">
+            ☀ SHIFT DÉJEUNER ({{ lunch_count }})
+        </a>
+        <a href="{% url 'cms_reservations' %}?shift=dinner" class="btn-outline" style="padding: 0.45rem 0.9rem; font-size: 0.75rem; font-family: var(--font-mono); {% if shift_filter == 'dinner' %}background: var(--burgundy); color: #fff; border-color: var(--gold);{% endif %}">
+            ☾ SHIFT DÎNER ({{ dinner_count }})
+        </a>
+        <a href="{% url 'cms_reservations' %}?status=pending" class="btn-outline" style="padding: 0.45rem 0.9rem; font-size: 0.75rem; font-family: var(--font-mono); color: #facc15; {% if status_filter == 'pending' %}background: rgba(250, 204, 21, 0.25); border-color: #facc15;{% endif %}">
+            EN ATTENTE ({{ pending_count }})
+        </a>
+    </div>
+
+    <!-- Search Box -->
+    <form method="get" action="{% url 'cms_reservations' %}" style="display: flex; gap: 0.5rem;">
+        <input type="text" name="q" value="{{ search_q }}" placeholder="Réf (ROYAL-), nom, téléphone..." class="form-input" style="padding: 0.45rem 0.8rem; font-size: 0.8rem; width: 220px;">
+        <button type="submit" class="btn-gold" style="padding: 0.45rem 0.85rem; font-size: 0.75rem;">
+            RECHERCHER
+        </button>
+    </form>
+</div>
+
+<!-- Reservations Desk Table -->
+<div style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 1.5rem;">
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.8rem; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--charcoal-border); color: var(--taupe); font-size: 0.7rem; text-transform: uppercase;">
+                    <th style="padding: 0.75rem 0.85rem;">RÉF CODE</th>
+                    <th style="padding: 0.75rem 0.85rem;">CONVIVE &bull; CONTACT</th>
+                    <th style="padding: 0.75rem 0.85rem;">DATE &bull; SHIFT &bull; HEURE</th>
+                    <th style="padding: 0.75rem 0.85rem;">CONVIVES &bull; SALON</th>
+                    <th style="padding: 0.75rem 0.85rem;">NOTES DIÉTÉTIQUES</th>
+                    <th style="padding: 0.75rem 0.85rem;">TABLE AFFECTÉE</th>
+                    <th style="padding: 0.75rem 0.85rem; text-align: right;">STATUT &bull; ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in reservations %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top;">
+                    <td style="padding: 0.85rem;">
+                        <span style="color: var(--gold); font-weight: 700;">{{ res.reference_code }}</span>
+                        <div style="font-size: 0.68rem; color: var(--taupe); margin-top: 0.2rem;">
+                            {{ res.created_at|date:"d M H:i" }}
+                        </div>
+                    </td>
+                    <td style="padding: 0.85rem;">
+                        <strong style="color: #fff; font-size: 0.9rem;">{{ res.full_name }}</strong>
+                        <div style="color: var(--taupe); font-size: 0.72rem; margin-top: 0.2rem;">
+                            📞 {{ res.phone }}<br>
+                            {% if res.email %}✉ {{ res.email }}{% endif %}
+                        </div>
+                    </td>
+                    <td style="padding: 0.85rem;">
+                        <div style="color: #fff; font-weight: 600;">{{ res.date|date:"D d M Y" }}</div>
+                        <div style="color: var(--gold); font-size: 0.75rem; margin-top: 0.2rem;">
+                            {% if res.shift == 'lunch' %}☀ DÉJEUNER{% else %}☾ DÎNER{% endif %} &bull; {{ res.time }}
+                        </div>
+                    </td>
+                    <td style="padding: 0.85rem;">
+                        <span style="color: #fff;">{{ res.guests }}</span>
+                        <div style="color: var(--taupe); font-size: 0.72rem; margin-top: 0.2rem;">
+                            {{ res.seating_area }}
+                        </div>
+                        {% if res.occasion %}
+                        <div style="color: var(--gold); font-size: 0.68rem; font-style: italic;">
+                            {{ res.occasion }}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.85rem; max-width: 200px;">
+                        {% if res.dietary_notes %}
+                        <div style="color: #facc15; font-size: 0.75rem;">
+                            ⚠ {{ res.dietary_notes }}
+                        </div>
+                        {% else %}
+                        <span style="color: var(--taupe); font-size: 0.72rem;">Aucune restriction</span>
+                        {% endif %}
+                        {% if res.special_requests %}
+                        <div style="color: var(--taupe); font-size: 0.7rem; margin-top: 0.35rem; font-style: italic;">
+                            « {{ res.special_requests }} »
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.85rem;">
+                        <form method="post" action="{% url 'cms_reservation_table' res.id %}" style="display: flex; gap: 0.35rem; align-items: center;">
+                            {% csrf_token %}
+                            <input type="text" name="table_number" value="{{ res.table_number|default:'' }}" placeholder="ex: 07" class="form-input" style="padding: 0.35rem 0.5rem; font-size: 0.75rem; width: 60px;">
+                            <button type="submit" class="btn-outline" style="padding: 0.35rem 0.55rem; font-size: 0.7rem;">OK</button>
+                        </form>
+                    </td>
+                    <td style="padding: 0.85rem; text-align: right;">
+                        <form method="post" action="{% url 'cms_reservation_status' res.id %}" style="display: inline-flex; gap: 0.35rem; margin-bottom: 0.35rem;">
+                            {% csrf_token %}
+                            {% if res.status == 'pending' %}
+                            <button type="submit" name="status" value="confirmed" class="btn-gold" style="padding: 0.3rem 0.65rem; font-size: 0.7rem; background: #3ca364; border-color: #3ca364; color: #fff;">
+                                ✓ CONFIRMER
+                            </button>
+                            <button type="submit" name="status" value="cancelled" class="btn-outline" style="padding: 0.3rem 0.55rem; font-size: 0.7rem; color: #f87171;">
+                                ✕
+                            </button>
+                            {% elif res.status == 'confirmed' %}
+                            <button type="submit" name="status" value="seated" class="btn-gold" style="padding: 0.3rem 0.65rem; font-size: 0.7rem; background: #3b82f6; border-color: #3b82f6; color: #fff;">
+                                🍽 INSTALLER
+                            </button>
+                            {% endif %}
+                        </form>
+                        <div>
+                            <span style="display: inline-block; padding: 2px 6px; border-radius: 3px; font-size: 0.68rem; text-transform: uppercase;
+                                {% if res.status == 'confirmed' %}background: rgba(74, 222, 128, 0.2); color: #4ade80; border: 1px solid #4ade80;
+                                {% elif res.status == 'seated' %}background: rgba(96, 165, 250, 0.2); color: #60a5fa; border: 1px solid #60a5fa;
+                                {% elif res.status == 'cancelled' %}background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #f87171;
+                                {% else %}background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid #facc15;{% endif %}">
+                                {{ res.get_status_display }}
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="padding: 3rem; text-align: center; color: var(--taupe);">
+                        Aucune réservation correspondant aux critères de filtre sélectionnés.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

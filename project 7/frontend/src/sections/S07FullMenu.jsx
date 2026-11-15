@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useCMS } from '../context/CMSContext';
 
 export default function S07FullMenu() {
-  const { content, openReservation } = useCMS();
+  const { content, openReservation, setSelectedDish } = useCMS();
   const menu = content?.menu || {};
   const tastingMenus = menu.tasting_menus || [];
   const categories = menu.categories || [];
@@ -137,36 +137,129 @@ export default function S07FullMenu() {
               ))}
             </div>
 
-            {/* Dishes in Selected Category */}
+            {/* Dishes in Selected Category with Haute Cuisine Meal Photography */}
             {currentCategory && (
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                  gap: '2.5rem',
-                  maxWidth: '1000px',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))',
+                  gap: '2rem',
+                  maxWidth: '1100px',
                   margin: '0 auto',
                 }}
               >
                 {currentCategory.items.map((item, idx) => (
                   <div
                     key={idx}
+                    onClick={() => setSelectedDish(item)}
                     style={{
-                      borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                      paddingBottom: '1.5rem',
+                      backgroundColor: '#25262A',
+                      border: '1px solid rgba(197, 164, 109, 0.25)',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      cursor: 'pointer',
+                      transition: 'transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.25)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.borderColor = 'rgba(197, 164, 109, 0.6)';
+                      e.currentTarget.style.boxShadow = '0 12px 30px rgba(0, 0, 0, 0.45)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.borderColor = 'rgba(197, 164, 109, 0.25)';
+                      e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.25)';
                     }}
                   >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
-                      <h4 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', color: 'var(--color-ivory)', fontWeight: 500 }}>
-                        {item.name}
-                      </h4>
-                      <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', color: 'var(--color-gold)', fontWeight: 600, marginLeft: '1rem' }}>
+                    <div style={{ height: '190px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+                      <img
+                        src={item.image || 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85'}
+                        alt={item.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+                        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                      />
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: '12px',
+                          right: '12px',
+                          backgroundColor: 'rgba(84, 37, 47, 0.9)',
+                          color: 'var(--color-gold-light)',
+                          border: '1px solid var(--color-gold)',
+                          padding: '0.25rem 0.65rem',
+                          borderRadius: '4px',
+                          fontFamily: 'var(--font-display)',
+                          fontWeight: 600,
+                          fontSize: '1rem',
+                        }}
+                      >
                         {item.price}
                       </span>
                     </div>
-                    <p style={{ color: 'var(--color-taupe)', fontSize: '0.88rem', lineHeight: '1.6' }}>
-                      {item.desc}
-                    </p>
+
+                    <div style={{ padding: '1.4rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                      <h4
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: '1.2rem',
+                          color: 'var(--color-ivory)',
+                          fontWeight: 500,
+                          marginBottom: '0.5rem',
+                          lineHeight: '1.35',
+                        }}
+                      >
+                        {item.name}
+                      </h4>
+                      <p
+                        style={{
+                          color: 'var(--color-taupe)',
+                          fontSize: '0.86rem',
+                          lineHeight: '1.55',
+                          flexGrow: 1,
+                          marginBottom: '1rem',
+                        }}
+                      >
+                        {item.desc}
+                      </p>
+
+                      {item.wine_pairing && (
+                        <div
+                          style={{
+                            fontSize: '0.78rem',
+                            color: 'var(--color-gold)',
+                            background: 'rgba(197, 164, 109, 0.08)',
+                            padding: '0.4rem 0.75rem',
+                            borderRadius: '4px',
+                            border: '1px solid rgba(197, 164, 109, 0.15)',
+                            marginBottom: '0.9rem',
+                          }}
+                        >
+                          🍷 {item.wine_pairing}
+                        </div>
+                      )}
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                          paddingTop: '0.75rem',
+                          marginTop: 'auto',
+                        }}
+                      >
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-gold)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                          Haute Gastronomie
+                        </span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--color-gold-light)', fontWeight: 500 }}>
+                          Voir le plat →
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

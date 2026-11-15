@@ -1,0 +1,32 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}L'ÉTOILE ROYALE // 08. GALERIE & PHOTOTHÈQUE{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="section-tag">08. ARCHIVES VISUELLES</span>
+            <h1 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; margin: 0.35rem 0;">
+                PHOTOTHÈQUE DE LA MAISON
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--taupe);">
+                Clichés des salons, de la verrerie Baccarat, de l'argenterie et de la cave aux grands crus.
+            </p>
+        </div>
+        <div>
+            <button type="submit" form="galleryForm" class="btn-gold">
+                METTRE À JOUR LA GALERIE &rarr;
+            </button>
+        </div>
+    </div>
+</div>
+
+<form method="post" action="{% url 'cms_gallery' %}" id="galleryForm">
+    {% csrf_token %}
+    <div style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 1.75rem;">
+        <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 1rem;">COLLECTION PHOTOGRAPHIQUE (JSON)</h3>
+        <textarea name="gallery_json" class="form-textarea" rows="18" style="font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.5; color: #facc15;">{{ gallery_json }}</textarea>
+    </div>
+</form>
+{% endblock %}

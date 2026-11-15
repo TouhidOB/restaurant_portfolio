@@ -1,0 +1,43 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}L'ÉTOILE ROYALE // 07. TEXTES DES 15 SECTIONS{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="section-tag">07. ÉDITION DES CONTENUS ÉDITORIAUX</span>
+            <h1 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; margin: 0.35rem 0;">
+                TEXTES DES 15 SECTIONS DU SITE
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--taupe);">
+                Ajustez le manifeste du Hero, la narration patrimoniale de 1788 et les déclarations du Chef.
+            </p>
+        </div>
+        <div>
+            <button type="submit" form="sectionsForm" class="btn-gold">
+                ENREGISTRER LES TEXTES &rarr;
+            </button>
+        </div>
+    </div>
+</div>
+
+<form method="post" action="{% url 'cms_sections' %}" id="sectionsForm">
+    {% csrf_token %}
+    <div style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 2rem; margin-bottom: 2rem;">
+        <h3 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 1.5rem; color: var(--gold);">
+            SECTION HERO PRINCIPALE
+        </h3>
+
+        <div style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="heroTagline">Slogan d'En-tête (Tagline)</label>
+            <input type="text" id="heroTagline" name="hero_tagline" class="form-input" value="{{ content.hero.tagline|default:'Salon Gastronomique & Bar à Champagne' }}">
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="leadDesc">Description de Présentation</label>
+            <textarea id="leadDesc" name="lead_description" class="form-textarea" rows="4">{{ content.hero.lead_description|default:"L'art culinaire français sublimé au cœur d'un hôtel particulier du XVIIIe siècle." }}</textarea>
+        </div>
+    </div>
+</form>
+{% endblock %}

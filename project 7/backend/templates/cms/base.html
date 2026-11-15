@@ -7,7 +7,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --burgundy: #54252F;
@@ -23,6 +23,7 @@
             --font-display: 'Playfair Display', Georgia, serif;
             --font-editorial: 'Cormorant Garamond', Georgia, serif;
             --font-sans: 'DM Sans', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
         * {
@@ -138,66 +139,138 @@
             border-color: var(--taupe);
         }
 
-        /* Messages */
-        .alerts-wrapper {
-            max-width: 1300px;
-            margin: 1.5rem auto 0;
-            padding: 0 2rem;
-            width: 100%;
+        /* Layout Grid */
+        .cms-layout-grid {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: calc(100vh - 140px);
         }
 
-        .alert {
-            padding: 0.9rem 1.25rem;
-            border-radius: 6px;
-            margin-bottom: 1rem;
-            font-size: 0.95rem;
+        @media (max-width: 960px) {
+            .cms-layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar */
+        .cms-sidebar {
+            background: #18191B;
+            border-right: 1px solid var(--charcoal-border);
+            padding: 1.75rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .cms-sidebar-header {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--gold);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 0 0.75rem 0.75rem;
+            border-bottom: 1px solid rgba(197, 164, 109, 0.2);
+            margin-bottom: 0.75rem;
+        }
+
+        .cms-nav-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 0.65rem 0.85rem;
+            border-radius: 4px;
+            text-decoration: none;
+            color: var(--taupe);
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            letter-spacing: 0.04em;
+            transition: all 0.2s ease;
         }
 
-        .alert-success {
-            background: rgba(30, 70, 45, 0.4);
-            border: 1px solid #3ca364;
-            color: #9fe2b6;
+        .cms-nav-item:hover {
+            color: var(--ivory);
+            background: rgba(84, 37, 47, 0.35);
         }
 
-        .alert-error {
-            background: rgba(84, 37, 47, 0.5);
-            border: 1px solid #d45d6f;
-            color: #f7aab5;
+        .cms-nav-item.active {
+            color: #fff;
+            background: var(--burgundy);
+            border-left: 3px solid var(--gold);
+            font-weight: 600;
         }
 
-        .alert-info {
-            background: rgba(40, 60, 90, 0.4);
-            border: 1px solid #4a88d9;
-            color: #b0d4ff;
+        /* Main Workspace */
+        .cms-workspace {
+            padding: 2rem 2.5rem;
+            overflow-x: auto;
         }
 
-        /* Main Content */
-        .main-container {
-            max-width: 1600px;
+        /* Common Elements */
+        .section-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.35rem;
+        }
+
+        .form-label {
+            display: block;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--taupe);
+            margin-bottom: 0.35rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input, .form-textarea, .form-select {
             width: 100%;
-            margin: 1rem auto 3rem;
-            padding: 0 1.5rem;
-            flex: 1;
+            background: #141517;
+            border: 1px solid var(--charcoal-border);
+            border-radius: 4px;
+            padding: 0.65rem 0.85rem;
+            color: var(--ivory);
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            box-sizing: border-box;
+            outline: none;
         }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            border-color: var(--gold);
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 0.85rem 1.25rem;
+            border-radius: 4px;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            font-family: var(--font-mono);
+        }
+        .alert-success { background: rgba(30, 70, 45, 0.4); border: 1px solid #3ca364; color: #9fe2b6; }
+        .alert-error { background: rgba(84, 37, 47, 0.5); border: 1px solid #d45d6f; color: #f7aab5; }
+        .alert-info { background: rgba(40, 60, 90, 0.4); border: 1px solid #4a88d9; color: #b0d4ff; }
 
         /* Footer */
         .footer {
             background-color: var(--burgundy-deep);
             border-top: 1px solid rgba(197, 164, 109, 0.15);
             text-align: center;
-            padding: 1.5rem;
+            padding: 1.25rem;
             color: var(--taupe);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
         }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body>
     <header class="topbar">
-        <a href="{% url 'cms_dashboard' %}" class="brand-badge">
+        <a href="{% url 'cms_overview' %}" class="brand-badge">
             <div class="brand-crest">✦</div>
             <div class="brand-text">
                 <h1>L'Étoile Royale</h1>
@@ -209,8 +282,8 @@
                 <span>↗ Voir le Site Public</span>
             </a>
             {% if user.is_authenticated %}
-                <span style="color: var(--gold); font-size: 0.9rem;">
-                    👤 {{ user.username }} (Admin)
+                <span style="color: var(--gold); font-size: 0.85rem; font-family: var(--font-mono);">
+                    👤 {{ user.username }}
                 </span>
                 <a href="{% url 'cms_logout' %}" class="btn-outline">Déconnexion</a>
             {% else %}
@@ -219,22 +292,107 @@
         </div>
     </header>
 
-    {% if messages %}
-    <div class="alerts-wrapper">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            <span>{{ message }}</span>
-        </div>
-        {% endfor %}
+    {% if user.is_authenticated %}
+    <div class="cms-layout-grid">
+        <!-- Sidebar Navigation -->
+        <aside class="cms-sidebar">
+            <div class="cms-sidebar-header">
+                NAVIGATION DU STUDIO
+            </div>
+
+            <a href="{% url 'cms_overview' %}" class="cms-nav-item {% if active_tab == 'overview' %}active{% endif %}">
+                <span>00. Aperçu &amp; KPIs</span>
+                <span>✦</span>
+            </a>
+
+            <a href="{% url 'cms_pages' %}" class="cms-nav-item {% if active_tab == 'pages' %}active{% endif %}">
+                <span>01. Pages Autonomes</span>
+                <span>📄</span>
+            </a>
+
+            <a href="{% url 'cms_identity' %}" class="cms-nav-item {% if active_tab == 'identity' %}active{% endif %}">
+                <span>02. Identité &amp; Horaires</span>
+                <span>⚜</span>
+            </a>
+
+            <a href="{% url 'cms_reservations' %}" class="cms-nav-item {% if active_tab == 'reservations' %}active{% endif %}">
+                <span>03. Réservations &amp; Shift</span>
+                <span>📅</span>
+            </a>
+
+            <a href="{% url 'cms_menu' %}" class="cms-nav-item {% if active_tab == 'menu' %}active{% endif %}">
+                <span>04. Carte &amp; Photographie</span>
+                <span>🍽</span>
+            </a>
+
+            <a href="{% url 'cms_tour' %}" class="cms-nav-item {% if active_tab == 'tour' %}active{% endif %}">
+                <span>05. Visite 3D Salons</span>
+                <span>🏛</span>
+            </a>
+
+            <a href="{% url 'cms_blog' %}" class="cms-nav-item {% if active_tab == 'blog' %}active{% endif %}">
+                <span>06. Gazette &amp; Journal</span>
+                <span>✍</span>
+            </a>
+
+            <a href="{% url 'cms_sections' %}" class="cms-nav-item {% if active_tab == 'sections' %}active{% endif %}">
+                <span>07. Textes des 15 Sections</span>
+                <span>📜</span>
+            </a>
+
+            <a href="{% url 'cms_gallery' %}" class="cms-nav-item {% if active_tab == 'gallery' %}active{% endif %}">
+                <span>08. Galerie &amp; Photothèque</span>
+                <span>🖼</span>
+            </a>
+
+            <a href="{% url 'cms_reviews' %}" class="cms-nav-item {% if active_tab == 'reviews' %}active{% endif %}">
+                <span>09. Critiques &amp; Étoiles</span>
+                <span>⭐</span>
+            </a>
+
+            <a href="{% url 'cms_faqs' %}" class="cms-nav-item {% if active_tab == 'faqs' %}active{% endif %}">
+                <span>10. FAQ &amp; Politiques</span>
+                <span>❓</span>
+            </a>
+
+            <a href="{% url 'cms_schema' %}" class="cms-nav-item {% if active_tab == 'schema' %}active{% endif %}">
+                <span>11. Schéma JSON Maître</span>
+                <span>{ }</span>
+            </a>
+        </aside>
+
+        <!-- Main Workspace -->
+        <main class="cms-workspace">
+            {% if messages %}
+            <div>
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
     </div>
+    {% else %}
+    <main style="padding: 2rem; max-width: 600px; margin: 3rem auto; width: 100%;">
+        {% if messages %}
+        <div>
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block auth_content %}{% endblock %}
+    </main>
     {% endif %}
 
-    <main class="main-container">
-        {% block content %}{% endblock %}
-    </main>
-
     <footer class="footer">
-        <p>&copy; 2026 L'Étoile Royale — Salon Gastronomique & Bar à Champagne • 18 Place Vendôme, Paris • CMS Découplé Django 5</p>
+        <p>&copy; 2026 L'ÉTOILE ROYALE — SALON GASTRONOMIQUE &bull; 18 PLACE VENDÔME, PARIS &bull; CMS STUDIO DJANGO 5</p>
     </footer>
     {% block extra_js %}{% endblock %}
 </body>

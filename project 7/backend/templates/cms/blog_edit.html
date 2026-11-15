@@ -1,0 +1,90 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}L'ÉTOILE ROYALE // ÉDITER LA CHRONIQUE: {{ post.title }}{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <a href="{% url 'cms_blog' %}" style="color: var(--taupe); text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem;">
+                    &larr; RETOUR À LA GAZETTE
+                </a>
+                <span style="color: rgba(255,255,255,0.2);">/</span>
+                <span class="section-tag">ÉDITION CHRONIQUE</span>
+            </div>
+            <h1 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; margin: 0.35rem 0;">
+                {{ post.title }}
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--taupe);">
+                URL publique : <a href="http://127.0.0.1:3000/blog/{{ post.slug }}" target="_blank" style="color: var(--gold); text-decoration: none;">/blog/{{ post.slug }} ↗</a>
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="http://127.0.0.1:3000/blog/{{ post.slug }}" target="_blank" class="btn-outline">
+                APERÇU PUBLIC ↗
+            </a>
+            <button type="submit" form="editBlogForm" class="btn-gold">
+                METTRE À JOUR &rarr;
+            </button>
+        </div>
+    </div>
+</div>
+
+<form method="post" action="{% url 'cms_blog_edit' post.pk %}" id="editBlogForm">
+    {% csrf_token %}
+    <div style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 2rem;">
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+            <div>
+                <label class="form-label" for="postTitle">Titre de l'Article *</label>
+                <input type="text" id="postTitle" name="title" class="form-input" required value="{{ post.title }}">
+            </div>
+            <div>
+                <label class="form-label" for="postCat">Catégorie</label>
+                <select id="postCat" name="category" class="form-select">
+                    {% for cat in categories %}
+                        <option value="{{ cat.pk }}" {% if post.category_id == cat.pk %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+            <div>
+                <label class="form-label" for="postSlug">Slug de l'URL *</label>
+                <input type="text" id="postSlug" name="slug" class="form-input" value="{{ post.slug }}" required>
+            </div>
+            <div>
+                <label class="form-label" for="postCover">URL Image de Couverture</label>
+                <input type="url" id="postCover" name="cover_image" class="form-input" value="{{ post.cover_image }}">
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+            <div>
+                <label class="form-label" for="postAuthor">Signature / Auteur</label>
+                <input type="text" id="postAuthor" name="author_name" class="form-input" value="{{ post.author_name }}">
+            </div>
+            <div>
+                <label class="form-label" for="postRead">Temps de Lecture Estimé</label>
+                <input type="text" id="postRead" name="read_time" class="form-input" value="{{ post.read_time }}">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label class="form-label" for="postExcerpt">Résumé Éditorial</label>
+            <textarea id="postExcerpt" name="excerpt" class="form-textarea" rows="2">{{ post.excerpt }}</textarea>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label class="form-label" for="postContent">Texte Intégral de l'Article</label>
+            <textarea id="postContent" name="content" class="form-textarea" rows="12">{{ post.content }}</textarea>
+        </div>
+
+        <label style="display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; font-family: var(--font-mono); font-size: 0.85rem; color: var(--ivory);">
+            <input type="checkbox" name="is_published" {% if post.is_published %}checked{% endif %} style="accent-color: var(--gold); width: 16px; height: 16px;">
+            <span>Publier l'article en ligne</span>
+        </label>
+    </div>
+</form>
+{% endblock %}

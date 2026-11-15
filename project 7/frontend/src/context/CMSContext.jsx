@@ -53,12 +53,16 @@ export function CMSProvider({ children }) {
         loading,
         refreshContent,
         activeReservationModal,
+        isReservationOpen: activeReservationModal,
         openReservation,
         closeReservation,
         selectedDish,
         setSelectedDish,
         lightboxImage,
         setLightboxImage,
+        customPages: content?.custom_pages || [],
+        blogPosts: content?.blog_posts || [],
+        blogCategories: content?.blog_categories || [],
       }}
     >
       {children}

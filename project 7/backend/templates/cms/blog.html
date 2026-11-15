@@ -1,0 +1,178 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}L'ÉTOILE ROYALE // 06. GAZETTE & JOURNAL GASTRONOMIQUE{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="section-tag">06. GAZETTE &bull; CHRONIQUES VENDÔME</span>
+            <h1 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; margin: 0.35rem 0;">
+                GAZETTE &amp; DISPATCHES GASTRONOMIQUES
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--taupe);">
+                Publiez des essais sur la haute gastronomie, l'histoire des grands crus et les secrets de notre brigade.
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="http://127.0.0.1:3000/blog" target="_blank" class="btn-outline">
+                VOIR LE JOURNAL PUBLIC ↗
+            </a>
+            <a href="#newDispatchSection" class="btn-gold">
+                + RÉDIGER UN ARTICLE
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Articles Table -->
+<div style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 1.5rem; margin-bottom: 2.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h2 style="font-family: var(--font-display); font-size: 1.25rem;">CHRONIQUES PUBLIÉES</h2>
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--gold);">
+            {{ published_posts }} / {{ total_posts }} PUBLIÉES
+        </span>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.8rem; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--charcoal-border); color: var(--taupe); font-size: 0.7rem; text-transform: uppercase;">
+                    <th style="padding: 0.75rem 1rem; width: 70px;">COUVERTURE</th>
+                    <th style="padding: 0.75rem 1rem;">TITRE &bull; ROUTE</th>
+                    <th style="padding: 0.75rem 1rem;">CATÉGORIE</th>
+                    <th style="padding: 0.75rem 1rem;">AUTEUR &bull; LECTURE</th>
+                    <th style="padding: 0.75rem 1rem;">LECTURES</th>
+                    <th style="padding: 0.75rem 1rem;">STATUT</th>
+                    <th style="padding: 0.75rem 1rem; text-align: right;">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: top;">
+                    <td style="padding: 0.75rem 1rem;">
+                        <div style="width: 65px; height: 48px; border-radius: 3px; overflow: hidden; background: #000; border: 1px solid var(--charcoal-border);">
+                            <img src="{{ post.cover_image }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <strong style="color: #fff; font-size: 0.9rem;">{{ post.title }}</strong>
+                        <div style="color: var(--taupe); font-size: 0.72rem; margin-top: 0.2rem;">
+                            Route : <a href="http://127.0.0.1:3000/blog/{{ post.slug }}" target="_blank" style="color: var(--gold); text-decoration: none;">/blog/{{ post.slug }} ↗</a>
+                        </div>
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <span style="background: rgba(197, 164, 109, 0.15); border: 1px solid var(--gold); padding: 2px 7px; border-radius: 3px; font-size: 0.72rem; color: var(--gold);">
+                            {{ post.category.name|default:"Général" }}
+                        </span>
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <div style="color: #fff;">{{ post.author_name }}</div>
+                        <div style="color: var(--taupe); font-size: 0.7rem;">{{ post.read_time }}</div>
+                    </td>
+                    <td style="padding: 0.75rem 1rem; color: var(--gold); font-weight: 600;">
+                        {{ post.views_count }}
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        {% if post.is_published %}
+                        <span style="color: #4ade80;">● En Ligne</span>
+                        {% else %}
+                        <span style="color: #facc15;">○ Brouillon</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem 1rem; text-align: right;">
+                        <div style="display: flex; gap: 0.35rem; justify-content: flex-end;">
+                            <a href="{% url 'cms_blog_edit' post.pk %}" class="btn-gold" style="padding: 0.3rem 0.65rem; font-size: 0.72rem;">
+                                ÉDITER &rarr;
+                            </a>
+                            <form method="post" action="{% url 'cms_blog_delete' post.pk %}" onsubmit="return confirm('Confirmer la suppression de cet article ?');" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-outline" style="padding: 0.3rem 0.5rem; font-size: 0.72rem; color: #f87171;">
+                                    ✕
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="padding: 2.5rem; text-align: center; color: var(--taupe);">
+                        Aucune chronique dans la Gazette. Utilisez le formulaire ci-dessous pour composer un premier dispatch.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Compose Form -->
+<div id="newDispatchSection" style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 2rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.35rem; margin-bottom: 0.5rem;">RÉDIGER UNE NOUVELLE CHRONIQUE</h3>
+    <p style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--taupe); margin-bottom: 1.5rem;">
+        Partagez les créations du Chef, l'histoire des grands crus ou les événements exclusifs de notre maison.
+    </p>
+
+    <form method="post" action="{% url 'cms_blog' %}">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create_post">
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+            <div>
+                <label class="form-label" for="postTitle">Titre de l'Article *</label>
+                <input type="text" id="postTitle" name="title" class="form-input" required placeholder="ex: L'Émulsion au Vin Jaune et Morilles d'Hiver">
+            </div>
+            <div>
+                <label class="form-label" for="postCat">Catégorie</label>
+                <select id="postCat" name="category" class="form-select">
+                    {% for cat in categories %}
+                        <option value="{{ cat.pk }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+            <div>
+                <label class="form-label" for="postSlug">Slug de l'URL *</label>
+                <input type="text" id="postSlug" name="slug" class="form-input" required placeholder="ex: emulsion-vin-jaune-morilles">
+            </div>
+            <div>
+                <label class="form-label" for="postCover">URL Image de Couverture</label>
+                <input type="url" id="postCover" name="cover_image" class="form-input" placeholder="https://images.unsplash.com/...">
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+            <div>
+                <label class="form-label" for="postAuthor">Signature / Auteur</label>
+                <input type="text" id="postAuthor" name="author_name" class="form-input" value="Alexandre de Morbihan">
+            </div>
+            <div>
+                <label class="form-label" for="postRead">Temps de Lecture Estimé</label>
+                <input type="text" id="postRead" name="read_time" class="form-input" value="5 min de lecture">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <label class="form-label" for="postExcerpt">Résumé Éditorial (Extrait court)</label>
+            <textarea id="postExcerpt" name="excerpt" class="form-textarea" rows="2" placeholder="Accroche affichée sur la liste des chroniques..."></textarea>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <label class="form-label" for="postContent">Texte Intégral de l'Article *</label>
+            <textarea id="postContent" name="content" class="form-textarea" rows="10" required placeholder="Développez votre récit gastronomique..."></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--charcoal-border); padding-top: 1.25rem;">
+            <label style="display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; font-family: var(--font-mono); font-size: 0.8rem; color: var(--ivory);">
+                <input type="checkbox" name="is_published" checked style="accent-color: var(--gold); width: 16px; height: 16px;">
+                <span>Publier l'article en ligne immédiatement</span>
+            </label>
+            <button type="submit" class="btn-gold" style="padding: 0.75rem 2rem;">
+                PUBLIER DANS LA GAZETTE &rarr;
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

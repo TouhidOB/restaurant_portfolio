@@ -1,0 +1,32 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}L'ÉTOILE ROYALE // 11. SCHÉMA JSON MAÎTRE{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="section-tag">11. INGÉNIERIE DE DONNÉES</span>
+            <h1 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; margin: 0.35rem 0;">
+                SCHÉMA JSON MAÎTRE
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--taupe);">
+                Structure brute de l'ensemble des 15 sections, des palettes et des réglages de l'API.
+            </p>
+        </div>
+        <div>
+            <button type="submit" form="schemaForm" class="btn-gold">
+                SAUVEGARDER LE SCHÉMA &rarr;
+            </button>
+        </div>
+    </div>
+</div>
+
+<form method="post" action="{% url 'cms_schema' %}" id="schemaForm">
+    {% csrf_token %}
+    <div style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 1.75rem;">
+        <h3 style="font-family: var(--font-display); font-size: 1.25rem; margin-bottom: 1rem;">CONTENT_JSON BRUT</h3>
+        <textarea name="raw_json" class="form-textarea" rows="22" style="font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.5; color: #4ade80;">{{ raw_json }}</textarea>
+    </div>
+</form>
+{% endblock %}

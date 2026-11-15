@@ -1,0 +1,67 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}L'ÉTOILE ROYALE // 04. CARTE & PHOTOGRAPHIE CULINAIRE{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="section-tag">04. HAUTE CUISINE &bull; PHOTOGRAPHIE</span>
+            <h1 style="font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; margin: 0.35rem 0;">
+                CARTE GASTRONOMIQUE &amp; PHOTOGRAPHIE CULINAIRE
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--taupe);">
+                Supervisez les plats, les accords mets-vins, les tarifs et les clichés haute résolution de chaque création.
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="http://127.0.0.1:3000/menu" target="_blank" class="btn-outline">
+                VOIR LA CARTE FRONTEND ↗
+            </a>
+            <button type="submit" form="menuForm" class="btn-gold">
+                ENREGISTRER LA CARTE &rarr;
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Category Cards Grid Preview -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    {% for cat in categories %}
+    <div style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--charcoal-border); padding-bottom: 0.5rem;">
+            <h3 style="font-family: var(--font-display); font-size: 1.15rem; color: var(--gold);">{{ cat.name }}</h3>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--taupe);">{{ cat.items|length }} plats</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            {% for item in cat.items|slice:":3" %}
+            <div style="display: flex; gap: 0.75rem; align-items: center;">
+                <div style="width: 50px; height: 40px; border-radius: 3px; overflow: hidden; background: #000; flex-shrink: 0; border: 1px solid var(--charcoal-border);">
+                    <img src="{{ item.image|default:'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=400&q=80' }}" alt="{{ item.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                    <div style="font-size: 0.82rem; color: #fff; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ item.name }}</div>
+                    <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--gold);">{{ item.price }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Raw Menu Categories JSON Editor -->
+<form method="post" action="{% url 'cms_menu' %}" id="menuForm">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="save_menu_json">
+    <div style="background: #18191B; border: 1px solid var(--charcoal-border); border-radius: 4px; padding: 1.75rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-family: var(--font-display); font-size: 1.25rem;">ÉDITEUR STRUCTURÉ DES MENUS (JSON)</h3>
+            <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--taupe);">
+                Inclut descriptions, prix, accords mets &amp; liens photographiques
+            </span>
+        </div>
+        <textarea name="menu_categories_json" class="form-textarea" rows="20" style="font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.5; color: #4ade80;">{{ categories_json }}</textarea>
+    </div>
+</form>
+{% endblock %}

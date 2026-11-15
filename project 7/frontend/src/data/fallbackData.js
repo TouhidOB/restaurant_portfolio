@@ -168,36 +168,108 @@ export const FALLBACK_DATA = {
         id: "entrees",
         name: "Les Entrées Délicates",
         items: [
-          { name: "Foie Gras de Canard des Landes Mi-Cuit", price: "48 €", desc: "Chutney de figues de Solliès au porto vintage, brioche feuilletée tiède au sel de Guérande." },
-          { name: "Carpaccio de Saint-Jacques de la Baie de Saint-Brieuc", price: "52 €", desc: "Huile de combawa, gelée d'eau de mer iodée, copeaux de truffe noire Melanosporum." },
-          { name: "Velouté d'Artichauts Épineux & Truffe Noire", price: "44 €", desc: "Copeaux de vieux parmesan Reggiano 36 mois, tartine campagnarde au beurre de noisette." }
+          {
+            name: "Foie Gras de Canard des Landes Mi-Cuit",
+            price: "48 €",
+            desc: "Chutney de figues de Solliès au porto vintage, brioche feuilletée tiède au sel de Guérande.",
+            image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Sauternes Château Guiraud 2016"
+          },
+          {
+            name: "Carpaccio de Saint-Jacques de la Baie de Saint-Brieuc",
+            price: "52 €",
+            desc: "Huile de combawa, gelée d'eau de mer iodée, copeaux de truffe noire Melanosporum.",
+            image: "https://images.unsplash.com/photo-1533777857889-4be7c70b33f7?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Chablis Premier Cru Montmains 2021"
+          },
+          {
+            name: "Velouté d'Artichauts Épineux & Truffe Noire",
+            price: "44 €",
+            desc: "Copeaux de vieux parmesan Reggiano 36 mois, tartine campagnarde au beurre de noisette.",
+            image: "https://images.unsplash.com/photo-1547496502-affa22d38842?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Meursault Domaine des Comtes Lafon 2020"
+          }
         ]
       },
       {
         id: "poissons",
         name: "Les Poissons & Crustacés",
         items: [
-          { name: "Sole de Petit Bateau Meunière Farcie aux Écrevisses", price: "105 €", desc: "Pommes rattes du Touquet écrasées à la fourchette, beurre mousseux au citron de Menton." },
-          { name: "Noix de Saint-Jacques Dorées au Sautoir", price: "92 €", desc: "Risotto d'épeautre crémeux au safran du Quercy et émulsion de corail au vin jaune." },
-          { name: "Bar de Ligne Cuit à Basse Température", price: "98 €", desc: "Fenouil braisé à l'anis étoilé, jus d'arêtes réduit aux coquillages et salicornes fraîches." }
+          {
+            name: "Sole de Petit Bateau Meunière Farcie aux Écrevisses",
+            price: "105 €",
+            desc: "Pommes rattes du Touquet écrasées à la fourchette, beurre mousseux au citron de Menton.",
+            image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Puligny-Montrachet 1er Cru Les Folatières 2019"
+          },
+          {
+            name: "Noix de Saint-Jacques Dorées au Sautoir",
+            price: "92 €",
+            desc: "Risotto d'épeautre crémeux au safran du Quercy et émulsion de corail au vin jaune.",
+            image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Château-Chalon Vin Jaune Domaine Macle 2014"
+          },
+          {
+            name: "Bar de Ligne Cuit à Basse Température",
+            price: "98 €",
+            desc: "Fenouil braisé à l'anis étoilé, jus d'arêtes réduit aux coquillages et salicornes fraîches.",
+            image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Corton-Charlemagne Grand Cru Louis Latour 2018"
+          }
         ]
       },
       {
         id: "viandes",
         name: "Les Viandes & Gibiers Nobles",
         items: [
-          { name: "Filet de Bœuf Simmental Affiné 45 Jours", price: "110 €", desc: "Moelle rôtie aux herbes fraîches, jus perlé à la truffe noire et purée Robuchon." },
-          { name: "Carré d'Agneau de Prés-Salés en Croûte d'Herbes", price: "96 €", desc: "Ail confit de Lautrec, jus d'agneau réduit au romarin et tian de légumes confits." },
-          { name: "Ris de Veau de Lait Croustillant au Beurre Noisette", price: "102 €", desc: "Champignons morilles étuvées au vin de Madère et asperges vertes glacées." }
+          {
+            name: "Filet de Bœuf Simmental Affiné 45 Jours",
+            price: "110 €",
+            desc: "Moelle rôtie aux herbes fraîches, jus perlé à la truffe noire et purée Robuchon.",
+            image: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Pauillac Château Pichon Baron 2015"
+          },
+          {
+            name: "Carré d'Agneau de Prés-Salés en Croûte d'Herbes",
+            price: "96 €",
+            desc: "Ail confit de Lautrec, jus d'agneau réduit au romarin et tian de légumes confits.",
+            image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Hermitage Domaine Jean-Louis Chave 2017"
+          },
+          {
+            name: "Ris de Veau de Lait Croustillant au Beurre Noisette",
+            price: "102 €",
+            desc: "Champignons morilles étuvées au vin de Madère et asperges vertes glacées.",
+            image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Volnay 1er Cru Champans Marquis d'Angerville 2018"
+          }
         ]
       },
       {
         id: "desserts",
         name: "La Pâtisserie de Haute Voltige",
         items: [
-          { name: "Millefeuille Traditionnel à la Vanille de Tahiti", price: "36 €", desc: "Feuilletage inversé caramélisé croustillant, crème diplomate légère et caramel beurre salé." },
-          { name: "Tartelette Sablée aux Fraises des Bois & Verveine", price: "38 €", desc: "Crème d'amandes douces de Provence, sorbet vivifiant à la verveine du potager." },
-          { name: "Chariot de Fromages Affinés par Maître Cantin", price: "35 €", desc: "Sélection d'exception de terroirs français accompagnés de confitures artisanales et pain aux noix." }
+          {
+            name: "Millefeuille Traditionnel à la Vanille de Tahiti",
+            price: "36 €",
+            desc: "Feuilletage inversé caramélisé croustillant, crème diplomate légère et caramel beurre salé.",
+            image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Champagne Krug Grande Cuvée 170ème Édition"
+          },
+          {
+            name: "Tartelette Sablée aux Fraises des Bois & Verveine",
+            price: "38 €",
+            desc: "Crème d'amandes douces de Provence, sorbet vivifiant à la verveine du potager.",
+            image: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Muscat de Beaumes-de-Venise Domaine Perrin 2020"
+          },
+          {
+            name: "Chariot de Fromages Affinés par Maître Cantin",
+            price: "35 €",
+            desc: "Sélection d'exception de terroirs français accompagnés de confitures artisanales et pain aux noix.",
+            image: "https://images.unsplash.com/photo-1452195100486-9cc805987862?auto=format&fit=crop&w=800&q=85",
+            wine_pairing: "Châteauneuf-du-Pape Blanc Château de Beaucastel 2021"
+          }
         ]
       }
     ]
@@ -348,5 +420,80 @@ export const FALLBACK_DATA = {
       { days: "Mardi au Samedi", hours: "19h00 – 23h30 (Dîner uniquement)" },
       { days: "Dimanche & Lundi", hours: "Fermeture hebdomadaire (Ouverture sur privatisation)" }
     ]
-  }
+  },
+  custom_pages: [
+    {
+      id: 1,
+      slug: "privatisation-salons-vendome",
+      title: "Privatisation & Salons Particuliers Vendôme",
+      meta_description: "Organisez vos réceptions privées, déjeuners d'affaires d'exception et soirées de gala au sein de nos salons historiques de 1788.",
+      blocks: [
+        {
+          type: "hero",
+          title: "Les Salons d'Exception de la Place Vendôme",
+          subtitle: "Privatisations & Haute Réception Privée",
+          bg_image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=85",
+          cta_text: "Demander une Brochure de Privatisation",
+          cta_link: "#contact"
+        },
+        {
+          type: "split",
+          title: "L'Écrin Historique du Salon Rohan",
+          lead: "Moulures d'époque, lustres d'époque et service de majordome dédié pour réunir jusqu'à 24 convives dans une discrétion absolue.",
+          body: "Bénéficiant d'une entrée privée directe depuis la cour d'honneur, le Salon Rohan offre un confort diplomatique sans équivalent à Paris.",
+          image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=85",
+          image_alt: "Salon Rohan L'Étoile Royale"
+        },
+        {
+          type: "features",
+          title: "Prestations Sur Mesure",
+          items: [
+            { title: "Menu Dégustation Personnalisé", desc: "Création exclusive par le Chef Alexandre de Morbihan accordée à vos souhaits." },
+            { title: "Accords Sommellerie Rares", desc: "Sélection de flacons de notre cave du XVIIIe siècle guidée par notre Chef Sommelier." },
+            { title: "Service Majordome & Voiturier", desc: "Accueil sur tapis pourpre, conciergerie privée et voiturier dédié tout au long de l'événement." }
+          ]
+        },
+        {
+          type: "cta",
+          title: "Concevoir Votre Événement Privé",
+          subtitle: "Notre directrice des réceptions se tient à votre disposition pour imaginer un moment inoubliable.",
+          button_text: "Contacter le Maître de Réception",
+          button_link: "/contact"
+        }
+      ]
+    }
+  ],
+  blog_categories: [
+    { id: 1, name: "Haute Gastronomie", slug: "haute-gastronomie", description: "Les coulisses des créations d'exception et techniques de brigade." },
+    { id: 2, name: "Art de la Cave", slug: "art-de-la-cave", description: "Les grands millésimes et trésors oenologiques sous la Place Vendôme." },
+    { id: 3, name: "Héritage & Salons", slug: "heritage-salons", description: "L'histoire illustre de l'hôtel particulier et l'art de recevoir parisien." }
+  ],
+  blog_posts: [
+    {
+      id: 1,
+      slug: "art-des-sauces-nobles-secret-alexandre",
+      title: "L'Art des Sauces Nobles : Le Secret du Chef Alexandre de Morbihan",
+      category: { id: 1, name: "Haute Gastronomie", slug: "haute-gastronomie" },
+      cover_image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=85",
+      excerpt: "Découvrez comment notre brigade perpétue les réductions lentes de 72 heures pour sublimer le homard bleu et le pigeonneau.",
+      content: "Dans les cuisines de L'Étoile Royale, la saucière est le cœur battant du piano. Le Chef Alexandre de Morbihan insiste sur la patience infinie que requiert un fond parfait. Chaque réduction s'opère à feu très doux, écumée avec recueillement, avant d'être montée au beurre cru demi-sel juste avant l'envoi. 'Une sauce n'est pas un artifice, elle est le trait d'union spirituel qui rassemble l'ensemble des éléments de l'assiette,' rappelle Alexandre. Ainsi le jus perlé aux airelles sauvages qui escorte le pigeonneau impérial exige-t-il trois jours d'infusion et de concentration pour atteindre son éclat d'ambre sombre.",
+      author_name: "Alexandre de Morbihan",
+      read_time: "5 min de lecture",
+      views_count: 342,
+      published_at: "2026-11-12T10:00:00Z"
+    },
+    {
+      id: 2,
+      slug: "tresors-caves-voutees-millesimes-oublies",
+      title: "Trésors des Caves Voûtées : À la Recherche des Millésimes Oubliés",
+      category: { id: 2, name: "Art de la Cave", slug: "art-de-la-cave" },
+      cover_image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1200&q=85",
+      excerpt: "Plongée dans la pénombre de nos cryptes du XVIIIe siècle où reposent 3 200 flacons rares et magnums mythiques.",
+      content: "Six mètres sous les pavés de la Place Vendôme s'étendent les galeries voûtées de nos caves historiques. À température constante de 12 degrés Celsius et 75% d'hygrométrie naturelle, des trésors inestimables continuent leur lente maturation : Romanée-Conti 1990, Château d'Yquem 1983, champagnes confidentiels dégorgés à la commande. Notre Chef Sommelier vous convie à une odyssée œnologique rare, où chaque bouteille débouchée devient une page vivante de l'histoire viticole française.",
+      author_name: "Jean-Baptiste La Tour",
+      read_time: "7 min de lecture",
+      views_count: 518,
+      published_at: "2026-11-08T14:30:00Z"
+    }
+  ]
 };
