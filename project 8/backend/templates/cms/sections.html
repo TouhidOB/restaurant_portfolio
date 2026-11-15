@@ -1,0 +1,43 @@
+{% extends "cms/base.html" %}
+
+{% block title %}15-Section Editor | Urban Table CMS{% endblock %}
+{% block page_title %}15-Section Content Editor{% endblock %}
+{% block page_subtitle %}Direct JSON editor for every warehouse and culinary section.{% endblock %}
+
+{% block content %}
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+        <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: center;">
+            <label style="font-size: 0.85rem; color: var(--amber); text-transform: uppercase; font-weight: 600;">
+                Select Section:
+            </label>
+            <select name="section_key" id="section_selector" onchange="loadSection()"
+                    style="padding: 0.65rem 1rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.4); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+                {% for key, label in sections_list %}
+                <option value="{{ key }}">{{ label }} ({{ key }})</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn-copper" style="margin-left: auto;">
+                Save Active Section
+            </button>
+        </div>
+
+        <textarea name="section_data" id="section_data" rows="22"
+                  style="width: 100%; font-family: var(--font-mono); font-size: 0.85rem; background: #141517; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 6px; padding: 1rem; color: #a5f3fc; line-height: 1.5; resize: vertical;"></textarea>
+    </form>
+</div>
+
+<script>
+const contentMap = {{ content|json_script:"content-data" }};
+const data = JSON.parse(document.getElementById('content-data').textContent);
+
+function loadSection() {
+    const key = document.getElementById('section_selector').value;
+    const val = data[key] || {};
+    document.getElementById('section_data').value = JSON.stringify(val, null, 2);
+}
+
+loadSection();
+</script>
+{% endblock %}

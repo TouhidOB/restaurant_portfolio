@@ -1,0 +1,31 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Menu & Meal Photography Studio | Urban Table CMS{% endblock %}
+{% block page_title %}Smokehouse Menu & Dish Photography Studio{% endblock %}
+{% block page_subtitle %}Manage open hearth courses, wood smoke cuts, dish photos, prices, and wine pairings.{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(184, 115, 69, 0.2); padding-bottom: 1rem;">
+            <div>
+                <h3 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--offwhite); text-transform: uppercase;">
+                    Menu Categories & Dish Photography JSON
+                </h3>
+                <p style="color: var(--concrete); font-size: 0.85rem; margin-top: 0.25rem;">
+                    Ensure each dish contains an image URL for the meal photography repertoire.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <button type="submit" class="btn-copper">
+                    Save Menu Repertoire
+                </button>
+            </div>
+        </div>
+
+        <textarea name="menu_json" rows="26"
+                  style="width: 100%; font-family: var(--font-mono); font-size: 0.85rem; background: #141517; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 6px; padding: 1rem; color: #a5f3fc; line-height: 1.5; resize: vertical;">{{ menu_json_str }}</textarea>
+    </div>
+</form>
+{% endblock %}

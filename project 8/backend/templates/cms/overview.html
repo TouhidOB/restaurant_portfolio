@@ -1,0 +1,159 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Warehouse Overview & KPIs | Urban Table CMS{% endblock %}
+{% block page_title %}Executive Warehouse Overview{% endblock %}
+{% block page_subtitle %}Live Covers, Open Hearth Shifts, and Content Operations{% endblock %}
+
+{% block content %}
+<!-- Metric KPI Cards -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+    <div class="card" style="margin-bottom: 0;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--amber); display: block; margin-bottom: 0.5rem; font-weight: 600;">
+            Pending Inquiries
+        </span>
+        <div style="font-family: var(--font-display); font-size: 2.8rem; color: var(--offwhite); line-height: 1;">
+            {{ pending_reservations }}
+        </div>
+        <div style="font-size: 0.8rem; color: var(--concrete); margin-top: 0.5rem;">Awaiting Pitmaster / Host confirmation</div>
+    </div>
+
+    <div class="card" style="margin-bottom: 0;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: #4ade80; display: block; margin-bottom: 0.5rem; font-weight: 600;">
+            Confirmed Covers
+        </span>
+        <div style="font-family: var(--font-display); font-size: 2.8rem; color: var(--offwhite); line-height: 1;">
+            {{ confirmed_reservations }}
+        </div>
+        <div style="font-size: 0.8rem; color: var(--concrete); margin-top: 0.5rem;">Approved warehouse bookings</div>
+    </div>
+
+    <div class="card" style="margin-bottom: 0;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--copper); display: block; margin-bottom: 0.5rem; font-weight: 600;">
+            Custom Pages
+        </span>
+        <div style="font-family: var(--font-display); font-size: 2.8rem; color: var(--offwhite); line-height: 1;">
+            {{ custom_pages_count }}
+        </div>
+        <div style="font-size: 0.8rem; color: var(--concrete); margin-top: 0.5rem;">Visual builder standalone pages</div>
+    </div>
+
+    <div class="card" style="margin-bottom: 0;">
+        <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--amber); display: block; margin-bottom: 0.5rem; font-weight: 600;">
+            Smokehouse Journal
+        </span>
+        <div style="font-family: var(--font-display); font-size: 2.8rem; color: var(--offwhite); line-height: 1;">
+            {{ blog_posts_count }}
+        </div>
+        <div style="font-size: 0.8rem; color: var(--concrete); margin-top: 0.5rem;">Dispatches & open flame stories</div>
+    </div>
+</div>
+
+<!-- Two Column Layout: Recent Reservations & Quick Dispatch -->
+<div style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 2rem;">
+    <!-- Recent Reservations -->
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(184, 115, 69, 0.2); padding-bottom: 1rem;">
+            <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--offwhite); text-transform: uppercase; letter-spacing: 0.05em;">
+                Recent Shift Bookings
+            </h3>
+            <a href="{% url 'cms_reservations' %}" style="color: var(--amber); text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                Host Desk ➔
+            </a>
+        </div>
+
+        {% if recent_reservations %}
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+                <thead>
+                    <tr style="text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: var(--steel);">
+                        <th style="padding: 0.6rem 0.5rem;">REF</th>
+                        <th style="padding: 0.6rem 0.5rem;">GUEST</th>
+                        <th style="padding: 0.6rem 0.5rem;">SHIFT</th>
+                        <th style="padding: 0.6rem 0.5rem;">DATE & TIME</th>
+                        <th style="padding: 0.6rem 0.5rem;">STATUS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in recent_reservations %}
+                    <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.04);">
+                        <td style="padding: 0.75rem 0.5rem; font-family: var(--font-mono); color: var(--amber); font-weight: 600;">
+                            {{ res.reference_code|default:"URBAN-TBD" }}
+                        </td>
+                        <td style="padding: 0.75rem 0.5rem; color: var(--offwhite); font-weight: 500;">
+                            {{ res.full_name }}
+                            <span style="display: block; font-size: 0.75rem; color: var(--steel);">{{ res.guests }}</span>
+                        </td>
+                        <td style="padding: 0.75rem 0.5rem;">
+                            {% if res.shift == 'lunch' %}
+                            <span style="color: #facc15; font-size: 0.78rem; text-transform: uppercase; font-weight: 600;">☀️ Lunch</span>
+                            {% else %}
+                            <span style="color: #c084fc; font-size: 0.78rem; text-transform: uppercase; font-weight: 600;">🌙 Dinner</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 0.75rem 0.5rem; color: var(--concrete);">
+                            {{ res.date|date:"M d" }} @ {{ res.time }}
+                        </td>
+                        <td style="padding: 0.75rem 0.5rem;">
+                            {% if res.status == 'confirmed' %}
+                            <span style="background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid #22c55e; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Confirmed</span>
+                            {% elif res.status == 'seated' %}
+                            <span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid #38bdf8; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Seated</span>
+                            {% elif res.status == 'cancelled' %}
+                            <span style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid #ef4444; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Cancelled</span>
+                            {% else %}
+                            <span style="background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid #eab308; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; text-transform: uppercase; font-weight: 600;">Pending</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color: var(--steel); font-size: 0.9rem;">No reservations registered yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Recent Journal Dispatches & Quick Operations -->
+    <div>
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(184, 115, 69, 0.2); padding-bottom: 0.75rem;">
+                <h3 style="font-family: var(--font-display); font-size: 1.3rem; color: var(--offwhite); text-transform: uppercase;">
+                    Smokehouse Journal
+                </h3>
+                <a href="{% url 'cms_blog' %}" style="color: var(--amber); text-decoration: none; font-size: 0.85rem; font-weight: 600;">
+                    Manage ➔
+                </a>
+            </div>
+
+            {% for post in recent_posts %}
+            <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                <div style="font-size: 0.75rem; color: var(--amber); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">
+                    {{ post.category.name|default:"General Dispatch" }}
+                </div>
+                <a href="{% url 'cms_blog_edit' pk=post.pk %}" style="font-family: var(--font-display); font-size: 1.1rem; color: var(--offwhite); text-decoration: none; display: block; margin: 0.25rem 0;">
+                    {{ post.title }}
+                </a>
+                <div style="font-size: 0.78rem; color: var(--steel);">
+                    By {{ post.author_name }} &bull; {{ post.views_count }} views
+                </div>
+            </div>
+            {% empty %}
+            <p style="color: var(--steel); font-size: 0.9rem;">No dispatches published yet.</p>
+            {% endfor %}
+        </div>
+
+        <div class="card" style="background: linear-gradient(135deg, rgba(145, 77, 55, 0.25) 0%, rgba(37, 39, 41, 0.8) 100%); border-color: rgba(184, 115, 69, 0.4);">
+            <h4 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--amber); margin-bottom: 0.5rem; text-transform: uppercase;">
+                Elementor Visual Builder
+            </h4>
+            <p style="color: var(--concrete); font-size: 0.85rem; line-height: 1.6; margin-bottom: 1.25rem;">
+                Create new landing pages, buyout presentations, and seasonal menus using modular canvas blocks.
+            </p>
+            <a href="{% url 'cms_pages' %}" class="btn-copper" style="width: 100%; justify-content: center;">
+                Launch Page Builder
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

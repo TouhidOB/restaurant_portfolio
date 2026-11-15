@@ -1,0 +1,101 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Edit Dispatch: {{ post.title }} | Urban Table CMS{% endblock %}
+{% block page_title %}Edit Smokehouse Dispatch{% endblock %}
+{% block page_subtitle %}Updating Journal Article: {{ post.title }}{% endblock %}
+
+{% block header_actions %}
+<a href="http://127.0.0.1:3000/blog/{{ post.slug }}" target="_blank" class="btn-secondary">
+    ↗ View Live Article
+</a>
+<a href="{% url 'cms_blog' %}" class="btn-secondary">
+    ← Back to Journal
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <form method="post">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    Article Title *
+                </label>
+                <input type="text" name="title" value="{{ post.title }}" required
+                       style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.95rem;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    Journal Category
+                </label>
+                <select name="category" style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if post.category and post.category.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    URL Slug
+                </label>
+                <input type="text" name="slug" value="{{ post.slug }}" required
+                       style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem; font-family: var(--font-mono);">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    Author Name
+                </label>
+                <input type="text" name="author_name" value="{{ post.author_name }}"
+                       style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    Read Time
+                </label>
+                <input type="text" name="read_time" value="{{ post.read_time }}"
+                       style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                Cover Photography URL
+            </label>
+            <input type="url" name="cover_image" value="{{ post.cover_image }}"
+                   style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                Article Excerpt
+            </label>
+            <textarea name="excerpt" rows="2"
+                      style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem; resize: vertical;">{{ post.excerpt }}</textarea>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                Full Article Content *
+            </label>
+            <textarea name="content" rows="12" required
+                      style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem; resize: vertical; line-height: 1.6;">{{ post.content }}</textarea>
+        </div>
+
+        <div style="margin-bottom: 1.75rem; display: flex; align-items: center; gap: 0.75rem;">
+            <input type="checkbox" id="is_published" name="is_published" {% if post.is_published %}checked{% endif %}
+                   style="width: 18px; height: 18px; accent-color: var(--brick);">
+            <label for="is_published" style="font-size: 0.88rem; color: var(--offwhite); cursor: pointer;">
+                Published Live in Journal
+            </label>
+        </div>
+
+        <button type="submit" class="btn-copper" style="padding: 0.85rem 2.2rem;">
+            Save Article Changes ➔
+        </button>
+    </form>
+</div>
+{% endblock %}

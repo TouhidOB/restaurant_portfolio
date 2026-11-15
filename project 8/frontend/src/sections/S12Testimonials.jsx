@@ -7,7 +7,7 @@ export default function S12Testimonials() {
   const items = test.items || [];
 
   return (
-    <section className="py-section" style={{ backgroundColor: 'var(--color-graphite)', position: 'relative' }}>
+    <section id="testimonials" className="py-section" style={{ backgroundColor: 'var(--color-graphite)', position: 'relative' }}>
       <div className="container">
         <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 4rem' }}>
           <span className="section-label">{test.subtitle || 'Honest Feedback From Our Community'}</span>

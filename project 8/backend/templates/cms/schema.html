@@ -1,0 +1,26 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Master JSON Schema | Urban Table CMS{% endblock %}
+{% block page_title %}Master Website JSON Schema{% endblock %}
+{% block page_subtitle %}Full reactive state tree synchronized with the React 18 client.{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(184, 115, 69, 0.2); padding-bottom: 1rem;">
+            <div>
+                <h3 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--offwhite); text-transform: uppercase;">
+                    Root Content State Tree
+                </h3>
+            </div>
+            <button type="submit" class="btn-copper">
+                Save & Deploy Master Schema
+            </button>
+        </div>
+
+        <textarea name="content_json" rows="26"
+                  style="width: 100%; font-family: var(--font-mono); font-size: 0.82rem; background: #141517; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 6px; padding: 1rem; color: #a5f3fc; line-height: 1.5; resize: vertical;">{{ content_json_str }}</textarea>
+    </div>
+</form>
+{% endblock %}

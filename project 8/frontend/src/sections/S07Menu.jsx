@@ -15,14 +15,16 @@ export default function S07Menu() {
     if (!searchQuery) return true;
     const q = searchQuery.toLowerCase();
     return (
-      item.name.toLowerCase().includes(q) ||
-      item.desc.toLowerCase().includes(q) ||
-      (item.dietary && item.dietary.toLowerCase().includes(q))
+      (item.name && item.name.toLowerCase().includes(q)) ||
+      (item.desc && item.desc.toLowerCase().includes(q)) ||
+      (item.description && item.description.toLowerCase().includes(q)) ||
+      (item.dietary && item.dietary.toLowerCase().includes(q)) ||
+      (item.pairing && item.pairing.toLowerCase().includes(q))
     );
   });
 
   return (
-    <section id="menu" className="py-section" style={{ backgroundColor: 'var(--color-black)', position: 'relative' }}>
+    <section id="menu" className="py-section" style={{ backgroundColor: 'var(--color-black, #111314)', position: 'relative' }}>
       <div className="container">
         {/* Section Header */}
         <div style={{ textAlign: 'center', maxWidth: '750px', margin: '0 auto 3rem' }}>
@@ -39,21 +41,21 @@ export default function S07Menu() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="🔍 Search dishes, smoked meats, ingredients..."
+            placeholder="🔍 Search dishes, smoked meats, pairings..."
             style={{
               width: '100%',
               padding: '0.85rem 1.25rem',
-              backgroundColor: 'var(--color-graphite)',
-              border: '1px solid var(--color-border)',
+              backgroundColor: 'var(--color-graphite, #252729)',
+              border: '1px solid var(--color-border, #3a3d40)',
               borderRadius: '2px',
-              color: 'var(--color-offwhite)',
-              fontFamily: 'var(--font-body)',
+              color: 'var(--color-offwhite, #F1EEE7)',
+              fontFamily: 'var(--font-body, Manrope)',
               fontSize: '0.95rem',
               outline: 'none',
               transition: 'border-color 0.2s',
             }}
-            onFocus={(e) => (e.target.style.borderColor = 'var(--color-copper)')}
-            onBlur={(e) => (e.target.style.borderColor = 'var(--color-border)')}
+            onFocus={(e) => (e.target.style.borderColor = 'var(--color-copper, #B87345)')}
+            onBlur={(e) => (e.target.style.borderColor = 'var(--color-border, #3a3d40)')}
           />
         </div>
 
@@ -66,7 +68,7 @@ export default function S07Menu() {
               gap: '0.75rem',
               flexWrap: 'wrap',
               marginBottom: '3.5rem',
-              borderBottom: '2px solid var(--color-brick)',
+              borderBottom: '2px solid var(--color-brick, #914D37)',
               paddingBottom: '1.25rem',
             }}
           >
@@ -75,12 +77,12 @@ export default function S07Menu() {
                 key={cat.id}
                 onClick={() => setActiveCat(cat.id)}
                 style={{
-                  background: activeCat === cat.id ? 'var(--color-copper)' : 'transparent',
-                  color: activeCat === cat.id ? 'var(--color-black)' : 'var(--color-concrete)',
+                  background: activeCat === cat.id ? 'var(--color-copper, #B87345)' : 'transparent',
+                  color: activeCat === cat.id ? 'var(--color-black, #111314)' : 'var(--color-concrete, #B7B4AC)',
                   border: 'none',
                   borderRadius: '2px',
                   padding: '0.65rem 1.4rem',
-                  fontFamily: 'var(--font-body)',
+                  fontFamily: 'var(--font-body, Manrope)',
                   fontSize: '0.85rem',
                   fontWeight: '800',
                   letterSpacing: '0.08em',
@@ -95,69 +97,164 @@ export default function S07Menu() {
           </div>
         )}
 
-        {/* Menu Items Grid */}
+        {/* Menu Items Grid with Meal Photography */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
             gap: '2rem',
-            maxWidth: '1100px',
+            maxWidth: '1150px',
             margin: '0 auto',
           }}
         >
           {displayedItems.length > 0 ? (
             displayedItems.map((item, idx) => (
               <div
-                key={idx}
+                key={item.id || idx}
                 onClick={() => setSelectedDish(item)}
                 style={{
-                  backgroundColor: 'var(--color-black-card)',
+                  backgroundColor: 'var(--color-black-card, #181A1C)',
                   border: '1px solid rgba(255, 255, 255, 0.08)',
                   borderRadius: '2px',
-                  padding: '1.75rem',
+                  overflow: 'hidden',
                   cursor: 'pointer',
                   transition: 'all 0.25s ease',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--color-copper)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.borderColor = 'var(--color-copper, #B87345)';
+                  e.currentTarget.style.transform = 'translateY(-3px)';
+                  const img = e.currentTarget.querySelector('img');
+                  if (img) img.style.transform = 'scale(1.05)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
                   e.currentTarget.style.transform = 'translateY(0)';
+                  const img = e.currentTarget.querySelector('img');
+                  if (img) img.style.transform = 'scale(1)';
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
-                  <h4 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', color: 'var(--color-offwhite)', textTransform: 'uppercase' }}>
-                    {item.name}
-                  </h4>
-                  <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.35rem', color: 'var(--color-copper)', fontWeight: 700, marginLeft: '1rem' }}>
-                    {item.price}
-                  </span>
-                </div>
+                {/* Dish Photo */}
+                {item.image && (
+                  <div style={{ height: '210px', overflow: 'hidden', position: 'relative', background: '#1c1e20' }}>
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.4s ease',
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '0.85rem',
+                        right: '0.85rem',
+                        background: 'rgba(17, 19, 20, 0.85)',
+                        border: '1px solid var(--color-copper, #B87345)',
+                        color: 'var(--color-copper, #B87345)',
+                        fontFamily: 'var(--font-display, Oswald)',
+                        fontWeight: 700,
+                        fontSize: '1.15rem',
+                        padding: '0.2rem 0.65rem',
+                        borderRadius: '2px',
+                      }}
+                    >
+                      {item.price}
+                    </div>
+                  </div>
+                )}
 
-                <p style={{ color: 'var(--color-concrete)', fontSize: '0.88rem', lineHeight: '1.6', marginBottom: '0.75rem' }}>
-                  {item.desc}
-                </p>
+                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+                    <h4
+                      style={{
+                        fontFamily: 'var(--font-display, Oswald)',
+                        fontSize: '1.25rem',
+                        color: 'var(--color-offwhite, #F1EEE7)',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.03em',
+                      }}
+                    >
+                      {item.name}
+                    </h4>
+                    {!item.image && (
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-display, Oswald)',
+                          fontSize: '1.3rem',
+                          color: 'var(--color-copper, #B87345)',
+                          fontWeight: 700,
+                        }}
+                      >
+                        {item.price}
+                      </span>
+                    )}
+                  </div>
 
-                {item.dietary && (
-                  <span
+                  <p
                     style={{
-                      display: 'inline-block',
-                      color: 'var(--color-copper)',
-                      fontSize: '0.72rem',
-                      letterSpacing: '0.1em',
-                      textTransform: 'uppercase',
-                      fontWeight: 800,
+                      color: 'var(--color-concrete, #B7B4AC)',
+                      fontSize: '0.88rem',
+                      lineHeight: '1.6',
+                      marginBottom: '1rem',
+                      flex: 1,
                     }}
                   >
-                    ✦ {item.dietary}
-                  </span>
-                )}
+                    {item.desc || item.description}
+                  </p>
+
+                  {item.pairing && (
+                    <div
+                      style={{
+                        fontSize: '0.78rem',
+                        color: 'var(--color-amber, #E9A24B)',
+                        marginBottom: '0.85rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                      }}
+                    >
+                      <span>🍺</span>
+                      <span>Pairing: {item.pairing}</span>
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    {item.dietary ? (
+                      <span
+                        style={{
+                          color: 'var(--color-copper, #B87345)',
+                          fontSize: '0.72rem',
+                          letterSpacing: '0.1em',
+                          textTransform: 'uppercase',
+                          fontWeight: 800,
+                        }}
+                      >
+                        ✦ {item.dietary}
+                      </span>
+                    ) : <span />}
+
+                    <span
+                      style={{
+                        color: 'var(--color-concrete, #B7B4AC)',
+                        fontSize: '0.78rem',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      View Details →
+                    </span>
+                  </div>
+                </div>
               </div>
             ))
           ) : (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: 'var(--color-concrete)', padding: '3rem' }}>
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: 'var(--color-concrete, #B7B4AC)', padding: '3rem' }}>
               No dishes found matching "{searchQuery}".
             </div>
           )}

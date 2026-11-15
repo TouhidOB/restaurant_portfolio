@@ -1,0 +1,175 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Smokehouse Journal & Dispatches | Urban Table CMS{% endblock %}
+{% block page_title %}Smokehouse Journal & Dispatches{% endblock %}
+{% block page_subtitle %}Manage articles, open fire techniques, dry-aging stories, and warehouse chronicles.{% endblock %}
+
+{% block header_actions %}
+<a href="#newDispatchModal" class="btn-copper">
+    + New Journal Dispatch
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Dispatches Table -->
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(184, 115, 69, 0.2); padding-bottom: 1rem;">
+        <h3 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--offwhite); text-transform: uppercase;">
+            Published Journal Articles
+        </h3>
+        <span style="font-size: 0.82rem; color: var(--amber); font-family: var(--font-mono); font-weight: 600;">
+            {{ posts|length }} Dispatches Active
+        </span>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: var(--steel); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                    <th style="padding: 0.75rem 1rem;">Title</th>
+                    <th style="padding: 0.75rem 1rem;">Category</th>
+                    <th style="padding: 0.75rem 1rem;">Author</th>
+                    <th style="padding: 0.75rem 1rem;">Read Time</th>
+                    <th style="padding: 0.75rem 1rem;">Views</th>
+                    <th style="padding: 0.75rem 1rem;">Published</th>
+                    <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.04);">
+                    <td style="padding: 0.85rem 1rem; color: var(--offwhite); font-weight: 600;">
+                        {{ post.title }}
+                        <div style="color: var(--amber); font-size: 0.75rem; font-family: var(--font-mono); margin-top: 0.2rem;">
+                            /blog/{{ post.slug }}
+                        </div>
+                    </td>
+                    <td style="padding: 0.85rem 1rem;">
+                        <span style="background: rgba(184, 115, 69, 0.2); border: 1px solid var(--copper); color: var(--amber); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
+                            {{ post.category.name|default:"General" }}
+                        </span>
+                    </td>
+                    <td style="padding: 0.85rem 1rem; color: var(--concrete);">
+                        {{ post.author_name }}
+                    </td>
+                    <td style="padding: 0.85rem 1rem; color: var(--steel); font-size: 0.8rem;">
+                        {{ post.read_time }}
+                    </td>
+                    <td style="padding: 0.85rem 1rem; color: var(--amber); font-family: var(--font-mono); font-weight: 600;">
+                        {{ post.views_count }}
+                    </td>
+                    <td style="padding: 0.85rem 1rem; color: var(--steel); font-size: 0.8rem;">
+                        {{ post.published_at|date:"M d, Y" }}
+                    </td>
+                    <td style="padding: 0.85rem 1rem; text-align: right;">
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <a href="{% url 'cms_blog_edit' pk=post.pk %}" class="btn-copper" style="padding: 0.35rem 0.85rem; font-size: 0.75rem;">
+                                Edit
+                            </a>
+                            <form method="post" action="{% url 'cms_blog_delete' pk=post.pk %}" onsubmit="return confirm('Delete this journal article?');" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-secondary" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; color: #f87171; border-color: rgba(239, 68, 68, 0.3);">
+                                    ✕
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="padding: 2.5rem; text-align: center; color: var(--steel);">
+                        No journal dispatches published yet. Create one below.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- New Dispatch Form -->
+<div id="newDispatchModal" class="card">
+    <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--offwhite); margin-bottom: 0.5rem; text-transform: uppercase;">
+        Author New Smokehouse Dispatch
+    </h3>
+    <p style="color: var(--concrete); font-size: 0.85rem; margin-bottom: 1.75rem;">
+        Publish an open flame story, cut breakdown, or warehouse history article to the public frontend blog.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    Article Title *
+                </label>
+                <input type="text" name="title" required placeholder="e.g. The Anatomy of an 850° Wood Hearth: Hickory, Oak & Smoke"
+                       style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.95rem;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    Journal Category
+                </label>
+                <select name="category" style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+                    {% for cat in categories %}
+                    <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    URL Slug
+                </label>
+                <input type="text" name="slug" placeholder="e.g. anatomy-850-wood-hearth"
+                       style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem; font-family: var(--font-mono);">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    Author Name
+                </label>
+                <input type="text" name="author_name" value="Pitmaster Marcus Vance"
+                       style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    Read Time
+                </label>
+                <input type="text" name="read_time" value="5 min read"
+                       style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                Cover Photography URL
+            </label>
+            <input type="url" name="cover_image" placeholder="https://images.unsplash.com/..."
+                   value="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=85"
+                   style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+            <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                Article Excerpt (Summary for Cards)
+            </label>
+            <textarea name="excerpt" rows="2" placeholder="Brief 1-2 sentence lead into the article..."
+                      style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem; resize: vertical;"></textarea>
+        </div>
+
+        <div style="margin-bottom: 1.75rem;">
+            <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                Full Article Content *
+            </label>
+            <textarea name="content" rows="8" required placeholder="Write the full smokehouse article body..."
+                      style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem; resize: vertical;"></textarea>
+        </div>
+
+        <button type="submit" class="btn-copper" style="padding: 0.85rem 2rem;">
+            Publish Journal Dispatch ➔
+        </button>
+    </form>
+</div>
+{% endblock %}

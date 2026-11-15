@@ -1,0 +1,188 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Visual Page Builder: {{ page.title }} | Urban Table CMS{% endblock %}
+{% block page_title %}Elementor-Style Visual Page Builder{% endblock %}
+{% block page_subtitle %}Editing Modular Canvas for: {{ page.title }}{% endblock %}
+
+{% block header_actions %}
+<a href="http://127.0.0.1:3000/page/{{ page.slug }}" target="_blank" class="btn-secondary">
+    ↗ View Live Page
+</a>
+<a href="{% url 'cms_pages' %}" class="btn-secondary">
+    ← Back to Pages
+</a>
+{% endblock %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 2rem; align-items: start;">
+        <!-- Left: Visual Block Canvas & Editor -->
+        <div>
+            <!-- Block Palette Toolbar -->
+            <div class="card" style="padding: 1.5rem; margin-bottom: 1.5rem; border-color: rgba(233, 162, 75, 0.4);">
+                <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--amber); margin-bottom: 0.75rem; font-weight: 700;">
+                    Visual Block Palette — Click to Append Component
+                </div>
+                <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+                    <button type="button" onclick="insertBlock('hero')" class="btn-copper" style="padding: 0.45rem 0.85rem; font-size: 0.75rem;">
+                        + Hero Section
+                    </button>
+                    <button type="button" onclick="insertBlock('split')" class="btn-copper" style="padding: 0.45rem 0.85rem; font-size: 0.75rem;">
+                        + Split Banner
+                    </button>
+                    <button type="button" onclick="insertBlock('features')" class="btn-copper" style="padding: 0.45rem 0.85rem; font-size: 0.75rem;">
+                        + Features Grid
+                    </button>
+                    <button type="button" onclick="insertBlock('cta')" class="btn-copper" style="padding: 0.45rem 0.85rem; font-size: 0.75rem;">
+                        + CTA Banner
+                    </button>
+                    <button type="button" onclick="insertBlock('reservation')" class="btn-copper" style="padding: 0.45rem 0.85rem; font-size: 0.75rem;">
+                        + Reservation Unit
+                    </button>
+                    <button type="button" onclick="insertBlock('faq')" class="btn-copper" style="padding: 0.45rem 0.85rem; font-size: 0.75rem;">
+                        + FAQ Accordion
+                    </button>
+                </div>
+            </div>
+
+            <!-- Block Hierarchy JSON Editor -->
+            <div class="card" style="padding: 1.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--offwhite); text-transform: uppercase;">
+                        Visual Block Hierarchy & Parameters
+                    </h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="button" onclick="formatJSON()" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                            Format JSON
+                        </button>
+                    </div>
+                </div>
+
+                <textarea id="blocks_json" name="blocks_json" rows="22"
+                          style="width: 100%; font-family: var(--font-mono); font-size: 0.85rem; background: #141517; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 6px; padding: 1rem; color: #a5f3fc; line-height: 1.5; resize: vertical;">{{ blocks_json_str }}</textarea>
+            </div>
+        </div>
+
+        <!-- Right: Page Metadata Settings -->
+        <div>
+            <div class="card" style="padding: 1.75rem;">
+                <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--offwhite); margin-bottom: 1.25rem; text-transform: uppercase; border-bottom: 1px solid rgba(255, 255, 255, 0.08); padding-bottom: 0.75rem;">
+                    Page Configuration
+                </h3>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.35rem; font-weight: 600;">
+                        Title
+                    </label>
+                    <input type="text" name="title" value="{{ page.title }}" required
+                           style="width: 100%; padding: 0.65rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.35rem; font-weight: 600;">
+                        URL Slug
+                    </label>
+                    <input type="text" name="slug" value="{{ page.slug }}" required
+                           style="width: 100%; padding: 0.65rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem; font-family: var(--font-mono);">
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                    <label style="display: block; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.35rem; font-weight: 600;">
+                        Meta Description
+                    </label>
+                    <textarea name="meta_description" rows="3"
+                              style="width: 100%; padding: 0.65rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.85rem; resize: vertical;">{{ page.meta_description }}</textarea>
+                </div>
+
+                <div style="margin-bottom: 1.75rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <input type="checkbox" id="is_published" name="is_published" {% if page.is_published %}checked{% endif %}
+                           style="width: 18px; height: 18px; accent-color: var(--brick);">
+                    <label for="is_published" style="font-size: 0.88rem; color: var(--offwhite); cursor: pointer;">
+                        Published Live on Frontend
+                    </label>
+                </div>
+
+                <button type="submit" class="btn-copper" style="width: 100%; justify-content: center; padding: 0.85rem;">
+                    Save Page Canvas Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+function formatJSON() {
+    const area = document.getElementById('blocks_json');
+    try {
+        const parsed = JSON.parse(area.value);
+        area.value = JSON.stringify(parsed, null, 2);
+    } catch (e) {
+        alert('Invalid JSON: ' + e.message);
+    }
+}
+
+function insertBlock(type) {
+    const area = document.getElementById('blocks_json');
+    let blocks = [];
+    try {
+        blocks = JSON.parse(area.value || '[]');
+    } catch(e) {
+        blocks = [];
+    }
+
+    const templates = {
+        hero: {
+            type: "hero",
+            title: "Open Hearth & Warehouse Gathering",
+            subtitle: "Wood-Fired Dining Experience",
+            bg_image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=85",
+            cta_text: "Inquire Regarding Space",
+            cta_link: "#reservation"
+        },
+        split: {
+            type: "split",
+            title: "Raw Industrial Architecture",
+            lead: "Exposed brickwork, heavy timber trusses, and a roaring 850° wood-fired hearth.",
+            body: "Constructed in 1924 as a freight warehouse, Urban Table retains its bold industrial bones while offering state-of-the-art kitchen craftsmanship.",
+            image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=85",
+            image_alt: "Urban Table Warehouse Architecture"
+        },
+        features: {
+            type: "features",
+            title: "Warehouse Buyout Specs",
+            items: [
+                { title: "Capacity up to 180 Guests", desc: "Full warehouse buyout including open hearth counter and mezzanine lounge." },
+                { title: "Custom Pitmaster Menus", desc: "Bespoke open-flame tasting courses paired with craft smokehouse cocktails." },
+                { title: "Dedicated Sound & AV", desc: "Acoustic treatment and integrated audio for private galas and presentations." }
+            ]
+        },
+        cta: {
+            type: "cta",
+            title: "Book The Warehouse",
+            subtitle: "Our private events director will coordinate customized seating, open-flame menus, and bar service.",
+            button_text: "Contact Host Desk",
+            button_link: "/contact"
+        },
+        reservation: {
+            type: "reservation",
+            title: "Reserve Warehouse Tables",
+            subtitle: "Lunch and dinner services available Tuesday through Sunday."
+        },
+        faq: {
+            type: "faq",
+            title: "Event & Dining FAQs",
+            items: [
+                { q: "What is the dress code?", a: "Smart casual. Industrial chic welcomed." },
+                { q: "Do you accommodate dietary restrictions?", a: "Yes, plant-based and gluten-free items cooked over dedicated coals." }
+            ]
+        }
+    };
+
+    if (templates[type]) {
+        blocks.push(templates[type]);
+        area.value = JSON.stringify(blocks, null, 2);
+    }
+}
+</script>
+{% endblock %}

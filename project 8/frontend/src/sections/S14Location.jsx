@@ -62,17 +62,18 @@ export default function S14Location() {
               <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--color-steel)', display: 'block', marginBottom: '0.5rem', fontWeight: 800 }}>
                 Operating Schedule
               </span>
-              {(loc.hours || [
-                { days: 'Tuesday to Thursday', hours: '4:00 PM – 11:00 PM' },
-                { days: 'Friday & Saturday', hours: '12:00 PM – Midnight' },
-                { days: 'Sunday', hours: '12:00 PM – 10:00 PM' },
-                { days: 'Monday', hours: 'Closed for Kitchen Cure & Prep' },
-              ]).map((h, idx) => (
-                <div key={idx} style={{ fontSize: '0.88rem', color: 'var(--color-concrete)', display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
-                  <span>{h.days} :</span>
-                  <span style={{ color: 'var(--color-offwhite)', fontWeight: 600 }}>{h.hours}</span>
+              {Array.isArray(loc.hours) ? (
+                loc.hours.map((h, idx) => (
+                  <div key={idx} style={{ fontSize: '0.88rem', color: 'var(--color-concrete)', display: 'flex', justifyContent: 'space-between', marginBottom: '0.3rem' }}>
+                    <span>{h.days} :</span>
+                    <span style={{ color: 'var(--color-offwhite)', fontWeight: 600 }}>{h.hours}</span>
+                  </div>
+                ))
+              ) : (
+                <div style={{ fontSize: '0.88rem', color: 'var(--color-offwhite)', lineHeight: '1.6' }}>
+                  {typeof loc.hours === 'string' ? loc.hours : 'Tuesday to Sunday: 12:00 PM – Midnight'}
                 </div>
-              ))}
+              )}
             </div>
           </div>
 

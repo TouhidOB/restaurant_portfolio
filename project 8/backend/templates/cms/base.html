@@ -3,27 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Urban Industrial CMS Studio | URBAN TABLE{% endblock %}</title>
-    <!-- Google Fonts: Oswald, Manrope, DM Serif Display -->
+    <title>{% block title %}Urban Table CMS Studio | Industrial Open Hearth{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Manrope:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --graphite: #252729;
             --brick: #914D37;
-            --concrete: #B7B4AC;
-            --offwhite: #F1EEE7;
+            --brick-dark: #6C3524;
             --copper: #B87345;
-            --copper-light: #D48C5B;
-            --black: #111314;
-            --black-card: #181A1C;
-            --steel: #737A7D;
             --amber: #E9A24B;
-            --border-industrial: rgba(184, 115, 69, 0.28);
+            --graphite: #252729;
+            --graphite-dark: #161718;
+            --charcoal: #111314;
+            --concrete: #B7B4AC;
+            --steel: #737A7D;
+            --offwhite: #F1EEE7;
+            --sidebar-width: 270px;
             --font-display: 'Oswald', sans-serif;
             --font-body: 'Manrope', sans-serif;
             --font-editorial: 'DM Serif Display', serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
 
         * {
@@ -33,217 +33,384 @@
         }
 
         body {
-            background-color: var(--black);
+            background-color: var(--charcoal);
             color: var(--offwhite);
             font-family: var(--font-body);
-            font-size: 15px;
-            line-height: 1.6;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* Top Bar */
-        .topbar {
-            background-color: var(--graphite);
-            border-bottom: 2px solid var(--brick);
-            padding: 0.9rem 2rem;
+        .cms-shell {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            min-height: 100vh;
         }
 
-        .brand-badge {
+        .cms-sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--graphite-dark);
+            border-right: 1px solid rgba(184, 115, 69, 0.25);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            padding: 1.75rem 1.5rem;
+            border-bottom: 1px solid rgba(184, 115, 69, 0.2);
             display: flex;
             align-items: center;
             gap: 0.85rem;
-            text-decoration: none;
         }
 
         .brand-crest {
             width: 38px;
             height: 38px;
-            border-radius: 2px;
-            background: linear-gradient(135deg, var(--brick) 0%, var(--black) 100%);
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--brick) 0%, var(--copper) 100%);
+            border: 1px solid var(--amber);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--copper);
+            color: var(--offwhite);
             font-family: var(--font-display);
-            font-size: 1.25rem;
             font-weight: 700;
-            border: 1px solid var(--copper);
+            font-size: 1.15rem;
+            box-shadow: 0 0 15px rgba(233, 162, 75, 0.25);
         }
 
         .brand-text h1 {
             font-family: var(--font-display);
-            font-size: 1.4rem;
-            color: var(--offwhite);
+            font-size: 1.25rem;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            font-weight: 700;
+            color: var(--offwhite);
             line-height: 1.1;
         }
 
         .brand-text span {
-            font-family: var(--font-body);
-            font-size: 0.75rem;
-            color: var(--copper);
-            letter-spacing: 0.15em;
+            font-size: 0.72rem;
+            color: var(--amber);
+            letter-spacing: 0.14em;
             text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            padding: 1.25rem 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+            flex-grow: 1;
+        }
+
+        .nav-category {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: var(--steel);
+            padding: 0.8rem 0.85rem 0.35rem;
             font-weight: 700;
         }
 
-        .nav-actions {
+        .nav-item {
             display: flex;
             align-items: center;
-            gap: 1.25rem;
-        }
-
-        .btn-copper {
-            background: var(--copper);
-            color: var(--black);
-            padding: 0.55rem 1.25rem;
-            border-radius: 2px;
-            font-weight: 700;
-            font-size: 0.82rem;
-            text-decoration: none;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            border: 1px solid var(--copper-light);
-            transition: all 0.2s ease;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .btn-copper:hover {
-            background: var(--copper-light);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(184, 115, 69, 0.35);
-        }
-
-        .btn-outline {
-            background: transparent;
+            gap: 0.85rem;
+            padding: 0.7rem 0.9rem;
+            border-radius: 6px;
             color: var(--concrete);
-            padding: 0.5rem 1rem;
-            border-radius: 2px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
             text-decoration: none;
-            font-size: 0.82rem;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+            font-size: 0.88rem;
+            font-weight: 500;
             transition: all 0.2s ease;
-            cursor: pointer;
+            border: 1px solid transparent;
         }
 
-        .btn-outline:hover {
+        .nav-item:hover {
             color: var(--offwhite);
+            background: rgba(145, 77, 55, 0.2);
+            border-color: rgba(184, 115, 69, 0.3);
+        }
+
+        .nav-item.active {
+            color: var(--offwhite);
+            background: var(--brick);
             border-color: var(--copper);
+            box-shadow: 0 4px 15px rgba(145, 77, 55, 0.4);
+            font-weight: 600;
         }
 
-        /* Messages */
-        .alerts-wrapper {
-            max-width: 1600px;
-            margin: 1.2rem auto 0;
-            padding: 0 1.5rem;
-            width: 100%;
+        .nav-badge {
+            margin-left: auto;
+            background: rgba(233, 162, 75, 0.2);
+            color: var(--amber);
+            border: 1px solid var(--amber);
+            font-size: 0.72rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            font-weight: 600;
         }
 
-        .alert {
-            padding: 0.85rem 1.25rem;
-            border-radius: 2px;
-            margin-bottom: 1rem;
-            font-size: 0.92rem;
+        .sidebar-footer {
+            padding: 1.25rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-weight: 500;
+            font-size: 0.82rem;
+            color: var(--steel);
+        }
+
+        .cms-workspace {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 2.5rem;
+            background-color: var(--charcoal);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(184, 115, 69, 0.2);
+        }
+
+        .page-title h2 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            color: var(--offwhite);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .page-title p {
+            color: var(--concrete);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-copper {
+            background: linear-gradient(135deg, var(--brick) 0%, var(--copper) 100%);
+            border: 1px solid var(--amber);
+            color: var(--offwhite);
+            padding: 0.65rem 1.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(184, 115, 69, 0.3);
+        }
+
+        .btn-copper:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(184, 115, 69, 0.45);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(184, 115, 69, 0.3);
+            color: var(--concrete);
+            padding: 0.65rem 1.25rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--offwhite);
+            border-color: var(--amber);
+        }
+
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
 
         .alert-success {
-            background: rgba(30, 70, 45, 0.5);
-            border: 1px solid #3ca364;
-            color: #9fe2b6;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid #22c55e;
+            color: #4ade80;
         }
 
         .alert-error {
-            background: rgba(145, 77, 55, 0.5);
-            border: 1px solid #e06044;
-            color: #ffb8a8;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #f87171;
         }
 
         .alert-info {
-            background: rgba(37, 39, 41, 0.7);
-            border: 1px solid var(--steel);
-            color: var(--concrete);
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid #0284c7;
+            color: #38bdf8;
         }
 
-        /* Main Content */
-        .main-container {
-            max-width: 1600px;
-            width: 100%;
-            margin: 1rem auto 3rem;
-            padding: 0 1.5rem;
-            flex: 1;
-        }
-
-        /* Footer */
-        .footer {
+        .card {
             background-color: var(--graphite);
-            border-top: 1px solid rgba(184, 115, 69, 0.2);
+            border: 1px solid rgba(184, 115, 69, 0.25);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .footer {
+            margin-top: auto;
             text-align: center;
-            padding: 1.25rem;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
             color: var(--steel);
-            font-size: 0.82rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
+            font-size: 0.8rem;
         }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <header class="topbar">
-        <a href="{% url 'cms_dashboard' %}" class="brand-badge">
-            <div class="brand-crest">UT</div>
-            <div class="brand-text">
-                <h1>URBAN TABLE</h1>
-                <span>Industrial CMS Studio</span>
+    {% if request.user.is_authenticated %}
+    <div class="cms-shell">
+        <!-- Sidebar Navigation -->
+        <aside class="cms-sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-crest">🔥</div>
+                <div class="brand-text">
+                    <h1>URBAN TABLE</h1>
+                    <span>Industrial Studio</span>
+                </div>
             </div>
-        </a>
-        <div class="nav-actions">
-            <a href="http://127.0.0.1:3000" target="_blank" class="btn-outline">
-                <span>↗ View Public Site (3000)</span>
-            </a>
-            {% if user.is_authenticated %}
-                <span style="color: var(--copper); font-size: 0.85rem; font-weight: 600;">
-                    ⚙ {{ user.username }} (Admin)
-                </span>
-                <a href="{% url 'cms_logout' %}" class="btn-outline">Sign Out</a>
-            {% else %}
-                <a href="{% url 'cms_login' %}" class="btn-copper">Admin Login</a>
-            {% endif %}
-        </div>
-    </header>
 
-    {% if messages %}
-    <div class="alerts-wrapper">
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            <span>{{ message }}</span>
-        </div>
-        {% endfor %}
+            <nav class="sidebar-menu">
+                <div class="nav-category">Control Center</div>
+                <a href="{% url 'cms_overview' %}" class="nav-item {% if active_tab == 'overview' %}active{% endif %}">
+                    <span>⚡</span> Overview & KPIs
+                </a>
+                <a href="{% url 'cms_reservations' %}" class="nav-item {% if active_tab == 'reservations' %}active{% endif %}">
+                    <span>📅</span> Warehouse Reservations
+                    <span class="nav-badge">Shift Desk</span>
+                </a>
+
+                <div class="nav-category">Content Architecture</div>
+                <a href="{% url 'cms_pages' %}" class="nav-item {% if active_tab == 'pages' %}active{% endif %}">
+                    <span>📄</span> Custom Page Builder
+                </a>
+                <a href="{% url 'cms_blog' %}" class="nav-item {% if active_tab == 'blog' %}active{% endif %}">
+                    <span>📰</span> Smokehouse Journal
+                </a>
+                <a href="{% url 'cms_menu' %}" class="nav-item {% if active_tab == 'menu' %}active{% endif %}">
+                    <span>🥩</span> Menu & Photos
+                </a>
+
+                <div class="nav-category">Atmosphere & Space</div>
+                <a href="{% url 'cms_identity' %}" class="nav-item {% if active_tab == 'identity' %}active{% endif %}">
+                    <span>⚙️</span> Warehouse Logistics
+                </a>
+                <a href="{% url 'cms_tour' %}" class="nav-item {% if active_tab == 'tour' %}active{% endif %}">
+                    <span>🏛️</span> 3D Spatial Tour
+                </a>
+                <a href="{% url 'cms_sections' %}" class="nav-item {% if active_tab == 'sections' %}active{% endif %}">
+                    <span>📑</span> 15-Section Editor
+                </a>
+                <a href="{% url 'cms_gallery' %}" class="nav-item {% if active_tab == 'gallery' %}active{% endif %}">
+                    <span>📸</span> Industrial Gallery
+                </a>
+                <a href="{% url 'cms_reviews' %}" class="nav-item {% if active_tab == 'reviews' %}active{% endif %}">
+                    <span>⭐</span> Press Reviews
+                </a>
+                <a href="{% url 'cms_faqs' %}" class="nav-item {% if active_tab == 'faqs' %}active{% endif %}">
+                    <span>❓</span> FAQ Desk
+                </a>
+                <a href="{% url 'cms_schema' %}" class="nav-item {% if active_tab == 'schema' %}active{% endif %}">
+                    <span>📦</span> Master Schema JSON
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div>
+                    <span style="color: var(--amber);">●</span> Staff: <strong>{{ request.user.username }}</strong>
+                </div>
+                <a href="{% url 'cms_logout' %}" style="color: #f87171; text-decoration: none; font-size: 0.8rem;">
+                    Sign Out ➔
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="cms-workspace">
+            <header class="topbar">
+                <div class="page-title">
+                    <h2>{% block page_title %}Dashboard{% endblock %}</h2>
+                    <p>{% block page_subtitle %}Warehouse Kitchen & Smokehouse Management{% endblock %}</p>
+                </div>
+                <div class="topbar-actions">
+                    <a href="http://127.0.0.1:3000" target="_blank" class="btn-secondary">
+                        ↗ Live Frontend (Port 3000)
+                    </a>
+                    {% block header_actions %}{% endblock %}
+                </div>
+            </header>
+
+            {% if messages %}
+            <div>
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <span>{{ message }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </main>
     </div>
+    {% else %}
+    <!-- Standalone Layout for Authentication -->
+    <main style="padding: 2rem; max-width: 600px; margin: 3rem auto; width: 100%;">
+        {% if messages %}
+        <div>
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block auth_content %}{% endblock %}
+    </main>
     {% endif %}
 
-    <main class="main-container">
-        {% block content %}{% endblock %}
-    </main>
-
     <footer class="footer">
-        <p>&copy; 2026 URBAN TABLE — Urban Kitchen & Smokehouse • 420 Ironworks Ave • Decoupled Django 5 CMS</p>
+        <p>&copy; 2026 URBAN TABLE — OPEN HEARTH & CRAFT SMOKEHOUSE &bull; 1924 WAREHOUSE DISTRICT &bull; DJANGO 5 CMS STUDIO</p>
     </footer>
     {% block extra_js %}{% endblock %}
 </body>

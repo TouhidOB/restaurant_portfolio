@@ -1,0 +1,135 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Standalone Custom Pages | Urban Table CMS{% endblock %}
+{% block page_title %}Standalone Custom Pages{% endblock %}
+{% block page_subtitle %}Visual Elementor-Style Page Builder for Industrial Warehouse Events{% endblock %}
+
+{% block header_actions %}
+<a href="#createPageModal" class="btn-copper">
+    + New Custom Page
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Pages Table -->
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(184, 115, 69, 0.2); padding-bottom: 1rem;">
+        <h3 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--offwhite); text-transform: uppercase;">
+            Deployed Custom Pages & Routes
+        </h3>
+        <span style="font-size: 0.82rem; color: var(--amber); font-family: var(--font-mono); font-weight: 600;">
+            {{ pages|length }} Pages Active
+        </span>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem;">
+            <thead>
+                <tr style="text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.08); color: var(--steel); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                    <th style="padding: 0.75rem 1rem;">Page Title</th>
+                    <th style="padding: 0.75rem 1rem;">Frontend Route</th>
+                    <th style="padding: 0.75rem 1rem;">Blocks</th>
+                    <th style="padding: 0.75rem 1rem;">Status</th>
+                    <th style="padding: 0.75rem 1rem;">Last Modified</th>
+                    <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for page in pages %}
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.04);">
+                    <td style="padding: 0.85rem 1rem; color: var(--offwhite); font-weight: 600;">
+                        {{ page.title }}
+                        {% if page.meta_description %}
+                        <div style="color: var(--concrete); font-size: 0.75rem; font-weight: normal; margin-top: 0.25rem;">
+                            {{ page.meta_description|truncatechars:70 }}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.85rem 1rem;">
+                        <a href="http://127.0.0.1:3000/page/{{ page.slug }}" target="_blank" style="color: var(--amber); text-decoration: none; font-family: var(--font-mono);">
+                            /page/{{ page.slug }} ↗
+                        </a>
+                    </td>
+                    <td style="padding: 0.85rem 1rem;">
+                        <span style="background: rgba(184, 115, 69, 0.2); border: 1px solid var(--copper); color: var(--amber); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;">
+                            {{ page.blocks|length }} blocks
+                        </span>
+                    </td>
+                    <td style="padding: 0.85rem 1rem;">
+                        {% if page.is_published %}
+                        <span style="color: #4ade80; font-size: 0.8rem; font-weight: 600;">● Published</span>
+                        {% else %}
+                        <span style="color: #facc15; font-size: 0.8rem;">○ Draft</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.85rem 1rem; color: var(--steel); font-size: 0.8rem;">
+                        {{ page.updated_at|date:"M d, Y H:i" }}
+                    </td>
+                    <td style="padding: 0.85rem 1rem; text-align: right;">
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                            <a href="{% url 'cms_page_builder' pk=page.pk %}" class="btn-copper" style="padding: 0.35rem 0.85rem; font-size: 0.75rem;">
+                                Builder ➔
+                            </a>
+                            <form method="post" action="{% url 'cms_page_delete' pk=page.pk %}" onsubmit="return confirm('Delete this custom page?');" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-secondary" style="padding: 0.35rem 0.6rem; font-size: 0.75rem; color: #f87171; border-color: rgba(239, 68, 68, 0.3);">
+                                    ✕
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" style="padding: 2.5rem; text-align: center; color: var(--steel);">
+                        No custom pages created yet. Use the form below to initialize a new page.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Page Form -->
+<div id="createPageModal" class="card">
+    <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--offwhite); margin-bottom: 0.5rem; text-transform: uppercase;">
+        Initialize New Standalone Page
+    </h3>
+    <p style="color: var(--concrete); font-size: 0.85rem; margin-bottom: 1.75rem;">
+        Define page metadata, title, and URL slug to open the visual block hierarchy builder.
+    </p>
+
+    <form method="post" action="{% url 'cms_page_create' %}">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    Page Title *
+                </label>
+                <input type="text" name="title" required placeholder="e.g. Industrial Warehouse Buyouts & Private Smokehouse"
+                       style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                    URL Slug * (lowercase, hyphens)
+                </label>
+                <input type="text" name="slug" required placeholder="e.g. industrial-warehouse-buyouts"
+                       style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem;">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--amber); margin-bottom: 0.4rem; font-weight: 600;">
+                Meta Description (SEO & OpenGraph)
+            </label>
+            <textarea name="meta_description" rows="2" placeholder="Brief summary of the warehouse buyout experience or special dining event..."
+                      style="width: 100%; padding: 0.75rem; background: #161718; border: 1px solid rgba(184, 115, 69, 0.3); border-radius: 4px; color: var(--offwhite); font-size: 0.9rem; resize: vertical;"></textarea>
+        </div>
+
+        <button type="submit" class="btn-copper" style="padding: 0.85rem 2rem;">
+            Create Page & Open Visual Builder ➔
+        </button>
+    </form>
+</div>
+{% endblock %}
