@@ -128,6 +128,7 @@ export default function Footer({ onNavigate }) {
                 { label: 'Diner Architecture', path: '/architecture' },
                 { label: '3D Spatial Tour', path: '/tour' },
                 { label: 'The Diner Experience', path: '/experience' },
+                { label: 'Editorial Journal', path: '/blog' },
                 { label: 'Location & Contact', path: '/contact' },
               ].map((item) => (
                 <li key={item.label}>

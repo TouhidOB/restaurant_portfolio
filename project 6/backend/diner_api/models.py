@@ -390,3 +390,46 @@ class CustomPage(models.Model):
 
     def __str__(self):
         return f"{self.title} (/{self.slug}) [Published: {self.is_published}]"
+
+
+# ==============================================================================
+# BLOG & EDITORIAL JOURNAL MODELS
+# ==============================================================================
+
+class BlogCategory(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=120, unique=True)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = "Blog Categories"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+    category = models.ForeignKey(BlogCategory, related_name='posts', on_delete=models.SET_NULL, null=True, blank=True)
+    author_name = models.CharField(max_length=100, default="Stardust Culinary Crew")
+    author_role = models.CharField(max_length=100, default="Executive Chef & Mixologist")
+    author_avatar = models.CharField(max_length=500, blank=True, default="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=200&q=80")
+    cover_image = models.ImageField(upload_to='blog/covers/', blank=True, null=True)
+    cover_image_url = models.CharField(max_length=500, blank=True, default="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80")
+    excerpt = models.TextField(help_text="Short teaser paragraph for blog cards")
+    content = models.TextField(help_text="Full editorial body content with formatting or markdown")
+    read_time_minutes = models.IntegerField(default=5)
+    is_featured = models.BooleanField(default=False)
+    is_published = models.BooleanField(default=True)
+    published_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-published_at', '-created_at']
+
+    def __str__(self):
+        return f"{self.title} [Published: {self.is_published}]"

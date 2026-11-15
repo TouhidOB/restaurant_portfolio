@@ -15,7 +15,22 @@ from .models import (
     FAQ,
     ContactInquiry,
     CustomPage,
+    BlogCategory,
+    BlogPost,
 )
+
+@admin.register(BlogCategory)
+class BlogCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'created_at')
+    prepopulated_fields = {'slug': ('name',)}
+
+@admin.register(BlogPost)
+class BlogPostAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'author_name', 'read_time_minutes', 'is_featured', 'is_published', 'published_at')
+    list_filter = ('is_published', 'is_featured', 'category')
+    search_fields = ('title', 'excerpt', 'content')
+    list_editable = ('is_published', 'is_featured')
+    prepopulated_fields = {'slug': ('title',)}
 
 @admin.register(CustomPage)
 class CustomPageAdmin(admin.ModelAdmin):

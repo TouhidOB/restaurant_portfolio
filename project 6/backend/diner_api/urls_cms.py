@@ -14,6 +14,11 @@ from .views import (
     cms_reviews_view,
     cms_faqs_view,
     cms_schema_view,
+    cms_blog_view,
+    cms_create_blog_post,
+    cms_edit_blog_post,
+    cms_toggle_blog_publish,
+    cms_delete_blog_post,
     cms_update_settings,
     cms_update_reservation_status,
     cms_approve_reservation,
@@ -48,6 +53,11 @@ urlpatterns = [
     path('reviews/', cms_reviews_view, name='cms_reviews'),
     path('faqs/', cms_faqs_view, name='cms_faqs'),
     path('schema/', cms_schema_view, name='cms_schema'),
+    path('blog/', cms_blog_view, name='cms_blog'),
+    path('blog/create/', cms_create_blog_post, name='cms_create_blog_post'),
+    path('blog/<int:pk>/edit/', cms_edit_blog_post, name='cms_edit_blog_post'),
+    path('blog/<int:pk>/toggle-publish/', cms_toggle_blog_publish, name='cms_toggle_blog_publish'),
+    path('blog/<int:pk>/delete/', cms_delete_blog_post, name='cms_delete_blog_post'),
 
     # Action / Mutation endpoints
     path('update-settings/', cms_update_settings, name='cms_update_settings'),

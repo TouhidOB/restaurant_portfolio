@@ -30,6 +30,8 @@ from .models import (
     FAQ,
     ContactInquiry,
     CustomPage,
+    BlogCategory,
+    BlogPost,
 )
 from .serializers import (
     RestaurantSerializer,
@@ -48,6 +50,8 @@ from .serializers import (
     ContactInquirySerializer,
     CustomPageSerializer,
     CustomPageNavSerializer,
+    BlogCategorySerializer,
+    BlogPostSerializer,
 )
 
 # ==============================================================================
@@ -72,6 +76,8 @@ class FullDinerContentView(APIView):
         testimonials = Testimonial.objects.filter(is_approved=True)
         faqs = FAQ.objects.filter(is_active=True)
         custom_pages = CustomPage.objects.filter(is_published=True)
+        blog_posts = BlogPost.objects.filter(is_published=True)
+        blog_categories = BlogCategory.objects.all()
 
         sections_dict = {}
         for s in sections:
@@ -97,6 +103,8 @@ class FullDinerContentView(APIView):
             'testimonials': TestimonialSerializer(testimonials, many=True).data,
             'faqs': FAQSerializer(faqs, many=True).data,
             'custom_pages': CustomPageSerializer(custom_pages, many=True).data,
+            'blog_posts': BlogPostSerializer(blog_posts, many=True, context={'request': request}).data,
+            'blog_categories': BlogCategorySerializer(blog_categories, many=True).data,
         }
         return Response(data)
 
@@ -116,6 +124,54 @@ class CustomPageDetailView(generics.RetrieveAPIView):
     queryset = CustomPage.objects.filter(is_published=True)
     serializer_class = CustomPageSerializer
     lookup_field = 'slug'
+
+
+class BlogPostListView(generics.ListAPIView):
+    """
+    Public endpoint for published blog articles with category and search filtering.
+    """
+    serializer_class = BlogPostSerializer
+
+    def get_queryset(self):
+        qs = BlogPost.objects.filter(is_published=True).select_related('category')
+        category_slug = self.request.query_params.get('category')
+        search = self.request.query_params.get('search')
+        featured = self.request.query_params.get('featured')
+
+        if category_slug and category_slug != 'all':
+            qs = qs.filter(category__slug=category_slug)
+        if search:
+            qs = qs.filter(
+                Q(title__icontains=search) |
+                Q(excerpt__icontains=search) |
+                Q(content__icontains=search)
+            )
+        if featured == 'true':
+            qs = qs.filter(is_featured=True)
+        return qs
+
+
+class BlogPostDetailView(generics.RetrieveAPIView):
+    """
+    Public endpoint for individual blog article detail by slug with related posts.
+    """
+    serializer_class = BlogPostSerializer
+    lookup_field = 'slug'
+    queryset = BlogPost.objects.filter(is_published=True).select_related('category')
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        data = dict(serializer.data)
+
+        # Related posts from the same category or latest
+        related = BlogPost.objects.filter(is_published=True).exclude(pk=instance.pk).select_related('category')
+        if instance.category:
+            cat_related = related.filter(category=instance.category)
+            if cat_related.exists():
+                related = cat_related
+        data['related_posts'] = BlogPostSerializer(related[:3], many=True, context={'request': request}).data
+        return Response(data)
 
 
 class ReservationCreateView(generics.CreateAPIView):
@@ -892,3 +948,150 @@ def cms_delete_page(request, pk):
         page.delete()
         messages.success(request, f"Custom Page '{title}' deleted successfully.")
     return redirect('cms_pages')
+
+
+# ==============================================================================
+# BLOG & EDITORIAL JOURNAL CMS VIEWS
+# ==============================================================================
+
+@login_required(login_url='/cms/login/')
+def cms_blog_view(request):
+    posts = BlogPost.objects.all().select_related('category')
+    categories = BlogCategory.objects.all()
+    kpis = {
+        'total_posts': posts.count(),
+        'published_posts': posts.filter(is_published=True).count(),
+        'draft_posts': posts.filter(is_published=False).count(),
+        'categories_count': categories.count(),
+    }
+    context = {
+        'active_page': 'blog',
+        'posts': posts,
+        'categories': categories,
+        'kpis': kpis,
+        'restaurant': Restaurant.objects.first(),
+    }
+    return render(request, 'cms/blog.html', context)
+
+
+@login_required(login_url='/cms/login/')
+def cms_create_blog_post(request):
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        slug = request.POST.get('slug', '').strip()
+        category_id = request.POST.get('category_id')
+        author_name = request.POST.get('author_name', 'Stardust Culinary Crew').strip()
+        author_role = request.POST.get('author_role', 'Executive Chef & Mixologist').strip()
+        cover_image_url = request.POST.get('cover_image_url', '').strip()
+        excerpt = request.POST.get('excerpt', '').strip()
+        content = request.POST.get('content', '').strip()
+        read_time = request.POST.get('read_time_minutes', '5').strip()
+        is_featured = request.POST.get('is_featured') == 'on'
+        is_published = request.POST.get('is_published') == 'on'
+
+        if not title:
+            messages.error(request, "Post title cannot be empty.")
+            return redirect('cms_blog')
+
+        if not slug:
+            slug = slugify(title)
+
+        base_slug = slug
+        count = 1
+        while BlogPost.objects.filter(slug=slug).exists():
+            slug = f"{base_slug}-{count}"
+            count += 1
+
+        category = BlogCategory.objects.filter(pk=category_id).first() if category_id else None
+
+        post = BlogPost.objects.create(
+            title=title,
+            slug=slug,
+            category=category,
+            author_name=author_name or 'Stardust Culinary Crew',
+            author_role=author_role or 'Staff Writer',
+            cover_image_url=cover_image_url or "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
+            excerpt=excerpt,
+            content=content,
+            read_time_minutes=int(read_time) if read_time.isdigit() else 5,
+            is_featured=is_featured,
+            is_published=is_published,
+        )
+
+        if 'cover_image' in request.FILES:
+            post.cover_image = request.FILES['cover_image']
+            post.save()
+
+        messages.success(request, f"Article '{post.title}' created successfully!")
+    return redirect('cms_blog')
+
+
+@login_required(login_url='/cms/login/')
+def cms_edit_blog_post(request, pk):
+    post = get_object_or_404(BlogPost, pk=pk)
+    categories = BlogCategory.objects.all()
+
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        category_id = request.POST.get('category_id')
+        author_name = request.POST.get('author_name', '').strip()
+        author_role = request.POST.get('author_role', '').strip()
+        cover_image_url = request.POST.get('cover_image_url', '').strip()
+        excerpt = request.POST.get('excerpt', '').strip()
+        content = request.POST.get('content', '').strip()
+        read_time = request.POST.get('read_time_minutes', '5').strip()
+        is_featured = request.POST.get('is_featured') == 'on'
+        is_published = request.POST.get('is_published') == 'on'
+
+        if title:
+            post.title = title
+        post.category = BlogCategory.objects.filter(pk=category_id).first() if category_id else None
+        if author_name:
+            post.author_name = author_name
+        if author_role:
+            post.author_role = author_role
+        if cover_image_url:
+            post.cover_image_url = cover_image_url
+        if excerpt:
+            post.excerpt = excerpt
+        if content:
+            post.content = content
+        if read_time.isdigit():
+            post.read_time_minutes = int(read_time)
+        post.is_featured = is_featured
+        post.is_published = is_published
+
+        if 'cover_image' in request.FILES:
+            post.cover_image = request.FILES['cover_image']
+
+        post.save()
+        messages.success(request, f"Article '{post.title}' updated successfully!")
+        return redirect('cms_blog')
+
+    context = {
+        'active_page': 'blog',
+        'post': post,
+        'categories': categories,
+        'restaurant': Restaurant.objects.first(),
+    }
+    return render(request, 'cms/blog_edit.html', context)
+
+
+@login_required(login_url='/cms/login/')
+def cms_toggle_blog_publish(request, pk):
+    post = get_object_or_404(BlogPost, pk=pk)
+    post.is_published = not post.is_published
+    post.save()
+    status_str = "Published" if post.is_published else "Draft"
+    messages.success(request, f"Article '{post.title}' is now set to {status_str}.")
+    return redirect('cms_blog')
+
+
+@login_required(login_url='/cms/login/')
+def cms_delete_blog_post(request, pk):
+    if request.method == 'POST':
+        post = get_object_or_404(BlogPost, pk=pk)
+        title = post.title
+        post.delete()
+        messages.success(request, f"Article '{title}' deleted successfully.")
+    return redirect('cms_blog')

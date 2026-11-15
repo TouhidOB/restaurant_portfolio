@@ -15,6 +15,8 @@ from .models import (
     FAQ,
     ContactInquiry,
     CustomPage,
+    BlogCategory,
+    BlogPost,
 )
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -181,3 +183,31 @@ class CustomPageSerializer(serializers.ModelSerializer):
             'created_at',
             'updated_at',
         ]
+
+
+# ==============================================================================
+# BLOG SERIALIZERS
+# ==============================================================================
+
+class BlogCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlogCategory
+        fields = ['id', 'name', 'slug', 'description']
+
+
+class BlogPostSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    category_slug = serializers.CharField(source='category.slug', read_only=True)
+    resolved_cover = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BlogPost
+        fields = '__all__'
+
+    def get_resolved_cover(self, obj):
+        if obj.cover_image:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.cover_image.url)
+            return obj.cover_image.url
+        return obj.cover_image_url or "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80"

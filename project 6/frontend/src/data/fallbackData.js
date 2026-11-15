@@ -597,5 +597,77 @@ export const FALLBACK_CONTENT = {
       question: "What payment methods do you accept?",
       answer: "We accept all major credit cards, Apple Pay, Google Pay, and cash. Contactless payment is supported at every table."
     }
+  ],
+  blog_categories: [
+    { id: 1, name: "Culinary Science", slug: "culinary-science", description: "The chemistry of the sear, dry aging, and heritage techniques." },
+    { id: 2, name: "Diner Culture", slug: "diner-culture", description: "The heritage of mid-century Americana and retro-futuristic design." },
+    { id: 3, name: "Mixology & Malts", slug: "mixology-malts", description: "Spun shakes, vintage malts, and neon-lit cocktail craftsmanship." },
+    { id: 4, name: "Midnight Chronicles", slug: "midnight-chronicles", description: "Tales, service logs, and late-night culinary energy." }
+  ],
+  blog_posts: [
+    {
+      id: 1,
+      title: "The Physics of the 500°F Plancha: Why Smash Burgers Rule",
+      slug: "physics-of-the-500-degree-plancha",
+      category_name: "Culinary Science",
+      category_slug: "culinary-science",
+      author_name: "Chef Vance Sterling",
+      author_role: "Executive Griddle Master",
+      resolved_cover: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80",
+      excerpt: "The Maillard reaction requires extreme surface contact and rapid heat transfer. Here is how our custom chrome planchas achieve the ultimate caramelized lace edge.",
+      content: "<h3>The Science of the Sear</h3><p>At Stardust Diner, burger craft is treated as exact thermodynamic science. When 80/20 prime dry-aged chuck hits a 500-degree chrome flattop under a heavy cast-iron press, water molecules vaporize instantly, concentrating natural amino acids and reducing sugars into a glorious golden-brown umami crust known as the Maillard reaction.</p><blockquote>\"If there is no crunch on the perimeter of the patty, you are eating a steamed ball of ground beef, not a smash burger.\" — Chef Vance Sterling</blockquote><h3>Why Chrome Matters</h3><p>Unlike raw steel or cast iron which feature microscopic pores, mirrored hard chrome plates provide uniform heat emissivity without hot or cold spots. This creates the signature razor-thin lace edges that have made our Double Atomic Smash legendary across Chicago's Atomic District.</p>",
+      read_time_minutes: 4,
+      is_featured: true,
+      is_published: true,
+      published_at: "2026-11-14T18:00:00Z"
+    },
+    {
+      id: 2,
+      title: "Chromium & Neon: The Architecture of Mid-Century Atomic Diners",
+      slug: "chromium-and-neon-architecture",
+      category_name: "Diner Culture",
+      category_slug: "diner-culture",
+      author_name: "Elena Rostova",
+      author_role: "Architectural Historian",
+      resolved_cover: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
+      excerpt: "How the Space Race and Googie design transformed roadside diners into streamlined spaceships of stainless steel, curved glass, and neon.",
+      content: "<h3>The Space-Age Oasis</h3><p>In mid-1950s America, roadside architecture took a bold leap toward the cosmos. Curved aerodynamic contours reminiscent of aerospace fuselages, canted roofs reaching toward orbital trajectories, and vibrant neon tubes bent by hand transformed roadside eateries into democratic sanctuaries of optimistic futurism.</p><p>Stardust Diner preserves this architectural lineage faithfully. From the cantilevered counter stools to our authentic 1955 Wurlitzer jukebox, every surface is an homage to human curiosity and fellowship.</p>",
+      read_time_minutes: 6,
+      is_featured: false,
+      is_published: true,
+      published_at: "2026-11-12T14:30:00Z"
+    },
+    {
+      id: 3,
+      title: "The Art of the Triple Malt: Why Real Shakes Take Time",
+      slug: "art-of-the-triple-malt",
+      category_name: "Mixology & Malts",
+      category_slug: "mixology-malts",
+      author_name: "Leo 'Fizz' Montgomery",
+      author_role: "Head Soda Jerk & Mixologist",
+      resolved_cover: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&w=1200&q=80",
+      excerpt: "Real malted milk isn't just powder dumped into soft serve. We break down the vintage triple-spindle aeration technique and house-churned custard base.",
+      content: "<h3>Reclaiming the Fountain Tradition</h3><p>Modern fast food stripped the soul from milkshakes by swapping rich custard and whole malted barley for hydrogenated corn syrup goo pumped from automated machines. At our stainless fountain counter, every shake is spun on vintage Hamilton Beach triple-head mixers.</p><p>We use Madagascar vanilla bean bean custard churned fresh every morning, whole milk from local Midwest pastures, and pure diastatic malt powder that lends that unmistakably nutty, toasted sweetness.</p>",
+      read_time_minutes: 5,
+      is_featured: false,
+      is_published: true,
+      published_at: "2026-11-10T12:00:00Z"
+    },
+    {
+      id: 4,
+      title: "2:00 AM on Neon Boulevard: Midnight Service Chronicles",
+      slug: "midnight-service-chronicles",
+      category_name: "Midnight Chronicles",
+      category_slug: "midnight-chronicles",
+      author_name: "Samantha Drake",
+      author_role: "Night Shift Dispatcher",
+      resolved_cover: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+      excerpt: "When the city sleeps, the diner awakens. Musicians, night shift medics, stargazers, and night owls gather under our glowing sign.",
+      content: "<h3>The Nocturnal Fellowship</h3><p>There is a sacred camaraderie that exists only between the hours of midnight and dawn. As the rest of the metropolis powers down, our neon beacon pulses with life. The hiss of the griddle, the low hum of acoustic jazz from the jukebox, and the steam rising from black coffee mugs create an atmosphere unlike anywhere else.</p><p>Whether you're celebrating a successful midnight gallery premiere or unwinding after a double shift in the emergency ward, there is always a booth waiting for you at Stardust.</p>",
+      read_time_minutes: 5,
+      is_featured: false,
+      is_published: true,
+      published_at: "2026-11-08T02:00:00Z"
+    }
   ]
 };

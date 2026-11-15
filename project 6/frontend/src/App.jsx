@@ -18,6 +18,8 @@ import ArchitecturePage from './components/pages/ArchitecturePage';
 import TourPage from './components/pages/TourPage';
 import ExperiencePage from './components/pages/ExperiencePage';
 import ContactPage from './components/pages/ContactPage';
+import BlogListPage from './components/pages/BlogListPage';
+import BlogPostDetailPage from './components/pages/BlogPostDetailPage';
 
 // Dynamic Standalone Page Builder Component
 import CustomPageView from './components/pages/CustomPageView';
@@ -77,6 +79,10 @@ export default function App() {
   const customPageMatch = currentPath.match(/^\/page\/([a-zA-Z0-9_-]+)/);
   const activeCustomSlug = customPageMatch ? customPageMatch[1] : null;
 
+  // Determine active blog post slug if on /blog/:slug
+  const blogPostMatch = currentPath.match(/^\/blog\/([a-zA-Z0-9_-]+)/);
+  const activeBlogSlug = blogPostMatch ? blogPostMatch[1] : null;
+
   return (
     <CMSProvider>
       <Preloader />
@@ -129,12 +135,30 @@ export default function App() {
           <ContactPage onNavigateHome={navigateToHome} onNavigatePage={navigateToPageKey} />
         )}
 
-        {/* Route 09: Dynamic Custom Standalone CMS Page */}
+        {/* Route 09: Dedicated Editorial Blog List Page */}
+        {currentPath === '/blog' && (
+          <BlogListPage
+            onNavigateHome={navigateToHome}
+            onNavigatePost={(slug) => navigateTo(`/blog/${slug}`)}
+          />
+        )}
+
+        {/* Route 10: Dedicated Editorial Blog Post Detail Page */}
+        {activeBlogSlug && (
+          <BlogPostDetailPage
+            slug={activeBlogSlug}
+            onNavigateHome={navigateToHome}
+            onNavigateBlog={() => navigateTo('/blog')}
+            onNavigatePost={(slug) => navigateTo(`/blog/${slug}`)}
+          />
+        )}
+
+        {/* Route 11: Dynamic Custom Standalone CMS Page */}
         {activeCustomSlug && (
           <CustomPageView slug={activeCustomSlug} onNavigateHome={navigateToHome} />
         )}
 
-        {/* Route 10: Complete Landing Page (All 14 Sections Uninterrupted) */}
+        {/* Route 12: Complete Landing Page (All 14 Sections Uninterrupted) */}
         {currentPath === '/' && (
           <>
             {/* Section 01: Hero */}

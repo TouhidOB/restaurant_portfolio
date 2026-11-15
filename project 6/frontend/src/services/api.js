@@ -22,6 +22,8 @@ export async function fetchFullContent() {
       testimonials: (data.testimonials && data.testimonials.length > 0) ? data.testimonials : FALLBACK_CONTENT.testimonials,
       faqs: (data.faqs && data.faqs.length > 0) ? data.faqs : FALLBACK_CONTENT.faqs,
       custom_pages: data.custom_pages || [],
+      blog_posts: (data.blog_posts && data.blog_posts.length > 0) ? data.blog_posts : FALLBACK_CONTENT.blog_posts,
+      blog_categories: (data.blog_categories && data.blog_categories.length > 0) ? data.blog_categories : FALLBACK_CONTENT.blog_categories,
     };
   } catch (err) {
     console.warn('[API] Failed to fetch remote content, utilizing fallback.', err);
@@ -105,3 +107,52 @@ export async function fetchReservationAvailability(date) {
     return null;
   }
 }
+
+export async function fetchBlogPosts(params = {}) {
+  try {
+    const searchParams = new URLSearchParams();
+    if (params.category) searchParams.set('category', params.category);
+    if (params.search) searchParams.set('search', params.search);
+    if (params.featured) searchParams.set('featured', 'true');
+
+    const qs = searchParams.toString();
+    const url = `/api/v1/blog/${qs ? `?${qs}` : ''}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.warn('[API] Blog posts fetch failed, filtering fallback data.', err);
+    let posts = FALLBACK_CONTENT.blog_posts || [];
+    if (params.category) {
+      posts = posts.filter(p => p.category_slug === params.category);
+    }
+    if (params.search) {
+      const q = params.search.toLowerCase();
+      posts = posts.filter(p => p.title.toLowerCase().includes(q) || p.excerpt.toLowerCase().includes(q));
+    }
+    if (params.featured) {
+      posts = posts.filter(p => p.is_featured);
+    }
+    return posts;
+  }
+}
+
+export async function fetchBlogPostDetail(slug) {
+  try {
+    const res = await fetch(`/api/v1/blog/${slug}/`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.warn(`[API] Blog post detail for '${slug}' fetch failed, finding in fallback data.`, err);
+    const post = (FALLBACK_CONTENT.blog_posts || []).find(p => p.slug === slug);
+    if (!post) return null;
+    const related = (FALLBACK_CONTENT.blog_posts || [])
+      .filter(p => p.slug !== slug && (!post.category_slug || p.category_slug === post.category_slug))
+      .slice(0, 3);
+    return {
+      ...post,
+      related_posts: related,
+    };
+  }
+}
+

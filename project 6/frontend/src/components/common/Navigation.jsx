@@ -24,6 +24,7 @@ export default function Navigation({ currentPath = '/', activePageSlug, onNaviga
     { label: 'ARCHITECTURE', path: '/architecture' },
     { label: '3D TOUR', path: '/tour' },
     { label: 'EXPERIENCE', path: '/experience' },
+    { label: 'JOURNAL', path: '/blog' },
     { label: 'CONTACT', path: '/contact' },
   ];
 
@@ -38,6 +39,9 @@ export default function Navigation({ currentPath = '/', activePageSlug, onNaviga
   const isLinkActive = (path) => {
     if (path === '/contact') {
       return currentPath === '/contact' || currentPath === '/location';
+    }
+    if (path === '/blog') {
+      return currentPath === '/blog' || currentPath.startsWith('/blog/');
     }
     return currentPath === path;
   };
