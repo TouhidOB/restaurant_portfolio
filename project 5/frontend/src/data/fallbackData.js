@@ -550,5 +550,87 @@ export const FALLBACK_CONTENT = {
       question: "What payment methods do you accept?",
       answer: "We accept all major credit cards, Apple Pay, Google Pay, and contactless payments. We do not accept personal checks."
     }
+  ],
+  custom_pages: [
+    {
+      id: 1,
+      title: "Glasshouse Private Buyouts",
+      slug: "glasshouse-private-buyouts",
+      meta_description: "Exclusive botanical pavilion for private weddings, diplomatic galas, and bespoke culinary receptions.",
+      is_published: true,
+      blocks: [
+        {
+          id: "block-hero-01",
+          type: "hero",
+          headline: "THE GLASSHOUSE PRIVATE BUYOUT",
+          subheadline: "Immersive Botanical Sanctuary for Grand Celebrations",
+          tag: "TROPICAL MODERNISM // PRIVATE DINING",
+          button_text: "COMMISSION AN EVENT",
+          button_link: "/contact",
+          image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920&q=85"
+        },
+        {
+          id: "block-features-01",
+          type: "features",
+          title: "SPATIAL AMENITIES & CAPACITIES",
+          columns: 3,
+          items: [
+            { title: "BOTANICAL CANOPY", description: "Sheltered under living broad-leaf palms with automated climate misting." },
+            { title: "PRIVATE EMBERS HEARTH", description: "Dedicated wood-fired hearth and private sommelier service." },
+            { title: "ACOUSTIC ISOLATION", description: "Natural teak baffles providing complete acoustic seclusion." }
+          ]
+        },
+        {
+          id: "block-split-01",
+          type: "split",
+          title: "SEAMLESS INDOOR-OUTDOOR ENTERTAINING",
+          description: "Accommodates up to 60 seated guests or 100 cocktail reception patrons. Framed by floor-to-ceiling retractable glass walls overlooking our lush bamboo groves.",
+          image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80"
+        },
+        {
+          id: "block-cta-01",
+          type: "cta",
+          title: "INQUIRE ABOUT BUYOUT DATES",
+          subtitle: "Our private events director responds within 24 business hours.",
+          button_text: "SUBMIT EVENT INQUIRY",
+          button_link: "/contact"
+        }
+      ]
+    }
+  ],
+  blog_categories: [
+    { id: 1, name: "Tropical Architecture", slug: "tropical-architecture", description: "Open-air pavilions, cross-ventilation, and living botanical design." },
+    { id: 2, name: "Botanical Gastronomy", slug: "botanical-gastronomy", description: "Dispatches on heirloom flora, citrus chemistry, and cold-pressed infusions." },
+    { id: 3, name: "Sourcing & Hearth", slug: "sourcing-and-hearth", description: "Profiles of Florida growers, coastal fishermen, and live-wood flame." }
+  ],
+  blog_posts: [
+    {
+      id: 1,
+      title: "Living Architecture: The Open-Air Pavilion and Natural Cooling",
+      slug: "living-architecture-open-air-dining",
+      category: { id: 1, name: "Tropical Architecture", slug: "tropical-architecture" },
+      cover_image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+      excerpt: "How passive solar design and living canopies create an organic dining climate in the Florida subtropical corridor.",
+      content: "When architecture respects the prevailing coastal breeze, artificial air conditioning becomes obsolete. Verdant was conceived around broad overhangs, reclaimed Indonesian teak louvers, and a central water courtyard that cools incoming air naturally.\n\nOur patrons dine in true connection with the elements: dappled tropical sun during midday lunch service and soft maritime night air accompanied by tree frogs and gentle palm rustle.",
+      author_name: "Elena Rostova",
+      read_time: "5 min read",
+      is_published: true,
+      views_count: 245,
+      published_at: "2026-03-12T14:00:00Z"
+    },
+    {
+      id: 2,
+      title: "The Botanical Hearth: Blending Wild Citrus with Ancient Flame",
+      slug: "the-botanical-hearth-flame-and-flora",
+      category: { id: 2, name: "Botanical Gastronomy", slug: "botanical-gastronomy" },
+      cover_image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      excerpt: "Exploring the interaction between high-heat citrus wood coals and indigenous subtropical botanicals.",
+      content: "Wood fire is not merely heat—it is an aromatic ingredient. By burning sustainably harvested orange and guava woods at 800 degrees, our hearth infuses wild snapper and hearts of palm with delicate, sweet fruit smoke.\n\nWe pair these charred notes with raw cold-pressed calamansi and wild sorrel for maximum acidity and vibrancy.",
+      author_name: "Chef Mateo Cruz",
+      read_time: "6 min read",
+      is_published: true,
+      views_count: 310,
+      published_at: "2026-03-20T17:30:00Z"
+    }
   ]
 };

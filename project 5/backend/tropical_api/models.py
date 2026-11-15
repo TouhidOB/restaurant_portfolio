@@ -98,6 +98,8 @@ class MenuItem(models.Model):
     image_url = models.CharField(max_length=500, blank=True)
     dietary_information = models.JSONField(default=list, blank=True)
     allergens = models.CharField(max_length=200, blank=True)
+    calories_estimate = models.IntegerField(default=0, blank=True)
+    origin_notes = models.CharField(max_length=200, blank=True, default="Locally harvested botanical produce")
     is_featured = models.BooleanField(default=False)
     is_available = models.BooleanField(default=True)
     display_order = models.IntegerField(default=0)
@@ -219,20 +221,30 @@ class Testimonial(models.Model):
 
 class Reservation(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Pending Inquiry'),
+        ('pending', 'Pending Approval'),
         ('contacted', 'Contacted Guest'),
         ('confirmed', 'Confirmed Table'),
-        ('cancelled', 'Cancelled'),
+        ('seated', 'Seated Guest'),
+        ('cancelled', 'Declined / Cancelled'),
         ('completed', 'Completed'),
     ]
+    SHIFT_CHOICES = [
+        ('lunch', 'Lunch Shift (12:00 — 15:30)'),
+        ('dinner', 'Dinner Shift (17:30 — 23:30)'),
+    ]
+
     reference_code = models.CharField(max_length=50, unique=True, editable=False)
     full_name = models.CharField(max_length=150)
     email = models.EmailField()
     phone = models.CharField(max_length=50)
     reservation_date = models.DateField()
     reservation_time = models.CharField(max_length=20, default="19:30")
+    shift = models.CharField(max_length=20, choices=SHIFT_CHOICES, default='dinner')
     guest_count = models.IntegerField(default=2)
     seating_area = models.CharField(max_length=100, default="Botanical Glasshouse")
+    dietary_notes = models.CharField(max_length=255, blank=True, default='')
+    occasion = models.CharField(max_length=100, blank=True, default='')
+    table_number = models.CharField(max_length=50, blank=True, default='')
     message = models.TextField(blank=True)
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending')
     admin_notes = models.TextField(blank=True)
@@ -247,13 +259,22 @@ class Reservation(models.Model):
             self.reference_code = f"TROP-{timezone.now().strftime('%y%m%d')}-{uuid.uuid4().hex[:4].upper()}"
         super().save(*args, **kwargs)
 
+    @property
+    def party_size(self):
+        return self.guest_count
+
+    @property
+    def time_slot(self):
+        return self.reservation_time
+
     def __str__(self):
-        return f"{self.reference_code} — {self.full_name} ({self.guest_count} guests)"
+        return f"{self.reference_code} — {self.full_name} ({self.guest_count} guests) [{self.shift}]"
 
 
 class FAQ(models.Model):
     question = models.CharField(max_length=255)
     answer = models.TextField()
+    category = models.CharField(max_length=100, default="General Inquiries", blank=True)
     display_order = models.IntegerField(default=0)
     is_active = models.BooleanField(default=True)
 
@@ -262,3 +283,58 @@ class FAQ(models.Model):
 
     def __str__(self):
         return self.question
+
+
+# ==========================================
+# VISUAL PAGE BUILDER & EDITORIAL MODELS
+# ==========================================
+
+class CustomPage(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
+    meta_description = models.CharField(max_length=300, blank=True)
+    blocks = models.JSONField(default=list, help_text="Structured modular layout blocks for Elementor-style builder")
+    is_published = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-updated_at']
+
+    def __str__(self):
+        return f"{self.title} (/page/{self.slug})"
+
+
+class BlogCategory(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name_plural = "Blog Categories"
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+    category = models.ForeignKey(BlogCategory, related_name='posts', on_delete=models.SET_NULL, null=True, blank=True)
+    cover_image = models.CharField(max_length=500, default="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80")
+    excerpt = models.TextField(blank=True)
+    content = models.TextField(help_text="Article content in formatted text or markdown")
+    author_name = models.CharField(max_length=100, default="Verdant Botanical Atelier")
+    read_time = models.CharField(max_length=50, default="5 min read")
+    is_published = models.BooleanField(default=True)
+    views_count = models.PositiveIntegerField(default=0)
+    published_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-published_at']
+
+    def __str__(self):
+        return self.title

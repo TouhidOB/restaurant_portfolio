@@ -1,0 +1,187 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}VERDANT // 00. METRICS OVERVIEW{% endblock %}
+
+{% block content %}
+<div class="cms-page-header" style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="section-tag">00. SYSTEM TELEMETRY</span>
+            <h1 style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; margin-top: 0.5rem; letter-spacing: -0.01em;">
+                OPERATIONAL TELEMETRY
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-sand); margin-top: 0.25rem;">
+                Botanical dining telemetry, shift velocity, cover allocations, and custom page status.
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="{% url 'cms_pages' %}" class="btn-tropical">
+                + NEW STANDALONE PAGE
+            </a>
+            <a href="{% url 'cms_reservations' %}" class="btn-tropical-secondary">
+                RESERVATION DESK &rarr;
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Telemetry KPI Matrix -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); border-top: 3px solid var(--accent-terracotta); padding: 1.25rem; border-radius: 4px;">
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">
+            PENDING APPROVAL
+        </div>
+        <div style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; color: var(--accent-terracotta); margin: 0.35rem 0;">
+            {{ pending_reservations }}
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-sand);">
+            Awaiting host confirmation
+        </div>
+    </div>
+
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); border-top: 3px solid #4ade80; padding: 1.25rem; border-radius: 4px;">
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">
+            CONFIRMED TABLES
+        </div>
+        <div style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; color: #4ade80; margin: 0.35rem 0;">
+            {{ confirmed_reservations }}
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-sand);">
+            Active guest table bookings
+        </div>
+    </div>
+
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); border-top: 3px solid var(--accent-citrus); padding: 1.25rem; border-radius: 4px;">
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">
+            TODAY'S SHIFTS
+        </div>
+        <div style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; color: var(--accent-citrus); margin: 0.35rem 0;">
+            {{ today_reservations }}
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-sand);">
+            Lunch &amp; dinner bookings
+        </div>
+    </div>
+
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); border-top: 3px solid #60a5fa; padding: 1.25rem; border-radius: 4px;">
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">
+            STANDALONE PAGES
+        </div>
+        <div style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; color: #60a5fa; margin: 0.35rem 0;">
+            {{ total_pages }}
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-sand);">
+            {{ published_pages }} active in navigation
+        </div>
+    </div>
+
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); border-top: 3px solid #c084fc; padding: 1.25rem; border-radius: 4px;">
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">
+            MENU REPERTOIRE
+        </div>
+        <div style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; color: #c084fc; margin: 0.35rem 0;">
+            {{ available_menu_items }} <span style="font-size: 1.1rem; color: var(--text-muted);">/ {{ total_menu_items }}</span>
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-sand);">
+            Haute botanical dishes
+        </div>
+    </div>
+
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); border-top: 3px solid #fb7185; padding: 1.25rem; border-radius: 4px;">
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">
+            VERDANT JOURNAL
+        </div>
+        <div style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; color: #fb7185; margin: 0.35rem 0;">
+            {{ total_posts }}
+        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-sand);">
+            {{ published_posts }} published articles
+        </div>
+    </div>
+</div>
+
+<!-- Recent Reservations Table -->
+<div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); padding: 1.5rem; margin-bottom: 2rem; border-radius: 6px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+            <h2 style="font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700;">RECENT GUEST RESERVATIONS</h2>
+            <p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-sand);">Direct bookings with reference codes &amp; shift assignments</p>
+        </div>
+        <a href="{% url 'cms_reservations' %}" class="btn-tropical-secondary" style="font-size: 0.75rem;">VIEW ALL &rarr;</a>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.8rem; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-botanical); color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase;">
+                    <th style="padding: 0.75rem 1rem;">REF CODE</th>
+                    <th style="padding: 0.75rem 1rem;">GUEST</th>
+                    <th style="padding: 0.75rem 1rem;">DATE &amp; SHIFT</th>
+                    <th style="padding: 0.75rem 1rem;">COVERS</th>
+                    <th style="padding: 0.75rem 1rem;">ZONE</th>
+                    <th style="padding: 0.75rem 1rem;">STATUS</th>
+                    <th style="padding: 0.75rem 1rem; text-align: right;">ACTION</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in recent_reservations %}
+                <tr style="border-bottom: 1px solid rgba(69, 107, 87, 0.4);">
+                    <td style="padding: 0.75rem 1rem; font-weight: 700; color: var(--accent-terracotta);">{{ res.reference_code }}</td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <div style="color: #fff; font-weight: 600;">{{ res.full_name }}</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">{{ res.email }}</div>
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <div>{{ res.reservation_date }} @ {{ res.reservation_time }}</div>
+                        <span style="font-size: 0.65rem; padding: 0.15rem 0.4rem; background: var(--bg-forest-deep); border: 1px solid var(--border-botanical); text-transform: uppercase; color: {% if res.shift == 'lunch' %}var(--accent-citrus){% else %}#60a5fa{% endif %}; border-radius: 3px;">
+                            {{ res.shift }}
+                        </span>
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">{{ res.guest_count }} PAX</td>
+                    <td style="padding: 0.75rem 1rem;">{{ res.seating_area }}</td>
+                    <td style="padding: 0.75rem 1rem;">
+                        {% if res.status == 'confirmed' %}
+                            <span style="color: #4ade80; border: 1px solid #4ade80; padding: 0.2rem 0.5rem; font-size: 0.7rem; border-radius: 3px;">CONFIRMED</span>
+                        {% elif res.status == 'seated' %}
+                            <span style="color: #60a5fa; border: 1px solid #60a5fa; padding: 0.2rem 0.5rem; font-size: 0.7rem; border-radius: 3px;">SEATED</span>
+                        {% elif res.status == 'cancelled' %}
+                            <span style="color: #f87171; border: 1px solid #f87171; padding: 0.2rem 0.5rem; font-size: 0.7rem; border-radius: 3px;">CANCELLED</span>
+                        {% else %}
+                            <span style="color: var(--accent-terracotta); border: 1px solid var(--accent-terracotta); padding: 0.2rem 0.5rem; font-size: 0.7rem; border-radius: 3px;">PENDING</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem 1rem; text-align: right;">
+                        <a href="{% url 'cms_reservations' %}?q={{ res.reference_code }}" class="btn-tropical-secondary" style="font-size: 0.7rem; padding: 0.3rem 0.6rem;">MANAGE</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                        No reservation records detected.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Quick Shortcuts -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); padding: 1.5rem; border-radius: 6px;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem;">VISUAL PAGE BUILDER</h3>
+        <p style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-sand); margin-bottom: 1rem;">
+            Assemble bespoke landing pages using modular botanical blocks (Hero, Split, Features, CTA, Reservation, Gallery).
+        </p>
+        <a href="{% url 'cms_pages' %}" class="btn-tropical" style="font-size: 0.75rem;">LAUNCH BUILDER &rarr;</a>
+    </div>
+
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); padding: 1.5rem; border-radius: 6px;">
+        <h3 style="font-family: var(--font-serif); font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem;">VERDANT BOTANICAL JOURNAL</h3>
+        <p style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-sand); margin-bottom: 1rem;">
+            Curate tropical modernism and culinary essays with category indexing, cover photography, and live read telemetry.
+        </p>
+        <a href="{% url 'cms_blog' %}" class="btn-tropical-secondary" style="font-size: 0.75rem;">JOURNAL DESK &rarr;</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}VERDANT // 10. FREQUENT INQUIRIES{% endblock %}
+
+{% block content %}
+<div class="cms-page-header" style="margin-bottom: 2rem;">
+    <div>
+        <span class="section-tag">10. FREQUENT INQUIRIES</span>
+        <h1 style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; margin-top: 0.5rem; letter-spacing: -0.01em;">
+            FAQS KNOWLEDGE BASE
+        </h1>
+        <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-sand); margin-top: 0.25rem;">
+            Answers to guest inquiries regarding dress code, botanical sourcing, corkage, and private galas.
+        </p>
+    </div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+    {% for faq in faqs %}
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); padding: 1.25rem; border-radius: 6px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.5rem;">
+            <h3 style="font-family: var(--font-serif); font-size: 1.25rem; font-weight: 700; color: #fff;">
+                Q: {{ faq.question }}
+            </h3>
+            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-terracotta); border: 1px solid var(--border-botanical); padding: 0.2rem 0.5rem; text-transform: uppercase; border-radius: 3px;">
+                {{ faq.category }}
+            </span>
+        </div>
+        <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--text-sand); line-height: 1.6;">
+            {{ faq.answer }}
+        </p>
+    </div>
+    {% empty %}
+    <div style="padding: 2rem; background: var(--bg-forest); border: 1px solid var(--border-botanical); text-align: center; color: var(--text-muted); font-family: var(--font-mono); border-radius: 4px;">
+        No FAQs recorded.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

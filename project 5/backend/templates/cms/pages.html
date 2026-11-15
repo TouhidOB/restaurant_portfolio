@@ -1,0 +1,129 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}VERDANT // 01. VISUAL PAGE BUILDER{% endblock %}
+
+{% block content %}
+<div class="cms-page-header" style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="section-tag">01. VISUAL ARCHITECTURE</span>
+            <h1 style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; margin-top: 0.5rem; letter-spacing: -0.01em;">
+                STANDALONE CUSTOM PAGES
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-sand); margin-top: 0.25rem;">
+                Compose bespoke landing pages with visual block editor — Elementor-style for tropical dining.
+            </p>
+        </div>
+        <div>
+            <a href="#createSection" class="btn-tropical">
+                + ASSEMBLE NEW PAGE
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Existing Custom Pages Table -->
+<div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); padding: 1.5rem; margin-bottom: 2.5rem; border-radius: 6px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h2 style="font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700;">CONFIGURED BOTANICAL PAGES</h2>
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-terracotta);">{{ pages.count }} REGISTERED</span>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.8rem; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-botanical); color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase;">
+                    <th style="padding: 0.75rem 1rem;">PAGE TITLE</th>
+                    <th style="padding: 0.75rem 1rem;">FRONTEND ROUTE</th>
+                    <th style="padding: 0.75rem 1rem;">BLOCK MATRIX</th>
+                    <th style="padding: 0.75rem 1rem;">STATUS</th>
+                    <th style="padding: 0.75rem 1rem; text-align: right;">OPERATIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for page in pages %}
+                <tr style="border-bottom: 1px solid rgba(69, 107, 87, 0.4);">
+                    <td style="padding: 0.75rem 1rem;">
+                        <div style="color: #fff; font-weight: 700; font-size: 0.95rem;">{{ page.title }}</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">Updated {{ page.updated_at|date:"M d, Y H:i" }}</div>
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <a href="http://localhost:3000/page/{{ page.slug }}" target="_blank" style="color: var(--accent-terracotta); text-decoration: none;">
+                            /page/{{ page.slug }} ↗
+                        </a>
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <span style="color: #fff; font-weight: 700;">{{ page.blocks|length }}</span> modular blocks
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        {% if page.is_published %}
+                            <span style="color: #4ade80; border: 1px solid #4ade80; padding: 0.2rem 0.5rem; font-size: 0.7rem; border-radius: 3px;">PUBLISHED</span>
+                        {% else %}
+                            <span style="color: var(--text-muted); border: 1px solid var(--border-botanical); padding: 0.2rem 0.5rem; font-size: 0.7rem; border-radius: 3px;">DRAFT</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem 1rem; text-align: right;">
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
+                            <a href="{% url 'cms_page_builder' page.pk %}" class="btn-tropical" style="font-size: 0.75rem; padding: 0.4rem 0.8rem;">
+                                BUILDER &rarr;
+                            </a>
+                            <form method="post" action="{% url 'cms_page_toggle' page.pk %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-tropical-secondary" style="font-size: 0.75rem; padding: 0.4rem 0.8rem;">
+                                    {% if page.is_published %}UNPUBLISH{% else %}PUBLISH{% endif %}
+                                </button>
+                            </form>
+                            <form method="post" action="{% url 'cms_page_delete' page.pk %}" onsubmit="return confirm('Permanently remove page {{ page.title }}?');" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-tropical-secondary" style="font-size: 0.75rem; padding: 0.4rem 0.8rem; color: #f87171; border-color: #5e2424;">
+                                    DELETE
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 2.5rem; text-align: center; color: var(--text-muted);">
+                        No custom pages created yet. Assemble your first page below.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create New Standalone Page Form -->
+<div id="createSection" style="background: var(--bg-forest); border: 1px solid var(--border-botanical); padding: 1.75rem; border-radius: 6px;">
+    <h2 style="font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">
+        ASSEMBLE NEW STANDALONE PAGE
+    </h2>
+    <p style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-sand); margin-bottom: 1.5rem;">
+        Initialize page metadata. Once instantiated, you will enter the visual drag-and-drop block builder.
+    </p>
+
+    <form method="post" action="{% url 'cms_page_create' %}">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem;">
+            <div class="form-group">
+                <label class="form-label" for="pageTitle">Page Title *</label>
+                <input type="text" id="pageTitle" name="title" class="form-input" required placeholder="e.g. Private Canopy Pavilion Sessions">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="pageSlug">URL Slug (Leave blank to auto-generate)</label>
+                <input type="text" id="pageSlug" name="slug" class="form-input" placeholder="e.g. private-canopy-sessions">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label" for="pageDesc">SEO Meta Description</label>
+            <textarea id="pageDesc" name="meta_description" class="form-textarea" rows="2" placeholder="Summary for search engines and social cards..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-tropical">
+            CREATE &amp; OPEN VISUAL BUILDER &rarr;
+        </button>
+    </form>
+</div>
+{% endblock %}

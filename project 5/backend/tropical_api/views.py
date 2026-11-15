@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,13 +12,15 @@ from rest_framework.response import Response
 from .models import (
     Restaurant, WebsiteSection, MenuCategory, MenuItem,
     VirtualTourViewpoint, PhilosophyPillar, CulinaryStoryStage,
-    DiningExperiencePanel, GalleryImage, Testimonial, Reservation, FAQ
+    DiningExperiencePanel, GalleryImage, Testimonial, Reservation, FAQ,
+    CustomPage, BlogCategory, BlogPost
 )
 from .serializers import (
     RestaurantSerializer, WebsiteSectionSerializer, MenuCategorySerializer,
     MenuItemSerializer, VirtualTourViewpointSerializer, PhilosophyPillarSerializer,
     CulinaryStoryStageSerializer, DiningExperiencePanelSerializer,
-    GalleryImageSerializer, TestimonialSerializer, ReservationSerializer, FAQSerializer
+    GalleryImageSerializer, TestimonialSerializer, ReservationSerializer, FAQSerializer,
+    CustomPageSerializer, BlogCategorySerializer, BlogPostListSerializer, BlogPostDetailSerializer
 )
 
 # ==========================================
@@ -27,7 +30,7 @@ from .serializers import (
 class FullTropicalContentView(APIView):
     """
     Consolidated API delivering all structured content for the 15 editorial sections
-    of the VERDANT Tropical Contemporary Restaurant platform.
+    of the VERDANT Tropical Contemporary Restaurant platform, plus custom pages and journal articles.
     """
     def get(self, request, *args, **kwargs):
         restaurant = Restaurant.objects.filter(is_active=True).first()
@@ -66,7 +69,7 @@ class FullTropicalContentView(APIView):
         ).data
 
         gallery = GalleryImageSerializer(
-            GalleryImage.objects.filter(is_active=True), many=True
+            GalleryImage.objects.filter(is_active=True), many=True, context={'request': request}
         ).data
 
         testimonials = TestimonialSerializer(
@@ -75,6 +78,18 @@ class FullTropicalContentView(APIView):
 
         faqs = FAQSerializer(
             FAQ.objects.filter(is_active=True), many=True
+        ).data
+
+        custom_pages = CustomPageSerializer(
+            CustomPage.objects.filter(is_published=True), many=True
+        ).data
+
+        blog_posts = BlogPostListSerializer(
+            BlogPost.objects.filter(is_published=True), many=True, context={'request': request}
+        ).data
+
+        blog_categories = BlogCategorySerializer(
+            BlogCategory.objects.all(), many=True
         ).data
 
         return Response({
@@ -91,6 +106,47 @@ class FullTropicalContentView(APIView):
             "gallery": gallery,
             "testimonials": testimonials,
             "faqs": faqs,
+            "custom_pages": custom_pages,
+            "blog_posts": blog_posts,
+            "blog_categories": blog_categories,
+        })
+
+
+class CustomPageDetailView(APIView):
+    """Retrieves a single published custom page by slug"""
+    def get(self, request, slug, *args, **kwargs):
+        page = get_object_or_404(CustomPage, slug=slug, is_published=True)
+        serializer = CustomPageSerializer(page)
+        return Response({
+            "status": "success",
+            "page": serializer.data
+        })
+
+
+class BlogPostListView(APIView):
+    """Returns published blog journal posts with category filter"""
+    def get(self, request, *args, **kwargs):
+        category_slug = request.query_params.get('category', None)
+        posts = BlogPost.objects.filter(is_published=True)
+        if category_slug:
+            posts = posts.filter(category__slug=category_slug)
+        serializer = BlogPostListSerializer(posts, many=True, context={'request': request})
+        return Response({
+            "status": "success",
+            "posts": serializer.data
+        })
+
+
+class BlogPostDetailView(APIView):
+    """Retrieves a single published blog article and increments view count"""
+    def get(self, request, slug, *args, **kwargs):
+        post = get_object_or_404(BlogPost, slug=slug, is_published=True)
+        post.views_count += 1
+        post.save(update_fields=['views_count'])
+        serializer = BlogPostDetailSerializer(post, context={'request': request})
+        return Response({
+            "status": "success",
+            "post": serializer.data
         })
 
 
@@ -102,7 +158,7 @@ class ReservationCreateView(APIView):
             reservation = serializer.save()
             return Response({
                 "status": "success",
-                "message": "Your reservation inquiry has been registered in the Verdant Botanical registry.",
+                "message": "Your reservation inquiry has been registered in the Verdant botanical registry.",
                 "reference_code": reservation.reference_code,
                 "data": serializer.data
             }, status=status.HTTP_201_CREATED)
@@ -117,6 +173,50 @@ class ReservationCreateView(APIView):
         return Response(serializer.data)
 
 
+class ReservationLookupView(APIView):
+    """Lookup reservation status and details by reference code"""
+    def get(self, request, *args, **kwargs):
+        ref_code = request.query_params.get('ref', '').strip().upper()
+        if not ref_code:
+            return Response({"status": "error", "message": "Reference code required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        reservation = Reservation.objects.filter(reference_code=ref_code).first()
+        if not reservation:
+            return Response({"status": "error", "message": f"No reservation record found for reference {ref_code}."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ReservationSerializer(reservation)
+        return Response({
+            "status": "success",
+            "reservation": serializer.data
+        })
+
+
+class ReservationAvailabilityView(APIView):
+    """Check seat availability by date and shift"""
+    def get(self, request, *args, **kwargs):
+        date_str = request.query_params.get('date', timezone.now().strftime('%Y-%m-%d'))
+        shift = request.query_params.get('shift', 'dinner').lower()
+
+        # Capacity per shift: Lunch 45 covers, Dinner 72 covers
+        max_covers = 45 if shift == 'lunch' else 72
+        existing = Reservation.objects.filter(
+            reservation_date=date_str,
+            shift=shift,
+            status__in=['pending', 'confirmed', 'seated']
+        )
+        booked_guests = sum(r.guest_count for r in existing)
+        available_seats = max(0, max_covers - booked_guests)
+
+        return Response({
+            "status": "success",
+            "date": date_str,
+            "shift": shift,
+            "booked_covers": booked_guests,
+            "remaining_seats": available_seats,
+            "is_available": available_seats >= 2
+        })
+
+
 class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MenuItem.objects.filter(is_available=True)
     serializer_class = MenuItemSerializer
@@ -125,179 +225,3 @@ class MenuItemViewSet(viewsets.ReadOnlyModelViewSet):
 class VirtualTourViewpointViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = VirtualTourViewpoint.objects.filter(is_active=True)
     serializer_class = VirtualTourViewpointSerializer
-
-
-# ==========================================
-# CMS STUDIO VIEWS
-# ==========================================
-
-def cms_login_view(request):
-    if request.user.is_authenticated:
-        return redirect('cms_dashboard')
-
-    if request.method == 'POST':
-        u = request.POST.get('username')
-        p = request.POST.get('password')
-        user = authenticate(request, username=u, password=p)
-        if user is not None and user.is_staff:
-            login(request, user)
-            messages.success(request, f"Welcome to Verdant Tropical CMS Studio, {user.username}.")
-            return redirect('cms_dashboard')
-        else:
-            messages.error(request, "Invalid botanical security credentials. Access restricted.")
-
-    return render(request, 'cms/login.html')
-
-
-def cms_logout_view(request):
-    logout(request)
-    messages.info(request, "Session closed safely.")
-    return redirect('cms_login')
-
-
-@login_required(login_url='cms_login')
-def cms_dashboard_view(request):
-    restaurant = Restaurant.objects.first()
-    if not restaurant:
-        restaurant = Restaurant.objects.create(name="VERDANT // TROPICAL MODERN DINING")
-
-    sections = WebsiteSection.objects.all()
-    categories = MenuCategory.objects.all()
-    menu_items = MenuItem.objects.select_related('category').all()
-    viewpoints = VirtualTourViewpoint.objects.all()
-    pillars = PhilosophyPillar.objects.all()
-    story_stages = CulinaryStoryStage.objects.all()
-    reservations = Reservation.objects.all().order_by('-created_at')
-    gallery = GalleryImage.objects.all()
-    faqs = FAQ.objects.all()
-
-    # Telemetry KPIs
-    kpis = {
-        'total_menu_items': menu_items.count(),
-        'available_menu_items': menu_items.filter(is_available=True).count(),
-        'total_reservations': reservations.count(),
-        'pending_reservations': reservations.filter(status='pending').count(),
-        'confirmed_reservations': reservations.filter(status='confirmed').count(),
-        'active_viewpoints': viewpoints.filter(is_active=True).count(),
-        'gallery_count': gallery.count(),
-    }
-
-    # Pre-render JSON for master JSON editor
-    full_content = {
-        "restaurant": RestaurantSerializer(restaurant).data,
-        "sections": {s.section_key: WebsiteSectionSerializer(s).data for s in sections},
-        "viewpoints": VirtualTourViewpointSerializer(viewpoints, many=True).data,
-        "pillars": PhilosophyPillarSerializer(pillars, many=True).data,
-        "faqs": FAQSerializer(faqs, many=True).data,
-    }
-
-    context = {
-        'restaurant': restaurant,
-        'sections': sections,
-        'categories': categories,
-        'menu_items': menu_items,
-        'viewpoints': viewpoints,
-        'pillars': pillars,
-        'story_stages': story_stages,
-        'reservations': reservations,
-        'gallery': gallery,
-        'faqs': faqs,
-        'kpis': kpis,
-        'master_json_str': json.dumps(full_content, indent=2),
-    }
-
-    return render(request, 'cms/dashboard.html', context)
-
-
-@login_required(login_url='cms_login')
-@require_POST
-def cms_update_settings(request):
-    restaurant = Restaurant.objects.first()
-    if not restaurant:
-        restaurant = Restaurant.objects.create()
-
-    restaurant.name = request.POST.get('name', restaurant.name)
-    restaurant.tagline = request.POST.get('tagline', restaurant.tagline)
-    restaurant.short_description = request.POST.get('short_description', restaurant.short_description)
-    restaurant.phone = request.POST.get('phone', restaurant.phone)
-    restaurant.email = request.POST.get('email', restaurant.email)
-    restaurant.address = request.POST.get('address', restaurant.address)
-    restaurant.city = request.POST.get('city', restaurant.city)
-    restaurant.coordinates_display = request.POST.get('coordinates_display', restaurant.coordinates_display)
-    restaurant.opening_hours_summary = request.POST.get('opening_hours_summary', restaurant.opening_hours_summary)
-    
-    restaurant.hero_heading_line1 = request.POST.get('hero_heading_line1', restaurant.hero_heading_line1)
-    restaurant.hero_heading_line2 = request.POST.get('hero_heading_line2', restaurant.hero_heading_line2)
-    restaurant.hero_heading_line3 = request.POST.get('hero_heading_line3', restaurant.hero_heading_line3)
-    restaurant.hero_supporting_text = request.POST.get('hero_supporting_text', restaurant.hero_supporting_text)
-    
-    restaurant.save()
-    messages.success(request, "Verdant restaurant parameters updated successfully.")
-    return redirect('cms_dashboard')
-
-
-@login_required(login_url='cms_login')
-@require_POST
-def cms_update_reservation_status(request, pk):
-    reservation = get_object_or_404(Reservation, pk=pk)
-    new_status = request.POST.get('status')
-    if new_status in dict(Reservation.STATUS_CHOICES):
-        reservation.status = new_status
-        reservation.save()
-        messages.success(request, f"Reservation {reservation.reference_code} status updated to {new_status.upper()}.")
-    return redirect('cms_dashboard')
-
-
-@login_required(login_url='cms_login')
-@require_POST
-def cms_toggle_menu_item(request, pk):
-    item = get_object_or_404(MenuItem, pk=pk)
-    item.is_available = not item.is_available
-    item.save()
-    messages.success(request, f"Menu item '{item.name}' availability set to {item.is_available}.")
-    return redirect('cms_dashboard')
-
-
-@login_required(login_url='cms_login')
-@require_POST
-def cms_update_section(request, pk):
-    section = get_object_or_404(WebsiteSection, pk=pk)
-    section.eyebrow = request.POST.get('eyebrow', section.eyebrow)
-    section.title = request.POST.get('title', section.title)
-    section.subtitle = request.POST.get('subtitle', section.subtitle)
-    section.is_visible = 'is_visible' in request.POST
-    section.save()
-    messages.success(request, f"Editorial section '{section.title}' (S{section.display_order:02d}) updated.")
-    return redirect('cms_dashboard')
-
-
-@login_required(login_url='cms_login')
-@require_POST
-def cms_save_master_json(request):
-    raw_json = request.POST.get('master_json')
-    try:
-        data = json.loads(raw_json)
-        if "restaurant" in data:
-            r_data = data["restaurant"]
-            restaurant = Restaurant.objects.first()
-            if restaurant:
-                for k, v in r_data.items():
-                    if hasattr(restaurant, k) and k not in ['id', 'created_at', 'updated_at']:
-                        setattr(restaurant, k, v)
-                restaurant.save()
-
-        if "sections" in data:
-            for s_key, s_data in data["sections"].items():
-                section = WebsiteSection.objects.filter(section_key=s_key).first()
-                if section:
-                    if 'eyebrow' in s_data: section.eyebrow = s_data['eyebrow']
-                    if 'title' in s_data: section.title = s_data['title']
-                    if 'subtitle' in s_data: section.subtitle = s_data['subtitle']
-                    if 'custom_content' in s_data: section.custom_content = s_data['custom_content']
-                    section.save()
-
-        messages.success(request, "Master architectural configuration successfully compiled and saved.")
-    except Exception as e:
-        messages.error(request, f"JSON parse error: {str(e)}")
-
-    return redirect('cms_dashboard')

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Navigation() {
-  const { content, openReservation } = useCMS();
+export default function Navigation({ currentPath = '/', onNavigate, onNavigateHome, onOpenReservation }) {
+  const { content, openReservation, customPages } = useCMS();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [pagesDropdownOpen, setPagesDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,18 +16,48 @@ export default function Navigation() {
   }, []);
 
   const navLinks = [
-    { label: 'PHILOSOPHY', href: '#philosophy' },
-    { label: 'SIGNATURES', href: '#signatures' },
-    { label: 'MENU', href: '#menu' },
-    { label: 'ARCHITECTURE', href: '#architecture' },
-    { label: '3D TOUR', href: '#tour' },
-    { label: 'EXPERIENCE', href: '#experience' },
-    { label: 'ARCHIVE', href: '#gallery' },
-    { label: 'CONTACT', href: '#location' },
+    { label: '01. MANIFESTO', path: '/story' },
+    { label: '02. SIGNATURES', path: '/signatures' },
+    { label: '03. MENU', path: '/menu' },
+    { label: '04. PROCESS', path: '/process' },
+    { label: '05. ARCHITECTURE', path: '/architecture' },
+    { label: '06. 3D TOUR', path: '/tour' },
+    { label: '07. EXPERIENCE', path: '/experience' },
+    { label: '08. JOURNAL', path: '/blog' },
+    { label: '09. CONTACT', path: '/contact' },
   ];
 
-  const handleLinkClick = () => {
+  const handleLinkClick = (e, path) => {
+    e.preventDefault();
     setMobileMenuOpen(false);
+    setPagesDropdownOpen(false);
+    if (onNavigate) {
+      onNavigate(path);
+    } else {
+      window.history.pushState({}, '', path);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  };
+
+  const handleBrandClick = (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    setPagesDropdownOpen(false);
+    if (onNavigateHome) {
+      onNavigateHome();
+    } else {
+      window.history.pushState({}, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  };
+
+  const handleReserveClick = () => {
+    setMobileMenuOpen(false);
+    if (onOpenReservation) {
+      onOpenReservation();
+    } else if (openReservation) {
+      openReservation();
+    }
   };
 
   return (
@@ -37,13 +68,13 @@ export default function Navigation() {
           top: 0,
           left: 0,
           right: 0,
-          height: 'var(--header-height)',
+          height: 'var(--header-height, 80px)',
           zIndex: 1000,
           transition: 'background-color 0.3s ease, backdrop-filter 0.3s ease, border-color 0.3s ease',
-          backgroundColor: scrolled ? 'rgba(26, 47, 37, 0.94)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
-          borderBottom: scrolled ? '1px solid rgba(61, 97, 78, 0.6)' : '1px solid transparent',
+          backgroundColor: scrolled ? 'rgba(26, 47, 37, 0.96)' : 'rgba(26, 47, 37, 0.90)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderBottom: scrolled ? '1px solid rgba(61, 97, 78, 0.6)' : '1px solid rgba(61, 97, 78, 0.3)',
           display: 'flex',
           alignItems: 'center',
         }}
@@ -59,7 +90,8 @@ export default function Navigation() {
         >
           {/* Brand Logo */}
           <a
-            href="#"
+            href="/"
+            onClick={handleBrandClick}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -71,12 +103,13 @@ export default function Navigation() {
               style={{
                 width: '38px',
                 height: '38px',
-                backgroundColor: 'var(--accent-terracotta)',
-                borderRadius: 'var(--radius-sm)',
+                backgroundColor: '#BC7153',
+                borderRadius: '4px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 boxShadow: '0 4px 12px rgba(188, 113, 83, 0.3)',
+                flexShrink: 0,
               }}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -87,11 +120,11 @@ export default function Navigation() {
             <div>
               <span
                 style={{
-                  fontFamily: 'var(--font-serif)',
+                  fontFamily: 'var(--font-serif, serif)',
                   fontSize: '1.45rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.08em',
-                  color: 'var(--text-ivory)',
+                  fontWeight: 700,
+                  letterSpacing: '0.06em',
+                  color: '#F6F2E9',
                   display: 'block',
                   lineHeight: 1,
                 }}
@@ -100,250 +133,279 @@ export default function Navigation() {
               </span>
               <span
                 style={{
-                  fontFamily: 'var(--font-mono)',
+                  fontFamily: 'var(--font-mono, monospace)',
                   fontSize: '0.62rem',
-                  letterSpacing: '0.14em',
-                  color: 'var(--sage-mist)',
-                  display: 'block',
+                  letterSpacing: '0.12em',
+                  color: '#AAB9A0',
                   marginTop: '0.2rem',
+                  display: 'block',
                 }}
               >
-                TROPICAL MODERN
+                TROPICAL MODERN &bull; PALM GROVE
               </span>
             </div>
           </a>
 
-          {/* Desktop Nav Links */}
+          {/* Desktop Navigation Links */}
           <nav
-            style={{
-              display: 'none',
-              alignItems: 'center',
-              gap: '1.6rem',
-            }}
-            className="desktop-nav"
-          >
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                style={{
-                  fontFamily: 'var(--font-ui)',
-                  fontSize: '0.82rem',
-                  fontWeight: 600,
-                  letterSpacing: '0.08em',
-                  color: 'var(--text-sand)',
-                  textDecoration: 'none',
-                  transition: 'color var(--transition-fast)',
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-terracotta)')}
-                onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-sand)')}
-              >
-                {link.label}
-              </a>
-            ))}
-          </nav>
-
-          {/* Action CTAs */}
-          <div
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '1rem',
             }}
+            className="desktop-nav"
           >
-            {/* Direct CMS Studio Link */}
+            {navLinks.map((link) => {
+              const isActive = currentPath === link.path;
+              return (
+                <a
+                  key={link.label}
+                  href={link.path}
+                  onClick={(e) => handleLinkClick(e, link.path)}
+                  style={{
+                    fontFamily: 'var(--font-mono, monospace)',
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.04em',
+                    color: isActive ? '#D9B84E' : '#C8B99F',
+                    textDecoration: 'none',
+                    borderBottom: isActive ? '2px solid #D9B84E' : '2px solid transparent',
+                    paddingBottom: '2px',
+                    transition: 'color 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#D9B84E')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = isActive ? '#D9B84E' : '#C8B99F')}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
+
+            {/* Dynamic Custom Pages Dropdown */}
+            {customPages && customPages.length > 0 && (
+              <div style={{ position: 'relative' }}>
+                <button
+                  type="button"
+                  onClick={() => setPagesDropdownOpen(!pagesDropdownOpen)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    fontFamily: 'var(--font-mono, monospace)',
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.04em',
+                    color: currentPath.startsWith('/page/') ? '#D9B84E' : '#C8B99F',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.3rem',
+                    padding: 0,
+                  }}
+                >
+                  10. PAGES <span style={{ fontSize: '0.6rem' }}>▼</span>
+                </button>
+                {pagesDropdownOpen && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 'calc(100% + 12px)',
+                      right: 0,
+                      background: '#1A2F25',
+                      border: '1px solid rgba(170, 185, 160, 0.3)',
+                      borderTop: '2px solid #BC7153',
+                      borderRadius: '4px',
+                      padding: '0.5rem 0',
+                      minWidth: '220px',
+                      boxShadow: '0 12px 30px rgba(0,0,0,0.8)',
+                      zIndex: 200,
+                    }}
+                  >
+                    {customPages.map((cp) => (
+                      <a
+                        key={cp.slug}
+                        href={`/page/${cp.slug}`}
+                        onClick={(e) => handleLinkClick(e, `/page/${cp.slug}`)}
+                        style={{
+                          display: 'block',
+                          padding: '0.5rem 1rem',
+                          fontFamily: 'var(--font-mono, monospace)',
+                          fontSize: '0.75rem',
+                          color: currentPath === `/page/${cp.slug}` ? '#D9B84E' : '#F6F2E9',
+                          textDecoration: 'none',
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.background = '#243F32')}
+                        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      >
+                        {cp.title}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </nav>
+
+          {/* Action Controls */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
             <a
               href="/cms/"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="Access Decoupled Django CMS Studio"
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
-                letterSpacing: '0.06em',
-                color: 'var(--accent-citrus)',
-                padding: '0.45rem 0.85rem',
-                borderRadius: 'var(--radius-sm)',
-                border: '1px solid rgba(217, 184, 78, 0.4)',
-                backgroundColor: 'rgba(217, 184, 78, 0.08)',
-                transition: 'all var(--transition-fast)',
+                fontFamily: 'var(--font-mono, monospace)',
+                fontSize: '0.72rem',
+                letterSpacing: '0.08em',
+                color: '#D9B84E',
+                border: '1px solid rgba(170, 185, 160, 0.3)',
+                borderRadius: '4px',
+                padding: '0.5rem 0.85rem',
+                textDecoration: 'none',
+                transition: 'all 0.2s ease',
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(217, 184, 78, 0.2)';
-                e.currentTarget.style.borderColor = 'var(--accent-citrus)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'rgba(217, 184, 78, 0.08)';
-                e.currentTarget.style.borderColor = 'rgba(217, 184, 78, 0.4)';
-              }}
+              className="cms-link-desktop"
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = '#D9B84E')}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(170, 185, 160, 0.3)')}
             >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                <line x1="9" y1="3" x2="9" y2="21" />
-              </svg>
-              <span>CMS STUDIO</span>
+              CMS STUDIO
             </a>
 
-            {/* Reserve Table Button */}
             <button
-              onClick={openReservation}
-              className="btn-terracotta"
+              type="button"
+              onClick={handleReserveClick}
               style={{
-                padding: '0.65rem 1.4rem',
-                fontSize: '0.85rem',
+                padding: '0.55rem 1.25rem',
+                background: '#BC7153',
+                border: 'none',
+                borderRadius: '4px',
+                color: '#fff',
+                fontFamily: 'var(--font-mono, monospace)',
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                letterSpacing: '0.04em',
+                cursor: 'pointer',
               }}
             >
-              <span>RESERVE TABLE</span>
+              RESERVE TABLE
             </button>
 
-            {/* Mobile Hamburger Button */}
+            {/* Mobile Menu Toggle Button */}
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="mobile-hamburger"
-              aria-label="Toggle Navigation Menu"
               style={{
-                display: 'flex',
+                display: 'none',
                 flexDirection: 'column',
-                justifyContent: 'space-around',
-                width: '32px',
-                height: '32px',
+                justifyContent: 'space-between',
+                width: '28px',
+                height: '18px',
                 background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
                 padding: 0,
-                zIndex: 1001,
               }}
+              className="mobile-toggle"
+              aria-label="Toggle navigation menu"
             >
-              <span
-                style={{
-                  width: '100%',
-                  height: '2px',
-                  backgroundColor: 'var(--text-ivory)',
-                  transition: 'all 0.3s ease',
-                  transform: mobileMenuOpen ? 'rotate(45deg) translate(6px, 6px)' : 'none',
-                }}
-              />
-              <span
-                style={{
-                  width: '100%',
-                  height: '2px',
-                  backgroundColor: 'var(--text-ivory)',
-                  transition: 'all 0.3s ease',
-                  opacity: mobileMenuOpen ? 0 : 1,
-                }}
-              />
-              <span
-                style={{
-                  width: '100%',
-                  height: '2px',
-                  backgroundColor: 'var(--text-ivory)',
-                  transition: 'all 0.3s ease',
-                  transform: mobileMenuOpen ? 'rotate(-45deg) translate(6px, -6px)' : 'none',
-                }}
-              />
+              <span style={{ width: '100%', height: '2px', background: '#F6F2E9' }} />
+              <span style={{ width: '100%', height: '2px', background: '#F6F2E9' }} />
+              <span style={{ width: '100%', height: '2px', background: '#F6F2E9' }} />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu Drawer */}
-      <div
-        style={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          maxWidth: '380px',
-          backgroundColor: '#1A2F25',
-          borderLeft: '1px solid var(--border-botanical)',
-          zIndex: 999,
-          padding: '6rem 2.5rem 3rem',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
-          transition: 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)',
-          boxShadow: mobileMenuOpen ? '-12px 0 32px rgba(0, 0, 0, 0.45)' : 'none',
-        }}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          <div
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.7rem',
-              color: 'var(--sage-mist)',
-              letterSpacing: '0.12em',
-              marginBottom: '0.5rem',
-            }}
-          >
-            NAVIGATION INDEX
-          </div>
-          {navLinks.map((link) => (
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 999,
+            background: 'rgba(26, 47, 37, 0.98)',
+            paddingTop: 'var(--header-height, 80px)',
+            display: 'flex',
+            flexDirection: 'column',
+            paddingLeft: '2rem',
+            paddingRight: '2rem',
+            paddingBottom: '3rem',
+            overflowY: 'auto',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginTop: '2rem' }}>
             <a
-              key={link.label}
-              href={link.href}
-              onClick={handleLinkClick}
+              href="/"
+              onClick={handleBrandClick}
               style={{
-                fontFamily: 'var(--font-serif)',
-                fontSize: '1.75rem',
-                color: 'var(--text-ivory)',
+                fontFamily: 'var(--font-mono, monospace)',
+                fontSize: '1rem',
+                color: currentPath === '/' ? '#D9B84E' : '#F6F2E9',
                 textDecoration: 'none',
-                transition: 'color var(--transition-fast)',
               }}
             >
-              {link.label}
+              00. INDEX LANDING
             </a>
-          ))}
-        </div>
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.path}
+                onClick={(e) => handleLinkClick(e, link.path)}
+                style={{
+                  fontFamily: 'var(--font-mono, monospace)',
+                  fontSize: '1rem',
+                  color: currentPath === link.path ? '#D9B84E' : '#F6F2E9',
+                  textDecoration: 'none',
+                }}
+              >
+                {link.label}
+              </a>
+            ))}
 
-        <div style={{ borderTop: '1px solid var(--border-botanical)', paddingTop: '2rem' }}>
-          <p
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.75rem',
-              color: 'var(--text-muted)',
-              marginBottom: '1rem',
-              lineHeight: 1.5,
-            }}
-          >
-            {content?.restaurant?.address || '840 Palm Grove Way, Tropical Corridor'}
-            <br />
-            {content?.restaurant?.opening_hours_summary || 'TUE — SUN / 12:00 — 23:30'}
-          </p>
-          <a
-            href="/cms/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'block',
-              textAlign: 'center',
-              padding: '0.75rem',
-              border: '1px solid var(--accent-citrus)',
-              color: 'var(--accent-citrus)',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.8rem',
-              borderRadius: 'var(--radius-sm)',
-            }}
-          >
-            OPEN CMS STUDIO (DJANGO)
-          </a>
-        </div>
-      </div>
+            {customPages && customPages.map((cp) => (
+              <a
+                key={cp.slug}
+                href={`/page/${cp.slug}`}
+                onClick={(e) => handleLinkClick(e, `/page/${cp.slug}`)}
+                style={{
+                  fontFamily: 'var(--font-mono, monospace)',
+                  fontSize: '1rem',
+                  color: currentPath === `/page/${cp.slug}` ? '#D9B84E' : '#AAB9A0',
+                  textDecoration: 'none',
+                }}
+              >
+                PAGE &bull; {cp.title}
+              </a>
+            ))}
 
-      <style>{`
-        @media (min-width: 1024px) {
-          .desktop-nav {
-            display: flex !important;
-          }
-          .mobile-hamburger {
-            display: none !important;
-          }
-        }
-      `}</style>
+            <a
+              href="/cms/"
+              style={{
+                fontFamily: 'var(--font-mono, monospace)',
+                fontSize: '1rem',
+                color: '#D9B84E',
+                textDecoration: 'none',
+                marginTop: '1rem',
+              }}
+            >
+              ⚙ CMS STUDIO BACKEND
+            </a>
+
+            <button
+              type="button"
+              onClick={handleReserveClick}
+              style={{
+                marginTop: '1.5rem',
+                padding: '0.85rem',
+                background: '#BC7153',
+                border: 'none',
+                borderRadius: '4px',
+                color: '#fff',
+                fontFamily: 'var(--font-mono, monospace)',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
+            >
+              RESERVE TABLE &rarr;
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

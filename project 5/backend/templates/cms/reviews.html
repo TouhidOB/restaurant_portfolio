@@ -1,0 +1,40 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}VERDANT // 09. CRITICAL ACCLAIM{% endblock %}
+
+{% block content %}
+<div class="cms-page-header" style="margin-bottom: 2rem;">
+    <div>
+        <span class="section-tag">09. CRITICAL ACCLAIM</span>
+        <h1 style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; margin-top: 0.5rem; letter-spacing: -0.01em;">
+            CRITIC REVIEWS &amp; ACCLAIM
+        </h1>
+        <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-sand); margin-top: 0.25rem;">
+            Gastronomic reviews, Michelin dispatch quotes, and design press recognition.
+        </p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.25rem;">
+    {% for rev in reviews %}
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); border-left: 3px solid var(--accent-terracotta); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: 6px;">
+        <div style="margin-bottom: 1rem;">
+            <div style="color: var(--accent-citrus); font-size: 1.1rem; margin-bottom: 0.5rem;">
+                ★ ★ ★ ★ ★
+            </div>
+            <p style="font-family: var(--font-serif); font-size: 1.15rem; color: #fff; line-height: 1.5; font-style: italic;">
+                "{{ rev.review_text }}"
+            </p>
+        </div>
+        <div style="border-top: 1px solid var(--border-botanical); padding-top: 0.75rem;">
+            <div style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700;">{{ rev.guest_name }}</div>
+            <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-terracotta);">{{ rev.source }}</div>
+        </div>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; padding: 2rem; background: var(--bg-forest); border: 1px solid var(--border-botanical); text-align: center; color: var(--text-muted); font-family: var(--font-mono); border-radius: 4px;">
+        No critic reviews recorded.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

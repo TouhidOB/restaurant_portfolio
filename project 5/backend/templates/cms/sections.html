@@ -1,0 +1,60 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}VERDANT // 07. 15 LANDING SECTIONS{% endblock %}
+
+{% block content %}
+<div class="cms-page-header" style="margin-bottom: 2rem;">
+    <div>
+        <span class="section-tag">07. EDITORIAL CONTENT</span>
+        <h1 style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; margin-top: 0.5rem; letter-spacing: -0.01em;">
+            15 EDITORIAL HOMEPAGE SECTIONS
+        </h1>
+        <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-sand); margin-top: 0.25rem;">
+            Manage headlines, eyebrows, subtitles, and visibility across all sections S01 through S15.
+        </p>
+    </div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 1.5rem;">
+    {% for s in sections %}
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); border-left: 4px solid var(--accent-terracotta); padding: 1.5rem; border-radius: 6px;">
+        <form method="post" action="{% url 'cms_update_section' s.pk %}">
+            {% csrf_token %}
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--border-botanical); padding-bottom: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--accent-terracotta); background: var(--bg-forest-deep); padding: 0.2rem 0.5rem; border: 1px solid var(--border-botanical); border-radius: 3px;">
+                        S{{ s.display_order|stringformat:"02d" }}
+                    </span>
+                    <strong style="font-family: var(--font-mono); font-size: 0.85rem; color: #fff;">{{ s.section_key }}</strong>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <label style="display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.75rem; color: #fff; cursor: pointer;">
+                        <input type="checkbox" name="is_visible" {% if s.is_visible %}checked{% endif %} style="accent-color: var(--accent-terracotta);">
+                        <span>RENDER ON HOMEPAGE</span>
+                    </label>
+                    <button type="submit" class="btn-tropical" style="font-size: 0.7rem; padding: 0.35rem 0.75rem;">
+                        UPDATE S{{ s.display_order|stringformat:"02d" }}
+                    </button>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; margin-bottom: 0.75rem;">
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 0.7rem;">Eyebrow Tag</label>
+                    <input type="text" name="eyebrow" class="form-input" style="font-size: 0.8rem;" value="{{ s.eyebrow }}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" style="font-size: 0.7rem;">Main Title</label>
+                    <input type="text" name="title" class="form-input" style="font-size: 0.8rem;" value="{{ s.title }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" style="font-size: 0.7rem;">Subtitle / Narrative</label>
+                <input type="text" name="subtitle" class="form-input" style="font-size: 0.8rem;" value="{{ s.subtitle }}">
+            </div>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

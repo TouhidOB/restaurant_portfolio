@@ -1,0 +1,38 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}VERDANT // 08. BOTANICAL ARCHIVE{% endblock %}
+
+{% block content %}
+<div class="cms-page-header" style="margin-bottom: 2rem;">
+    <div>
+        <span class="section-tag">08. VISUAL ARCHIVE</span>
+        <h1 style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; margin-top: 0.5rem; letter-spacing: -0.01em;">
+            BOTANICAL ARCHIVE
+        </h1>
+        <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-sand); margin-top: 0.25rem;">
+            Curated archive of open-air timber architecture, palm canopies, and tropical flora.
+        </p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+    {% for img in gallery %}
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); overflow: hidden; border-radius: 6px;">
+        <div style="position: relative; height: 180px; background: #000;">
+            <img src="{{ img.image_url }}" alt="{{ img.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.85); color: #fff; font-family: var(--font-mono); font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 2px;">
+                {{ img.category|upper }}
+            </div>
+        </div>
+        <div style="padding: 1rem;">
+            <h4 style="font-family: var(--font-serif); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem;">{{ img.title }}</h4>
+            <p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-sand);">{{ img.caption }}</p>
+        </div>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; padding: 2rem; background: var(--bg-forest); border: 1px solid var(--border-botanical); text-align: center; color: var(--text-muted); font-family: var(--font-mono); border-radius: 4px;">
+        No gallery items found.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

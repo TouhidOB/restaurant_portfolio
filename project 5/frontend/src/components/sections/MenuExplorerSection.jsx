@@ -309,7 +309,9 @@ export default function MenuExplorerSection() {
               gap: '1.75rem',
             }}
           >
-            {filteredItems.map((item) => (
+            {filteredItems.map((item) => {
+              const itemImg = item.resolved_image || item.image_url || item.image || "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=1200&q=80";
+              return (
               <div
                 key={item.id || item.slug}
                 className="tropical-card"
@@ -318,86 +320,126 @@ export default function MenuExplorerSection() {
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  gap: '1.25rem',
+                  gap: '1rem',
+                  overflow: 'hidden',
+                  padding: 0,
                 }}
                 onClick={() => openDish(item)}
               >
-                <div>
+                <div style={{ height: '200px', overflow: 'hidden', position: 'relative', backgroundColor: '#14251D' }}>
+                  <img
+                    src={itemImg}
+                    alt={item.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transition: 'transform 0.4s ease',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                  />
+                  {item.is_featured && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        right: '12px',
+                        background: 'var(--accent-terracotta, #BC7153)',
+                        color: '#fff',
+                        fontFamily: 'var(--font-mono, monospace)',
+                        fontSize: '0.65rem',
+                        fontWeight: 700,
+                        padding: '3px 8px',
+                        borderRadius: '3px',
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      CHEF'S SIGNATURE
+                    </span>
+                  )}
+                </div>
+
+                <div style={{ padding: '0 1.25rem 1.25rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
+                  <div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'baseline',
+                        justifyContent: 'space-between',
+                        gap: '0.75rem',
+                        marginBottom: '0.5rem',
+                      }}
+                    >
+                      <h4
+                        style={{
+                          fontFamily: 'var(--font-serif)',
+                          fontSize: '1.35rem',
+                          color: 'var(--text-ivory)',
+                          fontWeight: 600,
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        {item.name}
+                      </h4>
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '1.15rem',
+                          color: 'var(--accent-citrus)',
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {item.currency_symbol || '$'}{item.price}
+                      </span>
+                    </div>
+
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: '0.9rem',
+                        color: 'var(--text-sand)',
+                        lineHeight: 1.5,
+                        marginBottom: '1rem',
+                      }}
+                    >
+                      {item.short_description}
+                    </p>
+                  </div>
+
                   <div
                     style={{
                       display: 'flex',
-                      alignItems: 'baseline',
+                      alignItems: 'center',
                       justifyContent: 'space-between',
-                      gap: '0.75rem',
-                      marginBottom: '0.65rem',
+                      paddingTop: '0.75rem',
+                      borderTop: '1px solid var(--border-botanical)',
                     }}
                   >
-                    <h4
-                      style={{
-                        fontFamily: 'var(--font-serif)',
-                        fontSize: '1.4rem',
-                        color: 'var(--text-ivory)',
-                        fontWeight: 600,
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {item.name}
-                    </h4>
+                    <div style={{ display: 'flex', gap: '0.35rem' }}>
+                      {(item.dietary_information || []).map((diet) => (
+                        <span key={diet} className="meta-chip">
+                          {diet}
+                        </span>
+                      ))}
+                    </div>
+
                     <span
                       style={{
                         fontFamily: 'var(--font-mono)',
-                        fontSize: '1.15rem',
-                        color: 'var(--accent-citrus)',
+                        fontSize: '0.72rem',
+                        color: 'var(--accent-terracotta)',
                         fontWeight: 600,
-                        whiteSpace: 'nowrap',
                       }}
                     >
-                      {item.currency_symbol || '$'}{item.price}
+                      PREVIEW RECIPE →
                     </span>
                   </div>
-
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.92rem',
-                      color: 'var(--text-sand)',
-                      lineHeight: 1.55,
-                      marginBottom: '1rem',
-                    }}
-                  >
-                    {item.short_description}
-                  </p>
-                </div>
-
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    paddingTop: '0.85rem',
-                    borderTop: '1px solid var(--border-botanical)',
-                  }}
-                >
-                  <div style={{ display: 'flex', gap: '0.35rem' }}>
-                    {(item.dietary_information || []).map((diet) => (
-                      <span key={diet} className="meta-chip">
-                        {diet}
-                      </span>
-                    ))}
-                  </div>
-
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.72rem',
-                      color: 'var(--accent-terracotta)',
-                    }}
-                  >
-                    PREVIEW RECIPE →
-                  </span>
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         )}
       </div>

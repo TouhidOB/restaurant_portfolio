@@ -1,0 +1,48 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}VERDANT // 05. 3D SPATIAL TOUR{% endblock %}
+
+{% block content %}
+<div class="cms-page-header" style="margin-bottom: 2rem;">
+    <div>
+        <span class="section-tag">05. SPATIAL BOTANY</span>
+        <h1 style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; margin-top: 0.5rem; letter-spacing: -0.01em;">
+            3D SPATIAL VIEWPOINTS
+        </h1>
+        <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-sand); margin-top: 0.25rem;">
+            Architectural perspectives, canopy flora, and hotspot mapping across Verdant pavilions.
+        </p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 1.5rem;">
+    {% for vp in viewpoints %}
+    <div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); overflow: hidden; border-radius: 6px;">
+        <div style="position: relative; height: 200px; background: #000;">
+            <img src="{{ vp.image_url }}" alt="{{ vp.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            <div style="position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); border: 1px solid var(--accent-terracotta); color: var(--accent-terracotta); font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.5rem; border-radius: 2px;">
+                V{{ forloop.counter|stringformat:"02d" }}
+            </div>
+            <div style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.8); color: #fff; font-family: var(--font-mono); font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 2px;">
+                {{ vp.space_name }}
+            </div>
+        </div>
+        <div style="padding: 1.25rem;">
+            <h3 style="font-family: var(--font-serif); font-size: 1.35rem; font-weight: 700; margin-bottom: 0.35rem;">{{ vp.title }}</h3>
+            <p style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-sand); margin-bottom: 0.75rem;">{{ vp.description }}</p>
+
+            <div style="background: var(--bg-forest-deep); border: 1px solid var(--border-botanical); padding: 0.75rem; font-family: var(--font-mono); font-size: 0.7rem; border-radius: 4px;">
+                <div style="color: var(--text-muted); margin-bottom: 0.25rem;">MATERIALS: <span style="color: #fff;">{{ vp.materials_spec }}</span></div>
+                {% if vp.hotspot_title %}
+                    <div style="color: var(--text-muted);">HOTSPOT: <span style="color: var(--accent-citrus);">{{ vp.hotspot_title }}</span></div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; padding: 2rem; background: var(--bg-forest); border: 1px solid var(--border-botanical); text-align: center; color: var(--text-muted); font-family: var(--font-mono); border-radius: 4px;">
+        No spatial viewpoints initialized.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

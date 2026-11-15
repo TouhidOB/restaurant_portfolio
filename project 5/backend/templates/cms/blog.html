@@ -1,0 +1,185 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}VERDANT // 06. VERDANT JOURNAL{% endblock %}
+
+{% block content %}
+<div class="cms-page-header" style="margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+        <div>
+            <span class="section-tag">06. EDITORIAL JOURNAL</span>
+            <h1 style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 700; margin-top: 0.5rem; letter-spacing: -0.01em;">
+                VERDANT JOURNAL &amp; DISPATCHES
+            </h1>
+            <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-sand); margin-top: 0.25rem;">
+                Publish tropical gastronomy essays, living architecture dispatches, and wild botanical forage notes.
+            </p>
+        </div>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="http://localhost:3000/blog" target="_blank" class="btn-tropical-secondary">
+                VIEW PUBLIC JOURNAL ↗
+            </a>
+            <a href="#newArticleSection" class="btn-tropical">
+                + COMPOSE DISPATCH
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Articles Roster Table -->
+<div style="background: var(--bg-forest); border: 1px solid var(--border-botanical); padding: 1.5rem; margin-bottom: 2.5rem; border-radius: 6px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <h2 style="font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700;">PUBLISHED JOURNAL DISPATCHES</h2>
+        <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-terracotta);">
+            {{ published_posts }} / {{ total_posts }} PUBLISHED
+        </span>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 0.8rem; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--border-botanical); color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase;">
+                    <th style="padding: 0.75rem 1rem; width: 80px;">COVER</th>
+                    <th style="padding: 0.75rem 1rem;">TITLE &amp; SLUG</th>
+                    <th style="padding: 0.75rem 1rem;">CATEGORY</th>
+                    <th style="padding: 0.75rem 1rem;">AUTHOR &amp; READ</th>
+                    <th style="padding: 0.75rem 1rem;">READS</th>
+                    <th style="padding: 0.75rem 1rem;">STATUS</th>
+                    <th style="padding: 0.75rem 1rem; text-align: right;">ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr style="border-bottom: 1px solid rgba(69, 107, 87, 0.4); vertical-align: top;">
+                    <td style="padding: 0.75rem 1rem;">
+                        <div style="width: 72px; height: 50px; background: #000; overflow: hidden; border: 1px solid var(--border-botanical); border-radius: 3px;">
+                            <img src="{{ post.cover_image }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <strong style="color: #fff; font-size: 0.95rem; font-family: var(--font-serif);">{{ post.title }}</strong>
+                        <div style="margin-top: 0.25rem;">
+                            <a href="http://localhost:3000/blog/{{ post.slug }}" target="_blank" style="color: var(--accent-terracotta); text-decoration: none; font-size: 0.75rem;">
+                                /blog/{{ post.slug }} ↗
+                            </a>
+                        </div>
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        {% if post.category %}
+                            <span style="color: #fff; background: var(--bg-forest-deep); border: 1px solid var(--border-botanical); padding: 0.2rem 0.5rem; font-size: 0.7rem; border-radius: 2px;">
+                                {{ post.category.name }}
+                            </span>
+                        {% else %}
+                            <span style="color: var(--text-muted); font-size: 0.7rem;">General</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <div style="color: #fff;">{{ post.author_name }}</div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">{{ post.read_time }}</div>
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        <span style="color: var(--accent-citrus); font-weight: 700;">{{ post.views_count }}</span> views
+                    </td>
+                    <td style="padding: 0.75rem 1rem;">
+                        {% if post.is_published %}
+                            <span style="color: #4ade80; border: 1px solid #4ade80; padding: 0.2rem 0.5rem; font-size: 0.7rem; border-radius: 2px;">PUBLISHED</span>
+                        {% else %}
+                            <span style="color: var(--text-muted); border: 1px solid var(--border-botanical); padding: 0.2rem 0.5rem; font-size: 0.7rem; border-radius: 2px;">DRAFT</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 0.75rem 1rem; text-align: right;">
+                        <div style="display: flex; gap: 0.4rem; justify-content: flex-end;">
+                            <a href="{% url 'cms_blog_edit' post.pk %}" class="btn-tropical" style="font-size: 0.7rem; padding: 0.35rem 0.7rem;">
+                                EDIT &rarr;
+                            </a>
+                            <form method="post" action="{% url 'cms_blog_delete' post.pk %}" onsubmit="return confirm('Permanently delete {{ post.title }}?');" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-tropical-secondary" style="font-size: 0.7rem; padding: 0.35rem 0.6rem; color: #f87171; border-color: #5e2424;">
+                                    DEL
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="padding: 2.5rem; text-align: center; color: var(--text-muted);">
+                        No journal entries cataloged yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Compose New Dispatch Section -->
+<div id="newArticleSection" style="background: var(--bg-forest); border: 1px solid var(--border-botanical); padding: 1.75rem; border-radius: 6px;">
+    <h2 style="font-family: var(--font-serif); font-size: 1.4rem; font-weight: 700; margin-bottom: 0.5rem;">
+        COMPOSE BOTANICAL DISPATCH
+    </h2>
+    <p style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-sand); margin-bottom: 1.5rem;">
+        Initialize a new article in the Verdant editorial journal.
+    </p>
+
+    <form method="post" action="{% url 'cms_blog_create' %}">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+            <div class="form-group">
+                <label class="form-label" for="postTitle">Dispatch Headline *</label>
+                <input type="text" id="postTitle" name="title" class="form-input" required placeholder="e.g. Living Architecture: Framing the Subtropical Canopy">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="postCat">Category *</label>
+                <select id="postCat" name="category" class="form-input" required style="background: var(--bg-forest-deep); color: #fff;">
+                    {% for cat in categories %}
+                        <option value="{{ cat.pk }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+            <div class="form-group">
+                <label class="form-label" for="postSlug">URL Slug (leave blank to auto-generate)</label>
+                <input type="text" id="postSlug" name="slug" class="form-input" placeholder="e.g. framing-subtropical-canopy">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="postCover">Cover Photography URL</label>
+                <input type="url" id="postCover" name="cover_image" class="form-input" placeholder="https://images.unsplash.com/photo-...">
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+            <div class="form-group">
+                <label class="form-label" for="postAuthor">Author Byline</label>
+                <input type="text" id="postAuthor" name="author_name" class="form-input" value="Verdant Botanical Atelier">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="postRead">Estimated Read Time</label>
+                <input type="text" id="postRead" name="read_time" class="form-input" value="5 min read">
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" for="postExcerpt">Editorial Excerpt / Abstract</label>
+            <textarea id="postExcerpt" name="excerpt" class="form-textarea" rows="2" placeholder="Brief summary of botanical exploration..."></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label" for="postContent">Full Article Body (Markdown / Prose)</label>
+            <textarea id="postContent" name="content" class="form-textarea" rows="8" placeholder="Full longform article text..."></textarea>
+        </div>
+
+        <label style="display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; font-family: var(--font-mono); font-size: 0.8rem; color: #fff; margin-bottom: 1.5rem;">
+            <input type="checkbox" name="is_published" checked style="accent-color: var(--accent-terracotta); width: 16px; height: 16px;">
+            <span>Publish Dispatch Live Immediately</span>
+        </label>
+
+        <div>
+            <button type="submit" class="btn-tropical">
+                RECORD &amp; PUBLISH DISPATCH &rarr;
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
