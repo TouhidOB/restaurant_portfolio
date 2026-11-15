@@ -3,6 +3,8 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     FullDinerContentView,
     ReservationCreateView,
+    ReservationLookupView,
+    ReservationAvailabilityView,
     ContactCreateView,
     MenuItemViewSet,
     VirtualTourViewpointViewSet,
@@ -20,6 +22,8 @@ urlpatterns = [
     path('pages/', CustomPageListView.as_view(), name='api_custom_pages_list'),
     path('pages/<slug:slug>/', CustomPageDetailView.as_view(), name='api_custom_page_detail'),
     path('reservations/', ReservationCreateView.as_view(), name='api_reservation_create'),
+    path('reservations/lookup/', ReservationLookupView.as_view(), name='api_reservation_lookup'),
+    path('reservations/availability/', ReservationAvailabilityView.as_view(), name='api_reservation_availability'),
     path('contact/', ContactCreateView.as_view(), name='api_contact_create'),
     path('', include(router.urls)),
 ]

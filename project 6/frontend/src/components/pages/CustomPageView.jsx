@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchCustomPage } from '../../services/api';
+import { fetchCustomPage, createReservation } from '../../services/api';
 import { useCMS } from '../../context/CMSContext';
 
 export default function CustomPageView({ slug, onNavigateHome }) {
@@ -398,6 +398,27 @@ export default function CustomPageView({ slug, onNavigateHome }) {
                 </section>
               );
 
+            case 'table_reservation':
+              return (
+                <section key={block.id || idx} id="table-reservation-block" style={{ padding: '5rem 1.5rem', backgroundColor: '#090F1B', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                  <div style={{ maxWidth: '780px', margin: '0 auto', background: '#111A2B', border: '1px solid rgba(67, 217, 232, 0.3)', borderRadius: '8px', padding: 'clamp(2rem, 4vw, 3rem)', boxShadow: '0 20px 50px rgba(0,0,0,0.6)' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                      <span style={{ fontFamily: 'Space Mono, monospace', fontSize: '0.75rem', letterSpacing: '0.12em', color: '#43D9E8', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem' }}>
+                        {block.data?.eyebrow || 'TABLE RESERVATION TERMINAL'}
+                      </span>
+                      <h2 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: 'clamp(1.8rem, 4vw, 2.4rem)', color: '#FFFFFF', marginBottom: '0.5rem' }}>
+                        {block.data?.headline || 'Reserve Your Table'}
+                      </h2>
+                      <p style={{ color: '#F6E9D5', opacity: 0.8, fontSize: '0.95rem' }}>
+                        {block.data?.subtitle || 'Select your arrival shift, party size, and dining zone with instant confirmation.'}
+                      </p>
+                    </div>
+
+                    <InlineTableReservationForm defaultZone={block.data?.default_zone} submitText={block.data?.submit_text} />
+                  </div>
+                </section>
+              );
+
             case 'rich_text':
               return (
                 <section key={block.id || idx} style={{ padding: '5rem 1.5rem', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
@@ -420,5 +441,188 @@ export default function CustomPageView({ slug, onNavigateHome }) {
         })}
       </div>
     </div>
+  );
+}
+
+function InlineTableReservationForm({ defaultZone, submitText }) {
+  const [formData, setFormData] = useState({
+    guest_name: '',
+    email: '',
+    phone: '',
+    reservation_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+    reservation_time: '19:15',
+    party_size: 2,
+    preferred_zone: defaultZone || 'Retro Leather Booth',
+    occasion: 'casual',
+    dietary_notes: '',
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    const res = await createReservation({
+      ...formData,
+      party_size: parseInt(formData.party_size, 10),
+    });
+    setLoading(false);
+    if (res.success) {
+      setSuccess(res.data);
+    } else {
+      setError(res.error || 'Failed to submit reservation.');
+    }
+  };
+
+  if (success) {
+    return (
+      <div style={{ textAlign: 'center', padding: '1.5rem', background: '#090F1B', border: '1px dashed #43D9E8', borderRadius: '8px' }}>
+        <div style={{ color: '#43D9E8', fontSize: '2rem', marginBottom: '0.5rem' }}>✓</div>
+        <h3 style={{ color: '#FFF', fontFamily: 'Space Grotesk, sans-serif', fontSize: '1.5rem', marginBottom: '0.5rem' }}>
+          Table Reserved Successfully!
+        </h3>
+        <p style={{ color: '#43D9E8', fontFamily: 'Space Mono, monospace', fontSize: '1rem', marginBottom: '0.75rem' }}>
+          BOOKING REF #{success.reference_code}
+        </p>
+        <p style={{ color: '#F6E9D5', opacity: 0.8, fontSize: '0.9rem', marginBottom: '1.25rem' }}>
+          Thank you, {success.guest_name}. Your table for {success.party_size} guests on {success.reservation_date} at {success.reservation_time} is logged with our Maitre D'.
+        </p>
+        <button
+          type="button"
+          onClick={() => setSuccess(null)}
+          className="btn-cyan"
+          style={{ padding: '0.55rem 1.25rem', fontSize: '0.8rem' }}
+        >
+          Book Another Table
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      {error && (
+        <div style={{ padding: '0.75rem', background: 'rgba(216, 58, 69, 0.2)', border: '1px solid #D83A45', color: '#FFA5AC', borderRadius: '4px', fontSize: '0.85rem' }}>
+          {error}
+        </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+        <div>
+          <label style={{ display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#43D9E8', marginBottom: '0.35rem' }}>
+            Full Name *
+          </label>
+          <input
+            type="text"
+            required
+            value={formData.guest_name}
+            onChange={(e) => setFormData({ ...formData, guest_name: e.target.value })}
+            placeholder="e.g. Donna Hayward"
+            style={{ width: '100%', padding: '0.75rem', background: '#090F1B', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', color: '#FFF', fontSize: '0.85rem' }}
+          />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#43D9E8', marginBottom: '0.35rem' }}>
+            Email Address *
+          </label>
+          <input
+            type="email"
+            required
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            placeholder="donna@cosmos.net"
+            style={{ width: '100%', padding: '0.75rem', background: '#090F1B', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', color: '#FFF', fontSize: '0.85rem' }}
+          />
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+        <div>
+          <label style={{ display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#43D9E8', marginBottom: '0.35rem' }}>
+            Phone Number *
+          </label>
+          <input
+            type="tel"
+            required
+            value={formData.phone}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            placeholder="+1 (555) 789-2026"
+            style={{ width: '100%', padding: '0.75rem', background: '#090F1B', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', color: '#FFF', fontSize: '0.85rem' }}
+          />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#43D9E8', marginBottom: '0.35rem' }}>
+            Party Size *
+          </label>
+          <select
+            value={formData.party_size}
+            onChange={(e) => setFormData({ ...formData, party_size: e.target.value })}
+            style={{ width: '100%', padding: '0.75rem', background: '#090F1B', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', color: '#FFF', fontSize: '0.85rem' }}
+          >
+            {[1, 2, 3, 4, 5, 6, 8, 10, 12].map((n) => (
+              <option key={n} value={n}>{n} Guests</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
+        <div>
+          <label style={{ display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#43D9E8', marginBottom: '0.35rem' }}>
+            Arrival Date *
+          </label>
+          <input
+            type="date"
+            required
+            min={new Date().toISOString().split('T')[0]}
+            value={formData.reservation_date}
+            onChange={(e) => setFormData({ ...formData, reservation_date: e.target.value })}
+            style={{ width: '100%', padding: '0.75rem', background: '#090F1B', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', color: '#FFF', fontSize: '0.85rem' }}
+          />
+        </div>
+        <div>
+          <label style={{ display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#43D9E8', marginBottom: '0.35rem' }}>
+            Service Time *
+          </label>
+          <select
+            value={formData.reservation_time}
+            onChange={(e) => setFormData({ ...formData, reservation_time: e.target.value })}
+            style={{ width: '100%', padding: '0.75rem', background: '#090F1B', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', color: '#FFF', fontSize: '0.85rem' }}
+          >
+            <option value="12:00">12:00 PM (Lunch Shift)</option>
+            <option value="13:00">1:00 PM (Lunch Shift)</option>
+            <option value="17:30">5:30 PM (Dinner Shift)</option>
+            <option value="19:15">7:15 PM (Dinner Shift)</option>
+            <option value="20:30">8:30 PM (Dinner Shift)</option>
+            <option value="21:45">9:45 PM (Late Night Shift)</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label style={{ display: 'block', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#43D9E8', marginBottom: '0.35rem' }}>
+          Dietary Requirements / Allergies Alert
+        </label>
+        <input
+          type="text"
+          value={formData.dietary_notes}
+          onChange={(e) => setFormData({ ...formData, dietary_notes: e.target.value })}
+          placeholder="e.g. Gluten-free, nut allergy, vegetarian"
+          style={{ width: '100%', padding: '0.75rem', background: '#090F1B', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '4px', color: '#FFF', fontSize: '0.85rem' }}
+        />
+      </div>
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="btn-cherry"
+        style={{ width: '100%', padding: '0.9rem', fontWeight: 700, fontSize: '0.9rem', textTransform: 'uppercase', marginTop: '0.5rem' }}
+      >
+        {loading ? 'Securing Table...' : (submitText || 'Confirm Table Reservation')}
+      </button>
+    </form>
   );
 }

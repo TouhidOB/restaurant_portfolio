@@ -265,11 +265,20 @@ class Testimonial(models.Model):
 
 class Reservation(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Pending Inquiry'),
-        ('contacted', 'Contacted Guest'),
+        ('pending', 'Pending Review'),
         ('confirmed', 'Confirmed Table'),
+        ('seated', 'Seated at Table'),
+        ('completed', 'Dining Completed'),
         ('cancelled', 'Cancelled'),
-        ('completed', 'Completed'),
+        ('no_show', 'No-Show'),
+    ]
+    OCCASION_CHOICES = [
+        ('casual', 'Casual Dining'),
+        ('birthday', 'Birthday Celebration'),
+        ('anniversary', 'Anniversary'),
+        ('business', 'Business Dinner'),
+        ('date', 'Romantic Date'),
+        ('celebration', 'Special Celebration'),
     ]
     reference_code = models.CharField(max_length=50, unique=True, editable=False)
     full_name = models.CharField(max_length=150)
@@ -279,6 +288,9 @@ class Reservation(models.Model):
     reservation_time = models.CharField(max_length=20, default="19:30")
     guest_count = models.IntegerField(default=2)
     seating_area = models.CharField(max_length=100, default="Retro Leather Booth")
+    occasion = models.CharField(max_length=50, choices=OCCASION_CHOICES, default='casual')
+    dietary_notes = models.TextField(blank=True)
+    table_number = models.CharField(max_length=50, blank=True, help_text="e.g. Booth 4, Table 12, Counter 2")
     message = models.TextField(blank=True)
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='pending')
     admin_notes = models.TextField(blank=True)
@@ -286,15 +298,23 @@ class Reservation(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['-reservation_date', '-reservation_time', '-created_at']
 
     def save(self, *args, **kwargs):
         if not self.reference_code:
             self.reference_code = f"RETRO-{timezone.now().strftime('%y%m%d')}-{uuid.uuid4().hex[:4].upper()}"
         super().save(*args, **kwargs)
 
+    @property
+    def is_dinner_shift(self):
+        try:
+            hour = int(self.reservation_time.split(':')[0])
+            return hour >= 16
+        except Exception:
+            return True
+
     def __str__(self):
-        return f"{self.reference_code} — {self.full_name} ({self.guest_count} guests)"
+        return f"{self.reference_code} — {self.full_name} ({self.guest_count} guests) [{self.status}]"
 
 
 class FAQ(models.Model):

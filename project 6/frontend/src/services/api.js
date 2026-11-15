@@ -77,3 +77,31 @@ export async function submitReservation(reservationData) {
   }
   return result.data;
 }
+
+export async function lookupReservation(query) {
+  try {
+    const isEmail = query.includes('@');
+    const param = isEmail ? `email=${encodeURIComponent(query)}` : `code=${encodeURIComponent(query)}`;
+    const res = await fetch(`/api/v1/reservations/lookup/?${param}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return { success: false, error: err.error || 'No matching reservation found.' };
+    }
+    const data = await res.json();
+    return { success: true, ...data };
+  } catch (err) {
+    console.error('[API] Lookup failed:', err);
+    return { success: false, error: 'Network error looking up reservation.' };
+  }
+}
+
+export async function fetchReservationAvailability(date) {
+  try {
+    const res = await fetch(`/api/v1/reservations/availability/?date=${date || ''}`);
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (err) {
+    console.error('[API] Failed to fetch availability:', err);
+    return null;
+  }
+}

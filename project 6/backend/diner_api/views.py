@@ -1,4 +1,8 @@
 import json
+import datetime
+from django.utils import timezone
+from django.db.models import Q
+from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -114,6 +118,8 @@ class CustomPageDetailView(generics.RetrieveAPIView):
 
 
 class ReservationCreateView(generics.CreateAPIView):
+    authentication_classes = []
+    permission_classes = []
     queryset = Reservation.objects.all()
     serializer_class = ReservationSerializer
 
@@ -132,13 +138,92 @@ class ReservationCreateView(generics.CreateAPIView):
                 'reservation_time': reservation.reservation_time,
                 'party_size': reservation.guest_count,
                 'email': reservation.email,
+                'phone': reservation.phone,
                 'seating_area': reservation.seating_area,
+                'occasion': reservation.occasion,
+                'occasion_display': reservation.get_occasion_display(),
+                'dietary_notes': reservation.dietary_notes,
+                'booking_status': reservation.status,
+                'booking_status_display': reservation.get_status_display(),
             },
             status=status.HTTP_201_CREATED
         )
 
 
+class ReservationLookupView(APIView):
+    """
+    Guest lookup endpoint to retrieve a reservation by reference code or email.
+    """
+    authentication_classes = []
+    permission_classes = []
+    def get(self, request):
+        code = request.query_params.get('code', '').strip()
+        email = request.query_params.get('email', '').strip()
+
+        if not code and not email:
+            return Response(
+                {'success': False, 'error': 'Please provide a reservation reference code or email address.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        reservations = Reservation.objects.none()
+        if code:
+            reservations = Reservation.objects.filter(reference_code__iexact=code)
+        elif email:
+            reservations = Reservation.objects.filter(email__iexact=email).order_by('-reservation_date')
+
+        if not reservations.exists():
+            return Response(
+                {'success': False, 'error': f'No reservation found for query "{code or email}".'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = ReservationSerializer(reservations, many=True)
+        return Response({
+            'success': True,
+            'count': reservations.count(),
+            'reservations': serializer.data
+        })
+
+
+class ReservationAvailabilityView(APIView):
+    """
+    Returns shift schedules, active dining zones, and time slots for table reservation.
+    """
+    authentication_classes = []
+    permission_classes = []
+    def get(self, request):
+        date_str = request.query_params.get('date', timezone.now().strftime('%Y-%m-%d'))
+        lunch_slots = ['12:00', '12:30', '13:00', '13:30', '14:00', '14:30']
+        dinner_slots = ['17:30', '18:00', '18:30', '19:15', '20:00', '20:45', '21:30', '22:15']
+        seating_zones = [
+            {'id': 'Retro Leather Booth', 'name': 'Retro Leather Booth (Cozy vinyl booth with neon ambient lighting)'},
+            {'id': 'Starlight Dining Table', 'name': 'Starlight Dining Table (Center dining room with mid-century chrome fixtures)'},
+            {'id': 'Chrome Counter Stools', 'name': 'Chrome Counter Stools (Direct view of open griddle and shake counter)'},
+            {'id': 'VIP Galactic Salon', 'name': 'VIP Galactic Salon (Semi-private retro-futuristic vault for 6+ guests)'},
+        ]
+        occasions = [
+            {'id': 'casual', 'name': 'Casual Dining'},
+            {'id': 'birthday', 'name': 'Birthday Celebration 🎉'},
+            {'id': 'anniversary', 'name': 'Anniversary 🥂'},
+            {'id': 'date', 'name': 'Romantic Date ❤️'},
+            {'id': 'business', 'name': 'Business Dinner 💼'},
+            {'id': 'celebration', 'name': 'Special Celebration ✨'},
+        ]
+
+        return Response({
+            'success': True,
+            'date': date_str,
+            'lunch_slots': lunch_slots,
+            'dinner_slots': dinner_slots,
+            'seating_zones': seating_zones,
+            'occasions': occasions,
+        })
+
+
 class ContactCreateView(generics.CreateAPIView):
+    authentication_classes = []
+    permission_classes = []
     queryset = ContactInquiry.objects.all()
     serializer_class = ContactInquirySerializer
 
@@ -201,7 +286,7 @@ def cms_dashboard_view(request):
     brand_settings = BrandSettings.objects.first()
     sections = WebsiteSection.objects.all()
     categories = MenuCategory.objects.all().prefetch_related('items')
-    reservations = Reservation.objects.all().order_by('-created_at')
+    all_reservations = Reservation.objects.all().order_by('-reservation_date', 'reservation_time', '-created_at')
     viewpoints = VirtualTourViewpoint.objects.all()
     gallery_images = GalleryImage.objects.all()
     testimonials = Testimonial.objects.all()
@@ -209,11 +294,44 @@ def cms_dashboard_view(request):
     contact_inquiries = ContactInquiry.objects.all().order_by('-created_at')
     custom_pages = CustomPage.objects.all().order_by('nav_order', '-created_at')
 
+    # Reservation Filtering & Maitre D' Concierge
+    today = timezone.localdate()
+    tomorrow = today + datetime.timedelta(days=1)
+    res_filter = request.GET.get('res_filter', 'all')
+    res_search = request.GET.get('res_search', '').strip()
+
+    filtered_reservations = all_reservations
+    if res_filter == 'today':
+        filtered_reservations = filtered_reservations.filter(reservation_date=today)
+    elif res_filter == 'tomorrow':
+        filtered_reservations = filtered_reservations.filter(reservation_date=tomorrow)
+    elif res_filter == 'pending':
+        filtered_reservations = filtered_reservations.filter(status='pending')
+    elif res_filter == 'confirmed':
+        filtered_reservations = filtered_reservations.filter(status='confirmed')
+    elif res_filter == 'seated':
+        filtered_reservations = filtered_reservations.filter(status='seated')
+
+    if res_search:
+        filtered_reservations = filtered_reservations.filter(
+            Q(reference_code__icontains=res_search) |
+            Q(full_name__icontains=res_search) |
+            Q(phone__icontains=res_search) |
+            Q(email__icontains=res_search) |
+            Q(table_number__icontains=res_search)
+        )
+
+    today_reservations = all_reservations.filter(reservation_date=today)
+    today_covers = sum(r.guest_count for r in today_reservations.filter(status__in=['confirmed', 'seated', 'completed']))
+
     # Telemetry KPIs
     kpis = {
-        'total_reservations': reservations.count(),
-        'pending_reservations': reservations.filter(status='pending').count(),
-        'confirmed_reservations': reservations.filter(status='confirmed').count(),
+        'total_reservations': all_reservations.count(),
+        'pending_reservations': all_reservations.filter(status='pending').count(),
+        'confirmed_reservations': all_reservations.filter(status='confirmed').count(),
+        'seated_reservations': all_reservations.filter(status='seated').count(),
+        'today_reservations_count': today_reservations.count(),
+        'today_covers': today_covers,
         'total_menu_items': MenuItem.objects.count(),
         'active_menu_items': MenuItem.objects.filter(is_available=True).count(),
         'total_categories': categories.count(),
@@ -240,7 +358,10 @@ def cms_dashboard_view(request):
         'brand_settings': brand_settings,
         'sections': sections,
         'categories': categories,
-        'reservations': reservations,
+        'reservations': filtered_reservations,
+        'all_reservations_count': all_reservations.count(),
+        'res_filter': res_filter,
+        'res_search': res_search,
         'viewpoints': viewpoints,
         'gallery_images': gallery_images,
         'testimonials': testimonials,
@@ -278,10 +399,16 @@ def cms_update_reservation_status(request, pk):
         new_status = request.POST.get('status')
         if new_status in dict(Reservation.STATUS_CHOICES):
             res.status = new_status
+        if 'table_number' in request.POST:
+            res.table_number = request.POST.get('table_number', '').strip()
+        if 'admin_notes' in request.POST:
             res.admin_notes = request.POST.get('admin_notes', res.admin_notes)
-            res.save()
-            messages.success(request, f"Reservation {res.reference_code} updated to '{res.get_status_display()}'.")
-    return redirect('cms_dashboard')
+        res.save()
+        messages.success(
+            request,
+            f"Reservation {res.reference_code} updated: [{res.get_status_display()}] Table: '{res.table_number or 'Unassigned'}'."
+        )
+    return redirect(f"{reverse('cms_dashboard')}#section-reservations")
 
 
 @login_required(login_url='/cms/login/')

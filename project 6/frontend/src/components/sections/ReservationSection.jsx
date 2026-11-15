@@ -12,15 +12,38 @@ export default function ReservationSection() {
     email: '',
     phone: '',
     reservation_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-    reservation_time: '19:30',
+    reservation_time: '19:15',
     party_size: 2,
     preferred_zone: 'Retro Leather Booth',
+    occasion: 'casual',
+    dietary_notes: '',
     special_requests: '',
   });
 
+  const [shiftFilter, setShiftFilter] = useState('dinner');
   const [loading, setLoading] = useState(false);
   const [successResult, setSuccessResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [copiedCode, setCopiedCode] = useState(false);
+
+  const LUNCH_SLOTS = ['11:30', '12:00', '12:30', '13:00', '13:30', '14:00'];
+  const DINNER_SLOTS = ['17:30', '18:00', '18:45', '19:15', '20:00', '20:45', '21:30', '22:15'];
+
+  const SEATING_ZONES = [
+    { id: 'Retro Leather Booth', name: 'Red Leather Booth', desc: 'Cozy vinyl booth with table jukebox' },
+    { id: 'Starlight Dining Table', name: 'Starlight Dining Table', desc: 'Center room with chrome fixtures' },
+    { id: 'Chrome Counter Stools', name: 'Stainless Counter', desc: 'Front-row view of the flat-top grill' },
+    { id: 'VIP Galactic Salon', name: 'VIP Galactic Salon', desc: 'Semi-private vault for groups' },
+  ];
+
+  const OCCASIONS = [
+    { id: 'casual', name: 'Casual Dining' },
+    { id: 'birthday', name: 'Birthday Celebration 🎉' },
+    { id: 'anniversary', name: 'Anniversary 🥂' },
+    { id: 'date', name: 'Romantic Date ❤️' },
+    { id: 'business', name: 'Business Dinner 💼' },
+    { id: 'celebration', name: 'Special Celebration ✨' },
+  ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,6 +70,46 @@ export default function ReservationSection() {
     }
   };
 
+  const handleCopyCode = (code) => {
+    navigator.clipboard?.writeText(code);
+    setCopiedCode(true);
+    setTimeout(() => setCopiedCode(false), 2500);
+  };
+
+  const downloadICS = (res) => {
+    const dateStr = (res.reservation_date || '').replace(/-/g, '');
+    const [hours, mins] = (res.reservation_time || '19:15').split(':');
+    const startHour = hours ? hours.padStart(2, '0') : '19';
+    const startMin = mins ? mins.padStart(2, '0') : '15';
+    const endHour = String((parseInt(startHour, 10) + 2) % 24).padStart(2, '0');
+
+    const icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//Stardust Diner//Table Reservation//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'BEGIN:VEVENT',
+      `SUMMARY:Table at Stardust Diner (${res.reference_code})`,
+      `DESCRIPTION:Table reserved for ${res.party_size || res.guest_count} guests at ${res.seating_area}. Reference: ${res.reference_code}.`,
+      'LOCATION:88 Observatory Way, Neon Heights, CA 90210',
+      `DTSTART:${dateStr}T${startHour}${startMin}00`,
+      `DTEND:${dateStr}T${endHour}${startMin}00`,
+      'STATUS:CONFIRMED',
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\r\n');
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `stardust-reservation-${res.reference_code}.ics`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <section id="reservations" className="section-shell">
       <div className="container-diner">
@@ -61,14 +124,14 @@ export default function ReservationSection() {
           {/* Left Column: Context & Guidelines */}
           <div>
             <span className="section-tag">
-              {resSection.eyebrow || 'TABLE INQUIRY'}
+              {resSection.eyebrow || 'TABLE INQUIRY & RESERVATION'}
             </span>
             <h2 className="section-heading">
               {resSection.title || "COME ON IN. YOUR TABLE IS READY TO REQUEST."}
             </h2>
             <p className="section-lead" style={{ marginBottom: '2rem' }}>
               {resSection.subtitle ||
-                'Planning a visit? Send us your reservation request and our team will help arrange your dining experience.'}
+                'Planning a visit? Send us your reservation request and our Maitre D\' concierge team will confirm your seating.'}
             </p>
 
             <div
@@ -113,14 +176,14 @@ export default function ReservationSection() {
                 </li>
                 <li style={{ display: 'flex', gap: '0.5rem' }}>
                   <span style={{ color: 'var(--cherry-red)' }}>★</span>
-                  <span>For large groups of 9 or more, please submit your request 48 hours in advance.</span>
+                  <span>Instant confirmation code issued on booking submission.</span>
                 </li>
               </ul>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.9rem' }}>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                DIRECT PHONE RESERVATIONS
+                DIRECT PHONE RESERVATIONS & CONCIERGE
               </span>
               <a href={`tel:${restaurant.phone || '+13125551955'}`} style={{ color: '#FFFFFF', fontWeight: 700 }}>
                 {restaurant.phone || '+1 (312) 555-1955'}
@@ -137,12 +200,12 @@ export default function ReservationSection() {
               backgroundColor: 'var(--bg-surface)',
               border: '1px solid var(--border-light)',
               borderRadius: 'var(--radius-sm)',
-              padding: 'clamp(2rem, 4vw, 3rem)',
-              boxShadow: '0 20px 48px rgba(0, 0, 0, 0.5)',
+              padding: 'clamp(2rem, 4vw, 2.75rem)',
+              boxShadow: '0 20px 48px rgba(0, 0, 0, 0.5), 0 0 30px rgba(67, 217, 232, 0.1)',
             }}
           >
             {successResult ? (
-              <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
+              <div style={{ textAlign: 'center', padding: '1.5rem 0' }}>
                 <div
                   style={{
                     width: '60px',
@@ -156,6 +219,7 @@ export default function ReservationSection() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     margin: '0 auto 1.25rem',
+                    boxShadow: '0 0 20px rgba(67, 217, 232, 0.35)',
                   }}
                 >
                   ✓
@@ -168,37 +232,78 @@ export default function ReservationSection() {
                     marginBottom: '0.5rem',
                   }}
                 >
-                  Table Request Received
+                  Table Confirmed
                 </h3>
                 <p
                   style={{
                     fontFamily: 'var(--font-mono)',
                     fontSize: '0.95rem',
-                    color: 'var(--cherry-red)',
+                    color: 'var(--neon-cyan)',
                     marginBottom: '1rem',
                   }}
                 >
                   REF #{successResult.reference_code || 'RETRO-SAVED'}
                 </p>
-                <p
+
+                {/* Digital Ticket */}
+                <div
                   style={{
-                    fontFamily: 'var(--font-sans)',
-                    color: 'var(--text-cream)',
-                    fontSize: '0.95rem',
-                    lineHeight: 1.6,
-                    marginBottom: '1.75rem',
+                    backgroundColor: 'var(--bg-midnight-deep)',
+                    border: '1px dashed var(--neon-cyan)',
+                    borderRadius: '6px',
+                    padding: '1.25rem',
+                    textAlign: 'left',
+                    marginBottom: '1.5rem',
+                    fontSize: '0.85rem',
                   }}
                 >
-                  Thank you, <strong>{successResult.guest_name}</strong>. We look forward to welcoming you for{' '}
-                  <strong>{successResult.party_size} guests</strong> on <strong>{successResult.reservation_date}</strong>.
-                </p>
-                <button
-                  onClick={() => setSuccessResult(null)}
-                  className="btn-outline-diner"
-                  style={{ padding: '0.75rem 2rem' }}
-                >
-                  Submit Another Request
-                </button>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>MAITRE D' PASS</span>
+                    <button
+                      type="button"
+                      onClick={() => handleCopyCode(successResult.reference_code)}
+                      style={{
+                        background: 'transparent',
+                        border: '1px solid var(--neon-cyan)',
+                        color: 'var(--neon-cyan)',
+                        padding: '0.2rem 0.5rem',
+                        borderRadius: '3px',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.7rem',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {copiedCode ? '✓ COPIED' : 'COPY'}
+                    </button>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', color: 'var(--text-cream)' }}>
+                    <div>Guest: <strong style={{ color: '#FFF' }}>{successResult.guest_name}</strong></div>
+                    <div>Party: <strong style={{ color: 'var(--atomic-yellow)' }}>{successResult.party_size} PAX</strong></div>
+                    <div>Date: <strong style={{ color: '#FFF' }}>{successResult.reservation_date}</strong></div>
+                    <div>Time: <strong style={{ color: '#FFF' }}>{successResult.reservation_time}</strong></div>
+                    <div>Zone: <strong style={{ color: 'var(--neon-cyan)' }}>{successResult.seating_area}</strong></div>
+                    <div>Status: <span style={{ color: 'var(--neon-cyan)', fontWeight: 700 }}>● {successResult.booking_status_display || 'PENDING'}</span></div>
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => downloadICS(successResult)}
+                    className="btn-cyan"
+                    style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}
+                  >
+                    📅 ADD TO CALENDAR (.ICS)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSuccessResult(null)}
+                    className="btn-outline-diner"
+                    style={{ padding: '0.65rem 1.25rem', fontSize: '0.8rem' }}
+                  >
+                    Submit Another Booking
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.15rem' }}>
@@ -207,11 +312,14 @@ export default function ReservationSection() {
                     fontFamily: 'var(--font-display)',
                     fontSize: '1.85rem',
                     color: '#FFFFFF',
-                    marginBottom: '0.5rem',
+                    marginBottom: '0.25rem',
                   }}
                 >
-                  Booth Reservation Form
+                  Table Reservation Terminal
                 </h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginBottom: '0.5rem' }}>
+                  Choose your preferred service shift, arrival time, and seating area.
+                </p>
 
                 {errorMsg && (
                   <div
@@ -228,7 +336,8 @@ export default function ReservationSection() {
                   </div>
                 )}
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                {/* Name & Phone */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
                   <div>
                     <label
                       style={{
@@ -256,6 +365,7 @@ export default function ReservationSection() {
                         borderRadius: 'var(--radius-xs)',
                         color: 'var(--text-ivory)',
                         outline: 'none',
+                        fontSize: '0.88rem',
                       }}
                     />
                   </div>
@@ -286,12 +396,14 @@ export default function ReservationSection() {
                         borderRadius: 'var(--radius-xs)',
                         color: 'var(--text-ivory)',
                         outline: 'none',
+                        fontSize: '0.88rem',
                       }}
                     />
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                {/* Phone & Party */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
                   <div>
                     <label
                       style={{
@@ -319,6 +431,7 @@ export default function ReservationSection() {
                         borderRadius: 'var(--radius-xs)',
                         color: 'var(--text-ivory)',
                         outline: 'none',
+                        fontSize: '0.88rem',
                       }}
                     />
                   </div>
@@ -346,18 +459,20 @@ export default function ReservationSection() {
                         borderRadius: 'var(--radius-xs)',
                         color: 'var(--text-ivory)',
                         outline: 'none',
+                        fontSize: '0.88rem',
                       }}
                     >
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 10].map((n) => (
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 10, 12].map((n) => (
                         <option key={n} value={n}>
-                          {n} {n === 1 ? 'Guest' : 'Guests'}
+                          {n} {n === 1 ? 'Guest (Counter)' : 'Guests'}
                         </option>
                       ))}
                     </select>
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                {/* Date & Shift */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem' }}>
                   <div>
                     <label
                       style={{
@@ -374,6 +489,7 @@ export default function ReservationSection() {
                       type="date"
                       name="reservation_date"
                       required
+                      min={new Date().toISOString().split('T')[0]}
                       value={formData.reservation_date}
                       onChange={handleChange}
                       style={{
@@ -384,6 +500,7 @@ export default function ReservationSection() {
                         borderRadius: 'var(--radius-xs)',
                         color: 'var(--text-ivory)',
                         outline: 'none',
+                        fontSize: '0.88rem',
                       }}
                     />
                   </div>
@@ -397,11 +514,11 @@ export default function ReservationSection() {
                         marginBottom: '0.35rem',
                       }}
                     >
-                      TIME *
+                      OCCASION
                     </label>
                     <select
-                      name="reservation_time"
-                      value={formData.reservation_time}
+                      name="occasion"
+                      value={formData.occasion}
                       onChange={handleChange}
                       style={{
                         width: '100%',
@@ -411,50 +528,128 @@ export default function ReservationSection() {
                         borderRadius: 'var(--radius-xs)',
                         color: 'var(--text-ivory)',
                         outline: 'none',
+                        fontSize: '0.88rem',
                       }}
                     >
-                      <option value="11:30">11:30 AM</option>
-                      <option value="13:00">1:00 PM</option>
-                      <option value="17:30">5:30 PM</option>
-                      <option value="19:30">7:30 PM</option>
-                      <option value="21:30">9:30 PM</option>
-                      <option value="23:30">11:30 PM</option>
+                      {OCCASIONS.map((occ) => (
+                        <option key={occ.id} value={occ.id}>{occ.name}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
 
+                {/* Service Shift & Time Slots */}
                 <div>
-                  <label
-                    style={{
-                      display: 'block',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.7rem',
-                      color: 'var(--neon-cyan)',
-                      marginBottom: '0.35rem',
-                    }}
-                  >
-                    PREFERRED DINING AREA
-                  </label>
-                  <select
-                    name="preferred_zone"
-                    value={formData.preferred_zone}
-                    onChange={handleChange}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem 0.85rem',
-                      backgroundColor: 'var(--bg-midnight-deep)',
-                      border: '1px solid var(--border-diner)',
-                      borderRadius: 'var(--radius-xs)',
-                      color: 'var(--text-ivory)',
-                      outline: 'none',
-                    }}
-                  >
-                    <option value="Retro Leather Booth">Red Leather Booth with Table Jukebox</option>
-                    <option value="Stainless Steel Counter">40-Ft Stainless Steel Counter Stool</option>
-                    <option value="Atomic Neon Lounge">Atomic Neon Cocktail Lounge</option>
-                  </select>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
+                    <label
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.7rem',
+                        color: 'var(--neon-cyan)',
+                      }}
+                    >
+                      ARRIVAL TIME *
+                    </label>
+                    <div style={{ display: 'flex', gap: '0.2rem' }}>
+                      <button
+                        type="button"
+                        onClick={() => setShiftFilter('lunch')}
+                        style={{
+                          padding: '0.2rem 0.5rem',
+                          fontSize: '0.65rem',
+                          fontFamily: 'var(--font-mono)',
+                          borderRadius: '3px',
+                          border: shiftFilter === 'lunch' ? '1px solid var(--atomic-yellow)' : '1px solid var(--border-diner)',
+                          background: shiftFilter === 'lunch' ? 'rgba(242, 201, 76, 0.2)' : 'transparent',
+                          color: shiftFilter === 'lunch' ? 'var(--atomic-yellow)' : 'var(--text-muted)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        LUNCH
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShiftFilter('dinner')}
+                        style={{
+                          padding: '0.2rem 0.5rem',
+                          fontSize: '0.65rem',
+                          fontFamily: 'var(--font-mono)',
+                          borderRadius: '3px',
+                          border: shiftFilter === 'dinner' ? '1px solid var(--neon-cyan)' : '1px solid var(--border-diner)',
+                          background: shiftFilter === 'dinner' ? 'rgba(67, 217, 232, 0.2)' : 'transparent',
+                          color: shiftFilter === 'dinner' ? 'var(--neon-cyan)' : 'var(--text-muted)',
+                          cursor: 'pointer',
+                        }}
+                      >
+                        DINNER
+                      </button>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+                    {(shiftFilter === 'lunch' ? LUNCH_SLOTS : DINNER_SLOTS).map((t) => {
+                      const isSelected = formData.reservation_time === t;
+                      return (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setFormData((prev) => ({ ...prev, reservation_time: t }))}
+                          style={{
+                            padding: '0.4rem 0.75rem',
+                            borderRadius: '3px',
+                            border: isSelected ? '1px solid var(--neon-cyan)' : '1px solid var(--border-diner)',
+                            backgroundColor: isSelected ? 'rgba(67, 217, 232, 0.2)' : 'var(--bg-midnight-deep)',
+                            color: isSelected ? 'var(--neon-cyan)' : 'var(--text-ivory)',
+                            fontFamily: 'var(--font-mono)',
+                            fontSize: '0.75rem',
+                            fontWeight: isSelected ? 700 : 400,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {t}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
+                {/* Seating Area */}
+                <div>
+                  <label
+                    style={{
+                      display: 'block',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.7rem',
+                      color: 'var(--neon-cyan)',
+                      marginBottom: '0.4rem',
+                    }}
+                  >
+                    PREFERRED DINING ZONE
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.4rem' }}>
+                    {SEATING_ZONES.map((zone) => {
+                      const isSelected = formData.preferred_zone === zone.id;
+                      return (
+                        <div
+                          key={zone.id}
+                          onClick={() => setFormData((prev) => ({ ...prev, preferred_zone: zone.id }))}
+                          style={{
+                            padding: '0.6rem',
+                            borderRadius: '4px',
+                            border: isSelected ? '1px solid var(--neon-cyan)' : '1px solid var(--border-diner)',
+                            backgroundColor: isSelected ? 'rgba(67, 217, 232, 0.12)' : 'var(--bg-midnight-deep)',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <div style={{ fontWeight: 700, fontSize: '0.75rem', color: isSelected ? 'var(--neon-cyan)' : '#FFF' }}>
+                            {zone.name}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Dietary Notes */}
                 <div>
                   <label
                     style={{
@@ -465,23 +660,23 @@ export default function ReservationSection() {
                       marginBottom: '0.35rem',
                     }}
                   >
-                    NOTES & SPECIAL REQUESTS
+                    DIETARY REQUIREMENTS / ALLERGIES
                   </label>
-                  <textarea
-                    name="special_requests"
-                    rows="2"
-                    value={formData.special_requests}
+                  <input
+                    type="text"
+                    name="dietary_notes"
+                    value={formData.dietary_notes}
                     onChange={handleChange}
-                    placeholder="Dietary preferences, special celebrations, booth requests..."
+                    placeholder="e.g. Gluten-free, nut allergy, celebration candle"
                     style={{
                       width: '100%',
-                      padding: '0.75rem 0.85rem',
+                      padding: '0.65rem 0.85rem',
                       backgroundColor: 'var(--bg-midnight-deep)',
                       border: '1px solid var(--border-diner)',
                       borderRadius: 'var(--radius-xs)',
                       color: 'var(--text-ivory)',
                       outline: 'none',
-                      resize: 'none',
+                      fontSize: '0.82rem',
                     }}
                   />
                 </div>
@@ -492,13 +687,13 @@ export default function ReservationSection() {
                   className="btn-cherry"
                   style={{
                     width: '100%',
-                    padding: '1rem',
-                    fontSize: '0.95rem',
-                    marginTop: '0.5rem',
+                    padding: '0.9rem',
+                    fontSize: '0.9rem',
+                    marginTop: '0.4rem',
                     opacity: loading ? 0.7 : 1,
                   }}
                 >
-                  <span>{loading ? 'TRANSMITTING REQUEST...' : 'SUBMIT RESERVATION REQUEST'}</span>
+                  <span>{loading ? 'CONFIRMING TABLE...' : 'CONFIRM TABLE RESERVATION'}</span>
                 </button>
               </form>
             )}

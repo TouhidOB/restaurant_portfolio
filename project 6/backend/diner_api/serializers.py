@@ -104,6 +104,8 @@ class ReservationSerializer(serializers.ModelSerializer):
     party_size = serializers.IntegerField(source='guest_count', required=False)
     preferred_zone = serializers.CharField(source='seating_area', required=False)
     special_requests = serializers.CharField(source='message', required=False, allow_blank=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    occasion_display = serializers.CharField(source='get_occasion_display', read_only=True)
 
     class Meta:
         model = Reservation
@@ -111,10 +113,11 @@ class ReservationSerializer(serializers.ModelSerializer):
             'id', 'reference_code', 'full_name', 'guest_name',
             'email', 'phone', 'reservation_date', 'reservation_time',
             'guest_count', 'party_size', 'seating_area', 'preferred_zone',
-            'message', 'special_requests', 'status', 'admin_notes',
+            'occasion', 'occasion_display', 'dietary_notes', 'table_number',
+            'message', 'special_requests', 'status', 'status_display', 'admin_notes',
             'created_at', 'updated_at'
         ]
-        read_only_fields = ['reference_code', 'created_at', 'updated_at']
+        read_only_fields = ['reference_code', 'created_at', 'updated_at', 'status_display', 'occasion_display']
 
     def to_internal_value(self, data):
         data = data.copy() if hasattr(data, 'copy') else dict(data)
@@ -126,6 +129,8 @@ class ReservationSerializer(serializers.ModelSerializer):
             data['seating_area'] = data['preferred_zone']
         if 'special_requests' in data and 'message' not in data:
             data['message'] = data['special_requests']
+        if 'dietary_requirements' in data and 'dietary_notes' not in data:
+            data['dietary_notes'] = data['dietary_requirements']
         return super().to_internal_value(data)
 
     def to_representation(self, instance):
@@ -134,6 +139,7 @@ class ReservationSerializer(serializers.ModelSerializer):
         ret['party_size'] = instance.guest_count
         ret['preferred_zone'] = instance.seating_area
         ret['special_requests'] = instance.message
+        ret['is_dinner_shift'] = instance.is_dinner_shift
         return ret
 
 

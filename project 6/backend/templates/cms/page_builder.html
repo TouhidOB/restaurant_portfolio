@@ -192,6 +192,7 @@
   .type-image_gallery { background: rgba(162, 181, 168, 0.2); color: #C2D1C5; border: 1px solid #71866A; }
   .type-faq_accordion { background: rgba(255, 255, 255, 0.1); color: #FFF; border: 1px solid rgba(255, 255, 255, 0.3); }
   .type-contact_form { background: rgba(216, 58, 69, 0.2); color: #FF9B9B; border: 1px solid #D83A45; }
+  .type-table_reservation { background: rgba(94, 234, 212, 0.2); color: #5EEAD4; border: 1px solid #2DD4BF; }
   .type-rich_text { background: rgba(255, 255, 255, 0.08); color: var(--text-muted); border: 1px solid var(--border-color); }
 
   .block-toolbar {
@@ -383,6 +384,17 @@
           <div>
             <span class="widget-name">Inquiry & Booking Form</span>
             <span class="widget-desc">Dedicated event lead form</span>
+          </div>
+        </div>
+        <button class="btn-add-widget">+ Add</button>
+      </div>
+
+      <div class="widget-card" onclick="addBlock('table_reservation')">
+        <div class="widget-card-left">
+          <span class="widget-icon">🍽️</span>
+          <div>
+            <span class="widget-name">Table Reservation Terminal</span>
+            <span class="widget-desc">Live booking engine with shift times</span>
           </div>
         </div>
         <button class="btn-add-widget">+ Add</button>
@@ -667,6 +679,35 @@
       `;
     }
 
+    if (block.type === 'table_reservation') {
+      return `
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; margin-bottom: 1rem;">
+          <div class="form-group">
+            <label>Eyebrow Tag</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.eyebrow || 'TABLE INQUIRY')}" onchange="updateBlockField(${idx}, 'eyebrow', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Headline *</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.headline || 'Reserve Your Table')}" onchange="updateBlockField(${idx}, 'headline', this.value)">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Subtitle / Description</label>
+          <textarea class="form-control" rows="2" onchange="updateBlockField(${idx}, 'subtitle', this.value)">${escapeHtml(d.subtitle || 'Reserve your seating with our Maitre D concierge.')}</textarea>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label>Default Seating Zone</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.default_zone || 'Retro Leather Booth')}" onchange="updateBlockField(${idx}, 'default_zone', this.value)">
+          </div>
+          <div class="form-group">
+            <label>Submit Button Text</label>
+            <input type="text" class="form-control" value="${escapeHtml(d.submit_text || 'Confirm Table Reservation')}" onchange="updateBlockField(${idx}, 'submit_text', this.value)">
+          </div>
+        </div>
+      `;
+    }
+
     // Default Rich Text
     return `
       <div class="form-group">
@@ -775,6 +816,14 @@
           "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=800&q=80"
         ]
       };
+    } else if (type === 'table_reservation') {
+      data = {
+        eyebrow: "TABLE RESERVATION TERMINAL",
+        headline: "Reserve Your Table",
+        subtitle: "Select your arrival shift, party size, and dining zone with instant confirmation.",
+        default_zone: "Retro Leather Booth",
+        submit_text: "Confirm Table Reservation"
+      };
     } else {
       data = {
         headline: "Editorial Narrative",
@@ -851,7 +900,15 @@
         // Update slug preview if changed
         document.getElementById('pageSlugInput').value = res.slug;
         document.getElementById('btnFrontendPreview').href = res.preview_url;
-      } else {
+      } else if (type === 'table_reservation') {
+      data = {
+        eyebrow: "TABLE RESERVATION TERMINAL",
+        headline: "Reserve Your Table",
+        subtitle: "Select your arrival shift, party size, and dining zone with instant confirmation.",
+        default_zone: "Retro Leather Booth",
+        submit_text: "Confirm Table Reservation"
+      };
+    } else {
         alert('Save Error: ' + (res.error || 'Unknown error'));
       }
     } catch (err) {
