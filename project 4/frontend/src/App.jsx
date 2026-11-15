@@ -1,7 +1,7 @@
-import React from 'react';
-import { CMSProvider } from './context/CMSContext';
+import React, { useState, useEffect } from 'react';
+import { CMSProvider, useCMS } from './context/CMSContext';
 
-// Common Components
+// Common Components & Overlays
 import Preloader from './components/common/Preloader';
 import Navigation from './components/common/Navigation';
 import DishDetailModal from './components/common/DishDetailModal';
@@ -9,7 +9,20 @@ import ReservationModal from './components/common/ReservationModal';
 import Lightbox from './components/common/Lightbox';
 import Footer from './components/common/Footer';
 
-// 14 Editorial Sections (Section 15 is Footer)
+// Dedicated Standalone Pages
+import BrandPage from './pages/BrandPage';
+import SignaturesPage from './pages/SignaturesPage';
+import MenuPage from './pages/MenuPage';
+import StoryPage from './pages/StoryPage';
+import InteriorPage from './pages/InteriorPage';
+import TourPage from './pages/TourPage';
+import ExperiencePage from './pages/ExperiencePage';
+import ContactPage from './pages/ContactPage';
+import BlogListPage from './pages/BlogListPage';
+import BlogPostDetailPage from './pages/BlogPostDetailPage';
+import CustomPageView from './pages/CustomPageView';
+
+// 14 Editorial Sections on Landing Page (Section 15 is Footer)
 import HeroSection from './components/sections/HeroSection';
 import IntroSection from './components/sections/IntroSection';
 import PhilosophySection from './components/sections/PhilosophySection';
@@ -25,63 +38,178 @@ import ReservationSection from './components/sections/ReservationSection';
 import LocationHoursSection from './components/sections/LocationHoursSection';
 import FAQSection from './components/sections/FAQSection';
 
-export default function App() {
+function getNormalizedPath() {
+  const p = window.location.pathname.replace(/\/+$/, '') || '/';
+  return p;
+}
+
+function MonolithAppContent() {
+  const { openReservation } = useCMS();
+  const [currentPath, setCurrentPath] = useState(getNormalizedPath);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(getNormalizedPath());
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const navigateTo = (path) => {
+    const normalized = path.replace(/\/+$/, '') || '/';
+    setCurrentPath(normalized);
+    window.history.pushState({}, '', normalized);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const navigateToHome = () => {
+    navigateTo('/');
+  };
+
+  // Dynamic Route Matching
+  const customPageMatch = currentPath.match(/^\/page\/([a-zA-Z0-9_-]+)/);
+  const activeCustomSlug = customPageMatch ? customPageMatch[1] : null;
+
+  const blogPostMatch = currentPath.match(/^\/blog\/([a-zA-Z0-9_-]+)/);
+  const activeBlogSlug = blogPostMatch ? blogPostMatch[1] : null;
+
   return (
-    <CMSProvider>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-dark)', color: 'var(--text-primary)', overflowX: 'hidden' }}>
+      {/* Preloader */}
       <Preloader />
-      <Navigation />
-      
-      <main>
-        {/* Section 01: Hero */}
-        <HeroSection />
 
-        {/* Section 02: Editorial Intro */}
-        <IntroSection />
+      {/* Global Architectural Navigation */}
+      <Navigation
+        currentPath={currentPath}
+        onNavigate={navigateTo}
+        onNavigateHome={navigateToHome}
+        onOpenReservation={openReservation}
+      />
 
-        {/* Section 03: Philosophy */}
-        <PhilosophySection />
+      {/* Standalone Pages vs 15-Section Landing Page */}
+      {activeCustomSlug ? (
+        <CustomPageView
+          slug={activeCustomSlug}
+          onNavigateHome={navigateToHome}
+          onNavigateTo={navigateTo}
+        />
+      ) : activeBlogSlug ? (
+        <BlogPostDetailPage
+          slug={activeBlogSlug}
+          onNavigateHome={navigateToHome}
+          onNavigateTo={navigateTo}
+        />
+      ) : currentPath === '/blog' ? (
+        <BlogListPage
+          onNavigateHome={navigateToHome}
+          onNavigateTo={navigateTo}
+        />
+      ) : currentPath === '/story' || currentPath === '/manifesto' ? (
+        <BrandPage
+          onNavigateHome={navigateToHome}
+          onOpenReservation={openReservation}
+        />
+      ) : currentPath === '/signatures' ? (
+        <SignaturesPage
+          onNavigateHome={navigateToHome}
+          onOpenReservation={openReservation}
+        />
+      ) : currentPath === '/menu' ? (
+        <MenuPage
+          onNavigateHome={navigateToHome}
+          onOpenReservation={openReservation}
+        />
+      ) : currentPath === '/process' || currentPath === '/chef' ? (
+        <StoryPage
+          onNavigateHome={navigateToHome}
+          onOpenReservation={openReservation}
+        />
+      ) : currentPath === '/architecture' || currentPath === '/interior' ? (
+        <InteriorPage
+          onNavigateHome={navigateToHome}
+          onOpenReservation={openReservation}
+        />
+      ) : currentPath === '/tour' ? (
+        <TourPage
+          onNavigateHome={navigateToHome}
+          onOpenReservation={openReservation}
+        />
+      ) : currentPath === '/experience' ? (
+        <ExperiencePage
+          onNavigateHome={navigateToHome}
+          onOpenReservation={openReservation}
+        />
+      ) : currentPath === '/contact' ? (
+        <ContactPage
+          onNavigateHome={navigateToHome}
+          onOpenReservation={openReservation}
+        />
+      ) : (
+        /* Full 15-Section Editorial Landing Page */
+        <main>
+          {/* Section 01: Hero */}
+          <HeroSection />
 
-        {/* Section 04: Signature Dishes */}
-        <SignatureDishesSection />
+          {/* Section 02: Editorial Intro */}
+          <IntroSection />
 
-        {/* Section 05: Menu Explorer */}
-        <MenuExplorerSection />
+          {/* Section 03: Philosophy */}
+          <PhilosophySection />
 
-        {/* Section 06: Culinary Process */}
-        <CulinaryProcessSection />
+          {/* Section 04: Signature Dishes */}
+          <SignatureDishesSection />
 
-        {/* Section 07: Architecture & Materials */}
-        <ArchitectureSection />
+          {/* Section 05: Menu Explorer */}
+          <MenuExplorerSection />
 
-        {/* Section 08: 3D Virtual Tour (5 Viewpoints) */}
-        <TourSection />
+          {/* Section 06: Culinary Process */}
+          <CulinaryProcessSection />
 
-        {/* Section 09: Dining Experience */}
-        <DiningExperienceSection />
+          {/* Section 07: Architecture & Materials */}
+          <ArchitectureSection />
 
-        {/* Section 10: Gallery Archive */}
-        <GallerySection />
+          {/* Section 08: 3D Virtual Tour (5 Viewpoints) */}
+          <TourSection />
 
-        {/* Section 11: Critical Acclaim */}
-        <TestimonialsSection />
+          {/* Section 09: Dining Experience */}
+          <DiningExperienceSection />
 
-        {/* Section 12: In-Page Reservation Terminal */}
-        <ReservationSection />
+          {/* Section 10: Gallery Archive */}
+          <GallerySection />
 
-        {/* Section 13: Location & Coordinates */}
-        <LocationHoursSection />
+          {/* Section 11: Critical Acclaim */}
+          <TestimonialsSection />
 
-        {/* Section 14: Frequent Inquiries (FAQ) */}
-        <FAQSection />
-      </main>
+          {/* Section 12: In-Page Reservation Terminal */}
+          <ReservationSection />
+
+          {/* Section 13: Location & Coordinates */}
+          <LocationHoursSection />
+
+          {/* Section 14: Frequent Inquiries (FAQ) */}
+          <FAQSection />
+        </main>
+      )}
 
       {/* Section 15: Footer & Colophon */}
-      <Footer />
+      <Footer
+        onNavigate={navigateTo}
+        onNavigateHome={navigateToHome}
+        onOpenReservation={openReservation}
+      />
 
       {/* Dynamic Overlays & Modals */}
       <DishDetailModal />
       <ReservationModal />
       <Lightbox />
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <CMSProvider>
+      <MonolithAppContent />
     </CMSProvider>
   );
 }

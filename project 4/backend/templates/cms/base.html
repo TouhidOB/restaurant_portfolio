@@ -518,52 +518,60 @@
                 <!-- Navigation Pages & Modules -->
                 <nav class="sidebar-nav">
                     <div class="nav-group-label">00. System Telemetry</div>
-                    <a href="#overview" class="sidebar-nav-link active">
+                    <a href="{% url 'cms_overview' %}" class="sidebar-nav-link {% if active_tab == 'overview' %}active{% endif %}">
                         <span>00. Metrics Overview</span>
                         <span class="nav-badge">LIVE</span>
                     </a>
 
-                    <div class="nav-group-label">01. Identity &amp; Specs</div>
-                    <a href="#section-settings" class="sidebar-nav-link">
-                        <span>01. Restaurant Identity</span>
-                        <span class="nav-badge">HERO</span>
+                    <div class="nav-group-label">01. Visual Architecture</div>
+                    <a href="{% url 'cms_pages' %}" class="sidebar-nav-link {% if active_tab == 'pages' %}active{% endif %}">
+                        <span>01. Visual Page Builder</span>
+                        <span class="nav-badge" style="color: var(--accent-orange);">ELEMENTOR</span>
+                    </a>
+                    <a href="{% url 'cms_identity' %}" class="sidebar-nav-link {% if active_tab == 'identity' %}active{% endif %}">
+                        <span>02. Restaurant Identity</span>
+                        <span class="nav-badge">SPECS</span>
                     </a>
 
                     <div class="nav-group-label">02. Operational Desk</div>
-                    <a href="#section-reservations" class="sidebar-nav-link">
-                        <span>02. Reservation Triage</span>
-                        <span class="nav-badge" style="color: var(--accent-orange);">{{ kpis.pending_reservations }} PENDING</span>
+                    <a href="{% url 'cms_reservations' %}" class="sidebar-nav-link {% if active_tab == 'reservations' %}active{% endif %}">
+                        <span>03. Reservation Triage</span>
+                        <span class="nav-badge" style="color: var(--accent-orange);">SHIFTS</span>
                     </a>
-                    <a href="#section-menu" class="sidebar-nav-link">
-                        <span>03. Menu Repertoire</span>
-                        <span class="nav-badge">{{ kpis.total_menu_items }} DISHES</span>
+                    <a href="{% url 'cms_menu' %}" class="sidebar-nav-link {% if active_tab == 'menu' %}active{% endif %}">
+                        <span>04. Menu Repertoire</span>
+                        <span class="nav-badge">PHOTO HAUTE</span>
                     </a>
-                    <a href="#section-tour" class="sidebar-nav-link">
-                        <span>04. 3D Spatial Viewpoints</span>
-                        <span class="nav-badge">{{ viewpoints|length }} VECTORS</span>
+                    <a href="{% url 'cms_tour' %}" class="sidebar-nav-link {% if active_tab == 'tour' %}active{% endif %}">
+                        <span>05. 3D Spatial Tour</span>
+                        <span class="nav-badge">360°</span>
                     </a>
 
                     <div class="nav-group-label">03. Editorial Content</div>
-                    <a href="#section-editorial" class="sidebar-nav-link">
-                        <span>05. 15 Editorial Sections</span>
+                    <a href="{% url 'cms_blog' %}" class="sidebar-nav-link {% if active_tab == 'blog' %}active{% endif %}">
+                        <span>06. Monolith Journal</span>
+                        <span class="nav-badge" style="color: var(--accent-orange);">EDITORIAL</span>
+                    </a>
+                    <a href="{% url 'cms_sections' %}" class="sidebar-nav-link {% if active_tab == 'sections' %}active{% endif %}">
+                        <span>07. 15 Landing Sections</span>
                         <span class="nav-badge">15 MODS</span>
                     </a>
-                    <a href="#section-gallery" class="sidebar-nav-link">
-                        <span>06. Gallery Archive</span>
-                        <span class="nav-badge">{{ gallery|length }}</span>
+                    <a href="{% url 'cms_gallery' %}" class="sidebar-nav-link {% if active_tab == 'gallery' %}active{% endif %}">
+                        <span>08. Gallery Archive</span>
+                        <span class="nav-badge">ARCHIVE</span>
                     </a>
-                    <a href="#section-testimonials" class="sidebar-nav-link">
-                        <span>07. Critical Acclaim</span>
-                        <span class="nav-badge">{{ testimonials|length }}</span>
+                    <a href="{% url 'cms_reviews' %}" class="sidebar-nav-link {% if active_tab == 'reviews' %}active{% endif %}">
+                        <span>09. Critical Acclaim</span>
+                        <span class="nav-badge">CRITIQUE</span>
                     </a>
-                    <a href="#section-faqs" class="sidebar-nav-link">
-                        <span>08. Frequent Inquiries</span>
-                        <span class="nav-badge">{{ faqs|length }}</span>
+                    <a href="{% url 'cms_faqs' %}" class="sidebar-nav-link {% if active_tab == 'faqs' %}active{% endif %}">
+                        <span>10. Frequent Inquiries</span>
+                        <span class="nav-badge">FAQS</span>
                     </a>
 
                     <div class="nav-group-label">04. System Matrix</div>
-                    <a href="#section-json" class="sidebar-nav-link">
-                        <span>09. Master Architectural JSON</span>
+                    <a href="{% url 'cms_schema' %}" class="sidebar-nav-link {% if active_tab == 'schema' %}active{% endif %}">
+                        <span>11. Master Schema JSON</span>
                         <span class="nav-badge">RAW</span>
                     </a>
                 </nav>

@@ -1,0 +1,319 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}MONOLITH // PAGE BUILDER: {{ page.title }}{% endblock %}
+
+{% block content %}
+<form method="post" action="{% url 'cms_page_builder' page.pk %}" id="builderForm">
+    {% csrf_token %}
+    <div class="cms-page-header" style="margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <a href="{% url 'cms_pages' %}" style="color: var(--text-muted); text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem;">
+                        &larr; BACK TO PAGES
+                    </a>
+                    <span style="color: var(--border-light);">/</span>
+                    <span class="section-tag">VISUAL BLOCK BUILDER</span>
+                </div>
+                <h1 style="font-family: var(--font-heading); font-size: 2rem; font-weight: 700; margin-top: 0.5rem; letter-spacing: -0.02em;">
+                    {{ page.title }}
+                </h1>
+                <p style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                    Route: <a href="http://localhost:3000/page/{{ page.slug }}" target="_blank" style="color: var(--accent-orange); text-decoration: none;">/page/{{ page.slug }} ↗</a>
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <a href="http://localhost:3000/page/{{ page.slug }}" target="_blank" class="btn-brutal-secondary">
+                    PREVIEW PAGE ↗
+                </a>
+                <button type="submit" class="btn-brutal">
+                    SAVE ARCHITECTURAL LAYOUT &rarr;
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page Metadata Controls -->
+    <div style="background: var(--bg-surface); border: 1px solid var(--border-steel); padding: 1.5rem; margin-bottom: 2rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1rem;">
+            <div class="form-group">
+                <label class="form-label" for="pageTitle">Page Title</label>
+                <input type="text" id="pageTitle" name="title" class="form-input" value="{{ page.title }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="pageSlug">URL Slug</label>
+                <input type="text" id="pageSlug" name="slug" class="form-input" value="{{ page.slug }}" required>
+            </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label" for="metaDesc">SEO Meta Description</label>
+            <input type="text" id="metaDesc" name="meta_description" class="form-input" value="{{ page.meta_description }}">
+        </div>
+        <label style="display: inline-flex; align-items: center; gap: 0.6rem; cursor: pointer; font-family: var(--font-mono); font-size: 0.8rem; color: #fff;">
+            <input type="checkbox" name="is_published" {% if page.is_published %}checked{% endif %} style="accent-color: var(--accent-orange); width: 16px; height: 16px;">
+            <span>Publish Live on Public Frontend</span>
+        </label>
+    </div>
+
+    <!-- Builder Workspace: Block Palette (Left) + Blocks Canvas (Right) -->
+    <div style="display: grid; grid-template-columns: 280px 1fr; gap: 1.75rem; align-items: start;">
+        <!-- Left: Block Palette -->
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-steel); padding: 1.25rem; position: sticky; top: 90px;">
+            <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-orange); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem;">
+                + APPEND MODULAR BLOCKS
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <button type="button" class="btn-brutal-secondary" onclick="appendBlock('hero')" style="text-align: left; font-size: 0.75rem; padding: 0.6rem 0.8rem;">
+                    <strong>[+] HERO BANNER</strong><br>
+                    <small style="color: var(--text-muted);">Full-bleed architectural header</small>
+                </button>
+
+                <button type="button" class="btn-brutal-secondary" onclick="appendBlock('split')" style="text-align: left; font-size: 0.75rem; padding: 0.6rem 0.8rem;">
+                    <strong>[+] 50/50 SPLIT STORY</strong><br>
+                    <small style="color: var(--text-muted);">Concrete photography &amp; narrative</small>
+                </button>
+
+                <button type="button" class="btn-brutal-secondary" onclick="appendBlock('features')" style="text-align: left; font-size: 0.75rem; padding: 0.6rem 0.8rem;">
+                    <strong>[+] FEATURES GRID</strong><br>
+                    <small style="color: var(--text-muted);">3 or 4 spatial parameter pillars</small>
+                </button>
+
+                <button type="button" class="btn-brutal-secondary" onclick="appendBlock('cta')" style="text-align: left; font-size: 0.75rem; padding: 0.6rem 0.8rem;">
+                    <strong>[+] CTA BANNER</strong><br>
+                    <small style="color: var(--text-muted);">High-impact reservation prompt</small>
+                </button>
+
+                <button type="button" class="btn-brutal-secondary" onclick="appendBlock('gallery')" style="text-align: left; font-size: 0.75rem; padding: 0.6rem 0.8rem;">
+                    <strong>[+] PHOTO REPERTOIRE</strong><br>
+                    <small style="color: var(--text-muted);">Culinary &amp; spatial photo grid</small>
+                </button>
+
+                <button type="button" class="btn-brutal-secondary" onclick="appendBlock('reservation')" style="text-align: left; font-size: 0.75rem; padding: 0.6rem 0.8rem;">
+                    <strong>[+] RESERVATION BOOKER</strong><br>
+                    <small style="color: var(--text-muted);">Live shift &amp; table inquiry unit</small>
+                </button>
+
+                <button type="button" class="btn-brutal-secondary" onclick="appendBlock('faq')" style="text-align: left; font-size: 0.75rem; padding: 0.6rem 0.8rem;">
+                    <strong>[+] FAQ ACCORDION</strong><br>
+                    <small style="color: var(--text-muted);">Architectural inquiries &amp; policies</small>
+                </button>
+
+                <button type="button" class="btn-brutal-secondary" onclick="appendBlock('inquiry_form')" style="text-align: left; font-size: 0.75rem; padding: 0.6rem 0.8rem;">
+                    <strong>[+] PRIVATE VAULT FORM</strong><br>
+                    <small style="color: var(--text-muted);">Special buyout &amp; event form</small>
+                </button>
+            </div>
+        </div>
+
+        <!-- Right: Blocks Canvas -->
+        <div>
+            <div style="background: var(--bg-surface); border: 1px solid var(--border-steel); padding: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                    <h2 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700;">VISUAL BLOCK HIERARCHY</h2>
+                    <button type="button" onclick="syncBlocksToJSON()" class="btn-brutal-secondary" style="font-size: 0.7rem; padding: 0.3rem 0.6rem;">
+                        REFRESH JSON MATRIX
+                    </button>
+                </div>
+
+                <div id="blocksContainer" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Rendered by JavaScript from blocks JSON -->
+                </div>
+            </div>
+
+            <!-- JSON Data Editor Sync -->
+            <div style="background: var(--bg-surface); border: 1px solid var(--border-steel); padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <div style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--accent-orange);">
+                        RAW BLOCKS SCHEMA JSON (READ/WRITE SYNC)
+                    </div>
+                    <button type="button" onclick="loadFromJSON()" class="btn-brutal-secondary" style="font-size: 0.7rem; padding: 0.3rem 0.6rem;">
+                        PARSE JSON TO CARDS
+                    </button>
+                </div>
+                <textarea id="blocksJsonTextarea" name="blocks_json" class="form-textarea" rows="12" style="font-family: var(--font-mono); font-size: 0.8rem; background: var(--bg-dark);">{{ blocks_json }}</textarea>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+let blocks = [];
+try {
+    blocks = JSON.parse(document.getElementById('blocksJsonTextarea').value);
+} catch(e) {
+    blocks = [];
+}
+
+function renderBlocks() {
+    const container = document.getElementById('blocksContainer');
+    container.innerHTML = '';
+
+    if (blocks.length === 0) {
+        container.innerHTML = `
+            <div style="padding: 2rem; border: 1px dashed var(--border-steel); text-align: center; color: var(--text-muted); font-family: var(--font-mono); font-size: 0.8rem;">
+                No blocks added to page canvas yet. Click any modular block from the left library.
+            </div>
+        `;
+        return;
+    }
+
+    blocks.forEach((block, index) => {
+        const card = document.createElement('div');
+        card.style.background = 'var(--bg-dark)';
+        card.style.border = '1px solid var(--border-steel)';
+        card.style.borderLeft = '4px solid var(--accent-orange)';
+        card.style.padding = '1.25rem';
+
+        const header = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <div style="font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700; color: #fff;">
+                    #${index + 1} // <span style="color: var(--accent-orange); text-transform: uppercase;">${block.type}</span> BLOCK
+                </div>
+                <div style="display: flex; gap: 0.35rem;">
+                    <button type="button" onclick="moveBlock(${index}, -1)" class="btn-brutal-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" ${index === 0 ? 'disabled' : ''}>&uarr;</button>
+                    <button type="button" onclick="moveBlock(${index}, 1)" class="btn-brutal-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" ${index === blocks.length - 1 ? 'disabled' : ''}>&darr;</button>
+                    <button type="button" onclick="deleteBlock(${index})" class="btn-brutal-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem; color: #f87171; border-color: #5e2424;">&times;</button>
+                </div>
+            </div>
+        `;
+
+        let fields = '';
+        if (block.type === 'hero') {
+            fields = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <div>
+                        <label style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">HEADLINE</label>
+                        <input type="text" class="form-input" style="font-size: 0.8rem;" value="${block.headline || ''}" oninput="updateBlockField(${index}, 'headline', this.value)">
+                    </div>
+                    <div>
+                        <label style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">TAG / EYEBROW</label>
+                        <input type="text" class="form-input" style="font-size: 0.8rem;" value="${block.tag || ''}" oninput="updateBlockField(${index}, 'tag', this.value)">
+                    </div>
+                </div>
+                <div style="margin-bottom: 0.5rem;">
+                    <label style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">IMAGE URL</label>
+                    <input type="text" class="form-input" style="font-size: 0.8rem;" value="${block.image || ''}" oninput="updateBlockField(${index}, 'image', this.value)">
+                </div>
+            `;
+        } else if (block.type === 'split') {
+            fields = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.5rem;">
+                    <div>
+                        <label style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">TITLE</label>
+                        <input type="text" class="form-input" style="font-size: 0.8rem;" value="${block.title || ''}" oninput="updateBlockField(${index}, 'title', this.value)">
+                    </div>
+                    <div>
+                        <label style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">IMAGE URL</label>
+                        <input type="text" class="form-input" style="font-size: 0.8rem;" value="${block.image || ''}" oninput="updateBlockField(${index}, 'image', this.value)">
+                    </div>
+                </div>
+                <div>
+                    <label style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">DESCRIPTION</label>
+                    <textarea class="form-textarea" rows="2" style="font-size: 0.8rem;" oninput="updateBlockField(${index}, 'description', this.value)">${block.description || ''}</textarea>
+                </div>
+            `;
+        } else {
+            fields = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <div>
+                        <label style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">TITLE</label>
+                        <input type="text" class="form-input" style="font-size: 0.8rem;" value="${block.title || ''}" oninput="updateBlockField(${index}, 'title', this.value)">
+                    </div>
+                    <div>
+                        <label style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted);">SUBTITLE / TAG</label>
+                        <input type="text" class="form-input" style="font-size: 0.8rem;" value="${block.subtitle || ''}" oninput="updateBlockField(${index}, 'subtitle', this.value)">
+                    </div>
+                </div>
+            `;
+        }
+
+        card.innerHTML = header + fields;
+        container.appendChild(card);
+    });
+
+    syncBlocksToJSON();
+}
+
+function updateBlockField(index, field, value) {
+    blocks[index][field] = value;
+    syncBlocksToJSON();
+}
+
+function moveBlock(index, direction) {
+    const target = index + direction;
+    if (target < 0 || target >= blocks.length) return;
+    const temp = blocks[index];
+    blocks[index] = blocks[target];
+    blocks[target] = temp;
+    renderBlocks();
+}
+
+function deleteBlock(index) {
+    if (confirm('Delete this block?')) {
+        blocks.splice(index, 1);
+        renderBlocks();
+    }
+}
+
+function appendBlock(type) {
+    const newId = 'block-' + Math.random().toString(36).substr(2, 8);
+    let newBlock = { id: newId, type: type };
+
+    if (type === 'hero') {
+        newBlock.headline = 'MONOLITH SUB-VAULT';
+        newBlock.tag = 'ARCHITECTURAL SANCTUARY';
+        newBlock.image = 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=85';
+    } else if (type === 'split') {
+        newBlock.title = 'BOARD-FORMED CONCRETE & RAW BASALT';
+        newBlock.description = 'Cast in timber formwork and sculpted to monumental proportions in District 09.';
+        newBlock.image = 'https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80';
+    } else if (type === 'features') {
+        newBlock.title = 'SPATIAL SPECIFICATIONS';
+        newBlock.columns = 3;
+        newBlock.items = [
+            { title: 'ACOUSTIC CONTROL', description: 'Zero reverberation monolithic basalt.' },
+            { title: 'BINCHOTAN CHAR', description: 'Direct open flame grilling at 900°C.' },
+            { title: 'PRIVATE ENTRY', description: 'Underground service vault access.' }
+        ];
+    } else if (type === 'cta') {
+        newBlock.title = 'SECURE SUB-VAULT SEATING';
+        newBlock.button_text = 'REQUEST RESERVATION';
+        newBlock.button_link = '/contact';
+    } else if (type === 'reservation') {
+        newBlock.title = 'SELECT SHIFT & SEATING ZONE';
+        newBlock.shifts = ['lunch', 'dinner'];
+    } else if (type === 'faq') {
+        newBlock.title = 'FREQUENT INQUIRIES';
+        newBlock.faqs = [
+            { question: 'What is the dress code?', answer: 'Brutalist, architectural, or smart casual.' },
+            { question: 'Can dietary restrictions be accommodated?', answer: 'Yes, with 48 hours advance notice.' }
+        ];
+    } else if (type === 'inquiry_form') {
+        newBlock.title = 'PRIVATE EVENT COMMISSIONS';
+        newBlock.fields = ['name', 'email', 'phone', 'party_size', 'date', 'notes'];
+    } else {
+        newBlock.title = type.toUpperCase() + ' SECTION';
+    }
+
+    blocks.push(newBlock);
+    renderBlocks();
+}
+
+function syncBlocksToJSON() {
+    document.getElementById('blocksJsonTextarea').value = JSON.stringify(blocks, null, 2);
+}
+
+function loadFromJSON() {
+    try {
+        blocks = JSON.parse(document.getElementById('blocksJsonTextarea').value);
+        renderBlocks();
+    } catch(e) {
+        alert('Invalid JSON structure: ' + e.message);
+    }
+}
+
+// Initial render
+renderBlocks();
+</script>
+{% endblock %}

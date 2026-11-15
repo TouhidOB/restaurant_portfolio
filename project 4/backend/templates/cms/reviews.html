@@ -1,0 +1,40 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}MONOLITH // 09. CRITICAL ACCLAIM{% endblock %}
+
+{% block content %}
+<div class="cms-page-header" style="margin-bottom: 2rem;">
+    <div>
+        <span class="section-tag">09. CRITICAL ACCLAIM</span>
+        <h1 style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700; margin-top: 0.5rem; letter-spacing: -0.02em;">
+            CRITIC REVIEWS &amp; ACCLAIM
+        </h1>
+        <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">
+            Culinary criticism, Michelin dispatch quotes, and architectural press recognition.
+        </p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.25rem;">
+    {% for rev in reviews %}
+    <div style="background: var(--bg-surface); border: 1px solid var(--border-steel); border-left: 3px solid var(--accent-orange); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="margin-bottom: 1rem;">
+            <div style="color: var(--accent-orange); font-size: 1.1rem; margin-bottom: 0.5rem;">
+                ★ ★ ★ ★ ★
+            </div>
+            <p style="font-family: var(--font-sans); font-size: 0.9rem; color: #fff; line-height: 1.5; font-style: italic;">
+                "{{ rev.quote_text }}"
+            </p>
+        </div>
+        <div style="border-top: 1px solid var(--border-steel); padding-top: 0.75rem;">
+            <div style="font-family: var(--font-heading); font-size: 0.9rem; font-weight: 700;">{{ rev.critic_name }}</div>
+            <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--accent-orange);">{{ rev.publication }}</div>
+        </div>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; padding: 2rem; background: var(--bg-surface); border: 1px solid var(--border-steel); text-align: center; color: var(--text-muted); font-family: var(--font-mono);">
+        No critic reviews recorded.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

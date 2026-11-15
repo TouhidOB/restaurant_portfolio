@@ -1,0 +1,39 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}MONOLITH // 10. FREQUENT INQUIRIES{% endblock %}
+
+{% block content %}
+<div class="cms-page-header" style="margin-bottom: 2rem;">
+    <div>
+        <span class="section-tag">10. FREQUENT INQUIRIES</span>
+        <h1 style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700; margin-top: 0.5rem; letter-spacing: -0.02em;">
+            FAQS KNOWLEDGE BASE
+        </h1>
+        <p style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">
+            Answers to guest inquiries regarding acoustics, dress code, accessibility, and cellar tasting menus.
+        </p>
+    </div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+    {% for faq in faqs %}
+    <div style="background: var(--bg-surface); border: 1px solid var(--border-steel); padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.5rem;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; color: #fff;">
+                Q: {{ faq.question }}
+            </h3>
+            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: var(--accent-orange); border: 1px solid var(--border-steel); padding: 0.2rem 0.5rem; text-transform: uppercase;">
+                {{ faq.category }}
+            </span>
+        </div>
+        <p style="font-family: var(--font-sans); font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            {{ faq.answer }}
+        </p>
+    </div>
+    {% empty %}
+    <div style="padding: 2rem; background: var(--bg-surface); border: 1px solid var(--border-steel); text-align: center; color: var(--text-muted); font-family: var(--font-mono);">
+        No FAQs recorded.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

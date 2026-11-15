@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Navigation() {
-  const { content, openReservation } = useCMS();
+export default function Navigation({ currentPath = '/', onNavigate, onNavigateHome, onOpenReservation }) {
+  const { content, openReservation, customPages } = useCMS();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [pagesDropdownOpen, setPagesDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,15 +16,47 @@ export default function Navigation() {
   }, []);
 
   const navLinks = [
-    { label: '01. INTRO', href: '#intro' },
-    { label: '02. PHILOSOPHY', href: '#philosophy' },
-    { label: '03. SIGNATURES', href: '#signatures' },
-    { label: '04. MENU', href: '#menu' },
-    { label: '05. SPACE', href: '#architecture' },
-    { label: '06. 3D TOUR', href: '#tour' },
-    { label: '07. ARCHIVE', href: '#gallery' },
-    { label: '08. INQUIRIES', href: '#faq' },
+    { label: '01. MANIFESTO', path: '/story' },
+    { label: '02. SIGNATURES', path: '/signatures' },
+    { label: '03. MENU', path: '/menu' },
+    { label: '04. PROCESS', path: '/process' },
+    { label: '05. SPACE', path: '/architecture' },
+    { label: '06. 3D TOUR', path: '/tour' },
+    { label: '07. EXPERIENCE', path: '/experience' },
+    { label: '08. JOURNAL', path: '/blog' },
+    { label: '09. CONTACT', path: '/contact' },
   ];
+
+  const handleLinkClick = (e, path) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    setPagesDropdownOpen(false);
+    if (onNavigate) {
+      onNavigate(path);
+    } else {
+      window.location.href = path;
+    }
+  };
+
+  const handleBrandClick = (e) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    setPagesDropdownOpen(false);
+    if (onNavigateHome) {
+      onNavigateHome();
+    } else {
+      window.location.href = '/';
+    }
+  };
+
+  const handleReserveClick = () => {
+    setMobileMenuOpen(false);
+    if (onOpenReservation) {
+      onOpenReservation();
+    } else if (openReservation) {
+      openReservation();
+    }
+  };
 
   return (
     <header
@@ -34,7 +67,7 @@ export default function Navigation() {
         right: 0,
         zIndex: 1000,
         height: 'var(--header-height)',
-        backgroundColor: isScrolled ? 'rgba(32, 33, 31, 0.96)' : 'rgba(32, 33, 31, 0.8)',
+        backgroundColor: isScrolled ? 'rgba(32, 33, 31, 0.98)' : 'rgba(32, 33, 31, 0.92)',
         backdropFilter: 'blur(10px)',
         borderBottom: '1px solid var(--border-steel)',
         transition: 'background-color 0.2s',
@@ -51,12 +84,14 @@ export default function Navigation() {
       >
         {/* Brand / Logo */}
         <a
-          href="#"
+          href="/"
+          onClick={handleBrandClick}
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '1rem',
+            gap: '0.85rem',
             textDecoration: 'none',
+            color: '#fff',
           }}
         >
           <div
@@ -96,44 +131,112 @@ export default function Navigation() {
         {/* Desktop Navigation Links */}
         <nav
           style={{
-            display: 'none',
+            display: 'flex',
             alignItems: 'center',
-            gap: '1.5rem',
+            gap: '1.15rem',
           }}
           className="desktop-nav"
         >
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
-                letterSpacing: '0.05em',
-                color: 'var(--text-secondary)',
-                transition: 'color var(--transition-fast)',
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-orange)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
-            >
-              {link.label}
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const isActive = currentPath === link.path;
+            return (
+              <a
+                key={link.label}
+                href={link.path}
+                onClick={(e) => handleLinkClick(e, link.path)}
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.72rem',
+                  letterSpacing: '0.05em',
+                  color: isActive ? 'var(--accent-orange)' : 'var(--text-secondary)',
+                  textDecoration: 'none',
+                  borderBottom: isActive ? '2px solid var(--accent-orange)' : '2px solid transparent',
+                  paddingBottom: '2px',
+                  transition: 'color var(--transition-fast)',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--accent-orange)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = isActive ? 'var(--accent-orange)' : 'var(--text-secondary)')}
+              >
+                {link.label}
+              </a>
+            );
+          })}
+
+          {/* Dynamic Custom Pages Dropdown */}
+          {customPages && customPages.length > 0 && (
+            <div style={{ position: 'relative' }}>
+              <button
+                type="button"
+                onClick={() => setPagesDropdownOpen(!pagesDropdownOpen)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.72rem',
+                  letterSpacing: '0.05em',
+                  color: currentPath.startsWith('/page/') ? 'var(--accent-orange)' : 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  padding: 0,
+                }}
+              >
+                10. PAGES <span style={{ fontSize: '0.6rem' }}>▼</span>
+              </button>
+              {pagesDropdownOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 12px)',
+                    right: 0,
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-steel)',
+                    borderTop: '2px solid var(--accent-orange)',
+                    padding: '0.5rem 0',
+                    minWidth: '220px',
+                    boxShadow: '0 12px 30px rgba(0,0,0,0.8)',
+                    zIndex: 200,
+                  }}
+                >
+                  {customPages.map((cp) => (
+                    <a
+                      key={cp.slug}
+                      href={`/page/${cp.slug}`}
+                      onClick={(e) => handleLinkClick(e, `/page/${cp.slug}`)}
+                      style={{
+                        display: 'block',
+                        padding: '0.5rem 1rem',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.75rem',
+                        color: currentPath === `/page/${cp.slug}` ? 'var(--accent-orange)' : '#fff',
+                        textDecoration: 'none',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-dark)')}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      {cp.title}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </nav>
 
         {/* Action Controls */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
           <a
             href="/cms/"
             style={{
-              display: 'none',
               fontFamily: 'var(--font-mono)',
-              fontSize: '0.75rem',
+              fontSize: '0.72rem',
               letterSpacing: '0.08em',
               color: 'var(--accent-orange)',
               border: '1px solid var(--border-steel)',
-              padding: '0.55rem 0.9rem',
-              transition: 'border-color var(--transition-fast)',
+              padding: '0.5rem 0.85rem',
+              textDecoration: 'none',
+              transition: 'all var(--transition-fast)',
             }}
             className="cms-link-desktop"
             onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'var(--accent-orange)')}
@@ -144,14 +247,14 @@ export default function Navigation() {
 
           <button
             type="button"
-            onClick={openReservation}
+            onClick={handleReserveClick}
             className="btn-orange"
             style={{
-              padding: '0.65rem 1.4rem',
-              fontSize: '0.8rem',
+              padding: '0.6rem 1.25rem',
+              fontSize: '0.75rem',
             }}
           >
-            RESERVE
+            RESERVE SHIFT
           </button>
 
           {/* Mobile Menu Toggle */}
@@ -159,7 +262,7 @@ export default function Navigation() {
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             style={{
-              display: 'flex',
+              display: 'none',
               flexDirection: 'column',
               justifyContent: 'space-between',
               width: '28px',
@@ -192,21 +295,37 @@ export default function Navigation() {
             padding: '2rem',
             display: 'flex',
             flexDirection: 'column',
-            gap: '1.25rem',
+            gap: '1rem',
           }}
         >
           {navLinks.map((link) => (
             <a
               key={link.label}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
+              href={link.path}
+              onClick={(e) => handleLinkClick(e, link.path)}
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.9rem',
-                color: 'var(--text-primary)',
+                fontSize: '0.85rem',
+                color: currentPath === link.path ? 'var(--accent-orange)' : 'var(--text-primary)',
+                textDecoration: 'none',
               }}
             >
               {link.label}
+            </a>
+          ))}
+          {customPages && customPages.map(cp => (
+            <a
+              key={cp.slug}
+              href={`/page/${cp.slug}`}
+              onClick={(e) => handleLinkClick(e, `/page/${cp.slug}`)}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.85rem',
+                color: 'var(--accent-orange)',
+                textDecoration: 'none',
+              }}
+            >
+              &bull; {cp.title}
             </a>
           ))}
           <a
@@ -215,21 +334,15 @@ export default function Navigation() {
               fontFamily: 'var(--font-mono)',
               fontSize: '0.85rem',
               color: 'var(--accent-orange)',
-              marginTop: '0.5rem',
+              textDecoration: 'none',
+              borderTop: '1px solid var(--border-steel)',
+              paddingTop: '0.75rem',
             }}
           >
-            &rarr; CMS STUDIO
+            &rarr; CMS STUDIO TERMINAL
           </a>
         </div>
       )}
-
-      <style>{`
-        @media (min-width: 1024px) {
-          .desktop-nav { display: flex !important; }
-          .cms-link-desktop { display: inline-block !important; }
-          .mobile-toggle { display: none !important; }
-        }
-      `}</style>
     </header>
   );
 }

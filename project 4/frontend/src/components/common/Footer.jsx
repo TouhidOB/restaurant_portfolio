@@ -1,10 +1,19 @@
 import React from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Footer() {
-  const { content } = useCMS();
+export default function Footer({ onNavigate, onNavigateHome, onOpenReservation }) {
+  const { content, openReservation } = useCMS();
   const r = content.restaurant || {};
   const s15 = content.sections?.footer || {};
+
+  const handleLink = (e, path) => {
+    e.preventDefault();
+    if (onNavigate) {
+      onNavigate(path);
+    } else {
+      window.location.href = path;
+    }
+  };
 
   return (
     <footer

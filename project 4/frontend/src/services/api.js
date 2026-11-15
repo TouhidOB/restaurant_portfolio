@@ -20,6 +20,9 @@ export async function fetchFullContent() {
       gallery: (data.gallery && data.gallery.length > 0) ? data.gallery : FALLBACK_CONTENT.gallery,
       testimonials: (data.testimonials && data.testimonials.length > 0) ? data.testimonials : FALLBACK_CONTENT.testimonials,
       faqs: (data.faqs && data.faqs.length > 0) ? data.faqs : FALLBACK_CONTENT.faqs,
+      custom_pages: (data.custom_pages && data.custom_pages.length > 0) ? data.custom_pages : FALLBACK_CONTENT.custom_pages,
+      blog_posts: (data.blog_posts && data.blog_posts.length > 0) ? data.blog_posts : FALLBACK_CONTENT.blog_posts,
+      blog_categories: (data.blog_categories && data.blog_categories.length > 0) ? data.blog_categories : FALLBACK_CONTENT.blog_categories,
     };
   } catch (err) {
     console.warn('[API] Failed to fetch remote content, utilizing fallback.', err);
@@ -39,11 +42,84 @@ export async function submitReservation(reservationData) {
 
     const data = await res.json();
     if (!res.ok) {
-      throw new Error(data.message || 'Failed to submit reservation.');
+      const errDetail = data.errors ? Object.values(data.errors).flat().join(' ') : data.message;
+      throw new Error(errDetail || 'Failed to register reservation inquiry.');
     }
     return data;
   } catch (err) {
     console.error('[API] Reservation submission failed:', err);
     throw err;
   }
+}
+
+export async function lookupReservation(refCode) {
+  try {
+    const code = (refCode || '').trim().toUpperCase();
+    const res = await fetch(`/api/v1/reservations/lookup/?ref=${encodeURIComponent(code)}`);
+    const data = await res.json();
+    if (!res.ok || data.status !== 'success') {
+      return { success: false, message: data.message || `No reservation found for reference ${code}.` };
+    }
+    return { success: true, reservation: data.reservation };
+  } catch (err) {
+    console.warn('[API] Lookup failed, checking local session or error', err);
+    return { success: false, message: 'Could not connect to Monolith reservation registry.' };
+  }
+}
+
+export async function fetchReservationAvailability(date, shift) {
+  try {
+    const res = await fetch(`/api/v1/reservations/availability/?date=${encodeURIComponent(date)}&shift=${encodeURIComponent(shift)}`);
+    if (res.ok) {
+      return await res.json();
+    }
+    return { is_available: true, remaining_seats: 24 };
+  } catch (err) {
+    return { is_available: true, remaining_seats: 24 };
+  }
+}
+
+export async function fetchCustomPage(slug) {
+  try {
+    const res = await fetch(`/api/v1/pages/${encodeURIComponent(slug)}/`);
+    if (res.ok) {
+      const data = await res.json();
+      return data.page;
+    }
+  } catch (err) {
+    console.warn('[API] Custom page fetch failed:', err);
+  }
+  const match = FALLBACK_CONTENT.custom_pages?.find(p => p.slug === slug);
+  return match || null;
+}
+
+export async function fetchBlogPosts(categorySlug = null) {
+  try {
+    const url = categorySlug ? `/api/v1/blog/?category=${encodeURIComponent(categorySlug)}` : '/api/v1/blog/';
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      return data.posts;
+    }
+  } catch (err) {
+    console.warn('[API] Blog posts fetch failed:', err);
+  }
+  let posts = FALLBACK_CONTENT.blog_posts || [];
+  if (categorySlug) {
+    posts = posts.filter(p => p.category?.slug === categorySlug);
+  }
+  return posts;
+}
+
+export async function fetchBlogPostDetail(slug) {
+  try {
+    const res = await fetch(`/api/v1/blog/${encodeURIComponent(slug)}/`);
+    if (res.ok) {
+      const data = await res.json();
+      return data.post;
+    }
+  } catch (err) {
+    console.warn('[API] Blog detail fetch failed:', err);
+  }
+  return FALLBACK_CONTENT.blog_posts?.find(p => p.slug === slug) || null;
 }

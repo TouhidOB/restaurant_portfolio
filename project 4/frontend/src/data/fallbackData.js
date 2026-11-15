@@ -537,5 +537,101 @@ export const FALLBACK_CONTENT = {
       question: "What is your corkage policy?",
       answer: "Guests may bring up to two 750ml bottles per party of wines not represented on our 420-label cellar list. A corkage fee of $65 per bottle applies."
     }
+  ],
+  custom_pages: [
+    {
+      id: 1,
+      title: "Private Sub-Vault Experiences",
+      slug: "private-sub-vault",
+      meta_description: "Exclusive underground brutalist dining chamber for private buyouts and sensory tasting journeys.",
+      is_published: true,
+      blocks: [
+        {
+          id: "block-hero-01",
+          type: "hero",
+          headline: "PRIVATE SUB-VAULT EXPERIENCES",
+          subheadline: "Monolithic Sanctuary for Confidential Gastronomy",
+          tag: "DISTRICT 09 // SECTOR SUB-ZERO",
+          button_text: "REQUEST PRIVATE COMMISSION",
+          button_link: "/contact",
+          image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=85"
+        },
+        {
+          id: "block-features-01",
+          type: "features",
+          title: "SPATIAL ARCHITECTURE & CAPABILITIES",
+          columns: 3,
+          items: [
+            { title: "ACOUSTIC ABSORPTION", description: "Basalt walls treated for zero reverberation and complete conversational privacy." },
+            { title: "DEDICATED BINCHOTAN HEARTH", description: "Private chef station with 900°C live charcoal cooking directly before guests." },
+            { title: "ARCHIVAL CELLAR VAULT", description: "Direct access to rare single-vintage natural wines and 40-year Japanese whiskies." }
+          ]
+        },
+        {
+          id: "block-split-01",
+          type: "split",
+          title: "RAW MATERIALS & SENSORY PURITY",
+          description: "Commissioned for parties of 6 to 14 patrons. The Sub-Vault strips away all culinary theater to elevate pure temperature, smoke, and primal seasoning.",
+          image: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80"
+        },
+        {
+          id: "block-cta-01",
+          type: "cta",
+          title: "COMMISSION YOUR PRIVATE SESSION",
+          subtitle: "Reservations for the Sub-Vault require 72 hours advance registration.",
+          button_text: "INQUIRE WITH MAÎTRE D'",
+          button_link: "/contact"
+        }
+      ]
+    }
+  ],
+  blog_categories: [
+    { id: 1, name: "Architectural Gastronomy", slug: "architectural-gastronomy", description: "Intersections of raw materials, concrete acoustics, and dish architecture." },
+    { id: 2, name: "Binchotan Fire & Smoke", slug: "binchotan-fire-and-smoke", description: "Research on Kishu binchotan charcoal, high heat radiant roasting, and char dynamics." },
+    { id: 3, name: "Monolithic Design Notes", slug: "monolithic-design-notes", description: "Spatial dispatches from the architecture team behind Monolith." }
+  ],
+  blog_posts: [
+    {
+      id: 1,
+      title: "The Honest Texture: Board-Formed Concrete and Ancestral Fire",
+      slug: "honest-texture-concrete-fire",
+      category: { id: 1, name: "Architectural Gastronomy", slug: "architectural-gastronomy" },
+      cover_image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1200&q=80",
+      excerpt: "Why we chose structural concrete as the acoustic and visual medium for high-temperature wood-fired gastronomy in District 09.",
+      content: "When we conceived Monolith, the mandate was unequivocal: no decorative veneers. In architecture as in cooking, ornament is often applied to conceal lack of conviction. By casting board-formed concrete directly on site using rough-sawn Douglas fir boards, we embedded the natural grain of timber permanently into stone.\n\nInside this acoustic room, sound does not reverberate. The conversation drops to an intimate frequency, allowing the crackle of binchotan coals and the sizzle of dry-aged fat to command the room's auditory field.",
+      author_name: "Taras Koval & Julian Vance",
+      read_time: "5 min read",
+      is_published: true,
+      views_count: 342,
+      published_at: "2026-03-15T18:00:00Z"
+    },
+    {
+      id: 2,
+      title: "Charcoal Science: Searing Miyazaki Wagyu at 900 Degrees",
+      slug: "charcoal-science-wagyu-900c",
+      category: { id: 2, name: "Binchotan Fire & Smoke", slug: "binchotan-fire-and-smoke" },
+      cover_image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      excerpt: "Examining far-infrared radiation emitted by white oak Kishu charcoal and its effect on fat emulsification.",
+      content: "Standard charcoal burns fast with excessive smoke and unstable flame peaks. Kishu binchotan, produced through a carbonization process at 1000°C followed by a rapid smothering in ash and sand, creates pure carbon density.\n\nWhen we suspend A5 Miyazaki Wagyu ribeye over this heat bed, the radiant energy penetrates without charring the surface too rapidly. The intramuscular marbling melts from the core outward while the exterior achieves a microscopic crust imbued with pure clean smoke.",
+      author_name: "Head Chef Marcus Thorne",
+      read_time: "7 min read",
+      is_published: true,
+      views_count: 518,
+      published_at: "2026-03-22T20:30:00Z"
+    },
+    {
+      id: 3,
+      title: "Acoustic Solitude: Why Monolith Absorbs Sound Rather Than Reflecting It",
+      slug: "acoustic-solitude-district-09",
+      category: { id: 3, name: "Monolithic Design Notes", slug: "monolithic-design-notes" },
+      cover_image: "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1200&q=80",
+      excerpt: "How architectural baffles concealed behind blackened basalt create an oasis of tranquility in industrial New York.",
+      content: "Most modern restaurants operate at 85 decibels—a sensory assault designed to increase table turnover. At Monolith, we engineered acoustic resonance at exactly 58 decibels.\n\nMicro-perforated blackened steel panels backing basalt monoliths absorb middle frequencies. You hear your companion's voice with the clarity of a soundstage, even with fifty patrons sharing the room.",
+      author_name: "Studio Monolith Architecture",
+      read_time: "4 min read",
+      is_published: true,
+      views_count: 289,
+      published_at: "2026-04-02T16:00:00Z"
+    }
   ]
 };

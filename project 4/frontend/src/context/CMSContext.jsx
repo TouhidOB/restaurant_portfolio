@@ -44,6 +44,9 @@ export function CMSProvider({ children }) {
       value={{
         content,
         loading,
+        customPages: content.custom_pages || [],
+        blogPosts: content.blog_posts || [],
+        blogCategories: content.blog_categories || [],
         activeTourIndex,
         setActiveTourIndex,
         tourMode,
