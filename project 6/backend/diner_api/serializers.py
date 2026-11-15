@@ -36,19 +36,23 @@ class WebsiteSectionSerializer(serializers.ModelSerializer):
 
 
 class MenuItemSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
     resolved_image = serializers.SerializerMethodField()
 
     class Meta:
         model = MenuItem
         fields = '__all__'
 
-    def get_resolved_image(self, obj):
+    def get_image(self, obj):
         if obj.image:
             request = self.context.get('request')
             if request:
                 return request.build_absolute_uri(obj.image.url)
             return obj.image.url
         return obj.image_url or "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80"
+
+    def get_resolved_image(self, obj):
+        return self.get_image(obj)
 
 
 class MenuCategorySerializer(serializers.ModelSerializer):

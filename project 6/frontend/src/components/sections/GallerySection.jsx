@@ -100,8 +100,11 @@ export default function GallerySection() {
               }}
             >
               <img
-                src={img.image_url || img.resolved_image}
+                src={img.image_url || img.resolved_image || img.image || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80'}
                 alt={img.title}
+                onError={(e) => {
+                  e.currentTarget.src = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80';
+                }}
                 style={{
                   width: '100%',
                   height: '100%',

@@ -295,96 +295,155 @@ export default function MenuExplorerSection() {
               gap: '1.75rem',
             }}
           >
-            {filteredItems.map((item) => (
-              <div
-                key={item.id || item.slug}
-                className="diner-card"
-                style={{
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  gap: '1.25rem',
-                }}
-                onClick={() => openDish(item)}
-              >
-                <div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'baseline',
-                      justifyContent: 'space-between',
-                      gap: '0.75rem',
-                      marginBottom: '0.65rem',
-                    }}
-                  >
-                    <h4
-                      style={{
-                        fontFamily: 'var(--font-display)',
-                        fontSize: '1.4rem',
-                        color: '#FFFFFF',
-                        fontWeight: 700,
-                        lineHeight: 1.2,
+            {filteredItems.map((item) => {
+              const itemImg = item.resolved_image || item.image_url || item.image || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80';
+              return (
+                <div
+                  key={item.id || item.slug}
+                  className="diner-card"
+                  style={{
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    padding: 0,
+                    overflow: 'hidden',
+                    transition: 'all 0.25s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.borderColor = 'var(--neon-cyan)';
+                    e.currentTarget.style.boxShadow = '0 12px 28px rgba(67, 217, 232, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.borderColor = 'var(--border-diner)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                  onClick={() => openDish(item)}
+                >
+                  <div style={{ height: '200px', width: '100%', overflow: 'hidden', position: 'relative', backgroundColor: '#090F1B' }}>
+                    <img
+                      src={itemImg}
+                      alt={item.name}
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80';
                       }}
-                    >
-                      {item.name}
-                    </h4>
-                    <span
                       style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '1.2rem',
-                        color: 'var(--neon-cyan)',
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.4s ease',
+                      }}
+                    />
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '0.75rem',
+                        right: '0.75rem',
+                        backgroundColor: 'var(--cherry-red)',
+                        color: '#FFF',
+                        fontFamily: 'var(--font-display)',
                         fontWeight: 700,
-                        whiteSpace: 'nowrap',
+                        fontSize: '1rem',
+                        padding: '0.25rem 0.65rem',
+                        borderRadius: '3px',
+                        boxShadow: '0 0 10px rgba(216, 58, 69, 0.5)',
                       }}
                     >
                       {item.currency_symbol || '$'}{item.price}
-                    </span>
+                    </div>
+
+                    {item.is_featured && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '0.75rem',
+                          left: '0.75rem',
+                          backgroundColor: 'rgba(9, 15, 27, 0.9)',
+                          border: '1px solid var(--atomic-yellow)',
+                          color: 'var(--atomic-yellow)',
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.65rem',
+                          fontWeight: 700,
+                          padding: '0.2rem 0.5rem',
+                          borderRadius: '3px',
+                        }}
+                      >
+                        ★ FEATURED
+                      </div>
+                    )}
                   </div>
 
-                  <p
-                    style={{
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: '0.92rem',
-                      color: 'var(--text-cream)',
-                      lineHeight: 1.55,
-                      marginBottom: '1rem',
-                    }}
-                  >
-                    {item.short_description}
-                  </p>
-                </div>
+                  <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
+                    <div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'baseline',
+                          justifyContent: 'space-between',
+                          gap: '0.75rem',
+                          marginBottom: '0.65rem',
+                        }}
+                      >
+                        <h4
+                          style={{
+                            fontFamily: 'var(--font-display)',
+                            fontSize: '1.35rem',
+                            color: '#FFFFFF',
+                            fontWeight: 700,
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {item.name}
+                        </h4>
+                      </div>
 
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    paddingTop: '0.85rem',
-                    borderTop: '1px solid var(--border-diner)',
-                  }}
-                >
-                  <div style={{ display: 'flex', gap: '0.35rem' }}>
-                    {(item.dietary_information || []).map((diet) => (
-                      <span key={diet} className="meta-chip">
-                        {diet}
+                      <p
+                        style={{
+                          fontFamily: 'var(--font-sans)',
+                          fontSize: '0.92rem',
+                          color: 'var(--text-cream)',
+                          lineHeight: 1.55,
+                          marginBottom: '1rem',
+                        }}
+                      >
+                        {item.short_description}
+                      </p>
+                    </div>
+
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        paddingTop: '0.85rem',
+                        borderTop: '1px solid var(--border-diner)',
+                      }}
+                    >
+                      <div style={{ display: 'flex', gap: '0.35rem' }}>
+                        {(item.dietary_information || []).map((diet) => (
+                          <span key={diet} className="meta-chip">
+                            {diet}
+                          </span>
+                        ))}
+                      </div>
+
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.72rem',
+                          color: 'var(--cherry-red)',
+                          fontWeight: 700,
+                        }}
+                      >
+                        VIEW INGREDIENTS →
                       </span>
-                    ))}
+                    </div>
                   </div>
-
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.72rem',
-                      color: 'var(--cherry-red)',
-                      fontWeight: 700,
-                    }}
-                  >
-                    VIEW INGREDIENTS →
-                  </span>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

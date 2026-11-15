@@ -84,8 +84,11 @@ export default function Lightbox() {
           }}
         >
           <img
-            src={lightboxImage.image_url || lightboxImage.resolved_image}
+            src={lightboxImage.image_url || lightboxImage.resolved_image || lightboxImage.image || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80'}
             alt={lightboxImage.title || 'Diner Gallery item'}
+            onError={(e) => {
+              e.currentTarget.src = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80';
+            }}
             style={{
               maxWidth: '100%',
               maxHeight: '75vh',

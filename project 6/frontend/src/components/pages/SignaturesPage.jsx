@@ -4,7 +4,18 @@ import { useCMS } from '../../context/CMSContext';
 export default function SignaturesPage({ onNavigateHome, onNavigatePage }) {
   const { content, openDish, openReservation } = useCMS();
   const signaturesSec = content?.sections?.signatures || {};
-  const signatureDishes = content?.signature_dishes || [];
+  
+  // Collect signature dishes from signature_dishes or featured_dishes or categories
+  let signatureDishes = content?.signature_dishes || content?.featured_dishes || [];
+  if (!signatureDishes || signatureDishes.length === 0) {
+    const collected = [];
+    (content?.categories || []).forEach((cat) => {
+      (cat.items || []).forEach((item) => {
+        if (item.is_featured) collected.push(item);
+      });
+    });
+    signatureDishes = collected.length > 0 ? collected : ((content?.categories?.[0]?.items || []).slice(0, 4));
+  }
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -145,10 +156,13 @@ export default function SignaturesPage({ onNavigateHome, onNavigatePage }) {
                 }}
               >
                 {/* Dish Photo */}
-                <div style={{ position: 'relative', height: '260px', overflow: 'hidden' }}>
+                <div style={{ position: 'relative', height: '260px', overflow: 'hidden', backgroundColor: '#090F1B' }}>
                   <img
-                    src={dish.image}
+                    src={dish.resolved_image || dish.image_url || dish.image || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80'}
                     alt={dish.name}
+                    onError={(e) => {
+                      e.currentTarget.src = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80';
+                    }}
                     style={{
                       width: '100%',
                       height: '100%',

@@ -103,6 +103,7 @@
       <table class="cms-table" style="margin-bottom: 1.5rem;">
         <thead>
           <tr>
+            <th style="width: 70px;">Photo</th>
             <th>Dish Name</th>
             <th>Price</th>
             <th>Dietary Tags</th>
@@ -115,7 +116,15 @@
           {% for item in cat.items.all %}
             <tr>
               <td>
-                <strong>{{ item.name }}</strong><br>
+                <img 
+                  src="{% if item.image %}{{ item.image.url }}{% elif item.image_url %}{{ item.image_url }}{% else %}https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=120&q=80{% endif %}" 
+                  alt="{{ item.name }}" 
+                  onerror="this.src='https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=120&q=80'"
+                  style="width: 54px; height: 54px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-color); display: block;"
+                >
+              </td>
+              <td>
+                <strong style="color: #FFFFFF; font-size: 0.95rem;">{{ item.name }}</strong><br>
                 <small style="color: var(--text-muted);">{{ item.short_description }}</small>
               </td>
               <td><strong style="color: var(--neon-cyan);">{{ item.currency_symbol }}{{ item.price }}</strong></td>

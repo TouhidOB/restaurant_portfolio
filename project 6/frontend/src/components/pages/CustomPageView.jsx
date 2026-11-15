@@ -164,7 +164,12 @@ export default function CustomPageView({ slug, onNavigateHome }) {
                   <div style={{ maxWidth: '1240px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '3.5rem', alignItems: 'center' }}>
                     {!isImgRight && (
                       <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.6)', border: '1px solid rgba(67, 217, 232, 0.3)' }}>
-                        <img src={block.data?.image_url} alt={block.data?.headline} style={{ width: '100%', height: '420px', objectFit: 'cover', display: 'block' }} />
+                        <img 
+                          src={block.data?.image_url || 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80'} 
+                          alt={block.data?.headline} 
+                          onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80'; }}
+                          style={{ width: '100%', height: '420px', objectFit: 'cover', display: 'block' }} 
+                        />
                         {block.data?.badge && (
                           <span style={{ position: 'absolute', bottom: '1.25rem', right: '1.25rem', background: '#D83A45', color: '#FFF', padding: '0.4rem 1rem', borderRadius: '4px', fontWeight: 700, fontSize: '0.78rem', textTransform: 'uppercase' }}>
                             {block.data.badge}
@@ -192,7 +197,12 @@ export default function CustomPageView({ slug, onNavigateHome }) {
 
                     {isImgRight && (
                       <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.6)', border: '1px solid rgba(67, 217, 232, 0.3)' }}>
-                        <img src={block.data?.image_url} alt={block.data?.headline} style={{ width: '100%', height: '420px', objectFit: 'cover', display: 'block' }} />
+                        <img 
+                          src={block.data?.image_url || 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80'} 
+                          alt={block.data?.headline} 
+                          onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80'; }}
+                          style={{ width: '100%', height: '420px', objectFit: 'cover', display: 'block' }} 
+                        />
                         {block.data?.badge && (
                           <span style={{ position: 'absolute', bottom: '1.25rem', right: '1.25rem', background: '#D83A45', color: '#FFF', padding: '0.4rem 1rem', borderRadius: '4px', fontWeight: 700, fontSize: '0.78rem', textTransform: 'uppercase' }}>
                             {block.data.badge}
@@ -255,7 +265,14 @@ export default function CustomPageView({ slug, onNavigateHome }) {
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
                       {galleryImages.map((imgUrl, imgIdx) => (
                         <div key={imgIdx} style={{ borderRadius: '8px', overflow: 'hidden', height: '260px', border: '1px solid rgba(255,255,255,0.1)' }}>
-                          <img src={imgUrl} alt="Gallery item" style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')} onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')} />
+                          <img 
+                            src={imgUrl || 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80'} 
+                            alt="Gallery item" 
+                            onError={(e) => { e.currentTarget.src = 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80'; }}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.5s' }} 
+                            onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')} 
+                            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')} 
+                          />
                         </div>
                       ))}
                     </div>

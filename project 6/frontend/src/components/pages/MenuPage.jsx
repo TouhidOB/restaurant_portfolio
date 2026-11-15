@@ -281,35 +281,46 @@ export default function MenuPage({ onNavigateHome, onNavigatePage }) {
               gap: '2rem',
             }}
           >
-            {filteredItems.map((item) => (
-              <div
-                key={item.id}
-                className="diner-card"
-                onClick={() => openDish(item)}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: 0,
-                  overflow: 'hidden',
-                  cursor: 'pointer',
-                  border: '1px solid var(--border-diner)',
-                  transition: 'all 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-4px)';
-                  e.currentTarget.style.borderColor = 'var(--neon-cyan)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.borderColor = 'var(--border-diner)';
-                }}
-              >
-                {item.image && (
-                  <div style={{ height: '220px', overflow: 'hidden', position: 'relative' }}>
+            {filteredItems.map((item) => {
+              const itemImg = item.resolved_image || item.image_url || item.image || 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80';
+              return (
+                <div
+                  key={item.id}
+                  className="diner-card"
+                  onClick={() => openDish(item)}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: 0,
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                    border: '1px solid var(--border-diner)',
+                    transition: 'all 0.25s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                    e.currentTarget.style.borderColor = 'var(--neon-cyan)';
+                    e.currentTarget.style.boxShadow = '0 12px 28px rgba(67, 217, 232, 0.15)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.borderColor = 'var(--border-diner)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div style={{ height: '240px', overflow: 'hidden', position: 'relative', backgroundColor: '#090F1B' }}>
                     <img
-                      src={item.image}
+                      src={itemImg}
                       alt={item.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80';
+                      }}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.4s ease',
+                      }}
                     />
                     <div
                       style={{
@@ -321,50 +332,94 @@ export default function MenuPage({ onNavigateHome, onNavigatePage }) {
                         fontFamily: 'var(--font-display)',
                         fontWeight: 700,
                         fontSize: '1.05rem',
-                        padding: '0.25rem 0.65rem',
+                        padding: '0.3rem 0.75rem',
                         borderRadius: '3px',
+                        boxShadow: '0 0 10px rgba(216, 58, 69, 0.5)',
                       }}
                     >
-                      ${item.price}
+                      {item.currency_symbol || '$'}{item.price}
+                    </div>
+
+                    {item.is_featured && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '0.85rem',
+                          left: '0.85rem',
+                          backgroundColor: 'rgba(9, 15, 27, 0.9)',
+                          border: '1px solid var(--atomic-yellow)',
+                          color: 'var(--atomic-yellow)',
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.68rem',
+                          fontWeight: 700,
+                          padding: '0.2rem 0.55rem',
+                          borderRadius: '3px',
+                          backdropFilter: 'blur(4px)',
+                        }}
+                      >
+                        ★ SIGNATURE STAR
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
+                    <div>
+                      <h3
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: '1.4rem',
+                          color: '#FFFFFF',
+                          marginBottom: '0.5rem',
+                        }}
+                      >
+                        {item.name}
+                      </h3>
+                      <p style={{ color: 'var(--text-cream)', fontSize: '0.92rem', lineHeight: 1.5, marginBottom: '1.25rem' }}>
+                        {item.short_description || item.description}
+                      </p>
+                    </div>
+
+                    <div>
+                      {item.dietary_information && item.dietary_information.length > 0 && (
+                        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                          {item.dietary_information.map((diet, i) => (
+                            <span
+                              key={i}
+                              style={{
+                                fontFamily: 'var(--font-mono)',
+                                fontSize: '0.68rem',
+                                color: 'var(--neon-cyan)',
+                                border: '1px solid rgba(67, 217, 232, 0.35)',
+                                padding: '0.15rem 0.45rem',
+                                borderRadius: '2px',
+                              }}
+                            >
+                              {diet}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          paddingTop: '0.85rem',
+                          borderTop: '1px solid rgba(36, 53, 82, 0.5)',
+                          fontFamily: 'var(--font-mono)',
+                          fontSize: '0.72rem',
+                          color: 'var(--neon-cyan)',
+                        }}
+                      >
+                        <span>VIEW DETAILS & ALLERGENS</span>
+                        <span>↗</span>
+                      </div>
                     </div>
                   </div>
-                )}
-
-                <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flexGrow: 1, justifyContent: 'space-between' }}>
-                  <div>
-                    <h3
-                      style={{
-                        fontFamily: 'var(--font-display)',
-                        fontSize: '1.4rem',
-                        color: '#FFFFFF',
-                        marginBottom: '0.5rem',
-                      }}
-                    >
-                      {item.name}
-                    </h3>
-                    <p style={{ color: 'var(--text-cream)', fontSize: '0.92rem', lineHeight: 1.5, marginBottom: '1.25rem' }}>
-                      {item.short_description || item.description}
-                    </p>
-                  </div>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      paddingTop: '0.85rem',
-                      borderTop: '1px solid rgba(36, 53, 82, 0.5)',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.72rem',
-                      color: 'var(--neon-cyan)',
-                    }}
-                  >
-                    <span>DETAILS & ALLERGENS</span>
-                    <span>↗</span>
-                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {filteredItems.length === 0 && (

@@ -88,6 +88,7 @@ class FullDinerContentView(APIView):
             'sections': sections_dict,
             'categories': MenuCategorySerializer(categories, many=True, context={'request': request}).data,
             'featured_dishes': MenuItemSerializer(featured_dishes, many=True, context={'request': request}).data,
+            'signature_dishes': MenuItemSerializer(featured_dishes, many=True, context={'request': request}).data,
             'viewpoints': VirtualTourViewpointSerializer(viewpoints, many=True).data,
             'pillars': PhilosophyPillarSerializer(pillars, many=True).data,
             'story_stages': DinerStoryStageSerializer(story_stages, many=True).data,
