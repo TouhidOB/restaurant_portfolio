@@ -1,0 +1,114 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Menu Manager // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}POP MENU <span>& AVAILABILITY</span>{% endblock %}
+
+{% block content %}
+<style>
+  .dish-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .dish-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .dish-img {
+    height: 180px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    background-color: var(--bg-surface);
+  }
+  .dish-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--pop-yellow);
+    color: #000;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+  }
+  .dish-price {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(10, 10, 12, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
+    color: var(--pop-yellow);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 15px;
+    padding: 4px 10px;
+    border-radius: 3px;
+  }
+  .dish-info {
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .dish-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #FFF;
+  }
+  .dish-category {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--pop-pink);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .dish-desc {
+    color: var(--text-muted);
+    font-size: 12px;
+    line-height: 1.5;
+    flex: 1;
+  }
+</style>
+
+<div class="pop-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 16px;">Menu Repertoire & Food Photography</h3>
+      <p style="color: var(--text-muted); font-size: 13px;">Manage live dishes, prices, and high-fashion pop meal photography</p>
+    </div>
+    <span class="badge badge-pop">{{ items|length }} Total Dishes</span>
+  </div>
+
+  <div class="dish-grid">
+    {% for item in items %}
+    <div class="dish-card">
+      <div class="dish-img" style="background-image: url('{{ item.display_image }}');">
+        {% if item.badge_text %}
+          <div class="dish-badge">{{ item.badge_text }}</div>
+        {% elif item.is_featured %}
+          <div class="dish-badge">Featured Dish</div>
+        {% endif %}
+        <div class="dish-price">${{ item.price|default:"18.00" }}</div>
+      </div>
+      <div class="dish-info">
+        <div class="dish-category">{{ item.category.name }}</div>
+        <div class="dish-title">{{ item.name }}</div>
+        <div class="dish-desc">{{ item.description|truncatewords:20 }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

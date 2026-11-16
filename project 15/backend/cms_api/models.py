@@ -1,5 +1,8 @@
+import random
+import string
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class SiteConfig(models.Model):
     restaurant_name = models.CharField(max_length=200, default="POP! FOOD STUDIO")
@@ -166,11 +169,18 @@ class Testimonial(models.Model):
 
 class Reservation(models.Model):
     STATUS_CHOICES = [
+        ("pending", "Pending Confirmation"),
+        ("confirmed", "Confirmed"),
+        ("seated", "Seated"),
+        ("cancelled", "Cancelled"),
         ("new", "New Inquiry"),
         ("reviewing", "Reviewing"),
         ("contacted", "Contacted"),
-        ("confirmed", "Confirmed"),
         ("rejected", "Rejected"),
+    ]
+    SHIFT_CHOICES = [
+        ("lunch", "Daylight Pop Lunch"),
+        ("dinner", "Twilight Neon Dinner"),
     ]
     INQUIRY_CHOICES = [
         ("Table Reservation", "Table Reservation"),
@@ -179,15 +189,20 @@ class Reservation(models.Model):
         ("General Question", "General Question"),
     ]
 
+    reference_code = models.CharField(max_length=50, db_index=True, blank=True, default='')
     customer_name = models.CharField(max_length=200)
     phone = models.CharField(max_length=50)
     email = models.EmailField(blank=True, null=True)
     preferred_date = models.DateField()
     preferred_time = models.CharField(max_length=50)
+    shift = models.CharField(max_length=20, choices=SHIFT_CHOICES, default="dinner")
     guest_count = models.PositiveIntegerField(default=2)
     inquiry_type = models.CharField(max_length=50, choices=INQUIRY_CHOICES, default="Table Reservation")
+    selected_experience = models.CharField(max_length=150, blank=True)
+    table_number = models.CharField(max_length=50, blank=True)
+    dietary_notes = models.TextField(blank=True)
     message = models.TextField(blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="new")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     admin_notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -195,4 +210,75 @@ class Reservation(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.customer_name} - {self.preferred_date} ({self.guest_count} guests, {self.status})"
+        return f"{self.reference_code or 'NO-REF'} - {self.customer_name} ({self.preferred_date} {self.shift}, {self.guest_count} guests)"
+
+    @property
+    def full_name(self):
+        return self.customer_name
+
+    def save(self, *args, **kwargs):
+        if not self.reference_code:
+            today_str = timezone.now().strftime("%y%m%d")
+            rand_hex = ''.join(random.choices(string.ascii_uppercase + string.digits, k=4))
+            self.reference_code = f"POP-{today_str}-{rand_hex}"
+        super().save(*args, **kwargs)
+
+
+class CustomPage(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+    meta_title = models.CharField(max_length=255, blank=True)
+    meta_description = models.TextField(blank=True)
+    layout_data = models.JSONField(default=dict, blank=True)
+    is_published = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at"]
+
+    def __str__(self):
+        return f"{self.title} (/page/{self.slug})"
+
+
+class BlogCategory(models.Model):
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True)
+    sort_order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["sort_order", "name"]
+        verbose_name_plural = "Blog Categories"
+
+    def __str__(self):
+        return self.name
+
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=250)
+    slug = models.SlugField(unique=True)
+    category = models.ForeignKey(BlogCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
+    excerpt = models.TextField(blank=True)
+    content = models.TextField()
+    featured_image = models.ImageField(upload_to="blog/", blank=True, null=True)
+    featured_image_url = models.CharField(max_length=500, blank=True)
+    author_name = models.CharField(max_length=150, default="POP! Food Lab Team")
+    read_time = models.CharField(max_length=50, default="4 min read")
+    is_published = models.BooleanField(default=True)
+    published_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-published_at"]
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def display_image(self):
+        if self.featured_image:
+            return self.featured_image.url
+        return self.featured_image_url

@@ -1,0 +1,43 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Guest Reviews // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}GUEST REVIEWS <span>& CRITIC ACCLAIM</span>{% endblock %}
+
+{% block content %}
+<div class="pop-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 16px;">Verified Guest Feedback</h3>
+      <p style="color: var(--text-muted); font-size: 13px;">Manage testimonials, culinary press quotes, and food critic reviews</p>
+    </div>
+    <span class="badge badge-pop">{{ reviews|length }} Reviews</span>
+  </div>
+
+  <table class="pop-table" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+        <th style="padding: 12px;">Customer / Critic</th>
+        <th style="padding: 12px;">Publication / Source</th>
+        <th style="padding: 12px;">Rating</th>
+        <th style="padding: 12px;">Review Text</th>
+        <th style="padding: 12px;">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rev in reviews %}
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+        <td style="padding: 14px 12px;"><strong style="color: #FFF;">{{ rev.customer_name }}</strong></td>
+        <td style="padding: 14px 12px; color: var(--pop-yellow); font-weight: 600;">{{ rev.source }}</td>
+        <td style="padding: 14px 12px; color: #FFDD00;">★ {{ rev.rating }}/5</td>
+        <td style="padding: 14px 12px; color: var(--text-muted); font-size: 13px; max-width: 400px; line-height: 1.5;">"{{ rev.review_text }}"</td>
+        <td style="padding: 14px 12px; color: var(--text-muted); font-size: 12px;">{{ rev.review_date }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 30px;">No reviews recorded yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

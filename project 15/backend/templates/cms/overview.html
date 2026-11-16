@@ -1,0 +1,155 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Overview & KPIs // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}STUDIO <span>OVERVIEW & KPIS</span>{% endblock %}
+
+{% block header_actions %}
+  <a href="{% url 'cms_page_builder_new' %}" class="btn-action btn-pop">+ Create Standalone Page</a>
+{% endblock %}
+
+{% block content %}
+<style>
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+  .kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--pop-yellow);
+  }
+  .kpi-card.pink::before { background: var(--pop-pink); }
+  .kpi-card.cyan::before { background: var(--pop-cyan); }
+  .kpi-card.green::before { background: #48bb78; }
+  .kpi-num {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    color: #FFF;
+    margin-bottom: 4px;
+  }
+  .kpi-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+  .table-responsive {
+    overflow-x: auto;
+  }
+  .pop-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .pop-table th {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-muted);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .pop-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+  .pop-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+  }
+</style>
+
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-num">{{ total_reservations }}</div>
+    <div class="kpi-label">Total Reservations</div>
+  </div>
+  <div class="kpi-card pink">
+    <div class="kpi-num">{{ pending_reservations }}</div>
+    <div class="kpi-label">Pending Approval</div>
+  </div>
+  <div class="kpi-card green">
+    <div class="kpi-num">{{ confirmed_reservations }}</div>
+    <div class="kpi-label">Confirmed Bookings</div>
+  </div>
+  <div class="kpi-card cyan">
+    <div class="kpi-num">{{ pages_count }}</div>
+    <div class="kpi-label">Elementor Custom Pages</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-num">{{ menu_count }}</div>
+    <div class="kpi-label">Pop-Art Dishes</div>
+  </div>
+  <div class="kpi-card pink">
+    <div class="kpi-num">{{ blog_count }}</div>
+    <div class="kpi-label">Gazette Articles</div>
+  </div>
+</div>
+
+<div class="pop-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+    <h3 style="font-family: var(--font-display); font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px;">
+      Recent Dining Reservations
+    </h3>
+    <a href="{% url 'cms_reservations' %}" style="color: var(--pop-yellow); text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase;">
+      Open Host Desk &rarr;
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    <table class="pop-table">
+      <thead>
+        <tr>
+          <th>Ref Code</th>
+          <th>Guest Name</th>
+          <th>Date & Shift</th>
+          <th>Party Size</th>
+          <th>Table / Zone</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in recent_reservations %}
+        <tr>
+          <td><strong style="color: var(--pop-yellow); font-family: var(--font-mono);">{{ r.reference_code }}</strong></td>
+          <td>{{ r.customer_name }}</td>
+          <td>
+            {{ r.preferred_date }}
+            <span class="badge {% if r.shift == 'lunch' %}badge-pop{% else %}badge-pink{% endif %}">{{ r.get_shift_display }}</span>
+          </td>
+          <td>{{ r.guest_count }} PAX</td>
+          <td>{{ r.table_number|default:"Unassigned" }}</td>
+          <td>
+            <span class="badge badge-{{ r.status }}">{{ r.get_status_display }}</span>
+          </td>
+          <td>
+            <a href="{% url 'cms_reservations' %}?q={{ r.reference_code }}" class="btn-action btn-outline" style="padding: 4px 10px; font-size: 11px;">Manage</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">No reservations recorded yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

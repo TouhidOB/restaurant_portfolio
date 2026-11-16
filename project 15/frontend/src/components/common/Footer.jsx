@@ -1,10 +1,18 @@
 import React from 'react';
 import { useCMS } from '../../context/CMSContext';
-import { ArrowUpRight, Heart, MapPin, Phone, Mail } from 'lucide-react';
+import { ArrowUpRight, Heart, MapPin, Phone, Mail, Sparkles } from 'lucide-react';
 
-export default function Footer() {
-  const { data, setIsReservationModalOpen } = useCMS();
+export default function Footer({ onNavigate }) {
+  const { data, openReservation, openReservationModal, setIsReservationModalOpen } = useCMS();
+  const triggerReservation = openReservationModal || openReservation || (() => setIsReservationModalOpen(true));
   const config = data.config || {};
+
+  const handleLink = (e, path) => {
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate(path);
+    }
+  };
 
   return (
     <footer
@@ -47,8 +55,8 @@ export default function Footer() {
           >
             <h1
               style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 'clamp(3rem, 8.5vw, 7.5rem)',
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: 'clamp(2.5rem, 7vw, 6.5rem)',
                 lineHeight: 0.95,
                 fontWeight: 900,
                 color: '#FFFFFF',
@@ -60,213 +68,142 @@ export default function Footer() {
             </h1>
 
             <button
-              onClick={() => setIsReservationModalOpen(true)}
+              onClick={() => triggerReservation()}
               style={{
-                backgroundColor: '#CCFF00',
+                backgroundColor: '#FFDD00',
                 color: '#0A0B0E',
                 borderRadius: '999px',
                 padding: '16px 32px',
-                fontFamily: 'var(--font-display)',
+                fontFamily: 'Space Grotesk, sans-serif',
                 fontSize: '14px',
-                fontWeight: 700,
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 0 30px rgba(204, 255, 0, 0.35)',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px'
+                gap: '8px',
+                boxShadow: '0 0 20px rgba(255, 221, 0, 0.4)'
               }}
             >
-              <span>CLAIM A TABLE NOW</span>
-              <ArrowUpRight size={18} />
+              <span>Book Table</span>
+              <ArrowUpRight size={16} />
             </button>
           </div>
-
-          <p
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '13px',
-              color: '#CCFF00',
-              letterSpacing: '2px',
-              textTransform: 'uppercase',
-              margin: 0
-            }}
-          >
-            {config.tagline || 'EAT OUTSIDE THE LINES'} &bull; ARTS DISTRICT, STUDIO CITY
+          <p style={{ color: '#8E8EA0', fontSize: '15px', maxWidth: '640px' }}>
+            {config.tagline || 'EAT OUTSIDE THE LINES'} — A vibrant dining playground where oversized pop-art aesthetics meet culinary craftsmanship.
           </p>
         </div>
 
-        {/* 4 Column Grid */}
+        {/* 4-Column Navigation & Info */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
             gap: '40px',
             marginBottom: '60px'
           }}
         >
-          {/* Col 1: Studio Info */}
+          {/* Col 1: Studio Pages */}
           <div>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
-                color: '#646A7E',
-                fontWeight: 700,
-                letterSpacing: '1px',
-                marginBottom: '16px',
-                textTransform: 'uppercase'
-              }}
-            >
-              [ THE LOCATION ]
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '14px' }}>
-              <MapPin size={16} color="#FF3366" style={{ flexShrink: 0, marginTop: '3px' }} />
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: '13.5px', lineHeight: 1.5, color: '#D4D4D8' }}>
-                {config.address || '742 Evergreen Pop Boulevard, Arts District, Studio City, CA'}
-              </span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-              <Phone size={15} color="#0066FF" />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: '#9FA5B7' }}>{config.phone || '+1 (555) 767-3663'}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Mail size={15} color="#00F0FF" />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: '#9FA5B7' }}>{config.email || 'hello@popfoodstudio.com'}</span>
-            </div>
-          </div>
-
-          {/* Col 2: Studio Hours */}
-          <div>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
-                color: '#646A7E',
-                fontWeight: 700,
-                letterSpacing: '1px',
-                marginBottom: '16px',
-                textTransform: 'uppercase'
-              }}
-            >
-              [ OPENING HOURS ]
-            </div>
+            <h4 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1.5px', color: '#FFDD00', marginBottom: '16px', fontWeight: 800 }}>
+              Studio Destinations
+            </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {config.opening_hours &&
-                Object.entries(config.opening_hours).map(([days, hours]) => (
-                  <div key={days} style={{ fontSize: '12.5px' }}>
-                    <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, color: '#FFF' }}>{days}</div>
-                    <div style={{ fontFamily: 'var(--font-mono)', color: '#8E94A5', fontSize: '11px' }}>{hours}</div>
-                  </div>
-                ))}
+              <a href="/story" onClick={(e) => handleLink(e, '/story')} style={{ color: '#8E8EA0', textDecoration: 'none', fontSize: '14px' }}>Brand Story</a>
+              <a href="/featured" onClick={(e) => handleLink(e, '/featured')} style={{ color: '#8E8EA0', textDecoration: 'none', fontSize: '14px' }}>Featured Burgers</a>
+              <a href="/menu" onClick={(e) => handleLink(e, '/menu')} style={{ color: '#8E8EA0', textDecoration: 'none', fontSize: '14px' }}>Menu Repertoire</a>
+              <a href="/tour" onClick={(e) => handleLink(e, '/tour')} style={{ color: '#8E8EA0', textDecoration: 'none', fontSize: '14px' }}>3D Virtual Tour</a>
+              <a href="/philosophy" onClick={(e) => handleLink(e, '/philosophy')} style={{ color: '#8E8EA0', textDecoration: 'none', fontSize: '14px' }}>Food Philosophy</a>
             </div>
           </div>
 
-          {/* Col 3: Navigation Directory */}
+          {/* Col 2: Experiences */}
           <div>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
-                color: '#646A7E',
-                fontWeight: 700,
-                letterSpacing: '1px',
-                marginBottom: '16px',
-                textTransform: 'uppercase'
-              }}
-            >
-              [ EXPLORE STUDIO ]
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {[
-                { name: 'Our Origin Story', href: '#story' },
-                { name: '3D Interactive Studio', href: '#tour' },
-                { name: 'Signature Dishes', href: '#featured' },
-                { name: 'Full Menu Explorer', href: '#menu' },
-                { name: 'Culinary Laboratory', href: '#kitchen' },
-                { name: 'Happenings & Brunches', href: '#experiences' },
-                { name: 'Guest Reviews', href: '#reviews' },
-              ].map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  style={{
-                    color: '#9FA5B7',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '13px',
-                    transition: 'color 0.15s ease'
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = '#CCFF00')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = '#9FA5B7')}
-                >
-                  &rarr; {item.name}
-                </a>
-              ))}
+            <h4 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1.5px', color: '#FF007F', marginBottom: '16px', fontWeight: 800 }}>
+              Culinary Lab
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <a href="/kitchen" onClick={(e) => handleLink(e, '/kitchen')} style={{ color: '#8E8EA0', textDecoration: 'none', fontSize: '14px' }}>Open Kitchen Lab</a>
+              <a href="/team" onClick={(e) => handleLink(e, '/team')} style={{ color: '#8E8EA0', textDecoration: 'none', fontSize: '14px' }}>Culinary Brigade</a>
+              <a href="/experiences" onClick={(e) => handleLink(e, '/experiences')} style={{ color: '#8E8EA0', textDecoration: 'none', fontSize: '14px' }}>VIP Neon Loft Party</a>
+              <a href="/blog" onClick={(e) => handleLink(e, '/blog')} style={{ color: '#8E8EA0', textDecoration: 'none', fontSize: '14px' }}>Pop Food Gazette</a>
+              <a href="/contact" onClick={(e) => handleLink(e, '/contact')} style={{ color: '#8E8EA0', textDecoration: 'none', fontSize: '14px' }}>Location & Arrival</a>
             </div>
           </div>
 
-          {/* Col 4: CMS Studio Portal */}
+          {/* Col 3: Contact */}
           <div>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '11px',
-                color: '#646A7E',
-                fontWeight: 700,
-                letterSpacing: '1px',
-                marginBottom: '16px',
-                textTransform: 'uppercase'
-              }}
-            >
-              [ OPERATIONS OS ]
+            <h4 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1.5px', color: '#00E5FF', marginBottom: '16px', fontWeight: 800 }}>
+              Concierge & Contact
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '13px', color: '#8E8EA0' }}>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <MapPin size={16} color="#00E5FF" style={{ flexShrink: 0 }} />
+                <span>742 Evergreen Pop Boulevard, Arts District, Studio City, CA</span>
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <Phone size={16} color="#00E5FF" style={{ flexShrink: 0 }} />
+                <span>+1 (555) 767-3663</span>
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <Mail size={16} color="#00E5FF" style={{ flexShrink: 0 }} />
+                <span>hello@popfoodstudio.com</span>
+              </div>
             </div>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '13px', color: '#8E94A5', lineHeight: 1.6, marginBottom: '16px' }}>
-              Authorized studio managers can update dishes, modify 3D tour viewpoints, and triage guest reservations via our decoupled CMS Studio.
+          </div>
+
+          {/* Col 4: CMS Studio & Admin */}
+          <div>
+            <h4 style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1.5px', color: '#FFFFFF', marginBottom: '16px', fontWeight: 800 }}>
+              Management Console
+            </h4>
+            <p style={{ color: '#8E8EA0', fontSize: '13px', marginBottom: '16px' }}>
+              Host desk staff and creative editors can manage live reservations and visual pages.
             </p>
             <a
               href="/cms/"
-              target="_blank"
-              rel="noopener noreferrer"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                color: '#FFF',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                borderRadius: '999px',
                 padding: '10px 18px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '11.5px',
-                fontWeight: 600,
-                textDecoration: 'none'
+                background: 'rgba(255, 255, 255, 0.08)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                borderRadius: '4px',
+                color: '#FFDD00',
+                textDecoration: 'none',
+                fontFamily: 'JetBrains Mono, monospace',
+                fontSize: '12px',
+                fontWeight: 700
               }}
             >
-              <span>ACCESS STUDIO OS</span>
+              <span>ACCESS CMS STUDIO</span>
               <ArrowUpRight size={14} />
             </a>
           </div>
         </div>
 
-        {/* Bottom Bar */}
+        {/* Bottom Credits */}
         <div
           style={{
-            borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-            paddingTop: '28px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            paddingTop: '24px',
             display: 'flex',
-            flexWrap: 'wrap',
-            alignItems: 'center',
             justifyContent: 'space-between',
-            gap: '16px',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '12px',
             fontSize: '12px',
-            fontFamily: 'var(--font-mono)',
-            color: '#646A7E'
+            color: '#8E8EA0'
           }}
         >
-          <div>
-            &copy; {new Date().getFullYear()} POP! FOOD STUDIO LLC. ALL RIGHTS RESERVED.
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            CRAFTED WITH <Heart size={13} color="#FF3366" fill="#FF3366" /> FOR CONTEMPORARY FOOD LOVERS
+          <div>© 2026 POP! FOOD STUDIO. ALL RIGHTS RESERVED.</div>
+          <div style={{ display: 'flex', gap: '16px' }}>
+            <span>LOS ANGELES, CA</span>
+            <span>•</span>
+            <span>CONTEMPORARY POP-ART DINING</span>
           </div>
         </div>
       </div>

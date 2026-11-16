@@ -3,575 +3,317 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}POP! Studio OS | Restaurant Control Center{% endblock %}</title>
+  <title>{% block title %}POP! FOOD STUDIO // Studio CMS{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-canvas: #090A0E;
-      --bg-sidebar: #0F1117;
-      --bg-surface: #141620;
-      --bg-surface-elevated: #1B1E2B;
-      --bg-surface-hover: #222636;
-      
-      --border-subtle: rgba(255, 255, 255, 0.07);
-      --border-medium: rgba(255, 255, 255, 0.12);
-      --border-focus: #D4FF32;
-      
-      --text-primary: #F4F5F8;
-      --text-secondary: #9DA3B4;
-      --text-muted: #62687A;
-      
-      /* Vibrant Pop Accents */
-      --accent-coral: #FF3366;
-      --accent-lime: #D4FF32;
-      --accent-cobalt: #3B82F6;
-      --accent-cyan: #06B6D4;
-      --accent-purple: #A855F7;
-      --accent-emerald: #10B981;
-      --accent-amber: #F59E0B;
-      
+      --bg-dark: #0A0A0C;
+      --bg-card: #141418;
+      --bg-surface: #1E1E24;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-pop: #FFDD00;
+      --pop-yellow: #FFDD00;
+      --pop-pink: #FF007F;
+      --pop-cyan: #00E5FF;
+      --text-main: #FFFFFF;
+      --text-muted: #8E8EA0;
       --font-display: 'Space Grotesk', sans-serif;
       --font-body: 'Plus Jakarta Sans', sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: var(--bg-canvas);
-      color: var(--text-primary);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
       font-family: var(--font-body);
-      font-size: 13.5px;
-      line-height: 1.5;
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-      transition: all 0.15s ease;
-    }
-
-    /* Layout structure */
-    .cms-container {
       display: flex;
       min-height: 100vh;
+      line-height: 1.5;
     }
-
-    /* Sleek Dark Persistent Sidebar */
-    .cms-sidebar {
-      width: 280px;
-      background: var(--bg-sidebar);
-      border-right: 1px solid var(--border-subtle);
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: 0;
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--bg-card);
+      border-right: 1px solid var(--border-color);
       display: flex;
       flex-direction: column;
-      z-index: 100;
+      flex-shrink: 0;
+    }
+    .brand-header {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-badge {
+      width: 36px;
+      height: 36px;
+      background: var(--pop-yellow);
+      color: #000;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      box-shadow: 0 0 12px rgba(255, 221, 0, 0.4);
+    }
+    .brand-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+      color: #FFF;
+    }
+    .brand-subtitle {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--pop-yellow);
+      font-weight: 700;
+    }
+    .nav-list {
+      list-style: none;
+      padding: 16px 12px;
+      flex: 1;
       overflow-y: auto;
     }
-
-    .cms-sidebar-header {
-      padding: 22px 20px 18px;
-      border-bottom: 1px solid var(--border-subtle);
-      background: linear-gradient(180deg, rgba(255,51,102,0.06) 0%, transparent 100%);
+    .nav-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      padding: 10px 12px 4px;
+      font-weight: 700;
     }
-
-    .cms-brand-logo {
+    .nav-item a {
       display: flex;
       align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-
-    .cms-brand-badge {
-      background: var(--accent-coral);
-      color: #FFF;
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 6px;
-      letter-spacing: 0.5px;
-      box-shadow: 0 0 16px rgba(255, 51, 102, 0.4);
-    }
-
-    .cms-brand-title {
-      font-family: var(--font-display);
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: #FFF;
-      line-height: 1.1;
-    }
-
-    .cms-brand-sub {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      color: var(--accent-lime);
-      letter-spacing: 1px;
-      font-weight: 600;
-    }
-
-    /* Live Search Filter */
-    .cms-filter-box {
-      padding: 14px 18px;
-      border-bottom: 1px solid var(--border-subtle);
-      position: relative;
-    }
-
-    .cms-filter-input {
-      width: 100%;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 9px 36px 9px 12px;
-      font-family: var(--font-body);
-      font-size: 12.5px;
-      color: var(--text-primary);
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    .cms-filter-input:focus {
-      border-color: var(--accent-lime);
-      box-shadow: 0 0 0 2px rgba(212, 255, 50, 0.15);
-      background: var(--bg-surface-elevated);
-    }
-
-    .cms-filter-icon {
-      position: absolute;
-      right: 28px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-family: var(--font-mono);
-      font-size: 10px;
+      gap: 12px;
+      padding: 10px 12px;
       color: var(--text-muted);
-      background: var(--bg-surface-elevated);
-      padding: 2px 5px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
       border-radius: 4px;
-      border: 1px solid var(--border-subtle);
-      pointer-events: none;
+      transition: all 0.2s;
+      margin-bottom: 2px;
     }
-
-    /* Navigation Items */
-    .cms-sidebar-nav {
+    .nav-item a:hover {
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
+    .nav-item.active a {
+      background: rgba(255, 221, 0, 0.12);
+      color: var(--pop-yellow);
+      border-left: 3px solid var(--pop-yellow);
+    }
+    .user-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+    .btn-logout {
+      color: var(--pop-pink);
+      text-decoration: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+    /* Main Area */
+    .main-content {
       flex: 1;
-      padding: 14px 12px;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      overflow-y: auto;
     }
-
-    .cms-nav-heading {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      padding: 12px 10px 6px;
-    }
-
-    .cms-nav-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 12px;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-secondary);
-      transition: all 0.15s ease;
-      border: 1px solid transparent;
-    }
-
-    .cms-nav-item:hover {
-      background: var(--bg-surface);
-      color: var(--text-primary);
-      border-color: var(--border-subtle);
-    }
-
-    .cms-nav-item.active {
-      background: rgba(212, 255, 50, 0.08);
-      color: var(--accent-lime);
-      border-color: rgba(212, 255, 50, 0.2);
-    }
-
-    .cms-nav-item .tag {
-      font-family: var(--font-mono);
-      font-size: 10px;
-      background: var(--bg-surface);
-      color: var(--text-muted);
-      padding: 2px 7px;
-      border-radius: 6px;
-      border: 1px solid var(--border-subtle);
-    }
-
-    .cms-sidebar-footer {
-      padding: 16px 20px;
-      border-top: 1px solid var(--border-subtle);
-      background: var(--bg-sidebar);
+    .topbar {
+      padding: 18px 32px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-
-    /* Main Content Surface */
-    .cms-main {
-      margin-left: 280px;
-      flex: 1;
-      padding: 32px 40px 80px;
-      max-width: 1360px;
-    }
-
-    /* Top Action Bar */
-    .cms-topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 32px;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .cms-title {
+    .page-title {
       font-family: var(--font-display);
-      font-size: 26px;
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: -0.5px;
-      color: #FFF;
-    }
-
-    .cms-actions {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
-    /* Cards */
-    .cms-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 14px;
-      padding: 26px;
-      margin-bottom: 24px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      transition: all 0.25s ease;
+    .page-title span {
+      color: var(--pop-yellow);
     }
-
-    .cms-card:hover {
-      border-color: var(--border-medium);
-    }
-
-    .cms-card-header {
+    .topbar-actions {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 18px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border-subtle);
+      gap: 12px;
     }
-
-    .cms-card-title {
-      font-family: var(--font-display);
-      font-size: 17px;
-      font-weight: 700;
-      color: #FFF;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .btn-action {
       padding: 8px 16px;
-      border-radius: 8px;
-      font-family: var(--font-body);
-      font-size: 12.5px;
-      font-weight: 600;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      text-decoration: none;
       cursor: pointer;
-      border: 1px solid transparent;
-      transition: all 0.15s ease;
+      border: none;
+      transition: all 0.2s;
     }
-
-    .btn-lime {
-      background: var(--accent-lime);
-      color: #0A0B0E;
+    .btn-pop {
+      background: var(--pop-yellow);
+      color: #000;
     }
-    .btn-lime:hover {
-      background: #e2ff60;
-      box-shadow: 0 0 16px rgba(212, 255, 50, 0.4);
+    .btn-pop:hover {
+      background: #FFE633;
+      box-shadow: 0 0 14px rgba(255, 221, 0, 0.4);
     }
-
-    .btn-coral {
-      background: var(--accent-coral);
-      color: #FFF;
-    }
-    .btn-coral:hover {
-      background: #ff4d7a;
-      box-shadow: 0 0 16px rgba(255, 51, 102, 0.4);
-    }
-
     .btn-outline {
-      background: var(--bg-surface-elevated);
-      color: var(--text-primary);
-      border-color: var(--border-medium);
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
     }
     .btn-outline:hover {
-      background: var(--bg-surface-hover);
-      border-color: rgba(255,255,255,0.25);
+      background: var(--bg-surface);
     }
-
-    .btn-danger-outline {
-      background: transparent;
-      color: #F87171;
-      border-color: rgba(248, 113, 113, 0.2);
+    .content-body {
+      padding: 32px;
+      flex: 1;
     }
-    .btn-danger-outline:hover {
-      background: rgba(248, 113, 113, 0.1);
-      border-color: #F87171;
+    /* Cards and Utilities */
+    .pop-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 24px;
+      margin-bottom: 24px;
     }
-
-    /* Status Badges */
-    .badge-status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-family: var(--font-mono);
-      font-size: 11px;
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-
-    .status-new {
-      background: rgba(245, 158, 11, 0.12);
-      color: #FBBF24;
-      border: 1px solid rgba(245, 158, 11, 0.25);
-    }
-
-    .status-confirmed {
-      background: rgba(16, 185, 129, 0.12);
-      color: #34D399;
-      border: 1px solid rgba(16, 185, 129, 0.25);
-    }
-
-    .status-cancelled {
-      background: rgba(239, 68, 68, 0.12);
-      color: #F87171;
-      border: 1px solid rgba(239, 68, 68, 0.25);
-    }
-
-    /* Tables */
-    .cms-table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-
-    .cms-table th {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .cms-table td {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      font-size: 13px;
-    }
-
-    .cms-table tbody tr:hover td {
-      background: var(--bg-surface-elevated);
-      color: var(--text-primary);
-    }
-
-    /* Form inputs */
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-label {
-      display: block;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 6px;
     }
-
-    .form-control {
-      width: 100%;
-      background: var(--bg-surface-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 10px 14px;
-      font-family: var(--font-body);
-      font-size: 13.5px;
-      color: var(--text-primary);
-      outline: none;
-      transition: all 0.2s ease;
-    }
-
-    .form-control:focus {
-      border-color: var(--accent-lime);
-      box-shadow: 0 0 0 2px rgba(212, 255, 50, 0.15);
-      background: var(--bg-surface-hover);
-    }
-
-    textarea.form-control {
-      resize: vertical;
-      min-height: 80px;
-    }
-
-    /* Alerts */
-    .alert {
-      padding: 14px 18px;
-      border-radius: 8px;
-      font-size: 13px;
+    .badge-pop { background: rgba(255, 221, 0, 0.2); color: var(--pop-yellow); border: 1px solid var(--pop-yellow); }
+    .badge-pink { background: rgba(255, 0, 127, 0.2); color: var(--pop-pink); border: 1px solid var(--pop-pink); }
+    .badge-cyan { background: rgba(0, 229, 255, 0.2); color: var(--pop-cyan); border: 1px solid var(--pop-cyan); }
+    .badge-confirmed { background: rgba(72, 187, 120, 0.2); color: #48bb78; border: 1px solid #48bb78; }
+    .badge-pending { background: rgba(237, 137, 54, 0.2); color: #ed8936; border: 1px solid #ed8936; }
+    .badge-seated { background: rgba(66, 153, 225, 0.2); color: #4299e1; border: 1px solid #4299e1; }
+    .badge-cancelled { background: rgba(245, 101, 101, 0.2); color: #f56565; border: 1px solid #f56565; }
+    .messages-container {
       margin-bottom: 20px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #6EE7B7;
     }
-
-    .alert-error {
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #FCA5A5;
-    }
-
-    /* Grid layout utilities */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-    }
-
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-    }
-
-    /* Flash Highlight Animation for Target Sections */
-    @keyframes sectionPulse {
-      0% { box-shadow: 0 0 0 0 rgba(212, 255, 50, 0.5); }
-      70% { box-shadow: 0 0 0 10px rgba(212, 255, 50, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(212, 255, 50, 0); }
-    }
-
-    .highlight-flash {
-      animation: sectionPulse 1.8s ease-out;
-      border-color: var(--accent-lime) !important;
-    }
-
-    @media (max-width: 900px) {
-      .cms-sidebar {
-        display: none;
-      }
-      .cms-main {
-        margin-left: 0;
-        padding: 20px;
-      }
+    .alert-success {
+      background: rgba(72, 187, 120, 0.15);
+      border: 1px solid #48bb78;
+      color: #68d391;
+      padding: 12px 16px;
+      border-radius: 4px;
+      font-size: 13px;
+      margin-bottom: 12px;
     }
   </style>
   {% block extra_css %}{% endblock %}
 </head>
 <body>
-  {% block body_content %}
-  <div class="cms-container">
-    {% block page_layout %}{% endblock %}
-  </div>
-  {% endblock %}
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand-header">
+      <div class="brand-badge">P!</div>
+      <div>
+        <div class="brand-title">POP! STUDIO</div>
+        <div class="brand-subtitle">HEADLESS CMS</div>
+      </div>
+    </div>
 
-  <script>
-    // Live Keyword Search Filter for Persistent Sidebar
-    document.addEventListener('DOMContentLoaded', function() {
-      const filterInput = document.getElementById('sidebarFilter');
-      const navItems = document.querySelectorAll('.cms-nav-item');
-      const navHeadings = document.querySelectorAll('.cms-nav-heading');
+    <ul class="nav-list">
+      <li class="nav-label">Core Studio</li>
+      <li class="nav-item {% if active_section == 'overview' %}active{% endif %}">
+        <a href="{% url 'cms_overview' %}">⚡ Overview & KPIs</a>
+      </li>
+      <li class="nav-item {% if active_section == 'pages' %}active{% endif %}">
+        <a href="{% url 'cms_pages' %}">📄 Custom Pages (Elementor)</a>
+      </li>
+      <li class="nav-item {% if active_section == 'identity' %}active{% endif %}">
+        <a href="{% url 'cms_identity' %}">🎨 Studio Identity & Hours</a>
+      </li>
 
-      if (filterInput) {
-        filterInput.addEventListener('input', function(e) {
-          const query = e.target.value.toLowerCase().trim();
+      <li class="nav-label">Operations</li>
+      <li class="nav-item {% if active_section == 'reservations' %}active{% endif %}">
+        <a href="{% url 'cms_reservations' %}">📅 Table Reservations Desk</a>
+      </li>
+      <li class="nav-item {% if active_section == 'menu' %}active{% endif %}">
+        <a href="{% url 'cms_menu' %}">🍔 Pop Menu & Availability</a>
+      </li>
+      <li class="nav-item {% if active_section == 'tour' %}active{% endif %}">
+        <a href="{% url 'cms_tour' %}">🕶️ 3D Virtual Tour Lab</a>
+      </li>
 
-          navItems.forEach(item => {
-            const filterData = (item.getAttribute('data-filter') || '').toLowerCase();
-            const textContent = item.textContent.toLowerCase();
+      <li class="nav-label">Editorial & Content</li>
+      <li class="nav-item {% if active_section == 'blog' %}active{% endif %}">
+        <a href="{% url 'cms_blog' %}">✍️ Pop Food Gazette</a>
+      </li>
+      <li class="nav-item {% if active_section == 'sections' %}active{% endif %}">
+        <a href="{% url 'cms_sections' %}">📑 13-Section Config</a>
+      </li>
+      <li class="nav-item {% if active_section == 'gallery' %}active{% endif %}">
+        <a href="{% url 'cms_gallery' %}">📸 Pop Gallery Items</a>
+      </li>
+      <li class="nav-item {% if active_section == 'reviews' %}active{% endif %}">
+        <a href="{% url 'cms_reviews' %}">⭐ Guest Reviews</a>
+      </li>
+      <li class="nav-item {% if active_section == 'faqs' %}active{% endif %}">
+        <a href="{% url 'cms_faqs' %}">❓ FAQ Manager</a>
+      </li>
+      <li class="nav-item {% if active_section == 'schema' %}active{% endif %}">
+        <a href="{% url 'cms_schema' %}">{} Master JSON Schema</a>
+      </li>
+    </ul>
 
-            if (!query || filterData.includes(query) || textContent.includes(query)) {
-              item.style.display = 'flex';
-            } else {
-              item.style.display = 'none';
-            }
-          });
+    <div class="user-footer">
+      <div>👤 <strong>{{ request.user.username|default:"admin" }}</strong></div>
+      <a href="{% url 'cms_logout' %}" class="btn-logout">Logout &rarr;</a>
+    </div>
+  </aside>
 
-          // Headings visibility
-          navHeadings.forEach(heading => {
-            let next = heading.nextElementSibling;
-            let hasVisibleSiblings = false;
-            while (next && next.classList.contains('cms-nav-item')) {
-              if (next.style.display !== 'none') {
-                hasVisibleSiblings = true;
-                break;
-              }
-              next = next.nextElementSibling;
-            }
-            heading.style.display = (hasVisibleSiblings || !query) ? 'block' : 'none';
-          });
-        });
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <div class="topbar">
+      <div class="page-title">
+        {% block page_title %}POP! FOOD STUDIO <span>DASHBOARD</span>{% endblock %}
+      </div>
+      <div class="topbar-actions">
+        <a href="/" target="_blank" class="btn-action btn-outline">Preview Site ↗</a>
+        {% block header_actions %}{% endblock %}
+      </div>
+    </div>
 
-        // Keyboard shortcut ⌘K / Ctrl+K focus
-        window.addEventListener('keydown', function(e) {
-          if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-            e.preventDefault();
-            filterInput.focus();
-          }
-        });
-      }
+    <div class="content-body">
+      {% if messages %}
+        <div class="messages-container">
+          {% for message in messages %}
+            <div class="alert-success">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
 
-      // Smooth anchor jump + flash highlight
-      navItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-          const targetId = this.getAttribute('href');
-          if (targetId && targetId.startsWith('#')) {
-            const targetElem = document.querySelector(targetId);
-            if (targetElem) {
-              e.preventDefault();
-              targetElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              targetElem.classList.remove('highlight-flash');
-              void targetElem.offsetWidth; // trigger reflow
-              targetElem.classList.add('highlight-flash');
-            }
-          }
-        });
-      });
-    });
-  </script>
+      {% block content %}{% endblock %}
+    </div>
+  </main>
   {% block extra_js %}{% endblock %}
 </body>
 </html>

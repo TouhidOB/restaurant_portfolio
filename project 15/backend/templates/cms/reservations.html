@@ -1,0 +1,188 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Reservations Desk // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}MAITRE D' <span>TABLE RESERVATIONS & HOST DESK</span>{% endblock %}
+
+{% block content %}
+<style>
+  .desk-stats {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .stat-pill {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+  }
+  .filters-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .shift-tabs {
+    display: flex;
+    gap: 8px;
+  }
+  .shift-tab {
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    background: var(--bg-card);
+    transition: all 0.2s;
+  }
+  .shift-tab.active {
+    background: rgba(255, 221, 0, 0.15);
+    color: var(--pop-yellow);
+    border-color: var(--pop-yellow);
+  }
+</style>
+
+<div class="desk-stats">
+  <div class="stat-pill">
+    <span>⏳ PENDING:</span> <strong style="color: #ed8936;">{{ pending_count }}</strong>
+  </div>
+  <div class="stat-pill">
+    <span>✅ CONFIRMED:</span> <strong style="color: #48bb78;">{{ confirmed_count }}</strong>
+  </div>
+  <div class="stat-pill">
+    <span>🍽️ SEATED:</span> <strong style="color: #4299e1;">{{ seated_count }}</strong>
+  </div>
+  <div class="stat-pill">
+    <span>👥 TODAY'S COVERS:</span> <strong style="color: var(--pop-yellow);">{{ today_covers }} PAX</strong>
+  </div>
+</div>
+
+<div class="pop-card">
+  <!-- Shift & Status Filter Bar -->
+  <div class="filters-bar">
+    <div class="shift-tabs">
+      <a href="{% url 'cms_reservations' %}" class="shift-tab {% if shift_filter == 'all' %}active{% endif %}">
+        All Shifts
+      </a>
+      <a href="{% url 'cms_reservations' %}?shift=lunch{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}" class="shift-tab {% if shift_filter == 'lunch' %}active{% endif %}">
+        ☀️ Daylight Lunch
+      </a>
+      <a href="{% url 'cms_reservations' %}?shift=dinner{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}" class="shift-tab {% if shift_filter == 'dinner' %}active{% endif %}">
+        🌙 Twilight Dinner
+      </a>
+      <a href="{% url 'cms_reservations' %}?status=pending{% if shift_filter != 'all' %}&shift={{ shift_filter }}{% endif %}" class="shift-tab {% if status_filter == 'pending' %}active{% endif %}" style="border-color: #ed8936; color: #ed8936;">
+        Pending ({{ pending_count }})
+      </a>
+    </div>
+
+    <!-- Search input -->
+    <form method="GET" style="display: flex; gap: 8px;">
+      {% if shift_filter != 'all' %}<input type="hidden" name="shift" value="{{ shift_filter }}">{% endif %}
+      {% if status_filter != 'all' %}<input type="hidden" name="status" value="{{ status_filter }}">{% endif %}
+      <input type="text" name="q" value="{{ search_query }}" placeholder="Search ref, guest, phone..." style="padding: 8px 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF; font-size: 12px;">
+      <button type="submit" class="btn-action btn-outline" style="padding: 8px 14px;">Search</button>
+    </form>
+  </div>
+
+  <div class="table-responsive">
+    <table class="pop-table">
+      <thead>
+        <tr>
+          <th>Ref Code</th>
+          <th>Guest Details</th>
+          <th>Date & Shift</th>
+          <th>Party & Occasion</th>
+          <th>Zone Preference</th>
+          <th>Dietary / Notes</th>
+          <th>Table Assigned</th>
+          <th>Status & Staff Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservations %}
+        <tr>
+          <td>
+            <div style="font-family: var(--font-mono); font-weight: 700; color: var(--pop-yellow); font-size: 13px;">
+              {{ r.reference_code }}
+            </div>
+            <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px;">{{ r.created_at|date:"M d, H:i" }}</div>
+          </td>
+          <td>
+            <div style="font-weight: 700; font-size: 14px;">{{ r.customer_name }}</div>
+            <div style="color: var(--text-muted); font-size: 11px;">📞 {{ r.phone }}</div>
+            {% if r.email %}
+              <div style="color: var(--text-muted); font-size: 11px;">✉️ {{ r.email }}</div>
+            {% endif %}
+          </td>
+          <td>
+            <div><strong>{{ r.preferred_date|date:"D, M d" }}</strong></div>
+            <div style="margin-top: 4px;">
+              <span class="badge {% if r.shift == 'lunch' %}badge-pop{% else %}badge-pink{% endif %}">
+                {% if r.shift == 'lunch' %}☀️ LUNCH{% else %}🌙 DINNER{% endif %}
+              </span>
+              <span style="font-size: 11px; color: var(--text-muted); margin-left: 4px;">{{ r.preferred_time }}</span>
+            </div>
+          </td>
+          <td>
+            <div><strong>{{ r.guest_count }} PAX</strong></div>
+            <div style="font-size: 11px; color: var(--text-muted);">{{ r.inquiry_type }}</div>
+          </td>
+          <td>
+            <div style="font-size: 12px; color: var(--pop-cyan); font-weight: 600;">
+              {{ r.selected_experience|default:"General Seating" }}
+            </div>
+          </td>
+          <td style="max-width: 180px;">
+            <div style="font-size: 11px; color: #FFF;">{{ r.dietary_notes|default:"None specified" }}</div>
+            {% if r.message %}
+              <div style="font-size: 10px; color: var(--text-muted); margin-top: 2px; font-style: italic;">"{{ r.message }}"</div>
+            {% endif %}
+          </td>
+          <td>
+            <form method="POST" action="{% url 'cms_reservation_status_update' r.id %}" style="display: flex; gap: 4px;">
+              {% csrf_token %}
+              <input type="text" name="table_number" value="{{ r.table_number }}" placeholder="Table # (e.g. B07)" style="width: 110px; padding: 6px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 3px; color: #FFF; font-size: 11px;">
+              <button type="submit" class="btn-action btn-outline" style="padding: 6px 8px; font-size: 10px;">Set</button>
+            </form>
+          </td>
+          <td>
+            <form method="POST" action="{% url 'cms_reservation_status_update' r.id %}">
+              {% csrf_token %}
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <select name="status" style="padding: 6px 8px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 3px; color: #FFF; font-size: 11px;" onchange="this.form.submit()">
+                  {% for val, label in r.STATUS_CHOICES %}
+                    <option value="{{ val }}" {% if r.status == val %}selected{% endif %}>{{ label }}</option>
+                  {% endfor %}
+                </select>
+                <span class="badge badge-{{ r.status }}">{{ r.get_status_display }}</span>
+              </div>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 36px;">
+            No table reservations match the selected shift or query filter.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useCMS } from '../../context/CMSContext';
 import { Menu, X, ExternalLink, Calendar, Sparkles } from 'lucide-react';
 
-export default function Navigation() {
-  const { data, setIsReservationModalOpen } = useCMS();
+export default function Navigation({ currentPath = '/', onNavigate }) {
+  const { data, openReservation, openReservationModal, setIsReservationModalOpen } = useCMS();
+  const triggerReservation = openReservationModal || openReservation || (() => setIsReservationModalOpen(true));
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -16,14 +17,32 @@ export default function Navigation() {
   }, []);
 
   const navLinks = [
-    { label: 'Story', href: '#story' },
-    { label: '3D Studio', href: '#tour' },
-    { label: 'Menu', href: '#menu' },
-    { label: 'The Lab', href: '#kitchen' },
-    { label: 'Happenings', href: '#experiences' },
-    { label: 'Gallery', href: '#gallery' },
-    { label: 'Location', href: '#location' },
+    { label: 'Story', path: '/story', hash: '#story' },
+    { label: '3D Studio', path: '/tour', hash: '#tour' },
+    { label: 'Philosophy', path: '/philosophy', hash: '#philosophy' },
+    { label: 'Featured', path: '/featured', hash: '#featured' },
+    { label: 'Menu', path: '/menu', hash: '#menu' },
+    { label: 'The Lab', path: '/kitchen', hash: '#kitchen' },
+    { label: 'Team', path: '/team', hash: '#team' },
+    { label: 'VIP Loft', path: '/experiences', hash: '#experiences' },
+    { label: 'Gazette', path: '/blog', hash: '/blog' },
+    { label: 'Location', path: '/contact', hash: '#location' },
   ];
+
+  const handleLinkClick = (e, link) => {
+    if (onNavigate) {
+      e.preventDefault();
+      setMobileMenuOpen(false);
+      onNavigate(link.path);
+    }
+  };
+
+  const handleLogoClick = (e) => {
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate('/');
+    }
+  };
 
   return (
     <>
@@ -34,22 +53,22 @@ export default function Navigation() {
           left: '50%',
           transform: 'translateX(-50%)',
           width: 'calc(100% - 36px)',
-          maxWidth: '1280px',
+          maxWidth: '1360px',
           zIndex: 1000,
           transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         <div
           style={{
-            backgroundColor: 'rgba(15, 17, 24, 0.85)',
+            backgroundColor: 'rgba(15, 17, 24, 0.92)',
             backdropFilter: 'blur(20px)',
             WebkitBackdropFilter: 'blur(20px)',
             border: '1px solid rgba(255, 255, 255, 0.12)',
             borderRadius: '999px',
             boxShadow: isScrolled
-              ? '0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 51, 102, 0.08)'
+              ? '0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 221, 0, 0.12)'
               : '0 10px 30px rgba(0, 0, 0, 0.4)',
-            padding: '8px 18px',
+            padding: '8px 20px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -57,7 +76,8 @@ export default function Navigation() {
         >
           {/* Brand Logo */}
           <a
-            href="#"
+            href="/"
+            onClick={handleLogoClick}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -67,15 +87,15 @@ export default function Navigation() {
           >
             <div
               style={{
-                backgroundColor: '#FF3366',
-                color: '#FFF',
-                fontFamily: 'var(--font-display)',
+                backgroundColor: '#FFDD00',
+                color: '#000',
+                fontFamily: 'Space Grotesk, sans-serif',
                 fontSize: '13px',
                 fontWeight: 800,
                 padding: '4px 10px',
                 borderRadius: '999px',
                 letterSpacing: '0.5px',
-                boxShadow: '0 0 16px rgba(255, 51, 102, 0.4)'
+                boxShadow: '0 0 16px rgba(255, 221, 0, 0.4)'
               }}
             >
               POP!
@@ -83,7 +103,7 @@ export default function Navigation() {
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <span
                 style={{
-                  fontFamily: 'var(--font-display)',
+                  fontFamily: 'Space Grotesk, sans-serif',
                   fontSize: '14px',
                   fontWeight: 700,
                   letterSpacing: '0.5px',
@@ -94,9 +114,9 @@ export default function Navigation() {
               </span>
               <span
                 style={{
-                  fontFamily: 'var(--font-mono)',
+                  fontFamily: 'JetBrains Mono, monospace',
                   fontSize: '9px',
-                  color: '#CCFF00',
+                  color: '#FFDD00',
                   letterSpacing: '1px',
                   fontWeight: 600
                 }}
@@ -112,36 +132,46 @@ export default function Navigation() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '4px',
             }}
           >
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontWeight: 600,
-                  fontSize: '13px',
-                  color: '#9FA5B7',
-                  textDecoration: 'none',
-                  padding: '7px 14px',
-                  borderRadius: '999px',
-                  transition: 'all 0.15s ease',
-                  letterSpacing: '0.2px'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = '#FFFFFF';
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.color = '#9FA5B7';
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = currentPath === link.path;
+              return (
+                <a
+                  key={link.label}
+                  href={link.path}
+                  onClick={(e) => handleLinkClick(e, link)}
+                  style={{
+                    fontFamily: 'Plus Jakarta Sans, sans-serif',
+                    fontWeight: 600,
+                    fontSize: '12px',
+                    color: isActive ? '#FFDD00' : '#9FA5B7',
+                    textDecoration: 'none',
+                    padding: '6px 12px',
+                    borderRadius: '999px',
+                    transition: 'all 0.15s ease',
+                    letterSpacing: '0.2px',
+                    backgroundColor: isActive ? 'rgba(255, 221, 0, 0.12)' : 'transparent',
+                    border: isActive ? '1px solid rgba(255, 221, 0, 0.3)' : '1px solid transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = '#FFFFFF';
+                      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = '#9FA5B7';
+                      e.currentTarget.style.backgroundColor = 'transparent';
+                    }
+                  }}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
           </div>
 
           {/* Right Action Buttons */}
@@ -155,15 +185,13 @@ export default function Navigation() {
             {/* CMS Studio Link */}
             <a
               href="/cms/"
-              target="_blank"
-              rel="noopener noreferrer"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                 color: '#FFF',
-                fontFamily: 'var(--font-mono)',
+                fontFamily: 'JetBrains Mono, monospace',
                 fontSize: '11px',
                 fontWeight: 600,
                 padding: '8px 14px',
@@ -185,163 +213,107 @@ export default function Navigation() {
               <ExternalLink size={12} color="#9FA5B7" />
             </a>
 
-            {/* Book Table Button in Cyber Lime */}
+            {/* Book Table Button in Pop Yellow */}
             <button
-              onClick={() => setIsReservationModalOpen(true)}
+              onClick={() => triggerReservation()}
+              className="btn-reserve-nav"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                backgroundColor: '#CCFF00',
+                backgroundColor: '#FFDD00',
                 color: '#0A0B0E',
-                fontFamily: 'var(--font-display)',
-                fontSize: '12.5px',
-                fontWeight: 700,
-                letterSpacing: '0.3px',
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: '12px',
+                fontWeight: 800,
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase',
                 padding: '9px 18px',
                 borderRadius: '999px',
+                border: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 0 20px rgba(204, 255, 0, 0.35)',
-                transition: 'all 0.2s ease',
+                boxShadow: '0 0 16px rgba(255, 221, 0, 0.35)',
+                transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'scale(1.03)';
-                e.currentTarget.style.backgroundColor = '#d8ff33';
-                e.currentTarget.style.boxShadow = '0 0 26px rgba(204, 255, 0, 0.55)';
+                e.currentTarget.style.transform = 'translateY(-1px) scale(1.02)';
+                e.currentTarget.style.boxShadow = '0 0 24px rgba(255, 221, 0, 0.55)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.backgroundColor = '#CCFF00';
-                e.currentTarget.style.boxShadow = '0 0 20px rgba(204, 255, 0, 0.35)';
+                e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                e.currentTarget.style.boxShadow = '0 0 16px rgba(255, 221, 0, 0.35)';
               }}
             >
-              <Calendar size={14} />
-              <span>RESERVE TABLE</span>
+              <Calendar size={13} color="#0A0B0E" />
+              <span>Reserve Table</span>
             </button>
 
-            {/* Mobile Hamburger Button */}
+            {/* Mobile Hamburger Toggle */}
             <button
-              className="nav-mobile-btn"
+              className="nav-mobile-toggle"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               style={{
-                display: 'none',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '38px',
-                height: '38px',
-                backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                borderRadius: '50%',
+                background: 'transparent',
+                border: 'none',
                 color: '#FFF',
                 cursor: 'pointer',
+                padding: '6px',
+                display: 'none',
               }}
-              aria-label="Toggle navigation menu"
             >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
       </nav>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div
           style={{
             position: 'fixed',
             inset: 0,
-            backgroundColor: 'rgba(9, 10, 14, 0.95)',
+            backgroundColor: 'rgba(10, 11, 14, 0.98)',
             backdropFilter: 'blur(20px)',
             zIndex: 999,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: '24px',
+            gap: '18px',
+            padding: '40px',
           }}
-          onClick={() => setMobileMenuOpen(false)}
         >
-          <div
+          {navLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.path}
+              onClick={(e) => handleLinkClick(e, link)}
+              style={{
+                fontFamily: 'Space Grotesk, sans-serif',
+                fontSize: '20px',
+                fontWeight: 700,
+                color: currentPath === link.path ? '#FFDD00' : '#FFFFFF',
+                textDecoration: 'none',
+              }}
+            >
+              {link.label}
+            </a>
+          ))}
+          <a
+            href="/cms/"
             style={{
-              backgroundColor: '#12141D',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              borderRadius: '24px',
-              padding: '32px',
-              width: '100%',
-              maxWidth: '380px',
-              textAlign: 'center',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '14px',
-              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.8)'
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '14px',
+              color: '#FFDD00',
+              textDecoration: 'none',
+              marginTop: '12px'
             }}
-            onClick={(e) => e.stopPropagation()}
           >
-            <div
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '18px',
-                color: '#FF3366',
-                fontWeight: 700,
-                letterSpacing: '1px'
-              }}
-            >
-              POP! DIRECTORY
-            </div>
-
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '16px',
-                  color: '#FFF',
-                  textDecoration: 'none',
-                  padding: '10px 14px',
-                  borderRadius: '12px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                }}
-              >
-                {link.label}
-              </a>
-            ))}
-
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setIsReservationModalOpen(true);
-              }}
-              style={{
-                backgroundColor: '#CCFF00',
-                color: '#0A0B0E',
-                borderRadius: '12px',
-                padding: '14px',
-                fontFamily: 'var(--font-display)',
-                fontSize: '14px',
-                fontWeight: 700,
-                marginTop: '10px',
-                cursor: 'pointer',
-                boxShadow: '0 0 20px rgba(204, 255, 0, 0.35)'
-              }}
-            >
-              BOOK A TABLE NOW
-            </button>
-          </div>
+            Open CMS Studio &rarr;
+          </a>
         </div>
       )}
-
-      <style>{`
-        @media (max-width: 1024px) {
-          .nav-desktop-links {
-            display: none !important;
-          }
-          .nav-mobile-btn {
-            display: flex !important;
-          }
-        }
-      `}</style>
     </>
   );
 }

@@ -1,0 +1,62 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Custom Pages // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}CUSTOM PAGES <span>(ELEMENTOR BUILDER)</span>{% endblock %}
+
+{% block header_actions %}
+  <a href="{% url 'cms_page_builder_new' %}" class="btn-action btn-pop">+ Create New Standalone Page</a>
+{% endblock %}
+
+{% block content %}
+<div class="pop-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 16px;">Active Custom Pages</h3>
+      <p style="color: var(--text-muted); font-size: 13px;">Manage Elementor-style visual block pages rendered at <code>/page/:slug</code></p>
+    </div>
+  </div>
+
+  <table class="pop-table" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+        <th style="padding: 12px;">Title</th>
+        <th style="padding: 12px;">Route URL</th>
+        <th style="padding: 12px;">Blocks</th>
+        <th style="padding: 12px;">Status</th>
+        <th style="padding: 12px;">Updated</th>
+        <th style="padding: 12px; text-align: right;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in pages %}
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+        <td style="padding: 14px 12px;"><strong>{{ p.title }}</strong></td>
+        <td style="padding: 14px 12px;">
+          <a href="/page/{{ p.slug }}" target="_blank" style="color: var(--pop-cyan); text-decoration: none; font-family: var(--font-mono); font-size: 12px;">
+            /page/{{ p.slug }} ↗
+          </a>
+        </td>
+        <td style="padding: 14px 12px;">{{ p.layout_data.blocks|length|default:0 }} blocks</td>
+        <td style="padding: 14px 12px;">
+          {% if p.is_published %}
+            <span class="badge badge-confirmed">Published</span>
+          {% else %}
+            <span class="badge badge-pending">Draft</span>
+          {% endif %}
+        </td>
+        <td style="padding: 14px 12px; color: var(--text-muted); font-size: 12px;">{{ p.updated_at|date:"M d, Y" }}</td>
+        <td style="padding: 14px 12px; text-align: right;">
+          <a href="{% url 'cms_page_builder_edit' p.id %}" class="btn-action btn-pop" style="padding: 6px 14px; font-size: 11px;">Edit in Builder</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" style="padding: 30px; text-align: center; color: var(--text-muted);">
+          No custom pages found. Click "+ Create New Standalone Page" to design your first visual page.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

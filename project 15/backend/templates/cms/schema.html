@@ -1,0 +1,18 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Master JSON Schema // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}MASTER JSON <span>SCHEMA</span>{% endblock %}
+
+{% block content %}
+<div class="pop-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 16px;">Underlying Content Graph</h3>
+      <p style="color: var(--text-muted); font-size: 13px;">Direct inspectable JSON model backing the headless API responses</p>
+    </div>
+    <span class="badge badge-pop">SiteConfig.content_json</span>
+  </div>
+
+  <textarea readonly rows="24" style="width: 100%; background: #000; color: var(--pop-yellow); border: 1px solid var(--border-color); border-radius: 4px; padding: 16px; font-family: var(--font-mono); font-size: 12px; line-height: 1.5;">{{ schema_json }}</textarea>
+</div>
+{% endblock %}

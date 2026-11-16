@@ -1,0 +1,30 @@
+{% extends "cms/base.html" %}
+
+{% block title %}3D Virtual Tour // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}3D SPATIAL <span>TOUR LAB</span>{% endblock %}
+
+{% block content %}
+<div class="pop-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 16px;">Spatial Tour Viewpoints</h3>
+      <p style="color: var(--text-muted); font-size: 13px;">Manage 3D Three.js camera locations and pop-art room viewpoints</p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
+    {% for vp in viewpoints %}
+    <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden;">
+      <div style="height: 160px; background-image: url('{{ vp.display_image }}'); background-size: cover; background-position: center; background-color: #000;"></div>
+      <div style="padding: 16px;">
+        <h4 style="font-family: var(--font-display); font-size: 16px; color: #FFF; margin-bottom: 4px;">{{ vp.title }}</h4>
+        <div style="font-size: 11px; text-transform: uppercase; color: var(--pop-yellow); font-weight: 700; margin-bottom: 8px;">{{ vp.subtitle }}</div>
+        <p style="color: var(--text-muted); font-size: 12px; line-height: 1.5;">{{ vp.description|truncatewords:18 }}</p>
+      </div>
+    </div>
+    {% empty %}
+    <p style="color: var(--text-muted);">No 3D viewpoints configured.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

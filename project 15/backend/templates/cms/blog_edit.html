@@ -1,0 +1,65 @@
+{% extends "cms/base.html" %}
+
+{% block title %}{% if post %}Edit Article: {{ post.title }}{% else %}Compose New Article{% endif %} // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}GAZETTE <span>EDITOR</span>{% endblock %}
+
+{% block header_actions %}
+  <a href="{% url 'cms_blog' %}" class="btn-action btn-outline">&larr; Back to Gazette</a>
+  <button type="button" onclick="document.getElementById('blogEditForm').submit();" class="btn-action btn-pop">Publish Article</button>
+{% endblock %}
+
+{% block content %}
+<div class="pop-card">
+  <form id="blogEditForm" method="POST" action="{% url 'cms_save_blog' %}">
+    {% csrf_token %}
+    {% if post %}<input type="hidden" name="post_id" value="{{ post.id }}">{% endif %}
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px;">
+      <div>
+        <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Article Title *</label>
+        <input type="text" name="title" required value="{{ post.title|default:'' }}" placeholder="e.g. The Science of Saturated Pop-Art Flavors" style="width: 100%; padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF; font-size: 15px; font-weight: 700;">
+      </div>
+      <div>
+        <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Category</label>
+        <select name="category_id" style="width: 100%; padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF;">
+          {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if post and post.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+      <div>
+        <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Author Byline</label>
+        <input type="text" name="author_name" value="{{ post.author_name|default:'POP! Food Lab Team' }}" style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF;">
+      </div>
+      <div>
+        <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Estimated Read Time</label>
+        <input type="text" name="read_time" value="{{ post.read_time|default:'4 min read' }}" style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF;">
+      </div>
+      <div>
+        <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Featured Image URL</label>
+        <input type="text" name="featured_image_url" value="{{ post.featured_image_url|default:'' }}" placeholder="https://images.unsplash.com/..." style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF;">
+      </div>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Article Excerpt / Teaser</label>
+      <textarea name="excerpt" rows="2" style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF; font-family: var(--font-body);">{{ post.excerpt|default:'' }}</textarea>
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Full Markdown Article Content *</label>
+      <textarea name="content" rows="14" required style="width: 100%; padding: 14px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF; font-family: var(--font-mono); font-size: 13px; line-height: 1.6;">{{ post.content|default:'' }}</textarea>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+        <input type="checkbox" name="is_published" {% if post.is_published or not post %}checked{% endif %}>
+        <span style="font-size: 13px; font-weight: 600;">Publish to Public Gazette</span>
+      </label>
+    </div>
+  </form>
+</div>
+{% endblock %}

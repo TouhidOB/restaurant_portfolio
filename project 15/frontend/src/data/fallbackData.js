@@ -396,5 +396,89 @@ export const fallbackData = {
       description: "Fine-dining quality without the velvet ropes and hushed whispers. Come as you are, bring your crew, and eat outside the lines.",
       color: "#00C389"
     }
+  ],
+
+  custom_pages: [
+    {
+      id: 1,
+      title: "Pop-Art VIP Neon Loft Party & Private Dining",
+      slug: "pop-art-vip-neon-loft-party",
+      meta_title: "VIP Neon Loft Private Experiences | POP! Food Studio",
+      meta_description: "Host an unforgettable pop-art private dining celebration with customized comic menus and neon cocktail fountains.",
+      is_published: true,
+      layout_data: {
+        blocks: [
+          {
+            type: "hero",
+            headline: "THE PRIVATE NEON LOFT",
+            subheadline: "An exclusive pop-art playground for up to 50 guests, complete with private bar, vinyl DJ booth, and bespoke tasting menus.",
+            background_image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=80",
+            cta_text: "Book The Neon Loft",
+            cta_link: "#reservation"
+          },
+          {
+            type: "split",
+            headline: "IMMERSIVE CULINARY ENTERTAINMENT",
+            content: "Step inside our highest floor studio overlooking the Arts District. Guests enjoy live plancha stations, custom cocktail towers with aromatic smoke bubbles, and a dedicated culinary brigade preparing personalized burger flights.",
+            image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
+            image_position: "right"
+          },
+          {
+            type: "features",
+            headline: "WHAT'S INCLUDED IN THE VIP PACKAGE",
+            items: [
+              { title: "Custom Comic Menus", description: "Personalized pop-art illustration menus created by our resident graphic artists." },
+              { title: "Liquid Nitrogen Dessert Show", description: "Theatrical frozen sweet treats and smoking donut stacks crafted tableside." },
+              { title: "Private Mixology Station", description: "Unlimited handcrafted neon cocktails, botanical fizzes, and craft micro-brews." },
+              { title: "Dedicated Studio Concierge", description: "Full-service host and service brigade attending to every detail of your event." }
+            ]
+          },
+          {
+            type: "cta",
+            headline: "READY TO MAKE YOUR CELEBRATION UNFORGETTABLE?",
+            subheadline: "Contact our VIP event team now to reserve your date and customize your menu.",
+            button_text: "Inquire for Private Events",
+            button_link: "#reservation"
+          }
+        ]
+      }
+    }
+  ],
+
+  blog_categories: [
+    { id: 1, name: "Culinary Pop-Art Innovations", slug: "culinary-pop-art" },
+    { id: 2, name: "Neon Fizz & Mixology Lab", slug: "neon-cocktails-lab" },
+    { id: 3, name: "Modern Street Gastronomy", slug: "street-gastronomy" }
+  ],
+
+  blog_posts: [
+    {
+      id: 1,
+      title: "The Pop-Art Food Philosophy: Why We Eat Outside the Lines",
+      slug: "the-pop-art-food-philosophy-eating-outside-the-lines",
+      category_name: "Culinary Pop-Art Innovations",
+      category_slug: "culinary-pop-art",
+      author_name: "Chef Roy Lichtenstein & Studio Team",
+      read_time: "5 min read",
+      published_at: "2026-11-16T12:00:00Z",
+      featured_image_url: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
+      display_image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80",
+      excerpt: "Dining should never be mundane. Explore how our graphic color palette, tactile food textures, and comic-book aesthetics turn every meal into a high-energy gallery event.",
+      content: "In a world filled with muted beige dining rooms and whisper-quiet minimalist tables, POP! Food Studio was conceived with a radically joyful premise: food should be loud, electric, and impossible to ignore.\n\nInspired by the radical 1960s pop-art movement led by Andy Warhol, Roy Lichtenstein, and Keith Haring, our culinary studio treats each plate as a canvas of saturated primary pigments, high-contrast textures, and playful graphic forms.\n\nJust as pop-art stripped fine art of its academic pretension by elevating comic strips and everyday consumer icons, we elevate street classics with serious culinary discipline."
+    },
+    {
+      id: 2,
+      title: "Crafting The Atomic Smash Burger in Our Kitchen Lab",
+      slug: "crafting-the-atomic-smash-burger-in-our-kitchen-lab",
+      category_name: "Modern Street Gastronomy",
+      category_slug: "street-gastronomy",
+      author_name: "Head of Culinary Development",
+      read_time: "4 min read",
+      published_at: "2026-11-15T18:00:00Z",
+      featured_image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80",
+      display_image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80",
+      excerpt: "A deep dive into our 45-day dry-aged custom beef blend, high-heat chrome plancha caramelization, and our secret 18-ingredient comic-strip sauce.",
+      content: "The burger is the undisputed pop icon of modern gastronomy. But creating an unforgettable smash burger requires rigorous thermodynamic precision and butcher craftsmanship.\n\nWe source heritage beef from family-owned pastures: 40% 45-Day Dry-Aged Chuck, 30% Rich Marbled Brisket, and 30% Short Rib for decadent collagen melt.\n\nOur heavy custom iron presses generate 40 pounds of downward force, locking the beef directly onto the mirror-finish plancha. This creates an ultra-lacy, crispy Maillard crust that traps every ounce of juices."
+    }
   ]
 };

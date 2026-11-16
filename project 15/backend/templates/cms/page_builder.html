@@ -1,0 +1,291 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Elementor Visual Page Builder // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}VISUAL PAGE BUILDER <span>(ELEMENTOR CANVAS)</span>{% endblock %}
+
+{% block header_actions %}
+  <a href="{% url 'cms_pages' %}" class="btn-action btn-outline">&larr; Back to Pages</a>
+  <button type="button" onclick="document.getElementById('pageBuilderForm').submit();" class="btn-action btn-pop">Save & Publish Page</button>
+{% endblock %}
+
+{% block content %}
+<style>
+  .builder-container {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  .block-picker {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 20px;
+    position: sticky;
+    top: 20px;
+  }
+  .picker-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: var(--bg-surface);
+    border: 1px dashed var(--border-color);
+    border-radius: 4px;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .picker-btn:hover {
+    border-color: var(--pop-yellow);
+    background: rgba(255, 221, 0, 0.08);
+    color: var(--pop-yellow);
+  }
+  .canvas-area {
+    background: #000;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 24px;
+    min-height: 500px;
+  }
+  .canvas-block {
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .canvas-block:hover {
+    border-color: var(--pop-yellow);
+  }
+  .block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 8px;
+  }
+  .block-tag {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--pop-yellow);
+    font-weight: 700;
+  }
+  .btn-remove-block {
+    background: transparent;
+    border: none;
+    color: var(--pop-pink);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+  }
+</style>
+
+<form id="pageBuilderForm" method="POST" action="{% url 'cms_save_page' %}">
+  {% csrf_token %}
+  {% if page %}
+    <input type="hidden" name="page_id" value="{{ page.id }}">
+  {% endif %}
+  <input type="hidden" id="layout_data_input" name="layout_data" value="{{ layout_data_json }}">
+
+  <div class="pop-card" style="margin-bottom: 24px;">
+    <div style="display: grid; grid-template-columns: 2fr 2fr 1fr; gap: 16px; align-items: end;">
+      <div>
+        <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Page Title *</label>
+        <input type="text" name="title" required value="{{ page.title|default:'Pop-Art VIP Neon Loft Party' }}" style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF;">
+      </div>
+      <div>
+        <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">URL Slug (/page/:slug) *</label>
+        <input type="text" name="slug" required value="{{ page.slug|default:'pop-art-vip-neon-loft-party' }}" style="width: 100%; padding: 10px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF; font-family: var(--font-mono);">
+      </div>
+      <div>
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding-bottom: 12px;">
+          <input type="checkbox" name="is_published" {% if page.is_published or not page %}checked{% endif %}>
+          <span style="font-size: 13px; font-weight: 600;">Published</span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="builder-container">
+    <!-- Block Library Picker -->
+    <div class="block-picker">
+      <h4 style="font-family: var(--font-display); font-size: 13px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; color: var(--pop-yellow);">
+        + Add Visual Blocks
+      </h4>
+      <button type="button" class="picker-btn" onclick="addBlock('hero')">
+        <span>⚡</span> Hero Banner Block
+      </button>
+      <button type="button" class="picker-btn" onclick="addBlock('split')">
+        <span>🖼️</span> Split Story & Media Block
+      </button>
+      <button type="button" class="picker-btn" onclick="addBlock('features')">
+        <span>⭐</span> Feature Highlights Grid
+      </button>
+      <button type="button" class="picker-btn" onclick="addBlock('cta')">
+        <span>🎯</span> Call to Action (CTA)
+      </button>
+      <button type="button" class="picker-btn" onclick="addBlock('reservation')">
+        <span>📅</span> Table Reservation Widget
+      </button>
+    </div>
+
+    <!-- Drag & Drop Canvas -->
+    <div class="canvas-area">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 700;">
+          LIVE CANVAS PREVIEW
+        </span>
+        <span id="blockCount" style="font-size: 11px; color: var(--pop-yellow); font-family: var(--font-mono);">0 Blocks Loaded</span>
+      </div>
+
+      <div id="canvasBlocksContainer">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  let layoutData = {{ layout_data_json|safe }} || { blocks: [] };
+
+  function renderCanvas() {
+    const container = document.getElementById('canvasBlocksContainer');
+    container.innerHTML = '';
+    const blocks = layoutData.blocks || [];
+    document.getElementById('blockCount').textContent = `${blocks.length} Blocks Loaded`;
+
+    blocks.forEach((b, idx) => {
+      const blockEl = document.createElement('div');
+      blockEl.className = 'canvas-block';
+
+      let innerContent = '';
+      if (b.type === 'hero') {
+        innerContent = `
+          <div style="padding: 30px; background: rgba(255,221,0,0.06); border: 1px dashed var(--pop-yellow); text-align: center; border-radius: 4px;">
+            <h2 style="font-family: var(--font-display); font-size: 26px; color: #FFF;">${b.headline || 'Hero Headline'}</h2>
+            <p style="color: var(--text-muted); font-size: 14px; max-width: 600px; margin: 10px auto;">${b.subheadline || 'Subheadline'}</p>
+            <button type="button" class="btn-action btn-pop" style="margin-top: 14px;">${b.cta_text || 'Button'}</button>
+          </div>
+        `;
+      } else if (b.type === 'split') {
+        innerContent = `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center;">
+            <div>
+              <h3 style="font-family: var(--font-display); font-size: 20px; margin-bottom: 8px;">${b.headline || 'Story Block'}</h3>
+              <p style="color: var(--text-muted); font-size: 13px; line-height: 1.6;">${b.content || 'Content text goes here.'}</p>
+            </div>
+            <div style="background: var(--bg-surface); height: 160px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 12px; background-image: url('${b.image || ''}'); background-size: cover; background-position: center;">
+              ${b.image ? '' : 'Image Preview'}
+            </div>
+          </div>
+        `;
+      } else if (b.type === 'features') {
+        innerContent = `
+          <div>
+            <h3 style="font-family: var(--font-display); font-size: 18px; margin-bottom: 12px; text-align: center;">${b.headline || 'Features Grid'}</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+              ${(b.items || []).map(it => `
+                <div style="background: var(--bg-surface); padding: 14px; border-radius: 4px; border: 1px solid var(--border-color);">
+                  <div style="font-weight: 700; color: var(--pop-yellow); font-size: 13px; margin-bottom: 4px;">${it.title}</div>
+                  <div style="color: var(--text-muted); font-size: 11px;">${it.description}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      } else if (b.type === 'cta') {
+        innerContent = `
+          <div style="padding: 24px; background: rgba(255,0,127,0.08); border: 1px dashed var(--pop-pink); border-radius: 4px; text-align: center;">
+            <h3 style="font-family: var(--font-display); font-size: 22px; color: #FFF;">${b.headline || 'Ready to Experience?'}</h3>
+            <p style="color: var(--text-muted); font-size: 13px; margin: 8px 0 16px;">${b.subheadline || 'Book your table today.'}</p>
+            <button type="button" class="btn-action" style="background: var(--pop-pink); color: #FFF;">${b.button_text || 'Action Button'}</button>
+          </div>
+        `;
+      } else if (b.type === 'reservation') {
+        innerContent = `
+          <div style="padding: 20px; background: rgba(0,229,255,0.06); border: 1px dashed var(--pop-cyan); border-radius: 4px; text-align: center;">
+            <div style="font-size: 11px; text-transform: uppercase; color: var(--pop-cyan); font-weight: 700; letter-spacing: 1px;">Interactive Widget</div>
+            <h4 style="font-family: var(--font-display); font-size: 18px; margin-top: 4px;">Two-Way Table Reservation Form</h4>
+            <p style="color: var(--text-muted); font-size: 12px; margin-top: 4px;">Renders Daylight Lunch vs Twilight Dinner selectors and live confirmation.</p>
+          </div>
+        `;
+      }
+
+      blockEl.innerHTML = `
+        <div class="block-header">
+          <span class="block-tag">[BLOCK #${idx + 1}] ${b.type.toUpperCase()}</span>
+          <button type="button" class="btn-remove-block" onclick="removeBlock(${idx})">✕ Remove</button>
+        </div>
+        ${innerContent}
+      `;
+      container.appendChild(blockEl);
+    });
+
+    document.getElementById('layout_data_input').value = JSON.stringify(layoutData);
+  }
+
+  function addBlock(type) {
+    if (!layoutData.blocks) layoutData.blocks = [];
+    if (type === 'hero') {
+      layoutData.blocks.push({
+        type: 'hero',
+        headline: 'NEW HERO SECTION',
+        subheadline: 'Captivating visual description for your custom pop-art dining page.',
+        cta_text: 'Discover More',
+        cta_link: '#reservation'
+      });
+    } else if (type === 'split') {
+      layoutData.blocks.push({
+        type: 'split',
+        headline: 'THE STORY OF THE DISH',
+        content: 'Handcrafted with bespoke ingredients in our studio food laboratory.',
+        image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80',
+        image_position: 'right'
+      });
+    } else if (type === 'features') {
+      layoutData.blocks.push({
+        type: 'features',
+        headline: 'SIGNATURE ADVANTAGES',
+        items: [
+          { title: 'Feature One', description: 'Description of the unique amenity or offering.' },
+          { title: 'Feature Two', description: 'Description of the unique amenity or offering.' },
+          { title: 'Feature Three', description: 'Description of the unique amenity or offering.' }
+        ]
+      });
+    } else if (type === 'cta') {
+      layoutData.blocks.push({
+        type: 'cta',
+        headline: 'JOIN US FOR THE CELEBRATION',
+        subheadline: 'Limited seating available each evening.',
+        button_text: 'Book Now',
+        button_link: '#reservation'
+      });
+    } else if (type === 'reservation') {
+      layoutData.blocks.push({
+        type: 'reservation',
+        title: 'RESERVE YOUR TABLE'
+      });
+    }
+    renderCanvas();
+  }
+
+  function removeBlock(idx) {
+    layoutData.blocks.splice(idx, 1);
+    renderCanvas();
+  }
+
+  // Initial render
+  renderCanvas();
+</script>
+{% endblock %}

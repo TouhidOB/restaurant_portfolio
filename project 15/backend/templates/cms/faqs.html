@@ -1,0 +1,28 @@
+{% extends "cms/base.html" %}
+
+{% block title %}FAQ Manager // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}STUDIO FAQS <span>& KNOWLEDGE BASE</span>{% endblock %}
+
+{% block content %}
+<div class="pop-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 16px;">Frequently Asked Questions</h3>
+      <p style="color: var(--text-muted); font-size: 13px;">Manage dining policies, dress code, reservations, and culinary FAQs</p>
+    </div>
+  </div>
+
+  <div style="display: grid; gap: 14px;">
+    {% for f in faqs %}
+    <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 6px; padding: 18px;">
+      <h4 style="font-family: var(--font-display); font-size: 15px; color: var(--pop-yellow); margin-bottom: 8px;">
+        Q: {{ f.question }}
+      </h4>
+      <p style="color: var(--text-muted); font-size: 13px; line-height: 1.6;">
+        {{ f.answer }}
+      </p>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

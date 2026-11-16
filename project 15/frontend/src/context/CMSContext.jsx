@@ -13,6 +13,7 @@ export function CMSProvider({ children }) {
   const [activeViewpointIndex, setActiveViewpointIndex] = useState(0);
   const [selectedDish, setSelectedDish] = useState(null);
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
+  const [selectedExperience, setSelectedExperience] = useState('');
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [tourMood, setTourMood] = useState('neon'); // 'day', 'neon', 'midnight'
   const [viewMode, setViewMode] = useState('3d'); // '3d' or 'photo'
@@ -20,16 +21,20 @@ export function CMSProvider({ children }) {
   const loadData = useCallback(async () => {
     try {
       const apiData = await fetchPublicContent();
-      if (apiData && apiData.config) {
+      if (apiData && (apiData.config || apiData.content || apiData.menu_items)) {
         setData({
-          config: { ...fallbackData.config, ...apiData.config },
-          categories: apiData.categories?.length ? apiData.categories : fallbackData.categories,
+          config: { ...fallbackData.config, ...(apiData.config || apiData.content || {}) },
+          content: apiData.content || apiData.config || fallbackData.config,
+          categories: apiData.categories?.length ? apiData.categories : (apiData.menu_categories?.length ? apiData.menu_categories : fallbackData.categories),
           menu_items: apiData.menu_items?.length ? apiData.menu_items : fallbackData.menu_items,
           viewpoints: apiData.viewpoints?.length ? apiData.viewpoints : fallbackData.viewpoints,
           experiences: apiData.experiences?.length ? apiData.experiences : fallbackData.experiences,
           team: apiData.team?.length ? apiData.team : fallbackData.team,
           testimonials: apiData.testimonials?.length ? apiData.testimonials : fallbackData.testimonials,
           gallery: apiData.gallery?.length ? apiData.gallery : fallbackData.gallery,
+          custom_pages: apiData.custom_pages?.length ? apiData.custom_pages : fallbackData.custom_pages,
+          blog_categories: apiData.blog_categories?.length ? apiData.blog_categories : fallbackData.blog_categories,
+          blog_posts: apiData.blog_posts?.length ? apiData.blog_posts : fallbackData.blog_posts,
           philosophy: fallbackData.philosophy
         });
       } else {
@@ -55,13 +60,39 @@ export function CMSProvider({ children }) {
     return await submitReservation(formData);
   };
 
+  const openReservation = (experience = '') => {
+    setSelectedExperience(experience);
+    setIsReservationModalOpen(true);
+  };
+
+  const closeReservation = () => {
+    setIsReservationModalOpen(false);
+    setSelectedExperience('');
+  };
+
+  const t = (path, fallback = '') => {
+    const parts = path.split('.');
+    let cur = data.content || data.config;
+    for (const p of parts) {
+      if (!cur || typeof cur !== 'object') return fallback;
+      cur = cur[p];
+    }
+    return cur !== undefined ? cur : fallback;
+  };
+
   return (
     <CMSContext.Provider
       value={{
         data,
+        content: data.content || data.config,
+        config: data.config,
+        customPages: data.custom_pages || fallbackData.custom_pages || [],
+        blogPosts: data.blog_posts || fallbackData.blog_posts || [],
+        blogCategories: data.blog_categories || fallbackData.blog_categories || [],
         loading,
         error,
         refreshContent: loadData,
+        refetch: loadData,
         // Tour state
         activeViewpointIndex,
         setActiveViewpointIndex,
@@ -75,10 +106,16 @@ export function CMSProvider({ children }) {
         setSelectedDish,
         isReservationModalOpen,
         setIsReservationModalOpen,
+        openReservation,
+        openReservationModal: openReservation,
+        closeReservation,
+        selectedExperience,
+        setSelectedExperience,
         lightboxIndex,
         setLightboxIndex,
-        // Booking submit helper
-        handleBookingSubmit
+        // Helpers
+        handleBookingSubmit,
+        t,
       }}
     >
       {children}

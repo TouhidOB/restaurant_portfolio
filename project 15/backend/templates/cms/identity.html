@@ -1,0 +1,49 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Studio Identity // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}STUDIO IDENTITY <span>& LOGISTICS</span>{% endblock %}
+
+{% block content %}
+<div class="pop-card">
+  <h3 style="font-family: var(--font-display); font-size: 16px; margin-bottom: 20px;">
+    Brand Identity & Location Settings
+  </h3>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+      <div>
+        <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Restaurant Name</label>
+        <input type="text" name="restaurant_name" value="{{ config.restaurant_name }}" style="width: 100%; padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF; font-weight: 700;">
+      </div>
+      <div>
+        <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Direct Phone Line</label>
+        <input type="text" name="phone" value="{{ site.phone|default:'+1 (555) 767-3663' }}" style="width: 100%; padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF;">
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+      <div>
+        <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Concierge Email</label>
+        <input type="email" name="email" value="{{ site.email|default:'hello@popfoodstudio.com' }}" style="width: 100%; padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF;">
+      </div>
+      <div>
+        <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">GPS Coordinates String</label>
+        <input type="text" name="coordinates" value="{{ site.coordinates|default:'34.1483° N, 118.3965° W — ARTS DISTRICT' }}" style="width: 100%; padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF;">
+      </div>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Physical Address</label>
+      <input type="text" name="address" value="{{ site.address|default:'742 Evergreen Pop Boulevard, Arts District, Studio City, CA 90210' }}" style="width: 100%; padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF;">
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <label style="display: block; font-size: 11px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Operating Service Hours</label>
+      <input type="text" name="operating_hours" value="{{ site.operating_hours|default:'MON-THU: 11:30 - 22:30 | FRI: 11:30 - 00:00 | SAT: 10:30 - 00:00 | SUN: 10:30 - 22:00' }}" style="width: 100%; padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 4px; color: #FFF;">
+    </div>
+
+    <button type="submit" class="btn-action btn-pop">Save Logistics Settings</button>
+  </form>
+</div>
+{% endblock %}

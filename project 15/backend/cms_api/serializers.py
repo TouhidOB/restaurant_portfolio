@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import (
     SiteConfig, MenuCategory, MenuItem, TourViewpoint,
-    GalleryItem, DiningExperience, TeamMember, Testimonial, Reservation
+    GalleryItem, DiningExperience, TeamMember, Testimonial,
+    Reservation, CustomPage, BlogCategory, BlogPost
 )
 
 class SiteConfigSerializer(serializers.ModelSerializer):
@@ -105,14 +106,27 @@ class TestimonialSerializer(serializers.ModelSerializer):
 
 
 class ReservationSerializer(serializers.ModelSerializer):
+    guest_name = serializers.CharField(source='customer_name', read_only=True)
+    full_name = serializers.CharField(source='customer_name', read_only=True)
+    guests = serializers.IntegerField(source='guest_count', read_only=True)
+    party_size = serializers.IntegerField(source='guest_count', read_only=True)
+    reservation_date = serializers.DateField(source='preferred_date', read_only=True)
+    time_slot = serializers.CharField(source='preferred_time', read_only=True)
+    preferred_zone = serializers.CharField(source='selected_experience', read_only=True)
+    notes = serializers.CharField(source='message', read_only=True)
+    dietary = serializers.CharField(source='dietary_notes', read_only=True)
+
     class Meta:
         model = Reservation
         fields = [
-            'id', 'customer_name', 'phone', 'email',
-            'preferred_date', 'preferred_time', 'guest_count',
-            'inquiry_type', 'message', 'status', 'created_at'
+            'id', 'reference_code', 'customer_name', 'guest_name', 'full_name',
+            'phone', 'email', 'preferred_date', 'reservation_date',
+            'preferred_time', 'time_slot', 'shift', 'guest_count', 'guests', 'party_size',
+            'inquiry_type', 'selected_experience', 'preferred_zone', 'table_number',
+            'dietary_notes', 'dietary', 'message', 'notes', 'status', 'created_at'
         ]
         extra_kwargs = {
+            'reference_code': {'read_only': True},
             'status': {'read_only': True},
             'created_at': {'read_only': True}
         }
@@ -123,14 +137,62 @@ class ReservationSerializer(serializers.ModelSerializer):
             normalized['customer_name'] = normalized['name']
         if 'full_name' in normalized and 'customer_name' not in normalized:
             normalized['customer_name'] = normalized['full_name']
+        if 'guest_name' in normalized and 'customer_name' not in normalized:
+            normalized['customer_name'] = normalized['guest_name']
         if 'date' in normalized and 'preferred_date' not in normalized:
             normalized['preferred_date'] = normalized['date']
+        if 'reservation_date' in normalized and 'preferred_date' not in normalized:
+            normalized['preferred_date'] = normalized['reservation_date']
         if 'time' in normalized and 'preferred_time' not in normalized:
             normalized['preferred_time'] = normalized['time']
+        if 'time_slot' in normalized and 'preferred_time' not in normalized:
+            normalized['preferred_time'] = normalized['time_slot']
         if 'guests' in normalized and 'guest_count' not in normalized:
             normalized['guest_count'] = normalized['guests']
+        if 'party_size' in normalized and 'guest_count' not in normalized:
+            normalized['guest_count'] = normalized['party_size']
         if 'notes' in normalized and 'message' not in normalized:
             normalized['message'] = normalized['notes']
         if 'special_requests' in normalized and 'message' not in normalized:
             normalized['message'] = normalized['special_requests']
+        if 'dietary' in normalized and 'dietary_notes' not in normalized:
+            normalized['dietary_notes'] = normalized['dietary']
+        if 'experience' in normalized and 'selected_experience' not in normalized:
+            normalized['selected_experience'] = normalized['experience']
+        if 'preferred_zone' in normalized and 'selected_experience' not in normalized:
+            normalized['selected_experience'] = normalized['preferred_zone']
         return super().to_internal_value(normalized)
+
+
+class CustomPageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomPage
+        fields = [
+            'id', 'title', 'slug', 'meta_title', 'meta_description',
+            'layout_data', 'is_published', 'created_at', 'updated_at'
+        ]
+
+
+class BlogCategorySerializer(serializers.ModelSerializer):
+    posts_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BlogCategory
+        fields = ['id', 'name', 'slug', 'description', 'sort_order', 'posts_count']
+
+    def get_posts_count(self, obj):
+        return obj.posts.filter(is_published=True).count()
+
+
+class BlogPostSerializer(serializers.ModelSerializer):
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    category_slug = serializers.CharField(source='category.slug', read_only=True)
+    display_image = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = BlogPost
+        fields = [
+            'id', 'title', 'slug', 'category', 'category_name', 'category_slug',
+            'excerpt', 'content', 'featured_image', 'featured_image_url', 'display_image',
+            'author_name', 'read_time', 'is_published', 'published_at', 'created_at', 'updated_at'
+        ]

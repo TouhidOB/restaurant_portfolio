@@ -1,0 +1,72 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Pop Food Gazette // POP! FOOD STUDIO{% endblock %}
+{% block page_title %}POP FOOD GAZETTE <span>& JOURNAL</span>{% endblock %}
+
+{% block header_actions %}
+  <a href="{% url 'cms_blog_new' %}" class="btn-action btn-pop">+ Compose New Article</a>
+{% endblock %}
+
+{% block content %}
+<div class="pop-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 16px;">Editorial Journal & Pop-Art Gazette</h3>
+      <p style="color: var(--text-muted); font-size: 13px;">Manage blog articles, culinary stories, and cocktail lab features at <code>/blog</code></p>
+    </div>
+  </div>
+
+  <table class="pop-table" style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="border-bottom: 1px solid var(--border-color); text-align: left;">
+        <th style="padding: 12px;">Cover</th>
+        <th style="padding: 12px;">Article Title</th>
+        <th style="padding: 12px;">Category</th>
+        <th style="padding: 12px;">Author & Read Time</th>
+        <th style="padding: 12px;">Status</th>
+        <th style="padding: 12px;">Published</th>
+        <th style="padding: 12px; text-align: right;">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for post in posts %}
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.04);">
+        <td style="padding: 10px 12px; width: 70px;">
+          <div style="width: 60px; height: 42px; border-radius: 3px; background-image: url('{{ post.display_image }}'); background-size: cover; background-position: center; border: 1px solid var(--border-color);"></div>
+        </td>
+        <td style="padding: 12px;">
+          <strong style="color: #FFF; font-size: 14px;">{{ post.title }}</strong>
+          <div style="color: var(--text-muted); font-size: 11px; margin-top: 2px;">
+            <a href="/blog/{{ post.slug }}" target="_blank" style="color: var(--pop-cyan); text-decoration: none;">/blog/{{ post.slug }} ↗</a>
+          </div>
+        </td>
+        <td style="padding: 12px;">
+          <span class="badge badge-pop">{{ post.category.name|default:"General" }}</span>
+        </td>
+        <td style="padding: 12px; font-size: 12px; color: var(--text-muted);">
+          <div>{{ post.author_name }}</div>
+          <div style="font-size: 11px; color: var(--pop-yellow);">{{ post.read_time }}</div>
+        </td>
+        <td style="padding: 12px;">
+          {% if post.is_published %}
+            <span class="badge badge-confirmed">Published</span>
+          {% else %}
+            <span class="badge badge-pending">Draft</span>
+          {% endif %}
+        </td>
+        <td style="padding: 12px; color: var(--text-muted); font-size: 12px;">{{ post.published_at|date:"M d, Y" }}</td>
+        <td style="padding: 12px; text-align: right;">
+          <a href="{% url 'cms_blog_edit' post.id %}" class="btn-action btn-outline" style="padding: 6px 14px; font-size: 11px;">Edit Article</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 36px;">
+          No articles created yet. Click "+ Compose New Article" to start writing.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
