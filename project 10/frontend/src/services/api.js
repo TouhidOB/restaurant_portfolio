@@ -10,10 +10,14 @@ export async function fetchPublicContent() {
       return FALLBACK_CONTENT;
     }
     const data = await res.json();
-    if (data && data.content_json && Object.keys(data.content_json).length > 0) {
-      return data.content_json;
-    }
-    return FALLBACK_CONTENT;
+    const content = data.content_json || data;
+    return {
+      ...FALLBACK_CONTENT,
+      ...content,
+      custom_pages: data.custom_pages || FALLBACK_CONTENT.custom_pages || [],
+      blog_posts: data.blog_posts || FALLBACK_CONTENT.blog_posts || [],
+      blog_categories: data.blog_categories || FALLBACK_CONTENT.blog_categories || [],
+    };
   } catch (err) {
     console.warn('[CMS API] Could not reach Django backend. Using fallback content.', err);
     return FALLBACK_CONTENT;
@@ -44,6 +48,81 @@ export async function fetchMenuItems() {
   }
 }
 
+export async function fetchCustomPages() {
+  try {
+    const res = await fetch(`${API_BASE}/content/`);
+    if (!res.ok) return FALLBACK_CONTENT.custom_pages || [];
+    const data = await res.json();
+    return data.custom_pages || FALLBACK_CONTENT.custom_pages || [];
+  } catch (err) {
+    return FALLBACK_CONTENT.custom_pages || [];
+  }
+}
+
+export async function fetchCustomPage(slug) {
+  try {
+    const res = await fetch(`${API_BASE}/pages/${slug}/`);
+    if (!res.ok) {
+      const fallback = (FALLBACK_CONTENT.custom_pages || []).find((p) => p.slug === slug);
+      return fallback ? { page: fallback } : null;
+    }
+    return await res.json();
+  } catch (err) {
+    const fallback = (FALLBACK_CONTENT.custom_pages || []).find((p) => p.slug === slug);
+    return fallback ? { page: fallback } : null;
+  }
+}
+
+export async function fetchBlogPosts(category = null) {
+  try {
+    const url = category ? `${API_BASE}/blog/?category=${encodeURIComponent(category)}` : `${API_BASE}/blog/`;
+    const res = await fetch(url);
+    if (!res.ok) return FALLBACK_CONTENT.blog_posts || [];
+    const data = await res.json();
+    return data.posts || data.results || data || FALLBACK_CONTENT.blog_posts || [];
+  } catch (err) {
+    return FALLBACK_CONTENT.blog_posts || [];
+  }
+}
+
+export async function fetchBlogPostDetail(slug) {
+  try {
+    const res = await fetch(`${API_BASE}/blog/${slug}/`);
+    if (!res.ok) {
+      const fallback = (FALLBACK_CONTENT.blog_posts || []).find((p) => p.slug === slug);
+      return fallback ? { post: fallback } : null;
+    }
+    return await res.json();
+  } catch (err) {
+    const fallback = (FALLBACK_CONTENT.blog_posts || []).find((p) => p.slug === slug);
+    return fallback ? { post: fallback } : null;
+  }
+}
+
+export async function lookupReservation(code) {
+  try {
+    const res = await fetch(`${API_BASE}/reservations/lookup/?code=${encodeURIComponent(code)}`);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return { success: false, message: err.error || 'Reservation not found' };
+    }
+    const data = await res.json();
+    return { success: true, reservation: data.reservation || data };
+  } catch (err) {
+    return { success: false, message: 'Could not connect to host desk reservation server.' };
+  }
+}
+
+export async function checkReservationAvailability(date, shift = 'dinner') {
+  try {
+    const res = await fetch(`${API_BASE}/reservations/availability/?date=${encodeURIComponent(date)}&shift=${encodeURIComponent(shift)}`);
+    if (!res.ok) return { is_available: true, remaining_covers: 80 };
+    return await res.json();
+  } catch (err) {
+    return { is_available: true, remaining_covers: 80 };
+  }
+}
+
 export async function submitReservation(reservationData) {
   try {
     const res = await fetch(`${API_BASE}/reservations/`, {
@@ -56,10 +135,11 @@ export async function submitReservation(reservationData) {
 
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.detail || 'Failed to submit reservation inquiry');
+      throw new Error(errData.detail || errData.error || 'Failed to submit reservation inquiry');
     }
 
-    return await res.json();
+    const data = await res.json();
+    return { success: true, data: data.data || data };
   } catch (err) {
     console.error('[CMS API] Error submitting reservation:', err);
     throw err;

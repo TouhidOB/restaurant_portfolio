@@ -1,0 +1,193 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--ivory);">
+        The Bengal Gazette &amp; Culinary Journal
+      </h3>
+      <p style="color: var(--jute); font-size: 0.85rem;">
+        Publish and manage editorial essays, Zamindari culinary history, and river delta recipes.
+      </p>
+    </div>
+    <span style="font-size: 0.82rem; color: var(--brass); font-family: var(--font-mono); font-weight: 700;">
+      {{ posts|length }} Chronicles Published
+    </span>
+  </div>
+
+  <div style="overflow-x: auto; margin-bottom: 2.5rem;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--border-color); color: var(--brass); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.1em;">
+          <th style="padding: 0.75rem 1rem;">Article Title</th>
+          <th style="padding: 0.75rem 1rem;">Category</th>
+          <th style="padding: 0.75rem 1rem;">Author</th>
+          <th style="padding: 0.75rem 1rem;">Published</th>
+          <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for post in posts %}
+        <tr style="border-bottom: 1px solid rgba(212, 175, 55, 0.08);">
+          <td style="padding: 0.85rem 1rem; font-weight: 700; color: var(--ivory);">
+            {{ post.title }}
+            <div style="color: var(--jute); font-size: 0.75rem; font-weight: 400; margin-top: 0.2rem;">
+              <a href="http://127.0.0.1:3000/blog/{{ post.slug }}" target="_blank" style="color: var(--brass); font-family: var(--font-mono);">
+                /blog/{{ post.slug }} ↗
+              </a>
+            </div>
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            <span style="background: rgba(166, 83, 59, 0.35); border: 1px solid var(--border-color); color: var(--brass); padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; font-weight: 700;">
+              {{ post.category.name|default:"General" }}
+            </span>
+          </td>
+          <td style="padding: 0.85rem 1rem; color: var(--ivory);">
+            {{ post.author_name }}
+          </td>
+          <td style="padding: 0.85rem 1rem; color: var(--jute); font-size: 0.8rem;">
+            {{ post.published_at|date:"M d, Y" }}
+          </td>
+          <td style="padding: 0.85rem 1rem; text-align: right;">
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+              <a href="{% url 'cms_blog_edit' pk=post.pk %}" class="btn-primary" style="padding: 0.4rem 0.85rem; font-size: 0.75rem;">
+                Edit ➔
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="padding: 2.5rem; text-align: center; color: var(--jute);">
+            No articles published in the gazette yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Publish New Article Form -->
+  <div style="border-top: 1px solid var(--border-color); padding-top: 2rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--ivory); margin-bottom: 0.5rem;">
+      Publish New Gazette Chronicle
+    </h3>
+    <p style="color: var(--jute); font-size: 0.85rem; margin-bottom: 1.5rem;">
+      Compose articles that appear instantly in the frontend journal at /blog and /blog/:slug.
+    </p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="create_post">
+
+      <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.4rem; font-weight: 700;">
+            Article Title *
+          </label>
+          <input
+            type="text"
+            name="title"
+            required
+            placeholder="e.g. Sourcing River Delta Hilsa: Traditions of the Padma"
+            style="width: 100%; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.9rem; outline: none;"
+          />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.4rem; font-weight: 700;">
+            Editorial Category
+          </label>
+          <select
+            name="category_id"
+            style="width: 100%; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.9rem; outline: none;"
+          >
+            {% for cat in categories %}
+              <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.4rem; font-weight: 700;">
+            URL Slug (optional)
+          </label>
+          <input
+            type="text"
+            name="slug"
+            placeholder="auto-generated-if-blank"
+            style="width: 100%; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.9rem; outline: none;"
+          />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.4rem; font-weight: 700;">
+            Author Byline
+          </label>
+          <input
+            type="text"
+            name="author_name"
+            value="Chef Subrata Roy"
+            style="width: 100%; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.9rem; outline: none;"
+          />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.4rem; font-weight: 700;">
+            Reading Time
+          </label>
+          <input
+            type="text"
+            name="reading_time"
+            value="5 min read"
+            style="width: 100%; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.9rem; outline: none;"
+          />
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.4rem; font-weight: 700;">
+          Featured Hero Image URL
+        </label>
+        <input
+          type="url"
+          name="featured_image"
+          placeholder="https://images.unsplash.com/..."
+          style="width: 100%; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.9rem; outline: none;"
+        />
+      </div>
+
+      <div style="margin-bottom: 1.25rem;">
+        <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.4rem; font-weight: 700;">
+          Article Excerpt / Lead
+        </label>
+        <textarea
+          name="excerpt"
+          rows="2"
+          placeholder="Brief summary that appears on blog cards and search indexes..."
+          style="width: 100%; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.9rem; outline: none; resize: vertical;"
+        ></textarea>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.4rem; font-weight: 700;">
+          Article Body (HTML supported)
+        </label>
+        <textarea
+          name="content"
+          rows="8"
+          placeholder="<p>Detailed narrative about the culinary traditions, recipes, and river terroir...</p>"
+          style="width: 100%; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.9rem; outline: none; resize: vertical;"
+        ></textarea>
+      </div>
+
+      <button type="submit" class="btn-primary" style="padding: 0.85rem 2.2rem;">
+        Publish Chronicle to Journal ➔
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

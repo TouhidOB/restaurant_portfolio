@@ -1,0 +1,203 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  <input type="hidden" name="action" value="save_page">
+  <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 2rem; align-items: start;">
+    <!-- Left Column: Block Canvas & Palette -->
+    <div>
+      <!-- Block Palette -->
+      <div class="cms-card" style="border-color: var(--brass);">
+        <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--brass); font-weight: 800; margin-bottom: 0.85rem;">
+          Component Block Palette — Click to Append to Canvas
+        </div>
+        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+          <button type="button" onclick="insertBlock('hero')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Hero Banner
+          </button>
+          <button type="button" onclick="insertBlock('split')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Split Editorial
+          </button>
+          <button type="button" onclick="insertBlock('features')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Features Grid
+          </button>
+          <button type="button" onclick="insertBlock('cta')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Call-to-Action
+          </button>
+          <button type="button" onclick="insertBlock('reservation')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Table Reservation
+          </button>
+          <button type="button" onclick="insertBlock('faq')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + FAQ Accordion
+          </button>
+        </div>
+      </div>
+
+      <!-- JSON Canvas Editor -->
+      <div class="cms-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--ivory);">
+            Modular Block Canvas Hierarchy
+          </h3>
+          <button type="button" onclick="formatBlocksJSON()" class="btn-secondary" style="font-size: 0.75rem;">
+            Format JSON
+          </button>
+        </div>
+
+        <textarea
+          id="blocksJsonArea"
+          name="blocks_json"
+          rows="18"
+          style="width: 100%; padding: 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6; outline: none;"
+        >{{ blocks_json }}</textarea>
+      </div>
+    </div>
+
+    <!-- Right Column: Page Settings & Publish -->
+    <div>
+      <div class="cms-card" style="position: sticky; top: 90px;">
+        <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--ivory); margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+          Page Settings
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <div>
+            <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.35rem; font-weight: 700;">
+              Page Title *
+            </label>
+            <input
+              type="text"
+              name="title"
+              required
+              value="{{ page_obj.title|default:custom_page.title }}"
+              placeholder="e.g. Traditional Courtyard Sitar Nights"
+              style="width: 100%; padding: 0.75rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.88rem; outline: none;"
+            />
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.35rem; font-weight: 700;">
+              URL Slug *
+            </label>
+            <input
+              type="text"
+              name="slug"
+              required
+              value="{{ page_obj.slug|default:custom_page.slug }}"
+              placeholder="e.g. courtyard-sitar-nights"
+              style="width: 100%; padding: 0.75rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.88rem; outline: none;"
+            />
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.35rem; font-weight: 700;">
+              Meta Description (SEO)
+            </label>
+            <textarea
+              name="meta_description"
+              rows="3"
+              style="width: 100%; padding: 0.75rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.85rem; outline: none; resize: vertical;"
+            >{{ page_obj.meta_description|default:custom_page.meta_description }}</textarea>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0;">
+            <input
+              type="checkbox"
+              id="isPublishedCheck"
+              name="is_published"
+              {% if page_obj.is_published or custom_page.is_published or not page_obj %}checked{% endif %}
+              style="width: 16px; height: 16px; accent-color: var(--brass);"
+            />
+            <label for="isPublishedCheck" style="font-size: 0.88rem; font-weight: 700; color: var(--ivory);">
+              Publish To Frontend (/page/{{ page_obj.slug|default:custom_page.slug|default:'slug' }})
+            </label>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; padding: 0.9rem; justify-content: center;">
+            Save Canvas Changes ➔
+          </button>
+
+          {% if page_obj or custom_page %}
+            <a href="http://127.0.0.1:3000/page/{{ page_obj.slug|default:custom_page.slug }}" target="_blank" class="btn-secondary" style="text-align: center; display: block;">
+              ↗ Preview Live Page
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+const templates = {
+  hero: {
+    type: "hero",
+    title: "Aristocratic Hospitality in the Royal Courtyard",
+    subtitle: "ZAMINDARI ATITHI BHOJAN • LEVEL OF HERITAGE",
+    bg_image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=85",
+    cta_text: "Request Royal Banquet Inquiry",
+    cta_link: "#contact"
+  },
+  split: {
+    type: "split",
+    title: "Consecrated Bell-Metal Dining & 14-Course Feasts",
+    lead: "Dining as sacred ritual: heavy kansa tableware, slow clay-pot simmered curries, and antique silver rosewater sprinklers.",
+    body: "Our private dining rooms accommodate from 12 to 85 guests under hand-loomed indigo ceilings. Every course is introduced by our cultural food historian, paired with estate Darjeeling first-flush teas and artisanal sugarcane digestifs.",
+    image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=85",
+    image_alt: "Zamindari Private Feast Table"
+  },
+  features: {
+    type: "features",
+    title: "Bespoke Royal Banquet Amenities",
+    items: [
+      { title: "Bespoke 14-Course Menu", desc: "Customized seasonal degustion featuring Smoked Hilsa, Gold-Leaf Mutton Kosha, and seasonal date palm jaggery creations." },
+      { title: "Live Classical Sitar & Sarod", desc: "Acoustic accompaniment by master instrumentalists performing evening ragas throughout service." },
+      { title: "Handcrafted Kansa Service", desc: "Bespoke bell-metal plateware consecrated to retain heat and honor traditional Ayurvedic hospitality." }
+    ]
+  },
+  cta: {
+    type: "cta",
+    title: "Reserve the Royal Courtyard for Your Milestone",
+    subtitle: "Dates for festive banquets and private buyouts are secured by advance consultation with our Maître D'.",
+    button_text: "Inquire for Royal Buyout",
+    button_link: "/contact"
+  },
+  reservation: {
+    type: "reservation",
+    title: "Check Banquet Availability",
+    subtitle: "Our concierge desk will respond within 4 hours with personalized menu proposals."
+  },
+  faq: {
+    type: "faq",
+    title: "Royal Banquet Frequently Asked Questions",
+    items: [
+      { question: "Is live classical music included in private courtyard buyouts?", answer: "Yes, our in-house sitar and sarod artists perform classical evening ragas during your reception." },
+      { question: "Can we customize dietary choices for Zamindari thali banquets?", answer: "Our Master Chef accommodates bespoke vegetarian, fish, and halal dietary specifications." }
+    ]
+  }
+};
+
+function insertBlock(type) {
+  const area = document.getElementById('blocksJsonArea');
+  try {
+    let current = JSON.parse(area.value || '[]');
+    if (!Array.isArray(current)) current = [];
+    current.push(templates[type]);
+    area.value = JSON.stringify(current, null, 2);
+  } catch (e) {
+    alert('Please ensure existing JSON in the canvas is valid before appending blocks.');
+  }
+}
+
+function formatBlocksJSON() {
+  const area = document.getElementById('blocksJsonArea');
+  try {
+    const parsed = JSON.parse(area.value || '[]');
+    area.value = JSON.stringify(parsed, null, 2);
+  } catch (e) {
+    alert('Invalid JSON syntax: ' + e.message);
+  }
+}
+</script>
+{% endblock %}

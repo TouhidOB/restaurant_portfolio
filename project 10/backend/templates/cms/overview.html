@@ -1,0 +1,172 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<!-- KPI Metrics Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--brass);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--jute); font-weight: 800; margin-bottom: 0.35rem;">
+      Total Reservations
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.4rem; color: var(--brass); font-weight: 700;">
+      {{ total_reservations }}
+    </div>
+    <div style="font-size: 0.75rem; color: #81c784; margin-top: 0.3rem;">
+      Heritage Table Inquiries
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--terracotta);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--jute); font-weight: 800; margin-bottom: 0.35rem;">
+      Pending Approvals
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.4rem; color: var(--terracotta); font-weight: 700;">
+      {{ pending_reservations }}
+    </div>
+    <div style="font-size: 0.75rem; color: var(--jute); margin-top: 0.3rem;">
+      Awaiting Maitre D' Review
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid #81c784;">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--jute); font-weight: 800; margin-bottom: 0.35rem;">
+      Confirmed Covers
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.4rem; color: #81c784; font-weight: 700;">
+      {{ confirmed_reservations }}
+    </div>
+    <div style="font-size: 0.75rem; color: var(--jute); margin-top: 0.3rem;">
+      Assigned Courtyard Tables
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--brass);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--jute); font-weight: 800; margin-bottom: 0.35rem;">
+      Lunch / Dinner Shift Split
+    </div>
+    <div style="font-family: var(--font-display); font-size: 1.8rem; color: var(--ivory); font-weight: 700; margin-top: 0.4rem;">
+      ☀️ {{ lunch_covers }} / 🌙 {{ dinner_covers }}
+    </div>
+    <div style="font-size: 0.75rem; color: var(--jute); margin-top: 0.3rem;">
+      Live Shift Demand
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--leaf);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--jute); font-weight: 800; margin-bottom: 0.35rem;">
+      Pages &amp; Editorial
+    </div>
+    <div style="font-family: var(--font-display); font-size: 1.8rem; color: #c8e6c9; font-weight: 700; margin-top: 0.4rem;">
+      {{ total_pages }} Pages &bull; {{ total_articles }} Articles
+    </div>
+    <div style="font-size: 0.75rem; color: var(--jute); margin-top: 0.3rem;">
+      Active Content Assets
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions Banner -->
+<div class="cms-card" style="background: linear-gradient(135deg, rgba(166, 83, 59, 0.35) 0%, rgba(34, 48, 70, 0.7) 100%); border-left: 4px solid var(--brass);">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+    <div>
+      <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--brass); font-weight: 800;">
+        Fast-Track Command
+      </span>
+      <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--ivory); margin: 0.2rem 0;">
+        Zamindari Dining Studio Shortcuts
+      </h3>
+      <p style="color: var(--jute); font-size: 0.9rem;">
+        Launch visual page building canvas, review pending banquet reservations, or update the seasonal hilsa menu.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+      <a href="{% url 'cms_page_builder_create' %}" class="btn-primary">
+        + Create Standalone Page
+      </a>
+      <a href="{% url 'cms_reservations' %}?status=pending" class="btn-secondary">
+        Review Pending ({{ pending_reservations }})
+      </a>
+      <a href="{% url 'cms_menu' %}" class="btn-secondary">
+        Edit Heritage Menu
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Table Inquiries -->
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--ivory);">
+        Recent Table Inquiries &amp; Live Covers
+      </h3>
+      <p style="color: var(--jute); font-size: 0.85rem;">
+        Latest reservation inquiries submitted via the public portal or mobile concierge.
+      </p>
+    </div>
+    <a href="{% url 'cms_reservations' %}" class="btn-secondary" style="font-size: 0.78rem;">
+      View All Inquiries &rarr;
+    </a>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--border-color); color: var(--brass); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.1em;">
+          <th style="padding: 0.75rem 1rem;">Ref Code</th>
+          <th style="padding: 0.75rem 1rem;">Guest Name</th>
+          <th style="padding: 0.75rem 1rem;">Date &amp; Shift</th>
+          <th style="padding: 0.75rem 1rem;">Guests</th>
+          <th style="padding: 0.75rem 1rem;">Table #</th>
+          <th style="padding: 0.75rem 1rem;">Status</th>
+          <th style="padding: 0.75rem 1rem; text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for res in recent_reservations %}
+        <tr style="border-bottom: 1px solid rgba(212, 175, 55, 0.08);">
+          <td style="padding: 0.85rem 1rem; font-family: var(--font-mono); font-weight: 700; color: var(--brass);">
+            {{ res.reference_code|default:"-" }}
+          </td>
+          <td style="padding: 0.85rem 1rem; font-weight: 600; color: var(--ivory);">
+            {{ res.full_name }}
+            <div style="font-size: 0.75rem; color: var(--jute); font-weight: 400;">{{ res.phone }}</div>
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            {{ res.reservation_date }}
+            <span style="font-size: 0.75rem; display: block; color: var(--brass); text-transform: uppercase;">
+              {{ res.shift|default:"Dinner" }} &bull; {{ res.reservation_time }}
+            </span>
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            {{ res.guests }} Guests
+          </td>
+          <td style="padding: 0.85rem 1rem; color: var(--brass);">
+            {{ res.table_number|default:"Unassigned" }}
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            <span style="padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;
+              {% if res.status == 'confirmed' %}background: rgba(83, 107, 80, 0.4); color: #c8e6c9; border: 1px solid var(--leaf);
+              {% elif res.status == 'seated' %}background: rgba(38, 52, 74, 0.6); color: #90caf9; border: 1px solid #90caf9;
+              {% elif res.status == 'cancelled' %}background: rgba(166, 83, 59, 0.4); color: #ffab91; border: 1px solid var(--terracotta);
+              {% else %}background: rgba(212, 175, 55, 0.2); color: var(--brass); border: 1px solid var(--brass);{% endif %}">
+              {{ res.status }}
+            </span>
+          </td>
+          <td style="padding: 0.85rem 1rem; text-align: right;">
+            <a href="{% url 'cms_reservations' %}?search={{ res.reference_code }}" class="btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+              Manage &rarr;
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="padding: 2rem; text-align: center; color: var(--jute);">
+            No reservation inquiries recorded yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

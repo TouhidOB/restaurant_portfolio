@@ -70,6 +70,10 @@ export function CMSProvider({ children }) {
     setActiveReservationModal(false);
   };
 
+  const customPages = content?.custom_pages || FALLBACK_CONTENT.custom_pages || [];
+  const blogPosts = content?.blog_posts || FALLBACK_CONTENT.blog_posts || [];
+  const blogCategories = content?.blog_categories || FALLBACK_CONTENT.blog_categories || [];
+
   return (
     <CMSContext.Provider
       value={{
@@ -80,8 +84,12 @@ export function CMSProvider({ children }) {
         t,
         categories,
         menuItems,
+        customPages,
+        blogPosts,
+        blogCategories,
         loading,
         activeReservationModal,
+        isReservationOpen: activeReservationModal,
         openReservation,
         closeReservation,
         selectedDish,

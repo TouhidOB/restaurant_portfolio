@@ -1,0 +1,32 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--ivory);">
+      Frequently Asked Questions Manager
+    </h3>
+    <p style="color: var(--jute); font-size: 0.85rem;">
+      Manage guest guidelines, dress codes, private dining booking protocols, and dietary accommodations.
+    </p>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div style="margin-bottom: 1.5rem;">
+      <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.5rem; font-weight: 700;">
+        FAQs JSON Array
+      </label>
+      <textarea
+        name="faqs_json"
+        rows="16"
+        style="width: 100%; padding: 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6; outline: none;"
+      >{{ faqs_json }}</textarea>
+    </div>
+
+    <button type="submit" class="btn-primary" style="padding: 0.8rem 2rem;">
+      Save FAQ Directory ➔
+    </button>
+  </form>
+</div>
+{% endblock %}

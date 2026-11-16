@@ -1,0 +1,85 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--ivory);">
+        Bilingual Heritage Menu Repertoire
+      </h3>
+      <p style="color: var(--jute); font-size: 0.85rem;">
+        Traditional Zamindari thalis, river delta hilsa, and slow-braised clay pot specialties.
+      </p>
+    </div>
+    <span style="font-size: 0.82rem; color: var(--brass); font-family: var(--font-mono); font-weight: 700;">
+      {{ categories|length }} Categories Active
+    </span>
+  </div>
+
+  <!-- Raw JSON Form -->
+  <form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="save_menu_raw">
+
+    <div style="margin-bottom: 1.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+        <label style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); font-weight: 700;">
+          Menu JSON Architecture (Bilingual Categories &amp; Dishes)
+        </label>
+        <button type="button" onclick="formatJSON()" class="btn-secondary" style="font-size: 0.72rem; padding: 0.3rem 0.7rem;">
+          Format JSON
+        </button>
+      </div>
+
+      <textarea
+        id="menuJsonArea"
+        name="menu_json"
+        rows="16"
+        style="width: 100%; padding: 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6; outline: none;"
+      >{{ menu_json }}</textarea>
+    </div>
+
+    <button type="submit" class="btn-primary" style="padding: 0.8rem 2rem;">
+      Save &amp; Publish Menu Repertoire ➔
+    </button>
+  </form>
+</div>
+
+<!-- Category Preview Grid -->
+<div class="cms-card">
+  <h4 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--ivory); margin-bottom: 1.25rem;">
+    Active Menu Categories in Database
+  </h4>
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+    {% for cat in categories %}
+    <div style="background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; padding: 1.25rem;">
+      <div style="font-size: 0.75rem; color: var(--brass); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
+        Category 0{{ forloop.counter }}
+      </div>
+      <h5 style="font-family: var(--font-display); font-size: 1.3rem; color: var(--ivory); margin: 0.3rem 0;">
+        {{ cat.name_en }} / {{ cat.name_bn }}
+      </h5>
+      <p style="color: var(--jute); font-size: 0.82rem;">
+        Slug: <code>{{ cat.slug }}</code> &bull; Items: {{ cat.items.count }}
+      </p>
+    </div>
+    {% empty %}
+    <div style="color: var(--jute); font-size: 0.88rem;">
+      Categories managed directly via Master Menu JSON above.
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+function formatJSON() {
+  const area = document.getElementById('menuJsonArea');
+  try {
+    const parsed = JSON.parse(area.value || '{}');
+    area.value = JSON.stringify(parsed, null, 2);
+  } catch (e) {
+    alert('Invalid JSON syntax: ' + e.message);
+  }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--ivory);">
+      15-Section Master Content Editor
+    </h3>
+    <p style="color: var(--jute); font-size: 0.85rem;">
+      Direct raw JSON access to all 15 bilingual sections rendered on the public landing page.
+    </p>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div style="margin-bottom: 1.5rem;">
+      <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.5rem; font-weight: 700;">
+        Full SiteConfig content_json
+      </label>
+      <textarea
+        name="sections_json"
+        rows="22"
+        style="width: 100%; padding: 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6; outline: none;"
+      >{{ sections_json }}</textarea>
+    </div>
+
+    <button type="submit" class="btn-primary" style="padding: 0.85rem 2.2rem;">
+      Publish Master Sections JSON ➔
+    </button>
+  </form>
+</div>
+{% endblock %}

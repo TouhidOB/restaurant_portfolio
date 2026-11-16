@@ -1,0 +1,148 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--ivory);">
+        Deployed Custom Pages &amp; Standalone Routes
+      </h3>
+      <p style="color: var(--jute); font-size: 0.85rem;">
+        Dynamic Elementor-style pages published to the frontend at /page/:slug.
+      </p>
+    </div>
+    <span style="font-size: 0.82rem; color: var(--brass); font-family: var(--font-mono); font-weight: 700;">
+      {{ pages|length }} Pages Active
+    </span>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--border-color); color: var(--brass); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.1em;">
+          <th style="padding: 0.75rem 1rem;">Page Title</th>
+          <th style="padding: 0.75rem 1rem;">Frontend Route</th>
+          <th style="padding: 0.75rem 1rem;">Block Count</th>
+          <th style="padding: 0.75rem 1rem;">Status</th>
+          <th style="padding: 0.75rem 1rem;">Last Modified</th>
+          <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in pages %}
+        <tr style="border-bottom: 1px solid rgba(212, 175, 55, 0.08);">
+          <td style="padding: 0.85rem 1rem; font-weight: 700; color: var(--ivory);">
+            {{ p.title }}
+            {% if p.meta_description %}
+              <div style="color: var(--jute); font-size: 0.75rem; font-weight: 400; margin-top: 0.2rem;">
+                {{ p.meta_description|truncatechars:65 }}
+              </div>
+            {% endif %}
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            <a href="http://127.0.0.1:3000/page/{{ p.slug }}" target="_blank" style="color: var(--brass); font-family: var(--font-mono);">
+              /page/{{ p.slug }} ↗
+            </a>
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            <span style="background: rgba(166, 83, 59, 0.35); border: 1px solid var(--brass); color: var(--brass); padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; font-weight: 700;">
+              {{ p.blocks|length }} blocks
+            </span>
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            {% if p.is_published %}
+              <span style="color: #81c784; font-size: 0.8rem; font-weight: 700;">● Published</span>
+            {% else %}
+              <span style="color: var(--jute); font-size: 0.8rem; font-weight: 700;">○ Draft</span>
+            {% endif %}
+          </td>
+          <td style="padding: 0.85rem 1rem; color: var(--jute); font-size: 0.8rem;">
+            {{ p.updated_at|date:"M d, Y H:i" }}
+          </td>
+          <td style="padding: 0.85rem 1rem; text-align: right;">
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+              <a href="{% url 'cms_page_builder_edit' pk=p.pk %}" class="btn-primary" style="padding: 0.4rem 0.85rem; font-size: 0.75rem;">
+                Builder ➔
+              </a>
+              <form method="POST" style="display: inline;" onsubmit="return confirm('Delete page {{ p.title }}?');">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_page">
+                <input type="hidden" name="page_id" value="{{ p.id }}">
+                <button type="submit" class="btn-secondary" style="padding: 0.4rem 0.65rem; font-size: 0.75rem; color: #ef5350;">
+                  ✕
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="padding: 2.5rem; text-align: center; color: var(--jute);">
+            No standalone pages created yet. Initialize your first page below.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Initialize New Page Form -->
+<div class="cms-card">
+  <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--ivory); margin-bottom: 0.5rem;">
+    Create New Standalone Page
+  </h3>
+  <p style="color: var(--jute); font-size: 0.85rem; margin-bottom: 1.5rem;">
+    Define metadata and URL slug, then open the visual block canvas to assemble hero, split, features, and CTA blocks.
+  </p>
+
+  <form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="create_page">
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+      <div>
+        <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.4rem; font-weight: 700;">
+          Page Title *
+        </label>
+        <input
+          type="text"
+          name="title"
+          required
+          placeholder="e.g. Traditional Courtyard Sitar Nights & Private Feasts"
+          style="width: 100%; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.9rem; outline: none;"
+        />
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.4rem; font-weight: 700;">
+          URL Slug * (lowercase, hyphens)
+        </label>
+        <input
+          type="text"
+          name="slug"
+          required
+          placeholder="e.g. courtyard-sitar-nights"
+          style="width: 100%; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.9rem; outline: none;"
+        />
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+      <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.4rem; font-weight: 700;">
+        Meta Description (SEO &amp; OpenGraph)
+      </label>
+      <textarea
+        name="meta_description"
+        rows="2"
+        placeholder="Brief summary of the Bengali heritage banquet or cultural celebration..."
+        style="width: 100%; padding: 0.75rem 1rem; background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.9rem; outline: none; resize: vertical;"
+      ></textarea>
+    </div>
+
+    <button type="submit" class="btn-primary" style="padding: 0.8rem 2rem;">
+      Initialize Page &amp; Open Visual Canvas ➔
+    </button>
+  </form>
+</div>
+{% endblock %}

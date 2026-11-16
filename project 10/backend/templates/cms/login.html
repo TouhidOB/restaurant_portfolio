@@ -2,145 +2,70 @@
 
 {% block title %}Administrator Authentication | BENGAL HERITAGE CMS Studio{% endblock %}
 
-{% block extra_head %}
-<style>
-    .login-wrapper {
-        min-height: 70vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem 0;
-    }
+{% block auth_content %}
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, rgba(166, 83, 59, 0.15) 0%, #141312 100%), var(--indigo); padding: 2rem;">
+    <div style="background: var(--surface); border: 1px solid var(--border-color); border-radius: 4px; width: 100%; max-width: 460px; padding: 2.75rem 2.25rem; box-shadow: 0 25px 50px rgba(0,0,0,0.6); position: relative;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--terracotta), var(--brass), var(--leaf));"></div>
 
-    .login-card {
-        background: var(--indigo);
-        border: 1px solid var(--border-heritage);
-        border-radius: 4px;
-        width: 100%;
-        max-width: 480px;
-        padding: 2.75rem 2.25rem;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.5), 0 0 25px rgba(177, 138, 84, 0.08);
-        position: relative;
-    }
-
-    .login-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--terracotta), var(--brass), var(--leaf));
-    }
-
-    .login-header {
-        text-align: center;
-        margin-bottom: 2rem;
-    }
-
-    .login-header h2 {
-        font-family: var(--font-display-en);
-        font-size: 2.1rem;
-        color: var(--ivory);
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        margin-bottom: 0.4rem;
-        font-weight: 600;
-    }
-
-    .login-header p {
-        color: var(--brass);
-        font-size: 0.95rem;
-        font-family: var(--font-display-bn);
-        font-weight: 600;
-    }
-
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-
-    .form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--brass);
-        font-weight: 600;
-        font-family: var(--font-body-en);
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 0.85rem 1rem;
-        background: var(--indigo-card);
-        border: 1px solid var(--border-heritage);
-        border-radius: 3px;
-        color: var(--ivory);
-        font-family: var(--font-body-en);
-        font-size: 0.95rem;
-        transition: all 0.25s ease;
-        outline: none;
-    }
-
-    .form-control:focus {
-        border-color: var(--brass);
-        box-shadow: 0 0 0 2px rgba(177, 138, 84, 0.25);
-        background: var(--indigo-elevated);
-    }
-
-    .helper-box {
-        margin-top: 2rem;
-        padding: 1.1rem;
-        background: rgba(38, 52, 74, 0.55);
-        border-left: 3px solid var(--brass);
-        border-radius: 2px;
-        font-size: 0.82rem;
-        color: var(--jute);
-    }
-    .helper-box strong {
-        color: var(--brass);
-    }
-    .helper-box code {
-        background: var(--indigo-dark);
-        padding: 0.15rem 0.45rem;
-        border-radius: 2px;
-        color: var(--ivory);
-        font-family: monospace;
-        font-size: 0.86rem;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="login-wrapper">
-    <div class="login-card">
-        <div class="login-header">
-            <h2>Heritage Studio</h2>
-            <p>বাংলার ঐতিহ্য &bull; প্রশাসনিক প্রবেশদ্বার</p>
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="width: 48px; height: 48px; margin: 0 auto 1rem; border-radius: 4px; background: linear-gradient(135deg, var(--terracotta) 0%, var(--indigo) 100%); border: 1px solid var(--brass); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--brass);">
+                BH
+            </div>
+            <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--ivory); letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                Heritage Studio
+            </h2>
+            <p style="color: var(--brass); font-size: 0.88rem; font-family: 'Noto Serif Bengali', serif; letter-spacing: 0.05em;">
+                বাংলার ঐতিহ্য &bull; প্রশাসনিক প্রবেশদ্বার
+            </p>
         </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert-box alert-{{ message.tags }}" style="margin-bottom: 1.5rem;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
 
         <form method="POST" action="{% url 'cms_login' %}">
             {% csrf_token %}
-            <div class="form-group">
-                <label class="form-label" for="username">Staff Username</label>
-                <input type="text" id="username" name="username" class="form-control" placeholder="admin" required autofocus>
+            <div style="margin-bottom: 1.25rem;">
+                <label style="display: block; margin-bottom: 0.4rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); font-weight: 700;">
+                    Staff Username
+                </label>
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    required
+                    autofocus
+                    placeholder="admin"
+                    style="width: 100%; padding: 0.8rem 1rem; background: var(--card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.95rem; outline: none;"
+                />
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="password">Security Password</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••••••" required>
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; margin-bottom: 0.4rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); font-weight: 700;">
+                    Security Password
+                </label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    placeholder="••••••••••••"
+                    style="width: 100%; padding: 0.8rem 1rem; background: var(--card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--ivory); font-size: 0.95rem; outline: none;"
+                />
             </div>
 
-            <button type="submit" class="btn btn-terracotta" style="width: 100%; padding: 0.85rem; margin-top: 0.75rem; font-size: 0.9rem;">
-                Authenticate &amp; Enter Studio
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 0.85rem; font-size: 0.88rem; justify-content: center;">
+                Authenticate &amp; Enter Studio &rarr;
             </button>
         </form>
 
-        <div class="helper-box">
-            <p><strong>Bengali Heritage Administrator Credentials:</strong></p>
-            <p style="margin-top: 0.35rem;">Username: <code>admin</code> &nbsp;|&nbsp; Password: <code>adminpassword123</code></p>
-            <p style="margin-top: 0.4rem; font-size: 0.78rem;">Grants full bilingual editorial authority over all 15 sections, menu dishes, virtual tour viewpoints, and live table reservation inquiries.</p>
+        <div style="margin-top: 2rem; padding: 1rem; background: rgba(26, 37, 54, 0.6); border-left: 3px solid var(--brass); border-radius: 2px; font-size: 0.8rem; color: var(--jute);">
+            <p><strong style="color: var(--brass);">Staff Credentials:</strong></p>
+            <p style="margin-top: 0.25rem;">Username: <code style="color: var(--ivory); background: var(--card); padding: 1px 4px; border-radius: 2px;">admin</code> &bull; Password: <code style="color: var(--ivory); background: var(--card); padding: 1px 4px; border-radius: 2px;">adminpassword123</code></p>
         </div>
     </div>
 </div>

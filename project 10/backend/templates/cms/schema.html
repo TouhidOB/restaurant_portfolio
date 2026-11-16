@@ -1,0 +1,27 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--ivory);">
+      Master Schema &amp; Headless Architecture
+    </h3>
+    <p style="color: var(--jute); font-size: 0.85rem;">
+      Full JSON serialization inspected by frontend React components, search spiders, and third-party API clients.
+    </p>
+  </div>
+
+  <div style="margin-bottom: 1.5rem;">
+    <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brass); margin-bottom: 0.5rem; font-weight: 700;">
+      Current Active SiteConfig Schema (Read-Only)
+    </label>
+    <pre style="background: var(--surface); border: 1px solid var(--border-color); border-radius: 3px; padding: 1.25rem; color: var(--brass); font-family: var(--font-mono); font-size: 0.84rem; max-height: 520px; overflow-y: auto; line-height: 1.6;">{{ schema_json }}</pre>
+  </div>
+
+  <div style="display: flex; gap: 1rem;">
+    <a href="http://127.0.0.1:8001/api/content/" target="_blank" class="btn-primary">
+      Open Live Public API Endpoint ↗
+    </a>
+  </div>
+</div>
+{% endblock %}

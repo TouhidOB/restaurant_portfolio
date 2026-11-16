@@ -642,5 +642,94 @@ export const FALLBACK_CONTENT = {
       instagram: "https://instagram.com",
       youtube: "https://youtube.com"
     }
-  }
+  },
+  custom_pages: [
+    {
+      id: 1,
+      title: "Zamindari Royal Banquet & Courtyard Buyouts",
+      slug: "zamindari-royal-banquet-private-dining",
+      meta_description: "Host your landmark weddings, aristocratic family celebrations, and diplomatic banquets in our restored heritage courtyard.",
+      blocks: [
+        {
+          type: "hero",
+          title: "Aristocratic Hospitality in the Royal Courtyard",
+          subtitle: "ZAMINDARI ATITHI BHOJAN • LEVEL OF HERITAGE",
+          lead: "Step into a sanctuary of antique Burma teak columns, hand-carved terracotta friezes, and private sitar recitals tailored for distinguished family celebrations and diplomatic feasts.",
+          cta_text: "Request Royal Banquet Inquiry",
+          bg_image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=85"
+        },
+        {
+          type: "split",
+          title: "Consecrated Bell-Metal Dining & 14-Course Feasts",
+          lead: "Dining as sacred ritual: heavy kansa tableware, slow clay-pot simmered curries, and antique silver rosewater sprinklers.",
+          body: "Our private dining rooms accommodate from 12 to 85 guests under hand-loomed indigo ceilings. Every course is introduced by our cultural food historian, paired with estate Darjeeling first-flush teas and artisanal sugarcane digestifs.",
+          image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=85",
+          image_alt: "Zamindari Private Feast Table"
+        },
+        {
+          type: "features",
+          title: "Bespoke Royal Banquet Amenities",
+          items: [
+            {
+              title: "Bespoke 14-Course Menu",
+              desc: "Customized seasonal degustion featuring Smoked Hilsa, Gold-Leaf Mutton Kosha, and seasonal date palm jaggery creations."
+            },
+            {
+              title: "Live Classical Sitar & Sarod",
+              desc: "Acoustic accompaniment by master instrumentalists performing evening ragas throughout service."
+            },
+            {
+              title: "Handcrafted Kansa Service",
+              desc: "Bespoke bell-metal plateware consecrated to retain heat and honor traditional Ayurvedic hospitality."
+            }
+          ]
+        },
+        {
+          type: "cta",
+          title: "Reserve the Royal Courtyard for Your Milestone",
+          subtitle: "Dates for festive banquets and private buyouts are secured by advance consultation with our Maître D'.",
+          button_text: "Inquire for Royal Buyout"
+        },
+        {
+          type: "reservation",
+          title: "Check Banquet Availability",
+          subtitle: "Our concierge desk will respond within 4 hours with personalized menu proposals."
+        }
+      ],
+      is_published: true
+    }
+  ],
+  blog_categories: [
+    { id: 1, name: "Zamindari Gastronomy", slug: "zamindari-gastronomy", description: "Historical banquets, aristocratic Thakurbari recipes, and grand feast traditions." },
+    { id: 2, name: "River Delta Culinary", slug: "river-delta-culinary", description: "Padma river hilsa, Sundarbans mangrove honey, and coastal bay seafood." },
+    { id: 3, name: "Spice & Terroir Chronicles", slug: "spice-chronicles", description: "Cold-pressed mustard oil, radhuni seeds, five-spice blends, and artisanal heritage preparations." }
+  ],
+  blog_posts: [
+    {
+      id: 1,
+      title: "The Sacred Geometry of Shorshe Ilish: Sourcing Hilsa from the Padma Delta",
+      slug: "secrets-of-shorshe-ilish-padma-delta",
+      category: { id: 2, name: "River Delta Culinary", slug: "river-delta-culinary" },
+      author_name: "Chef Subrata Roy",
+      reading_time: "5 min read",
+      published_at: "November 2026",
+      excerpt: "Why autumn silver hilsa caught at the confluence of the Padma and Meghna rivers produces the legendary silken texture and rich delta flavor that defines Bengali haute cuisine.",
+      content: "<p>For centuries across Bengal, the arrival of autumn rains heralded the sacred culinary ascent of the silver queen: the Tenualosa ilisha, revered simply as Ilish. At BENGAL HERITAGE DINING, our sourcing philosophy is unbending: we procure exclusively silver-bellied wild hilsa harvested at the exact tidal confluence of the Padma and Meghna deltas.</p><p>True Shorshe Ilish relies on a delicate balance between yellow and brown mustard seeds, grounded on a traditional black granite shil-nora with rock salt and green chilies. The heat must come not from dried cayenne, but from cold-pressed virgin mustard oil and whole slit kacha lonka, allowing the sweet fat of the river fish to emulsify into golden harmony.</p><p>Served on hand-beaten kansa (bell metal) plates alongside steaming aromatic Gobindobhog rice, it is not merely dinner; it is an ancestral rite of passage.</p>",
+      featured_image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=85",
+      is_published: true
+    },
+    {
+      id: 2,
+      title: "Echoes of the Thakurbari Kitchens: Feasting Across Old Bengal",
+      slug: "zamindari-royal-feasts-kolkata-dhaka",
+      category: { id: 1, name: "Zamindari Gastronomy", slug: "zamindari-gastronomy" },
+      author_name: "Maitreyi Sen",
+      reading_time: "6 min read",
+      published_at: "November 2026",
+      excerpt: "Exploring the 19th-century aristocratic manor banquets where Awadhi Mughlai subtlety blended seamlessly with Bengal's rural freshwater bounty and Portuguese cheese crafts.",
+      content: "<p>The culinary renaissance of the Bengali Renaissance was birthed in the legendary andhar-mahal (inner courtyard kitchens) of aristocratic estates stretching from Jorasanko in Kolkata to the riverine palaces of Bikrampur. It was an era of unprecedented gastronomic synthesis.</p><p>Unlike Western synchronous dining, an authentic Bengali Zamindari meal is strictly linear and Ayurvedic in progression: commencing with the bitter shukto to cleanse the palate, progressing through rich lentils and crisp fritters, culminating in the crescendo of mustard fish, slow-simmered kosha mangsho, and concluded with cooling plastic chutney and nolen gurer sandesh.</p>",
+      featured_image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=85",
+      is_published: true
+    }
+  ]
 };

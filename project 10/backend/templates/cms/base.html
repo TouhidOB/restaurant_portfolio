@@ -1,311 +1,368 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Bengali Heritage CMS Studio | BENGAL HERITAGE DINING{% endblock %}</title>
-    <!-- Google Fonts: Noto Serif Bengali, Noto Sans Bengali, Cormorant Garamond, Manrope -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Manrope:wght@300;400;500;600;700;800&family=Noto+Sans+Bengali:wght@300;400;500;600;700&family=Noto+Serif+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --terracotta: #A6533B;
-            --terracotta-hover: #BF6247;
-            --indigo: #26344A;
-            --indigo-dark: #192433;
-            --indigo-card: #2E3E56;
-            --indigo-elevated: #364964;
-            --ivory: #F4EBDD;
-            --ivory-light: #FBF7F0;
-            --brass: #B18A54;
-            --brass-hover: #C59D65;
-            --jute: #C8B18D;
-            --leaf: #536B50;
-            --charcoal: #242321;
-            --river-mist: #AEBCC0;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title|default:"CMS Studio" }} | BENGAL HERITAGE DINING</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --terracotta: #A6533B;
+      --indigo: #1A2536;
+      --surface: #223046;
+      --card: #2B3D58;
+      --ivory: #F4EBDD;
+      --brass: #D4AF37;
+      --jute: #C8B18D;
+      --leaf: #536B50;
+      --charcoal: #141312;
+      --border-color: rgba(212, 175, 55, 0.22);
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Manrope', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
 
-            --border-heritage: rgba(177, 138, 84, 0.3);
-            --border-subtle: rgba(255, 255, 255, 0.08);
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--indigo);
+      color: var(--ivory);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
 
-            --font-display-en: 'Cormorant Garamond', Georgia, serif;
-            --font-display-bn: 'Noto Serif Bengali', serif;
-            --font-body-en: 'Manrope', -apple-system, sans-serif;
-            --font-body-bn: 'Noto Sans Bengali', sans-serif;
-        }
+    a { color: var(--brass); text-decoration: none; transition: all 0.2s; }
+    a:hover { color: var(--jute); }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    /* Layout */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+    }
 
-        body {
-            background-color: var(--indigo-dark);
-            color: var(--ivory);
-            font-family: var(--font-body-en);
-            font-size: 15px;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 280px;
+      background-color: var(--surface);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
 
-        /* Top Bar */
-        .topbar {
-            background-color: var(--indigo);
-            border-bottom: 2px solid var(--terracotta);
-            padding: 0.85rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(12px);
-        }
+    .brand-header {
+      padding: 1.75rem 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
 
-        .brand-badge {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            text-decoration: none;
-        }
+    .brand-crest {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, var(--terracotta) 0%, var(--indigo) 100%);
+      border: 1px solid var(--brass);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.35rem;
+      color: var(--brass);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
 
-        .brand-crest {
-            width: 42px;
-            height: 42px;
-            border-radius: 3px;
-            background: linear-gradient(135deg, var(--terracotta) 0%, var(--indigo-card) 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--ivory);
-            font-family: var(--font-display-bn);
-            font-size: 1.5rem;
-            font-weight: 700;
-            border: 1px solid var(--brass);
-            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-        }
+    .nav-section-title {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--jute);
+      padding: 1.25rem 1.5rem 0.5rem;
+    }
 
-        .brand-text h1 {
-            font-family: var(--font-display-en);
-            font-size: 1.45rem;
-            color: var(--ivory);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            font-weight: 600;
-            line-height: 1.1;
-        }
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      padding: 0 0.75rem;
+    }
 
-        .brand-text span {
-            font-family: var(--font-display-bn);
-            font-size: 0.82rem;
-            color: var(--brass);
-            letter-spacing: 0.05em;
-            font-weight: 600;
-        }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 4px;
+      color: var(--ivory);
+      font-size: 0.86rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
 
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-        }
+    .nav-item:hover {
+      background-color: rgba(212, 175, 55, 0.12);
+      color: var(--brass);
+      transform: translateX(3px);
+    }
 
-        .pill-badge {
-            padding: 0.35rem 0.85rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            font-family: var(--font-body-en);
-        }
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(166, 83, 59, 0.35) 0%, rgba(212, 175, 55, 0.15) 100%);
+      color: var(--brass);
+      border-left: 3px solid var(--terracotta);
+      font-weight: 700;
+    }
 
-        .pill-live {
-            background: rgba(166, 83, 59, 0.25);
-            color: var(--ivory);
-            border: 1px solid var(--terracotta);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .pill-live::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background-color: var(--brass);
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 8px var(--brass);
-        }
+    .nav-badge {
+      margin-left: auto;
+      font-size: 0.72rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 10px;
+      background: rgba(166, 83, 59, 0.4);
+      color: var(--ivory);
+      border: 1px solid var(--terracotta);
+    }
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.55rem 1.25rem;
-            border-radius: 3px;
-            font-size: 0.84rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            text-decoration: none;
-            transition: all 0.25s ease;
-            cursor: pointer;
-            border: none;
-            font-family: var(--font-body-en);
-        }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 1.25rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+    }
 
-        .btn-terracotta {
-            background: var(--terracotta);
-            color: var(--ivory-light);
-            box-shadow: 0 4px 15px rgba(166, 83, 59, 0.3);
-        }
-        .btn-terracotta:hover {
-            background: var(--terracotta-hover);
-            transform: translateY(-1px);
-        }
+    /* Main Workspace */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      background: radial-gradient(circle at 80% 20%, rgba(166, 83, 59, 0.08) 0%, transparent 60%), var(--indigo);
+    }
 
-        .btn-brass {
-            background: var(--brass);
-            color: var(--charcoal);
-            font-weight: 700;
-        }
-        .btn-brass:hover {
-            background: var(--brass-hover);
-            transform: translateY(-1px);
-        }
+    .topbar {
+      height: 70px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2.5rem;
+      background-color: rgba(26, 37, 54, 0.75);
+      backdrop-filter: blur(10px);
+    }
 
-        .btn-outline {
-            background: transparent;
-            color: var(--ivory);
-            border: 1px solid var(--border-heritage);
-        }
-        .btn-outline:hover {
-            background: rgba(177, 138, 84, 0.12);
-            color: var(--brass);
-            border-color: var(--brass);
-        }
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      color: var(--ivory);
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
 
-        /* Container */
-        .container {
-            max-width: 1440px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 2rem;
-            flex: 1;
-        }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
 
-        /* Flash Messages */
-        .messages-container {
-            margin-bottom: 1.5rem;
-        }
-        .alert {
-            padding: 1rem 1.5rem;
-            border-radius: 3px;
-            margin-bottom: 0.75rem;
-            font-size: 0.92rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .alert-success {
-            background: rgba(38, 52, 74, 0.9);
-            border-left: 4px solid var(--brass);
-            color: var(--ivory-light);
-        }
-        .alert-error {
-            background: rgba(166, 83, 59, 0.25);
-            border-left: 4px solid var(--terracotta);
-            color: #FFB59E;
-        }
-        .alert-info {
-            background: rgba(83, 107, 80, 0.3);
-            border-left: 4px solid var(--leaf);
-            color: var(--ivory);
-        }
+    .btn-public-preview {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.95rem;
+      border-radius: 4px;
+      background: rgba(166, 83, 59, 0.25);
+      border: 1px solid var(--terracotta);
+      color: var(--ivory);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: all 0.2s;
+    }
+    .btn-public-preview:hover {
+      background: var(--terracotta);
+      color: #fff;
+    }
 
-        /* Footer */
-        .cms-footer {
-            background: var(--indigo);
-            border-top: 1px solid var(--border-subtle);
-            padding: 1.5rem 2rem;
-            text-align: center;
-            color: var(--jute);
-            font-size: 0.85rem;
-            margin-top: auto;
-        }
+    .content-body {
+      padding: 2.5rem;
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+    }
 
-        .cms-footer a {
-            color: var(--brass);
-            text-decoration: none;
-        }
+    /* Shared UI Components */
+    .cms-card {
+      background-color: var(--card);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
 
-        @media (max-width: 900px) {
-            .topbar {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
-            }
-            .container {
-                padding: 1rem;
-            }
-        }
-    </style>
-    {% block extra_head %}{% endblock %}
+    .btn-primary {
+      background: linear-gradient(135deg, var(--terracotta) 0%, #873d28 100%);
+      color: #fff;
+      border: 1px solid var(--brass);
+      padding: 0.65rem 1.4rem;
+      border-radius: 3px;
+      font-family: var(--font-body);
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #bd6247 0%, var(--terracotta) 100%);
+      box-shadow: 0 4px 15px rgba(166, 83, 59, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(26, 37, 54, 0.6);
+      color: var(--ivory);
+      border: 1px solid var(--border-color);
+      padding: 0.65rem 1.25rem;
+      border-radius: 3px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover {
+      border-color: var(--brass);
+      color: var(--brass);
+    }
+
+    /* Alerts */
+    .alert-box {
+      padding: 1rem 1.25rem;
+      border-radius: 3px;
+      margin-bottom: 1.5rem;
+      font-size: 0.88rem;
+    }
+    .alert-success { background: rgba(83, 107, 80, 0.3); border-left: 4px solid var(--leaf); color: #c8e6c9; }
+    .alert-error { background: rgba(166, 83, 59, 0.3); border-left: 4px solid var(--terracotta); color: #ffcdd2; }
+    .alert-warning { background: rgba(212, 175, 55, 0.25); border-left: 4px solid var(--brass); color: #fff9c4; }
+  </style>
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
-
-    <!-- Top Navigation Bar -->
-    <header class="topbar">
-        <a href="{% url 'cms_dashboard' %}" class="brand-badge">
-            <div class="brand-crest">ঐ</div>
-            <div class="brand-text">
-                <h1>BENGAL HERITAGE</h1>
-                <span>বাংলার ঐতিহ্য &bull; Administrative Studio</span>
-            </div>
-        </a>
-
-        <div class="nav-actions">
-            <span class="pill-badge pill-live">Heritage Studio Live</span>
-            <a href="http://127.0.0.1:3000/" target="_blank" class="btn btn-outline">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                View Public Site
-            </a>
-            {% if user.is_authenticated %}
-                <span style="font-size: 0.85rem; color: var(--brass); font-weight: 600;">
-                    Staff: {{ user.username }}
-                </span>
-                <a href="{% url 'cms_logout' %}" class="btn btn-outline" style="padding: 0.45rem 0.95rem; font-size: 0.8rem;">
-                    Sign Out
-                </a>
-            {% endif %}
+  {% block auth_content %}
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand-header">
+        <div class="brand-crest">BH</div>
+        <div>
+          <div style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--ivory); line-height: 1.1;">
+            BENGAL HERITAGE
+          </div>
+          <div style="font-size: 0.68rem; color: var(--brass); letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700;">
+            CMS STUDIO &bull; ZAMINDARI
+          </div>
         </div>
-    </header>
+      </div>
 
-    <!-- Main Body Container -->
-    <main class="container">
+      <nav style="overflow-y: auto; flex: 1; padding-bottom: 2rem;">
+        <div class="nav-section-title">Core Management</div>
+        <div class="nav-links">
+          <a href="{% url 'cms_overview' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_overview' %}active{% endif %}">
+            <span>📊</span> Overview &amp; KPIs
+          </a>
+          <a href="{% url 'cms_pages' %}" class="nav-item {% if 'pages' in request.resolver_match.url_name %}active{% endif %}">
+            <span>📄</span> Custom Page Builder
+          </a>
+          <a href="{% url 'cms_identity' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_identity' %}active{% endif %}">
+            <span>🏛️</span> Identity &amp; Hours
+          </a>
+          <a href="{% url 'cms_reservations' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_reservations' %}active{% endif %}">
+            <span>📅</span> Table Reservations
+          </a>
+          <a href="{% url 'cms_menu' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_menu' %}active{% endif %}">
+            <span>🍲</span> Menu &amp; Offerings
+          </a>
+        </div>
+
+        <div class="nav-section-title">Content &amp; 3D Experience</div>
+        <div class="nav-links">
+          <a href="{% url 'cms_tour' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_tour' %}active{% endif %}">
+            <span>🏺</span> 3D Courtyard Tour
+          </a>
+          <a href="{% url 'cms_sections' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_sections' %}active{% endif %}">
+            <span>📑</span> 15-Section Editor
+          </a>
+          <a href="{% url 'cms_gallery' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_gallery' %}active{% endif %}">
+            <span>🖼️</span> Visual Archive
+          </a>
+          <a href="{% url 'cms_reviews' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_reviews' %}active{% endif %}">
+            <span>⭐</span> Guest Reviews
+          </a>
+          <a href="{% url 'cms_faqs' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_faqs' %}active{% endif %}">
+            <span>❓</span> FAQ Manager
+          </a>
+        </div>
+
+        <div class="nav-section-title">Editorial &amp; Schema</div>
+        <div class="nav-links">
+          <a href="{% url 'cms_blog' %}" class="nav-item {% if 'blog' in request.resolver_match.url_name %}active{% endif %}">
+            <span>📜</span> The Bengal Gazette
+          </a>
+          <a href="{% url 'cms_schema' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_schema' %}active{% endif %}">
+            <span>⚙️</span> Master Schema JSON
+          </a>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div>
+          <div style="font-weight: 700; color: var(--ivory);">{{ request.user.username }}</div>
+          <div style="font-size: 0.7rem; color: var(--brass);">Maitre D' Access</div>
+        </div>
+        <a href="{% url 'cms_logout' %}" style="color: #ef5350; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">
+          Sign Out
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="main-content">
+      <header class="topbar">
+        <h1 class="page-title">{{ page_title }}</h1>
+        <div class="topbar-actions">
+          <a href="http://127.0.0.1:3000" target="_blank" class="btn-public-preview">
+            <span>🌐</span> View Public Site ↗
+          </a>
+        </div>
+      </header>
+
+      <div class="content-body">
         {% if messages %}
-            <div class="messages-container">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        <span>{{ message }}</span>
-                    </div>
-                {% endfor %}
+          {% for message in messages %}
+            <div class="alert-box alert-{{ message.tags }}">
+              {{ message }}
             </div>
+          {% endfor %}
         {% endif %}
 
         {% block content %}{% endblock %}
+      </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="cms-footer">
-        <p>BENGAL HERITAGE DINING Decoupled CMS Studio &copy; 2026. Django REST Backend Port 8001 &bull; React Frontend Port 3000.</p>
-    </footer>
-
-    {% block extra_js %}{% endblock %}
+  </div>
+  {% endblock %}
 </body>
 </html>

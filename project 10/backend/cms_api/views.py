@@ -1,19 +1,21 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, permissions, viewsets
+from rest_framework import status, permissions, viewsets, generics
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate, login, logout
-from .models import SiteConfig, MenuCategory, MenuItem, Reservation
+from django.shortcuts import get_object_or_404
+from .models import SiteConfig, MenuCategory, MenuItem, Reservation, CustomPage, BlogCategory, BlogPost
 from .serializers import (
     SiteConfigSerializer, MenuCategorySerializer, MenuItemSerializer,
-    ReservationSerializer, UserSerializer
+    ReservationSerializer, UserSerializer,
+    CustomPageSerializer, BlogCategorySerializer, BlogPostSerializer
 )
 
 class PublicContentView(APIView):
     """
     Public read-only endpoint consumed by the React 18 frontend on load.
     Returns the complete 15-section bilingual Bengali Heritage configuration,
-    theme tokens, and default language settings.
+    theme tokens, menu categories, custom pages, and editorial journal posts.
     """
     permission_classes = [permissions.AllowAny]
 
@@ -22,11 +24,121 @@ class PublicContentView(APIView):
         if not config:
             config = SiteConfig.objects.order_by('-updated_at').first()
 
-        if not config:
-            return Response({"error": "No configuration published yet"}, status=status.HTTP_404_NOT_FOUND)
+        content_data = config.content_json if config else {}
+        restaurant_name = config.restaurant_name if config else "BENGAL HERITAGE DINING"
 
-        serializer = SiteConfigSerializer(config)
-        return Response(serializer.data)
+        # Fetch custom pages & blogs
+        custom_pages = CustomPage.objects.filter(is_published=True).order_by('-created_at')
+        blog_categories = BlogCategory.objects.all().order_by('name')
+        blog_posts = BlogPost.objects.filter(is_published=True).order_by('-published_at')
+
+        return Response({
+            "status": "success",
+            "restaurant_name": restaurant_name,
+            "restaurant": {"name": restaurant_name, "slug": "bengal-heritage"},
+            "content_json": content_data,
+            "custom_pages": CustomPageSerializer(custom_pages, many=True).data,
+            "blog_categories": BlogCategorySerializer(blog_categories, many=True).data,
+            "blog_posts": BlogPostSerializer(blog_posts, many=True).data,
+        })
+
+
+class CustomPageDetailView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, slug):
+        page = get_object_or_404(CustomPage, slug=slug, is_published=True)
+        return Response({
+            "status": "success",
+            "page": CustomPageSerializer(page).data,
+            "title": page.title,
+            "blocks": page.blocks,
+        })
+
+
+class BlogPostListView(generics.ListAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = BlogPostSerializer
+
+    def get_queryset(self):
+        qs = BlogPost.objects.filter(is_published=True)
+        cat_slug = self.request.query_params.get('category')
+        if cat_slug:
+            qs = qs.filter(category__slug=cat_slug)
+        return qs.order_by('-published_at')
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        return Response({
+            "status": "success",
+            "posts": response.data,
+            "results": response.data,
+        })
+
+
+class BlogPostDetailView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, slug):
+        post = get_object_or_404(BlogPost, slug=slug, is_published=True)
+        return Response({
+            "status": "success",
+            "post": BlogPostSerializer(post).data,
+        })
+
+
+class ReservationCreateView(generics.CreateAPIView):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = ReservationSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = serializer.save()
+        return Response({
+            "status": "success",
+            "message": "Your table reservation inquiry has been submitted for host desk confirmation.",
+            "data": ReservationSerializer(instance).data,
+            "reference_code": instance.reference_code,
+        }, status=status.HTTP_201_CREATED)
+
+
+class ReservationLookupView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        code = request.query_params.get('code') or request.query_params.get('ref')
+        if not code:
+            return Response({"error": "Reference code query parameter is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        reservation = Reservation.objects.filter(reference_code__iexact=code.strip()).first()
+        if not reservation:
+            return Response({"error": f"No reservation record found for reference code '{code}'"}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response({
+            "status": "success",
+            "reservation": ReservationSerializer(reservation).data
+        })
+
+
+class ReservationAvailabilityView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        date = request.query_params.get('date')
+        shift = request.query_params.get('shift', 'dinner').lower()
+        capacity = 100 if shift == 'lunch' else 160
+        booked = Reservation.objects.filter(reservation_date=date, shift=shift, status__in=['pending', 'confirmed', 'seated']).count() if date else 6
+        remaining = max(0, capacity - booked)
+
+        return Response({
+            "date": date,
+            "shift": shift,
+            "capacity": capacity,
+            "booked_covers": booked,
+            "remaining_covers": remaining,
+            "is_available": remaining > 0,
+        })
 
 
 class MenuCategoryViewSet(viewsets.ModelViewSet):

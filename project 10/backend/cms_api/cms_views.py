@@ -5,14 +5,31 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from .models import SiteConfig, MenuCategory, MenuItem, Reservation
+from django.utils.text import slugify
+from .models import SiteConfig, Reservation, CustomPage, BlogCategory, BlogPost, MenuCategory, MenuItem
 
 def is_staff_or_superuser(user):
     return user.is_authenticated and (user.is_staff or user.is_superuser)
 
+
+def get_site_config(user=None):
+    config = SiteConfig.objects.filter(is_published=True).order_by('-updated_at').first()
+    if not config:
+        config = SiteConfig.objects.order_by('-updated_at').first()
+    if not config:
+        config = SiteConfig.objects.create(
+            restaurant_name="BENGAL HERITAGE DINING",
+            content_json={},
+            theme_json={},
+            is_published=True,
+            updated_by=user if user and user.is_authenticated else None
+        )
+    return config
+
+
 def cms_login_view(request):
     if request.user.is_authenticated and (request.user.is_staff or request.user.is_superuser):
-        return redirect('cms_dashboard')
+        return redirect('cms_overview')
 
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
@@ -21,8 +38,8 @@ def cms_login_view(request):
 
         if user and (user.is_staff or user.is_superuser):
             login(request, user)
-            messages.success(request, f"Welcome, {user.username}. Access to Bengali Heritage CMS Studio granted.")
-            next_url = request.GET.get('next', reverse('cms_dashboard'))
+            messages.success(request, f"Welcome, {user.username}. Access to Bengal Heritage CMS Studio granted.")
+            next_url = request.GET.get('next', reverse('cms_overview'))
             return HttpResponseRedirect(next_url)
         else:
             messages.error(request, "Access Denied: Invalid administrator credentials or insufficient staff permissions.")
@@ -34,312 +51,205 @@ def cms_login_view(request):
 @user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
 def cms_logout_view(request):
     logout(request)
-    messages.info(request, "You have been securely signed out of the Bengali Heritage CMS Studio.")
+    messages.info(request, "You have been securely signed out of Bengal Heritage CMS Studio.")
     return redirect('cms_login')
 
 
 @login_required(login_url='/cms/login/')
 @user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
-def cms_dashboard_view(request):
-    config = SiteConfig.objects.filter(is_published=True).order_by('-updated_at').first()
-    if not config:
-        config = SiteConfig.objects.order_by('-updated_at').first()
-    if not config:
-        config = SiteConfig.objects.create(
-            restaurant_name="BENGAL HERITAGE DINING",
-            content_json={},
-            theme_json={},
-            default_language="en",
-            supported_languages=["en", "bn"],
-            is_published=True,
-            updated_by=request.user
-        )
+def cms_overview_view(request):
+    config = get_site_config(request.user)
+    content = config.content_json or {}
+
+    total_reservations = Reservation.objects.count()
+    pending_reservations = Reservation.objects.filter(status='pending').count()
+    confirmed_reservations = Reservation.objects.filter(status='confirmed').count()
+    seated_reservations = Reservation.objects.filter(status='seated').count()
+    lunch_covers = Reservation.objects.filter(shift='lunch', status__in=['pending', 'confirmed', 'seated']).count()
+    dinner_covers = Reservation.objects.filter(shift='dinner', status__in=['pending', 'confirmed', 'seated']).count()
+
+    total_pages = CustomPage.objects.count()
+    total_articles = BlogPost.objects.count()
+    menu_categories = MenuCategory.objects.count() or len(content.get('menu', {}).get('categories', []))
+
+    context = {
+        'page_title': 'Overview & Key Metrics',
+        'config': config,
+        'content': content,
+        'total_reservations': total_reservations,
+        'pending_reservations': pending_reservations,
+        'confirmed_reservations': confirmed_reservations,
+        'seated_reservations': seated_reservations,
+        'lunch_covers': lunch_covers,
+        'dinner_covers': dinner_covers,
+        'total_pages': total_pages,
+        'total_articles': total_articles,
+        'menu_categories': menu_categories,
+        'recent_reservations': Reservation.objects.all().order_by('-created_at')[:6],
+    }
+    return render(request, 'cms/overview.html', context)
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_pages_view(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'create_page':
+            title = request.POST.get('title', '').strip()
+            slug = request.POST.get('slug', '').strip() or slugify(title)
+            meta_desc = request.POST.get('meta_description', '').strip()
+
+            if title and slug:
+                CustomPage.objects.create(
+                    title=title,
+                    slug=slug,
+                    meta_description=meta_desc,
+                    blocks=[],
+                    is_published=True
+                )
+                messages.success(request, f"Created new custom page '{title}' (/{slug})")
+                return redirect('cms_pages')
+        elif action == 'delete_page':
+            page_id = request.POST.get('page_id')
+            page_obj = get_object_or_404(CustomPage, id=page_id)
+            title = page_obj.title
+            page_obj.delete()
+            messages.warning(request, f"Deleted page '{title}'")
+            return redirect('cms_pages')
+
+    pages = CustomPage.objects.all().order_by('-updated_at')
+    return render(request, 'cms/pages.html', {
+        'page_title': 'Elementor-Style Standalone Pages',
+        'pages': pages,
+    })
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_page_builder_view(request, pk=None):
+    page_obj = None
+    if pk:
+        page_obj = get_object_or_404(CustomPage, pk=pk)
 
     if request.method == 'POST':
         action = request.POST.get('action')
+        if action == 'save_page':
+            title = request.POST.get('title', '').strip()
+            slug = request.POST.get('slug', '').strip() or slugify(title)
+            meta_description = request.POST.get('meta_description', '').strip()
+            is_published = request.POST.get('is_published') == 'on'
+            blocks_json_str = request.POST.get('blocks_json', '[]')
 
-        if action == 'save_raw_json':
-            raw_json_str = request.POST.get('raw_json', '')
             try:
-                parsed_json = json.loads(raw_json_str)
-                config.content_json = parsed_json
-                if 'hero' in parsed_json and 'restaurant_name' in parsed_json['hero']:
-                    name_val = parsed_json['hero']['restaurant_name']
-                    if isinstance(name_val, dict):
-                        config.restaurant_name = name_val.get('en', 'BENGAL HERITAGE DINING')
-                    else:
-                        config.restaurant_name = str(name_val)
-                config.updated_by = request.user
-                config.save()
-                messages.success(request, "Bengali Heritage JSON configuration saved & published successfully!")
-            except json.JSONDecodeError as e:
-                messages.error(request, f"Invalid JSON format: {str(e)}")
+                blocks = json.loads(blocks_json_str)
+            except json.JSONDecodeError:
+                blocks = []
+                messages.error(request, "Blocks JSON invalid. Falling back to previous layout.")
 
-        elif action == 'save_form_sections':
-            data = config.content_json if isinstance(config.content_json, dict) else {}
+            if not page_obj:
+                page_obj = CustomPage.objects.create(
+                    title=title,
+                    slug=slug,
+                    meta_description=meta_description,
+                    blocks=blocks,
+                    is_published=is_published
+                )
+                messages.success(request, f"Created page '{title}' with {len(blocks)} blocks!")
+                return redirect('cms_page_builder_edit', pk=page_obj.pk)
+            else:
+                page_obj.title = title
+                page_obj.slug = slug
+                page_obj.meta_description = meta_description
+                page_obj.blocks = blocks
+                page_obj.is_published = is_published
+                page_obj.save()
+                messages.success(request, f"Page '{page_obj.title}' saved successfully!")
+                return redirect('cms_page_builder_edit', pk=page_obj.pk)
 
-            # General & Hero
-            hero = data.get('hero', {})
-            name_en = request.POST.get('hero_name_en', 'BENGAL HERITAGE DINING')
-            name_bn = request.POST.get('hero_name_bn', 'বাংলার ঐতিহ্য ডাইনিং')
-            hero['restaurant_name'] = {'en': name_en, 'bn': name_bn}
+    blocks_json = json.dumps(page_obj.blocks if page_obj else [], indent=2)
+    return render(request, 'cms/page_builder.html', {
+        'page_title': f"Visual Page Builder — {page_obj.title if page_obj else 'New Page'}",
+        'page_obj': page_obj,
+        'blocks_json': blocks_json,
+    })
 
-            hero['eyebrow'] = {
-                'en': request.POST.get('hero_eyebrow_en', 'A TASTE OF BENGAL'),
-                'bn': request.POST.get('hero_eyebrow_bn', 'বাংলার স্বাদের গল্প')
-            }
-            hero['title'] = {
-                'en': request.POST.get('hero_title_en', 'Where Heritage Meets the Art of Dining.'),
-                'bn': request.POST.get('hero_title_bn', 'ঐতিহ্যের ছোঁয়ায় আধুনিক ভোজনের অভিজ্ঞতা।')
-            }
-            hero['tagline'] = {
-                'en': request.POST.get('hero_tagline_en', 'Traditional Bengal Reinterpreted Through Contemporary Luxury'),
-                'bn': request.POST.get('hero_tagline_bn', 'ঐতিহ্যবাহী বাংলার স্বাদ ও সমকালীন আভিজাত্য')
-            }
-            hero['lead_description'] = {
-                'en': request.POST.get('hero_desc_en', 'Discover the flavors, stories, and warmth of Bengali hospitality in a contemporary dining experience.'),
-                'bn': request.POST.get('hero_desc_bn', 'বাঙালির স্বাদ, ঐতিহ্য ও আন্তরিক আতিথেয়তার এক অনন্য অভিজ্ঞতা।')
-            }
-            hero['cta_primary_text'] = {
-                'en': request.POST.get('hero_cta_primary_en', 'Explore Our Menu'),
-                'bn': request.POST.get('hero_cta_primary_bn', 'মেনু দেখুন')
-            }
-            hero['cta_secondary_text'] = {
-                'en': request.POST.get('hero_cta_secondary_en', 'Discover Our Story'),
-                'bn': request.POST.get('hero_cta_secondary_bn', 'আমাদের গল্প')
-            }
-            data['hero'] = hero
 
-            # S03: Brand Story
-            story = data.get('brandStory', {})
-            story['subtitle'] = {
-                'en': request.POST.get('story_subtitle_en', 'Our Heritage, Our Story'),
-                'bn': request.POST.get('story_subtitle_bn', 'আমাদের ঐতিহ্য ও গল্প')
-            }
-            story['title'] = {
-                'en': request.POST.get('story_title_en', 'Centuries of Culinary Artistry in Every Dish'),
-                'bn': request.POST.get('story_title_bn', 'প্রতিটি পদে শতবর্ষের ঐতিহ্যবাহী রন্ধনশিল্প')
-            }
-            story['body_paragraph_1'] = {
-                'en': request.POST.get('story_p1_en', ''),
-                'bn': request.POST.get('story_p1_bn', '')
-            }
-            story['body_paragraph_2'] = {
-                'en': request.POST.get('story_p2_en', ''),
-                'bn': request.POST.get('story_p2_bn', '')
-            }
-            story['quote'] = {
-                'en': request.POST.get('story_quote_en', ''),
-                'bn': request.POST.get('story_quote_bn', '')
-            }
-            story['quote_author'] = {
-                'en': request.POST.get('story_quote_author_en', ''),
-                'bn': request.POST.get('story_quote_author_bn', '')
-            }
-            data['brandStory'] = story
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_identity_view(request):
+    config = get_site_config(request.user)
+    content = config.content_json or {}
 
-            # S04: 3D Tour
-            tour = data.get('virtualTour', {})
-            tour['subtitle'] = {
-                'en': request.POST.get('tour_subtitle_en', 'Explore The Five Spaces'),
-                'bn': request.POST.get('tour_subtitle_bn', 'পাঁচটি নান্দনিক স্পেস অন্বেষণ করুন')
-            }
-            tour['title'] = {
-                'en': request.POST.get('tour_title_en', 'Interactive Heritage Virtual Tour'),
-                'bn': request.POST.get('tour_title_bn', 'ইন্টারেক্টিভ রেস্তোরাঁ ভার্চুয়াল ট্যুর')
-            }
-            tour['description'] = {
-                'en': request.POST.get('tour_desc_en', ''),
-                'bn': request.POST.get('tour_desc_bn', '')
-            }
-            data['virtualTour'] = tour
+    if request.method == 'POST':
+        name_en = request.POST.get('restaurant_name_en', 'BENGAL HERITAGE DINING').strip()
+        tagline_en = request.POST.get('tagline_en', '').strip()
+        address_en = request.POST.get('address_en', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        email = request.POST.get('email', '').strip()
+        hours_en = request.POST.get('hours_en', '').strip()
 
-            # S05: Dining Philosophy
-            phil = data.get('diningPhilosophy', {})
-            phil['subtitle'] = {
-                'en': request.POST.get('phil_subtitle_en', 'The Bengali Dining Philosophy'),
-                'bn': request.POST.get('phil_subtitle_bn', 'বাঙালি ভোজন দর্শন')
-            }
-            phil['title'] = {
-                'en': request.POST.get('phil_title_en', 'Respect for Terroir, Patience & Warmth'),
-                'bn': request.POST.get('phil_title_bn', 'মাটি, মমতা ও আতিথেয়তার মেলবন্ধন')
-            }
-            data['diningPhilosophy'] = phil
+        hero = content.get('hero', {})
+        hero['restaurant_name'] = {'en': name_en, 'bn': request.POST.get('restaurant_name_bn', 'বাংলার ঐতিহ্য ডাইনিং')}
+        hero['tagline'] = {'en': tagline_en, 'bn': request.POST.get('tagline_bn', '')}
+        content['hero'] = hero
 
-            # S06: Signature Dishes
-            sig = data.get('signatureDishes', {})
-            sig['subtitle'] = {
-                'en': request.POST.get('sig_subtitle_en', 'Artisan Recipes of Bengal'),
-                'bn': request.POST.get('sig_subtitle_bn', 'বাংলার স্বাক্ষর রন্ধনশিল্প')
-            }
-            sig['title'] = {
-                'en': request.POST.get('sig_title_en', 'Signature Bengali Culinary Offerings'),
-                'bn': request.POST.get('sig_title_bn', 'স্বাক্ষর বাঙালি খাবারের সমাহার')
-            }
-            data['signatureDishes'] = sig
+        loc = content.get('location', {})
+        loc['address'] = {'en': address_en, 'bn': request.POST.get('address_bn', '')}
+        loc['phone'] = phone
+        loc['email'] = email
+        loc['hours'] = {'en': hours_en, 'bn': request.POST.get('hours_bn', '')}
+        content['location'] = loc
 
-            # S07: Menu Explorer
-            menu = data.get('menuExplorer', {})
-            menu['subtitle'] = {
-                'en': request.POST.get('menu_subtitle_en', 'Complete Bilingual Menu Explorer'),
-                'bn': request.POST.get('menu_subtitle_bn', 'দ্বিভাষিক মেনু এক্সপ্লোরার')
-            }
-            menu['title'] = {
-                'en': request.POST.get('menu_title_en', 'Flavors of Bengal'),
-                'bn': request.POST.get('menu_title_bn', 'বাংলার খাঁটি স্বাদ')
-            }
-            data['menuExplorer'] = menu
+        config.restaurant_name = name_en
+        config.content_json = content
+        config.save()
+        messages.success(request, "Bengal Heritage identity & logistics updated successfully!")
+        return redirect('cms_identity')
 
-            # S08: Architecture
-            arch = data.get('architecture', {})
-            arch['subtitle'] = {
-                'en': request.POST.get('arch_subtitle_en', 'Terracotta, Teak & Jamdani'),
-                'bn': request.POST.get('arch_subtitle_bn', 'টেরাকোটা, সেগুন ও জামদানির বুনন')
-            }
-            arch['title'] = {
-                'en': request.POST.get('arch_title_en', 'Architecture, Materials & Craftsmanship'),
-                'bn': request.POST.get('arch_title_bn', 'স্থাপত্যশৈলী ও ঐতিহ্যবাহী কারুকাজ')
-            }
-            arch['quote'] = {
-                'en': request.POST.get('arch_quote_en', ''),
-                'bn': request.POST.get('arch_quote_bn', '')
-            }
-            data['architecture'] = arch
-
-            # S09: Chef
-            chef = data.get('chef', {})
-            chef['name'] = {
-                'en': request.POST.get('chef_name_en', 'Master Chef Ananya Sen'),
-                'bn': request.POST.get('chef_name_bn', 'মাস্টার শেফ অনন্যা সেন')
-            }
-            chef['title'] = {
-                'en': request.POST.get('chef_title_en', 'Culinary Director & Heritage Archivist'),
-                'bn': request.POST.get('chef_title_bn', 'রন্ধন পরিচালক ও খাদ্য ঐতিহ্যবিদ')
-            }
-            chef['bio'] = {
-                'en': request.POST.get('chef_bio_en', ''),
-                'bn': request.POST.get('chef_bio_bn', '')
-            }
-            chef['quote'] = {
-                'en': request.POST.get('chef_quote_en', ''),
-                'bn': request.POST.get('chef_quote_bn', '')
-            }
-            data['chef'] = chef
-
-            # S10: Cultural Experiences
-            exp = data.get('culturalExperiences', {})
-            exp['subtitle'] = {
-                'en': request.POST.get('exp_subtitle_en', 'Special Dining Occasions'),
-                'bn': request.POST.get('exp_subtitle_bn', 'বিশেষ ভোজন ও সাংস্কৃতিক উৎসব')
-            }
-            exp['title'] = {
-                'en': request.POST.get('exp_title_en', 'Cultural Dining & Special Experiences'),
-                'bn': request.POST.get('exp_title_bn', 'ঐতিহ্যবাহী ভোজন ও উৎসবের আয়োজন')
-            }
-            data['culturalExperiences'] = exp
-
-            # S11: Gallery
-            gallery = data.get('gallery', {})
-            gallery['subtitle'] = {
-                'en': request.POST.get('gal_subtitle_en', 'Visual Archives'),
-                'bn': request.POST.get('gal_subtitle_bn', 'দৃশ্যপট ও পরিবেশ')
-            }
-            gallery['title'] = {
-                'en': request.POST.get('gal_title_en', 'Food, Craft & Atmosphere Gallery'),
-                'bn': request.POST.get('gal_title_bn', 'খাবার, কারুকাজ ও রূপময় আবহ')
-            }
-            data['gallery'] = gallery
-
-            # S12: Testimonials
-            testimonials = data.get('testimonials', {})
-            testimonials['subtitle'] = {
-                'en': request.POST.get('test_subtitle_en', 'Guest Stories & Reviews'),
-                'bn': request.POST.get('test_subtitle_bn', 'অতিথিদের অভিজ্ঞতা ও সম্মাননা')
-            }
-            testimonials['title'] = {
-                'en': request.POST.get('test_title_en', 'What Our Diners Say'),
-                'bn': request.POST.get('test_title_bn', 'অতিথিদের মূল্যায়ন')
-            }
-            data['testimonials'] = testimonials
-
-            # S13: Reservation Info
-            res_cfg = data.get('reservation', {})
-            res_cfg['subtitle'] = {
-                'en': request.POST.get('res_subtitle_en', 'Reserve Your Table'),
-                'bn': request.POST.get('res_subtitle_bn', 'টেবিল বুকিং করুন')
-            }
-            res_cfg['title'] = {
-                'en': request.POST.get('res_title_en', 'Table Reservation Inquiry'),
-                'bn': request.POST.get('res_title_bn', 'টেবিল সংরক্ষণ ও অনুসন্ধান')
-            }
-            res_cfg['description'] = {
-                'en': request.POST.get('res_desc_en', ''),
-                'bn': request.POST.get('res_desc_bn', '')
-            }
-            res_cfg['policy'] = {
-                'en': request.POST.get('res_policy_en', ''),
-                'bn': request.POST.get('res_policy_bn', '')
-            }
-            data['reservation'] = res_cfg
-
-            # S14: Location
-            loc = data.get('location', {})
-            loc['subtitle'] = {
-                'en': request.POST.get('loc_subtitle_en', 'Heritage Quarter & Coordinates'),
-                'bn': request.POST.get('loc_subtitle_bn', 'ঐতিহাসিক প্রান্ত ও অবস্থান')
-            }
-            loc['title'] = {
-                'en': request.POST.get('loc_title_en', 'Location, Hours & Directions'),
-                'bn': request.POST.get('loc_title_bn', 'ঠিকানা, সময়সূচি ও পথনির্দেশ')
-            }
-            loc['address'] = {
-                'en': request.POST.get('loc_address_en', 'House 14, Road 71, Gulshan Heritage Enclave, Dhaka'),
-                'bn': request.POST.get('loc_address_bn', 'বাড়ি ১৪, রোড ৭১, গুলশান হেরিটেজ এনক্লেভ, ঢাকা')
-            }
-            loc['phone'] = request.POST.get('loc_phone', '+880 1711-234567')
-            loc['whatsapp'] = request.POST.get('loc_whatsapp', '+880 1711-234567')
-            loc['email'] = request.POST.get('loc_email', 'hospitality@bengalheritage.com')
-            loc['hours'] = {
-                'en': request.POST.get('loc_hours_en', 'Daily: 12:00 PM – 11:30 PM (Lunch & Heritage Dinner)'),
-                'bn': request.POST.get('loc_hours_bn', 'প্রতিদিন: দুপুর ১২:০০ – রাত ১১:৩০ (মধ্যাহ্নভোজ ও সান্ধ্যভোজ)')
-            }
-            data['location'] = loc
-
-            # Theme Colors
-            theme = data.get('theme', {})
-            colors = theme.get('colors', {})
-            colors['terracotta'] = request.POST.get('theme_terracotta', '#A6533B')
-            colors['indigo'] = request.POST.get('theme_indigo', '#26344A')
-            colors['ivory'] = request.POST.get('theme_ivory', '#F4EBDD')
-            colors['brass'] = request.POST.get('theme_brass', '#B18A54')
-            colors['jute'] = request.POST.get('theme_jute', '#C8B18D')
-            colors['leaf'] = request.POST.get('theme_leaf', '#536B50')
-            colors['charcoal'] = request.POST.get('theme_charcoal', '#242321')
-            colors['river_mist'] = request.POST.get('theme_river_mist', '#AEBCC0')
-            theme['colors'] = colors
-            data['theme'] = theme
-
-            config.content_json = data
-            config.restaurant_name = name_en
-            config.default_language = request.POST.get('default_language', 'en')
-            config.updated_by = request.user
-            config.save()
-            messages.success(request, "Bengali Heritage section fields updated and published instantly!")
-
-        return redirect('cms_dashboard')
-
-    reservations = Reservation.objects.all().order_by('-created_at')
-    categories = MenuCategory.objects.all().order_by('sort_order')
-    menu_items = MenuItem.objects.all().order_by('sort_order')
-    pretty_json = json.dumps(config.content_json, indent=2, ensure_ascii=False)
-
-    return render(request, 'cms/dashboard.html', {
+    return render(request, 'cms/identity.html', {
+        'page_title': 'Identity & Brand Coordinates',
         'config': config,
-        'pretty_json': pretty_json,
-        'reservations': reservations,
-        'categories': categories,
-        'menu_items': menu_items,
-        'content': config.content_json or {}
+        'content': content,
+    })
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_reservations_view(request):
+    shift_filter = request.GET.get('shift', '')
+    status_filter = request.GET.get('status', '')
+    search_query = request.GET.get('search', '').strip()
+
+    qs = Reservation.objects.all().order_by('-created_at')
+    if shift_filter in ['lunch', 'dinner']:
+        qs = qs.filter(shift=shift_filter)
+    if status_filter:
+        qs = qs.filter(status=status_filter)
+    if search_query:
+        qs = qs.filter(
+            models.Q(full_name__icontains=search_query) |
+            models.Q(reference_code__icontains=search_query) |
+            models.Q(phone__icontains=search_query) |
+            models.Q(table_number__icontains=search_query)
+        )
+
+    counts = {
+        'all': Reservation.objects.count(),
+        'pending': Reservation.objects.filter(status='pending').count(),
+        'confirmed': Reservation.objects.filter(status='confirmed').count(),
+        'seated': Reservation.objects.filter(status='seated').count(),
+        'lunch': Reservation.objects.filter(shift='lunch').count(),
+        'dinner': Reservation.objects.filter(shift='dinner').count(),
+    }
+
+    return render(request, 'cms/reservations.html', {
+        'page_title': 'Maitre D’ Table Reservations & Host Desk',
+        'reservations': qs,
+        'counts': counts,
+        'current_shift': shift_filter,
+        'current_status': status_filter,
+        'search_query': search_query,
     })
 
 
@@ -349,11 +259,19 @@ def cms_reservation_status_view(request, res_id):
     if request.method == 'POST':
         reservation = get_object_or_404(Reservation, id=res_id)
         new_status = request.POST.get('status')
-        if new_status in dict(Reservation.STATUS_CHOICES):
+        table_num = request.POST.get('table_number')
+        admin_notes = request.POST.get('admin_notes')
+
+        if new_status:
             reservation.status = new_status
-            reservation.save()
-            messages.success(request, f"Reservation for {reservation.full_name} updated to {new_status.title()}.")
-    return redirect('cms_dashboard')
+        if table_num is not None:
+            reservation.table_number = table_num
+        if admin_notes is not None:
+            reservation.admin_notes = admin_notes
+        reservation.save()
+
+        messages.success(request, f"Updated reservation [{reservation.reference_code}] for {reservation.full_name}.")
+    return redirect(request.META.get('HTTP_REFERER', 'cms_reservations'))
 
 
 @login_required(login_url='/cms/login/')
@@ -361,7 +279,258 @@ def cms_reservation_status_view(request, res_id):
 def cms_reservation_delete_view(request, res_id):
     if request.method == 'POST':
         reservation = get_object_or_404(Reservation, id=res_id)
-        name = reservation.full_name
+        ref = reservation.reference_code
         reservation.delete()
-        messages.success(request, f"Reservation inquiry for {name} has been removed.")
-    return redirect('cms_dashboard')
+        messages.warning(request, f"Reservation inquiry [{ref}] removed.")
+    return redirect(request.META.get('HTTP_REFERER', 'cms_reservations'))
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_menu_view(request):
+    config = get_site_config(request.user)
+    content = config.content_json or {}
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'save_menu_raw':
+            raw_str = request.POST.get('menu_json', '{}')
+            try:
+                parsed = json.loads(raw_str)
+                content['menu'] = parsed
+                config.content_json = content
+                config.save()
+                messages.success(request, "Bengal Heritage menu repertoire saved successfully!")
+            except json.JSONDecodeError as e:
+                messages.error(request, f"Invalid JSON format: {e}")
+            return redirect('cms_menu')
+
+    categories = MenuCategory.objects.all().order_by('sort_order')
+    menu_items = MenuItem.objects.all().order_by('sort_order')
+    menu_json = json.dumps(content.get('menu', {}), indent=2, ensure_ascii=False)
+
+    return render(request, 'cms/menu.html', {
+        'page_title': 'Heritage Menu & Seasonal Offerings',
+        'menu_json': menu_json,
+        'categories': categories,
+        'menu_items': menu_items,
+        'content': content,
+    })
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_tour_view(request):
+    config = get_site_config(request.user)
+    content = config.content_json or {}
+
+    if request.method == 'POST':
+        tour_str = request.POST.get('tour_json', '{}')
+        try:
+            content['virtualTour'] = json.loads(tour_str)
+            config.content_json = content
+            config.save()
+            messages.success(request, "Virtual tour viewpoints saved successfully!")
+        except Exception as e:
+            messages.error(request, f"Error saving viewpoints: {e}")
+        return redirect('cms_tour')
+
+    tour_json = json.dumps(content.get('virtualTour', {}), indent=2, ensure_ascii=False)
+    return render(request, 'cms/tour.html', {
+        'page_title': '3D Courtyard Virtual Tour',
+        'tour_json': tour_json,
+        'content': content,
+    })
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_sections_view(request):
+    config = get_site_config(request.user)
+    content = config.content_json or {}
+
+    if request.method == 'POST':
+        sections_str = request.POST.get('sections_json', '{}')
+        try:
+            parsed = json.loads(sections_str)
+            config.content_json = parsed
+            config.save()
+            messages.success(request, "All 15 Bengal Heritage sections updated & published successfully!")
+        except Exception as e:
+            messages.error(request, f"Invalid JSON format: {e}")
+        return redirect('cms_sections')
+
+    sections_json = json.dumps(content, indent=2, ensure_ascii=False)
+    return render(request, 'cms/sections.html', {
+        'page_title': '15-Section Master Editor',
+        'sections_json': sections_json,
+        'content': content,
+    })
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_gallery_view(request):
+    config = get_site_config(request.user)
+    content = config.content_json or {}
+    gallery = content.get('gallery', {})
+
+    if request.method == 'POST':
+        gallery_str = request.POST.get('gallery_json', '{}')
+        try:
+            content['gallery'] = json.loads(gallery_str)
+            config.content_json = content
+            config.save()
+            messages.success(request, "Heritage visual gallery updated!")
+        except Exception as e:
+            messages.error(request, f"Error: {e}")
+        return redirect('cms_gallery')
+
+    gallery_json = json.dumps(gallery, indent=2, ensure_ascii=False)
+    return render(request, 'cms/gallery.html', {
+        'page_title': 'Heritage Visual Archive & Gallery',
+        'gallery_json': gallery_json,
+        'content': content,
+    })
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_reviews_view(request):
+    config = get_site_config(request.user)
+    content = config.content_json or {}
+    test = content.get('testimonials', {})
+
+    if request.method == 'POST':
+        rev_str = request.POST.get('reviews_json', '{}')
+        try:
+            content['testimonials'] = json.loads(rev_str)
+            config.content_json = content
+            config.save()
+            messages.success(request, "Guest accolades & critical honors saved!")
+        except Exception as e:
+            messages.error(request, f"Error: {e}")
+        return redirect('cms_reviews')
+
+    reviews_json = json.dumps(test, indent=2, ensure_ascii=False)
+    return render(request, 'cms/reviews.html', {
+        'page_title': 'Guest Reviews & Distinctions',
+        'reviews_json': reviews_json,
+        'content': content,
+    })
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_faqs_view(request):
+    config = get_site_config(request.user)
+    content = config.content_json or {}
+
+    if request.method == 'POST':
+        faqs_str = request.POST.get('faqs_json', '[]')
+        try:
+            content['faqs'] = json.loads(faqs_str)
+            config.content_json = content
+            config.save()
+            messages.success(request, "Frequently Asked Questions updated!")
+        except Exception as e:
+            messages.error(request, f"Error: {e}")
+        return redirect('cms_faqs')
+
+    faqs_json = json.dumps(content.get('faqs', []), indent=2, ensure_ascii=False)
+    return render(request, 'cms/faqs.html', {
+        'page_title': 'Frequently Asked Questions',
+        'faqs_json': faqs_json,
+        'content': content,
+    })
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_schema_view(request):
+    config = get_site_config(request.user)
+    schema_json = json.dumps(config.content_json, indent=2, ensure_ascii=False)
+    return render(request, 'cms/schema.html', {
+        'page_title': 'Master Schema & JSON Architecture',
+        'schema_json': schema_json,
+        'config': config,
+    })
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_blog_view(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'create_post':
+            title = request.POST.get('title', '').strip()
+            slug = request.POST.get('slug', '').strip() or slugify(title)
+            category_id = request.POST.get('category_id')
+            excerpt = request.POST.get('excerpt', '').strip()
+            content_html = request.POST.get('content', '').strip()
+            featured_image = request.POST.get('featured_image', '').strip()
+            author_name = request.POST.get('author_name', 'Chef Subrata Roy').strip()
+            reading_time = request.POST.get('reading_time', '5 min read').strip()
+
+            cat = None
+            if category_id:
+                cat = BlogCategory.objects.filter(id=category_id).first()
+
+            BlogPost.objects.create(
+                title=title,
+                slug=slug,
+                category=cat,
+                excerpt=excerpt,
+                content=content_html,
+                featured_image=featured_image,
+                author_name=author_name,
+                reading_time=reading_time,
+                is_published=True
+            )
+            messages.success(request, f"Created new chronicle '{title}'!")
+            return redirect('cms_blog')
+
+    posts = BlogPost.objects.all().order_by('-published_at', '-created_at')
+    categories = BlogCategory.objects.all().order_by('name')
+
+    return render(request, 'cms/blog.html', {
+        'page_title': 'The Bengal Heritage Gazette & Culinary Journal',
+        'posts': posts,
+        'categories': categories,
+    })
+
+
+@login_required(login_url='/cms/login/')
+@user_passes_test(is_staff_or_superuser, login_url='/cms/login/')
+def cms_blog_edit_view(request, pk):
+    post = get_object_or_404(BlogPost, pk=pk)
+    categories = BlogCategory.objects.all().order_by('name')
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'delete_post':
+            title = post.title
+            post.delete()
+            messages.warning(request, f"Chronicle '{title}' deleted.")
+            return redirect('cms_blog')
+
+        post.title = request.POST.get('title', post.title).strip()
+        post.slug = request.POST.get('slug', post.slug).strip() or slugify(post.title)
+        cat_id = request.POST.get('category_id')
+        post.category = BlogCategory.objects.filter(id=cat_id).first() if cat_id else None
+        post.excerpt = request.POST.get('excerpt', post.excerpt).strip()
+        post.content = request.POST.get('content', post.content).strip()
+        post.featured_image = request.POST.get('featured_image', post.featured_image).strip()
+        post.author_name = request.POST.get('author_name', post.author_name).strip()
+        post.reading_time = request.POST.get('reading_time', post.reading_time).strip()
+        post.is_published = request.POST.get('is_published') == 'on'
+        post.save()
+
+        messages.success(request, f"Chronicle '{post.title}' updated successfully!")
+        return redirect('cms_blog')
+
+    return render(request, 'cms/blog_edit.html', {
+        'page_title': f"Edit Chronicle — {post.title}",
+        'post': post,
+        'categories': categories,
+    })
