@@ -1,0 +1,137 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Table Reservation & Host Desk | Charred & Prime CMS{% endblock %}
+
+{% block content %}
+<div class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <div class="cms-card-title">
+        📅 Table Reservation & Host Desk Run-Sheet
+      </div>
+      <div style="font-size: 12px; color: var(--taupe); margin-top: 4px;">
+        Manage table assignments, seating statuses, dietary requirements, and live guest shifts.
+      </div>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <a href="?shift=lunch" class="btn btn-outline btn-sm {% if shift_filter == 'lunch' %}active{% endif %}" style="border-color: var(--amber); color: var(--amber);">
+        ☀️ LUNCH ({{ counts.lunch }})
+      </a>
+      <a href="?shift=dinner" class="btn btn-outline btn-sm {% if shift_filter == 'dinner' %}active{% endif %}" style="border-color: var(--champagne); color: var(--champagne);">
+        🌙 DINNER ({{ counts.dinner }})
+      </a>
+      <a href="?shift=all" class="btn btn-outline btn-sm {% if shift_filter == 'all' %}active{% endif %}">
+        ALL SHIFTS
+      </a>
+    </div>
+  </div>
+
+  <!-- Filter Pills -->
+  <div style="display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap;">
+    <a href="?status=all&shift={{ shift_filter }}" class="btn btn-outline btn-sm {% if status_filter == 'all' %}btn-bronze{% endif %}">
+      All ({{ reservations|length }})
+    </a>
+    <a href="?status=pending&shift={{ shift_filter }}" class="btn btn-outline btn-sm {% if status_filter == 'pending' %}btn-bronze{% endif %}" style="color: #f3be7a;">
+      Pending ({{ counts.pending }})
+    </a>
+    <a href="?status=confirmed&shift={{ shift_filter }}" class="btn btn-outline btn-sm {% if status_filter == 'confirmed' %}btn-bronze{% endif %}" style="color: #68d391;">
+      Confirmed ({{ counts.confirmed }})
+    </a>
+    <a href="?status=seated&shift={{ shift_filter }}" class="btn btn-outline btn-sm {% if status_filter == 'seated' %}btn-bronze{% endif %}" style="color: #63b3ed;">
+      Seated ({{ counts.seated }})
+    </a>
+  </div>
+
+  <table class="cms-table">
+    <thead>
+      <tr>
+        <th>REF CODE</th>
+        <th>GUEST DETAILS</th>
+        <th>DATE & SHIFT</th>
+        <th>PARTY & OCCASION</th>
+        <th>ZONE PREFERENCE</th>
+        <th>DIETARY / NOTES</th>
+        <th>TABLE ASSIGNED</th>
+        <th>STATUS & STAFF ACTION</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for res in reservations %}
+      <tr>
+        <td style="font-family: var(--font-heading); font-weight: 700; color: var(--champagne);">
+          {{ res.reference_code|default:"—" }}
+          <div style="font-size: 10px; color: var(--taupe); font-weight: normal;">
+            {{ res.created_at|date:"M d, H:i" }}
+          </div>
+        </td>
+        <td>
+          <div style="font-weight: 600; color: var(--ivory);">{{ res.full_name }}</div>
+          <div style="font-size: 11px; color: var(--taupe);">📞 {{ res.phone }}</div>
+          {% if res.email %}<div style="font-size: 11px; color: var(--taupe);">✉️ {{ res.email }}</div>{% endif %}
+        </td>
+        <td>
+          <div style="font-weight: 600;">{{ res.preferred_date }}</div>
+          <div style="font-size: 11px; color: {% if res.shift == 'lunch' %}var(--amber){% else %}var(--champagne){% endif %}; font-weight: 700; text-transform: uppercase;">
+            {% if res.shift == 'lunch' %}☀️ LUNCH{% else %}🌙 DINNER{% endif %} • {{ res.preferred_time }}
+          </div>
+        </td>
+        <td>
+          <div style="font-weight: 600;">{{ res.guests }} PAX</div>
+          <div style="font-size: 11px; color: var(--taupe);">{{ res.occasion|default:"Dining" }}</div>
+        </td>
+        <td>
+          <span style="font-size: 12px; color: var(--ivory);">
+            {{ res.selected_experience|default:"Main Dining" }}
+          </span>
+        </td>
+        <td style="max-width: 200px;">
+          <div style="font-size: 12px; color: var(--champagne);">
+            {{ res.dietary_notes|default:res.special_requests|default:"No dietary restrictions noted." }}
+          </div>
+        </td>
+        <td>
+          <form method="POST" action="{% url 'cms_assign_table' res.id %}" style="display: flex; gap: 6px;">
+            {% csrf_token %}
+            <input type="text" name="table_number" class="form-control" style="width: 100px; padding: 4px 8px; font-size: 12px;" value="{{ res.table_number|default:'' }}" placeholder="Table #">
+            <button type="submit" class="btn btn-outline btn-sm">Set</button>
+          </form>
+        </td>
+        <td>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <span class="badge-status status-{{ res.status }}">
+              {{ res.status }}
+            </span>
+            <div style="display: flex; gap: 4px;">
+              {% if res.status != 'confirmed' %}
+              <form method="POST" action="{% url 'cms_res_status' res.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="confirmed">
+                <button type="submit" class="btn btn-outline btn-sm" style="color: #68d391; border-color: #38a169;">✓ Approve</button>
+              </form>
+              {% endif %}
+              {% if res.status != 'seated' %}
+              <form method="POST" action="{% url 'cms_res_status' res.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="seated">
+                <button type="submit" class="btn btn-outline btn-sm" style="color: #63b3ed; border-color: #3182ce;">Seat</button>
+              </form>
+              {% endif %}
+              <form method="POST" action="{% url 'cms_del_res' res.id %}" onsubmit="return confirm('Cancel and delete reservation: {{ res.reference_code }}?');" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-sm">✕</button>
+              </form>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="8" style="text-align: center; padding: 36px; color: var(--taupe);">
+          No reservations found matching the selected shift and status filter.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

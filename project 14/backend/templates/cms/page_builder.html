@@ -1,0 +1,304 @@
+{% extends "cms/base.html" %}
+
+{% block title %}{{ page_title }} | Charred & Prime CMS{% endblock %}
+
+{% block extra_head %}
+<style>
+  .block-card {
+    background: var(--graphite);
+    border: 1px solid var(--border-dark);
+    border-radius: 4px;
+    padding: 18px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(148, 115, 79, 0.15);
+  }
+  .block-type-badge {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--champagne);
+    background: rgba(196, 168, 120, 0.1);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<form method="POST" action="{% url 'cms_save_page' %}" id="pageBuilderForm">
+  {% csrf_token %}
+  {% if page %}
+    <input type="hidden" name="page_id" value="{{ page.id }}">
+  {% endif %}
+  <input type="hidden" name="blocks_json" id="blocksJsonInput" value="{{ blocks_json }}">
+
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <div class="cms-card-title">
+        ⚙️ Page Configuration & SEO
+      </div>
+      <button type="submit" class="btn btn-bronze">
+        💾 Save & Publish Page
+      </button>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Page Title *</label>
+        <input type="text" name="title" class="form-control" value="{{ page.title|default:'' }}" required placeholder="e.g. Subterranean Wine Vault Experience">
+      </div>
+      <div class="form-group">
+        <label class="form-label">URL Slug *</label>
+        <input type="text" name="slug" class="form-control" value="{{ page.slug|default:'' }}" required placeholder="e.g. subterranean-wine-vault-experience">
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Meta SEO Title</label>
+        <input type="text" name="meta_title" class="form-control" value="{{ page.meta_title|default:'' }}" placeholder="Charred & Prime | Private Cellar Dining">
+      </div>
+      <div class="form-group" style="display: flex; align-items: center; padding-top: 24px;">
+        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+          <input type="checkbox" name="is_published" {% if not page or page.is_published %}checked{% endif %}>
+          <span style="font-family: var(--font-heading); font-weight: 600; color: var(--ivory);">Live Public Status (Active on /page/&lt;slug&gt;)</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Meta Description</label>
+      <textarea name="meta_description" class="form-control" rows="2" placeholder="Brief SEO description...">{{ page.meta_description|default:'' }}</textarea>
+    </div>
+  </div>
+
+  <!-- Elementor Visual Canvas -->
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <div class="cms-card-title">
+        🧱 Visual Canvas Sections & Blocks
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="addBlock('hero')">+ Hero</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="addBlock('split')">+ Split Feature</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="addBlock('features')">+ Grid Pillars</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="addBlock('cta')">+ VIP Banner</button>
+        <button type="button" class="btn btn-outline btn-sm" onclick="addBlock('reservation')">+ Table Booking</button>
+      </div>
+    </div>
+
+    <div id="blocksContainer">
+      <!-- Blocks rendered dynamically by JS -->
+    </div>
+
+    <div style="text-align: center; padding: 20px 0; border-top: 1px dashed var(--border-dark);">
+      <button type="submit" class="btn btn-bronze" style="padding: 12px 32px; font-size: 13px;">
+        💾 Save & Compile Canvas
+      </button>
+    </div>
+  </div>
+</form>
+
+<script>
+  let blocks = {{ blocks_json|safe }} || [];
+
+  function renderBlocks() {
+    const container = document.getElementById('blocksContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (blocks.length === 0) {
+      container.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--taupe);">No canvas blocks added yet. Click one of the buttons above to add your first section.</div>';
+      return;
+    }
+
+    blocks.forEach((block, index) => {
+      const card = document.createElement('div');
+      card.className = 'block-card';
+
+      let innerFields = '';
+      if (block.type === 'hero') {
+        innerFields = `
+          <div class="form-group">
+            <label class="form-label">Subtitle / Tagline</label>
+            <input type="text" class="form-control" value="${block.subtitle || ''}" onchange="updateBlockField(${index}, 'subtitle', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hero Title</label>
+            <input type="text" class="form-control" value="${block.title || ''}" onchange="updateBlockField(${index}, 'title', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lead Editorial Text</label>
+            <textarea class="form-control" onchange="updateBlockField(${index}, 'content', this.value)">${block.content || ''}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Call to Action Button Label</label>
+            <input type="text" class="form-control" value="${block.button_text || ''}" onchange="updateBlockField(${index}, 'button_text', this.value)">
+          </div>
+        `;
+      } else if (block.type === 'split') {
+        innerFields = `
+          <div class="grid-2">
+            <div>
+              <div class="form-group">
+                <label class="form-label">Section Tagline</label>
+                <input type="text" class="form-control" value="${block.subtitle || ''}" onchange="updateBlockField(${index}, 'subtitle', this.value)">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Section Headline</label>
+                <input type="text" class="form-control" value="${block.title || ''}" onchange="updateBlockField(${index}, 'title', this.value)">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Story Narrative</label>
+                <textarea class="form-control" onchange="updateBlockField(${index}, 'content', this.value)">${block.content || ''}</textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Button Label</label>
+                <input type="text" class="form-control" value="${block.button_text || ''}" onchange="updateBlockField(${index}, 'button_text', this.value)">
+              </div>
+            </div>
+            <div>
+              <div class="form-group">
+                <label class="form-label">Feature Image URL</label>
+                <input type="text" class="form-control" value="${block.image_url || ''}" onchange="updateBlockField(${index}, 'image_url', this.value)">
+              </div>
+              ${block.image_url ? `<img src="${block.image_url}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 4px; border: 1px solid var(--border-dark); margin-top: 8px;">` : ''}
+            </div>
+          </div>
+        `;
+      } else if (block.type === 'features') {
+        innerFields = `
+          <div class="form-group">
+            <label class="form-label">Features Section Title</label>
+            <input type="text" class="form-control" value="${block.title || ''}" onchange="updateBlockField(${index}, 'title', this.value)">
+          </div>
+          <div style="font-size: 12px; color: var(--taupe); margin-top: 8px;">
+            Features items will display as responsive four-pillar cards on the public page.
+          </div>
+        `;
+      } else if (block.type === 'cta') {
+        innerFields = `
+          <div class="form-group">
+            <label class="form-label">Banner Title</label>
+            <input type="text" class="form-control" value="${block.title || ''}" onchange="updateBlockField(${index}, 'title', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Banner Description</label>
+            <textarea class="form-control" onchange="updateBlockField(${index}, 'content', this.value)">${block.content || ''}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Button Label</label>
+            <input type="text" class="form-control" value="${block.button_text || ''}" onchange="updateBlockField(${index}, 'button_text', this.value)">
+          </div>
+        `;
+      } else if (block.type === 'reservation') {
+        innerFields = `
+          <div class="form-group">
+            <label class="form-label">Reservation Banner Title</label>
+            <input type="text" class="form-control" value="${block.title || ''}" onchange="updateBlockField(${index}, 'title', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Instructions / Terms</label>
+            <textarea class="form-control" onchange="updateBlockField(${index}, 'content', this.value)">${block.content || ''}</textarea>
+          </div>
+        `;
+      }
+
+      card.innerHTML = `
+        <div class="block-header">
+          <div class="block-type-badge">${block.type} BLOCK</div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="moveBlock(${index}, -1)" ${index === 0 ? 'disabled' : ''}>↑</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="moveBlock(${index}, 1)" ${index === blocks.length - 1 ? 'disabled' : ''}>↓</button>
+            <button type="button" class="btn btn-danger btn-sm" onclick="deleteBlock(${index})">Remove</button>
+          </div>
+        </div>
+        ${innerFields}
+      `;
+      container.appendChild(card);
+    });
+
+    document.getElementById('blocksJsonInput').value = JSON.stringify(blocks);
+  }
+
+  function addBlock(type) {
+    if (type === 'hero') {
+      blocks.push({
+        type: 'hero',
+        title: 'Bespoke Private Cut Showcase',
+        subtitle: 'EXCLUSIVE STEAKHOUSE DINING',
+        content: 'Discover our rare dry-aged prime loins and reserve cellar pairings in an intimate setting.',
+        button_text: 'Reserve Experience'
+      });
+    } else if (type === 'split') {
+      blocks.push({
+        type: 'split',
+        title: 'Tableside Wagyu & Caviar Service',
+        subtitle: 'CULINARY ARTISTRY',
+        content: 'Our executive meat sommelier and grillmaster prepare rare primal loins directly before your party.',
+        image_url: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?w=800&q=80',
+        button_text: 'View Curated Menu'
+      });
+    } else if (type === 'features') {
+      blocks.push({
+        type: 'features',
+        title: 'Exclusive Amenities',
+        subtitle: 'PRIVATE CELLAR HOSPITALITY',
+        items: [
+          { icon: '🥩', title: '60-Day Primal Selection', text: 'Whole prime ribs and tomahawks aged in our Himalayan salt cave.' },
+          { icon: '🍷', title: 'Library Vintages', text: 'Access to 3,000 rare Bordeaux and Napa Valley reserve bottles.' },
+          { icon: '🔥', title: 'White Oak Grill', text: 'Flash-seared over 1,000°F live Pennsylvania hardwood coals.' },
+          { icon: '🗝️', title: 'VIP Elevator', text: 'Private discreet entry into our subterranean wine dining vault.' }
+        ]
+      });
+    } else if (type === 'cta') {
+      blocks.push({
+        type: 'cta',
+        title: 'Book a Private Cellar Soirée',
+        content: 'Ideal for board dinners, milestone celebrations, and intimate family gatherings.',
+        button_text: 'Inquire for Private Dates'
+      });
+    } else if (type === 'reservation') {
+      blocks.push({
+        type: 'reservation',
+        title: 'Reserve Your Private Table',
+        content: 'Reservations open 60 days in advance. Daylight lunch or twilight dinner shifts available.'
+      });
+    }
+    renderBlocks();
+  }
+
+  function updateBlockField(index, field, value) {
+    blocks[index][field] = value;
+    document.getElementById('blocksJsonInput').value = JSON.stringify(blocks);
+  }
+
+  function moveBlock(index, direction) {
+    const target = index + direction;
+    if (target < 0 || target >= blocks.length) return;
+    const temp = blocks[index];
+    blocks[index] = blocks[target];
+    blocks[target] = temp;
+    renderBlocks();
+  }
+
+  function deleteBlock(index) {
+    if (confirm('Delete this canvas block?')) {
+      blocks.splice(index, 1);
+      renderBlocks();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', renderBlocks);
+</script>
+{% endblock %}

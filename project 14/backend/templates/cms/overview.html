@@ -1,0 +1,125 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Overview & KPIs | Charred & Prime CMS{% endblock %}
+
+{% block content %}
+<!-- KPI Metrics Grid -->
+<div class="grid-4" style="margin-bottom: 28px;">
+  <div class="cms-card" style="padding: 20px; text-align: center;">
+    <div style="font-size: 11px; font-family: var(--font-heading); color: var(--taupe); letter-spacing: 1.5px; text-transform: uppercase;">Total Inquiries</div>
+    <div style="font-family: var(--font-display); font-size: 38px; color: var(--ivory); font-weight: 700; margin: 8px 0;">{{ total_reservations }}</div>
+    <div style="font-size: 11px; color: var(--champagne);">All Bookings Logged</div>
+  </div>
+
+  <div class="cms-card" style="padding: 20px; text-align: center;">
+    <div style="font-size: 11px; font-family: var(--font-heading); color: var(--taupe); letter-spacing: 1.5px; text-transform: uppercase;">Pending Host Review</div>
+    <div style="font-family: var(--font-display); font-size: 38px; color: var(--amber); font-weight: 700; margin: 8px 0;">{{ pending_reservations }}</div>
+    <div style="font-size: 11px; color: #f3be7a;">Requires Concierge Action</div>
+  </div>
+
+  <div class="cms-card" style="padding: 20px; text-align: center;">
+    <div style="font-size: 11px; font-family: var(--font-heading); color: var(--taupe); letter-spacing: 1.5px; text-transform: uppercase;">Confirmed Covers</div>
+    <div style="font-family: var(--font-display); font-size: 38px; color: #68d391; font-weight: 700; margin: 8px 0;">{{ confirmed_reservations }}</div>
+    <div style="font-size: 11px; color: #68d391;">Seated: {{ seated_reservations }}</div>
+  </div>
+
+  <div class="cms-card" style="padding: 20px; text-align: center;">
+    <div style="font-size: 11px; font-family: var(--font-heading); color: var(--taupe); letter-spacing: 1.5px; text-transform: uppercase;">Shift Balance</div>
+    <div style="font-family: var(--font-display); font-size: 32px; color: var(--ivory); font-weight: 700; margin: 8px 0;">{{ lunch_covers }} <span style="font-size: 18px; color: var(--taupe);">/</span> {{ dinner_covers }}</div>
+    <div style="font-size: 11px; color: var(--champagne);">Daylight Lunch / Twilight Dinner</div>
+  </div>
+</div>
+
+<!-- Secondary Statistics & System Health -->
+<div class="grid-3" style="margin-bottom: 28px;">
+  <div class="cms-card" style="padding: 20px;">
+    <div class="cms-card-title" style="font-size: 18px; margin-bottom: 10px;">📄 Custom Pages</div>
+    <p style="color: var(--taupe); font-size: 13px; margin-bottom: 14px;">Active standalone Elementor-style pages published on the headless engine.</p>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 24px; font-weight: 700; color: var(--ivory);">{{ total_pages }}</span>
+      <a href="{% url 'cms_pages' %}" class="btn btn-outline btn-sm">Manage Pages →</a>
+    </div>
+  </div>
+
+  <div class="cms-card" style="padding: 20px;">
+    <div class="cms-card-title" style="font-size: 18px; margin-bottom: 10px;">📰 Steakhouse Gazette</div>
+    <p style="color: var(--taupe); font-size: 13px; margin-bottom: 14px;">Editorial articles covering dry-aging craft, white oak embers, and cellar wines.</p>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 24px; font-weight: 700; color: var(--ivory);">{{ total_articles }}</span>
+      <a href="{% url 'cms_blog' %}" class="btn btn-outline btn-sm">Manage Gazette →</a>
+    </div>
+  </div>
+
+  <div class="cms-card" style="padding: 20px;">
+    <div class="cms-card-title" style="font-size: 18px; margin-bottom: 10px;">🥩 Steak Inventory</div>
+    <p style="color: var(--taupe); font-size: 13px; margin-bottom: 14px;">Prime dry-aged steaks, wagyu reserves, wood-fired seafood, and cellar pairings.</p>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 24px; font-weight: 700; color: var(--ivory);">{{ menu_categories }} Categories</span>
+      <a href="{% url 'cms_menu' %}" class="btn btn-outline btn-sm">Edit Menu →</a>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Reservations Host Run-Sheet -->
+<div class="cms-card">
+  <div class="cms-card-header">
+    <div class="cms-card-title">
+      📅 Latest Table Reservations & Guest Inquiries
+    </div>
+    <a href="{% url 'cms_reservations' %}" class="btn btn-outline btn-sm">Open Host Desk →</a>
+  </div>
+
+  <table class="cms-table">
+    <thead>
+      <tr>
+        <th>REF CODE</th>
+        <th>GUEST DETAILS</th>
+        <th>DATE & TIME</th>
+        <th>SHIFT</th>
+        <th>GUESTS</th>
+        <th>EXPERIENCE / CUT</th>
+        <th>STATUS</th>
+        <th>ACTION</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for res in recent_reservations %}
+      <tr>
+        <td style="font-family: var(--font-heading); font-weight: 700; color: var(--champagne);">
+          {{ res.reference_code|default:"—" }}
+        </td>
+        <td>
+          <div style="font-weight: 600; color: var(--ivory);">{{ res.full_name }}</div>
+          <div style="font-size: 11px; color: var(--taupe);">{{ res.phone }} • {{ res.email|default:"No email" }}</div>
+        </td>
+        <td>
+          <div>{{ res.preferred_date }}</div>
+          <div style="font-size: 11px; color: var(--taupe);">{{ res.preferred_time }}</div>
+        </td>
+        <td>
+          <span style="font-family: var(--font-heading); font-size: 11px; font-weight: 700; color: {% if res.shift == 'lunch' %}var(--amber){% else %}var(--champagne){% endif %}; text-transform: uppercase;">
+            {{ res.shift }}
+          </span>
+        </td>
+        <td>{{ res.guests }} Pax</td>
+        <td>{{ res.selected_experience|default:"General Table" }}</td>
+        <td>
+          <span class="badge-status status-{{ res.status }}">
+            {{ res.status }}
+          </span>
+        </td>
+        <td>
+          <a href="{% url 'cms_reservations' %}" class="btn btn-outline btn-sm">Manage</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="8" style="text-align: center; padding: 24px; color: var(--taupe);">
+          No reservation requests logged yet.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

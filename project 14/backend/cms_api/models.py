@@ -1,5 +1,8 @@
+import random
+import string
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class SiteConfig(models.Model):
     restaurant_name = models.CharField(max_length=200, default="CHARRED & PRIME")
@@ -181,25 +184,102 @@ class Reservation(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending Inquiry"),
         ("confirmed", "Confirmed"),
+        ("seated", "Seated"),
         ("cancelled", "Cancelled"),
     ]
+    SHIFT_CHOICES = [
+        ("lunch", "Daylight Executive Lunch"),
+        ("dinner", "Twilight Prime Dinner"),
+    ]
 
+    reference_code = models.CharField(max_length=40, unique=True, null=True, blank=True)
     full_name = models.CharField(max_length=200)
     phone = models.CharField(max_length=50)
     email = models.EmailField(blank=True, null=True)
     preferred_date = models.DateField()
     preferred_time = models.CharField(max_length=50)
+    shift = models.CharField(max_length=20, choices=SHIFT_CHOICES, default="dinner")
     guests = models.PositiveIntegerField(default=2)
     occasion = models.CharField(max_length=100, blank=True)
     selected_experience = models.CharField(max_length=150, blank=True)
+    table_number = models.CharField(max_length=30, blank=True)
+    dietary_notes = models.TextField(blank=True)
     special_requests = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["-created_at"]
         verbose_name = "Reservation"
         verbose_name_plural = "Reservations"
 
+    def save(self, *args, **kwargs):
+        if not self.reference_code:
+            today_str = timezone.now().strftime("%y%m%d")
+            rand_suffix = "".join(random.choices(string.ascii_uppercase + string.digits, k=4))
+            shift_tag = "LUN" if self.shift == "lunch" else "DIN"
+            self.reference_code = f"PRIME-{today_str}-{shift_tag}{rand_suffix}"
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.full_name} - {self.preferred_date} ({self.guests} guests, {self.status})"
+        return f"[{self.reference_code or 'NO-REF'}] {self.full_name} - {self.preferred_date} ({self.shift.upper()})"
+
+
+class CustomPage(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+    meta_title = models.CharField(max_length=255, blank=True)
+    meta_description = models.TextField(blank=True)
+    blocks = models.JSONField(default=list, blank=True)
+    is_published = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Custom Page"
+        verbose_name_plural = "Custom Pages"
+
+    def __str__(self):
+        return self.title
+
+
+class BlogCategory(models.Model):
+    name = models.CharField(max_length=120)
+    slug = models.SlugField(max_length=140, unique=True)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Blog Category"
+        verbose_name_plural = "Blog Categories"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+    category = models.ForeignKey(BlogCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name="posts")
+    excerpt = models.TextField(blank=True)
+    content = models.TextField()
+    featured_image = models.CharField(max_length=500, blank=True)
+    reading_time = models.CharField(max_length=50, default="5 min read")
+    author = models.CharField(max_length=120, default="Executive Pitmaster & Meat Sommelier")
+    is_published = models.BooleanField(default=True)
+    published_at = models.DateTimeField(default=timezone.now)
+    meta_title = models.CharField(max_length=255, blank=True)
+    meta_description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-published_at", "-created_at"]
+        verbose_name = "Blog Post"
+        verbose_name_plural = "Blog Posts"
+
+    def __str__(self):
+        return self.title

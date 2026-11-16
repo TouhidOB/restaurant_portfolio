@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}CMS Studio | Dark Luxury Steakhouse{% endblock %}</title>
+  <title>{% block title %}CMS Studio | Charred & Prime{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -45,6 +45,7 @@
     a:hover {
       color: var(--ivory);
     }
+    
     /* Layout with persistent sidebar */
     .cms-container {
       display: flex;
@@ -69,9 +70,9 @@
     }
     .cms-brand-logo {
       font-family: var(--font-display);
-      font-size: 22px;
-      font-weight: 600;
-      letter-spacing: 2px;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
       color: var(--ivory);
       display: flex;
       align-items: center;
@@ -94,24 +95,6 @@
       border-radius: 2px;
       margin-top: 6px;
     }
-    .cms-search-box {
-      padding: 14px 20px 8px;
-    }
-    .cms-search-input {
-      width: 100%;
-      background: var(--obsidian);
-      border: 1px solid var(--border-dark);
-      border-radius: 3px;
-      padding: 8px 12px;
-      color: var(--ivory);
-      font-family: var(--font-heading);
-      font-size: 12px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .cms-search-input:focus {
-      border-color: var(--champagne);
-    }
     .cms-nav-group {
       padding: 12px 0;
       flex: 1;
@@ -123,13 +106,13 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--taupe);
-      padding: 8px 20px 4px;
+      padding: 12px 20px 6px;
     }
     .cms-nav-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 8px 20px;
+      padding: 10px 20px;
       color: var(--taupe);
       font-family: var(--font-heading);
       font-size: 13px;
@@ -137,10 +120,11 @@
       cursor: pointer;
       border-left: 3px solid transparent;
       transition: all 0.2s;
+      text-decoration: none;
     }
     .cms-nav-item:hover, .cms-nav-item.active {
       color: var(--ivory);
-      background: rgba(148, 115, 79, 0.08);
+      background: rgba(148, 115, 79, 0.12);
       border-left-color: var(--bronze);
     }
     .cms-nav-item .tag {
@@ -159,12 +143,13 @@
       align-items: center;
       background: rgba(16, 16, 16, 0.5);
     }
+
     /* Main Content Area */
     .cms-main {
       margin-left: 290px;
       flex: 1;
       padding: 32px 40px;
-      max-width: 1300px;
+      max-width: 1360px;
     }
     .cms-topbar {
       display: flex;
@@ -176,7 +161,7 @@
     }
     .cms-title {
       font-family: var(--font-display);
-      font-size: 32px;
+      font-size: 30px;
       font-weight: 600;
       letter-spacing: 0.5px;
       color: var(--ivory);
@@ -184,6 +169,7 @@
     .cms-actions {
       display: flex;
       gap: 12px;
+      align-items: center;
     }
     .btn {
       display: inline-flex;
@@ -225,6 +211,11 @@
     .btn-danger:hover {
       background: #9c2d2d;
     }
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 11px;
+    }
+
     /* Cards and Panels */
     .cms-card {
       background: var(--charcoal);
@@ -233,10 +224,6 @@
       padding: 24px;
       margin-bottom: 24px;
       transition: box-shadow 0.3s, border-color 0.3s;
-    }
-    .cms-card.flash-highlight {
-      border-color: var(--champagne);
-      box-shadow: 0 0 25px rgba(196, 168, 120, 0.35);
     }
     .cms-card-header {
       display: flex;
@@ -255,6 +242,7 @@
       align-items: center;
       gap: 10px;
     }
+
     /* Form inputs */
     .form-group {
       margin-bottom: 16px;
@@ -303,6 +291,7 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 16px;
     }
+
     /* Table styles */
     .cms-table {
       width: 100%;
@@ -316,18 +305,19 @@
       letter-spacing: 1.5px;
       text-transform: uppercase;
       color: var(--taupe);
-      padding: 10px 14px;
+      padding: 12px 14px;
       border-bottom: 1px solid var(--border-dark);
     }
     .cms-table td {
-      padding: 12px 14px;
+      padding: 14px 14px;
       border-bottom: 1px solid rgba(148, 115, 79, 0.1);
       color: var(--ivory);
       font-size: 13px;
+      vertical-align: middle;
     }
     .badge-status {
       display: inline-block;
-      padding: 2px 8px;
+      padding: 3px 10px;
       border-radius: 2px;
       font-family: var(--font-heading);
       font-size: 10px;
@@ -337,6 +327,7 @@
     }
     .status-pending { background: rgba(216, 154, 75, 0.2); color: #f3be7a; border: 1px solid #d89a4b; }
     .status-confirmed { background: rgba(72, 187, 120, 0.2); color: #68d391; border: 1px solid #38a169; }
+    .status-seated { background: rgba(66, 153, 225, 0.2); color: #63b3ed; border: 1px solid #3182ce; }
     .status-cancelled { background: rgba(229, 62, 62, 0.2); color: #fc8181; border: 1px solid #e53e3e; }
 
     /* Alert / Flash messages */
@@ -358,6 +349,100 @@
   {% block extra_head %}{% endblock %}
 </head>
 <body>
-  {% block body_content %}{% endblock %}
+  {% block body_content %}
+  <div class="cms-container">
+    
+    <!-- Persistent Sidebar -->
+    <aside class="cms-sidebar">
+      <div class="cms-sidebar-header">
+        <div class="cms-brand-logo">
+          🥩 CHARRED <span>&</span> PRIME
+        </div>
+        <div class="cms-badge">HEADLESS STEAKHOUSE STUDIO</div>
+      </div>
+
+      <nav class="cms-nav-group">
+        <div class="cms-nav-heading">CORE OPERATIONS</div>
+        <a href="{% url 'cms_overview' %}" class="cms-nav-item {% if request.path == '/cms/overview/' or request.path == '/cms/' %}active{% endif %}">
+          <span>⚡ Overview & KPIs</span>
+        </a>
+        <a href="{% url 'cms_pages' %}" class="cms-nav-item {% if '/cms/pages/' in request.path %}active{% endif %}">
+          <span>📄 Custom Page Builder</span>
+          <span class="tag">Elementor</span>
+        </a>
+        <a href="{% url 'cms_reservations' %}" class="cms-nav-item {% if '/cms/reservations/' in request.path %}active{% endif %}">
+          <span>📅 Table Reservation Desk</span>
+          <span class="tag">Shifts</span>
+        </a>
+        <a href="{% url 'cms_identity' %}" class="cms-nav-item {% if '/cms/identity/' in request.path %}active{% endif %}">
+          <span>⚙️ Steakhouse Identity & Hours</span>
+        </a>
+
+        <div class="cms-nav-heading">CULINARY & CELLAR</div>
+        <a href="{% url 'cms_menu' %}" class="cms-nav-item {% if '/cms/menu/' in request.path %}active{% endif %}">
+          <span>🥩 Menu & Steak Availability</span>
+        </a>
+        <a href="{% url 'cms_blog' %}" class="cms-nav-item {% if '/cms/blog/' in request.path %}active{% endif %}">
+          <span>📰 Steakhouse Gazette & Journal</span>
+          <span class="tag">Blog</span>
+        </a>
+        <a href="{% url 'cms_tour' %}" class="cms-nav-item {% if '/cms/tour/' in request.path %}active{% endif %}">
+          <span>🧭 3D Spatial Tour</span>
+        </a>
+
+        <div class="cms-nav-heading">CONTENT & ARCHIVE</div>
+        <a href="{% url 'cms_sections' %}" class="cms-nav-item {% if '/cms/sections/' in request.path %}active{% endif %}">
+          <span>📑 14-Section Content Editor</span>
+        </a>
+        <a href="{% url 'cms_gallery' %}" class="cms-nav-item {% if '/cms/gallery/' in request.path %}active{% endif %}">
+          <span>🖼️ Ambience & Cuts Gallery</span>
+        </a>
+        <a href="{% url 'cms_reviews' %}" class="cms-nav-item {% if '/cms/reviews/' in request.path %}active{% endif %}">
+          <span>⭐ Guest Reviews</span>
+        </a>
+        <a href="{% url 'cms_faqs' %}" class="cms-nav-item {% if '/cms/faqs/' in request.path %}active{% endif %}">
+          <span>❓ FAQ Manager</span>
+        </a>
+        <a href="{% url 'cms_schema' %}" class="cms-nav-item {% if '/cms/schema/' in request.path %}active{% endif %}">
+          <span>{ } Master JSON Schema</span>
+        </a>
+      </nav>
+
+      <div class="cms-sidebar-footer">
+        <span style="color: var(--taupe);">User: <strong>{{ request.user.username }}</strong></span>
+        <a href="{% url 'cms_logout' %}" style="color: var(--champagne); font-weight: 600;">LOGOUT ↗</a>
+      </div>
+    </aside>
+
+    <!-- Main Content Stream -->
+    <main class="cms-main">
+      <div class="cms-topbar">
+        <div>
+          <h1 class="cms-title">{{ page_title|default:"CMS Studio" }}</h1>
+          <div style="font-size: 12px; color: var(--taupe); margin-top: 4px;">Charred & Prime • 482 Lexington Avenue, Manhattan, NY</div>
+        </div>
+        <div class="cms-actions">
+          <a href="http://127.0.0.1:3000/" target="_blank" class="btn btn-outline">
+            🌐 Live Website ↗
+          </a>
+          <a href="{% url 'cms_page_builder_new' %}" class="btn btn-bronze">
+            + New Custom Page
+          </a>
+        </div>
+      </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert {% if message.tags == 'error' %}alert-error{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+
+  </div>
+  {% endblock %}
 </body>
 </html>

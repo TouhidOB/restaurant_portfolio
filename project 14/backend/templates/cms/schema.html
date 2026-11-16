@@ -1,0 +1,33 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Master JSON Schema | Charred & Prime CMS{% endblock %}
+
+{% block content %}
+<form method="POST" action="{% url 'cms_save_schema' %}">
+  {% csrf_token %}
+  
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <div>
+        <div class="cms-card-title">{ } Master Headless Content Tree (JSON)</div>
+        <div style="font-size: 12px; color: var(--taupe); margin-top: 4px;">
+          Full JSON database payload served to the React frontend at /api/content/
+        </div>
+      </div>
+      <button type="submit" class="btn btn-bronze">
+        💾 Sync Master Schema
+      </button>
+    </div>
+
+    <div class="form-group">
+      <textarea name="schema_json" class="form-control" style="min-height: 520px; font-family: monospace; font-size: 12px; background: #0A0A0A; color: #EDE5D8; line-height: 1.5;">{{ content_str|safe }}</textarea>
+    </div>
+
+    <div style="text-align: right;">
+      <button type="submit" class="btn btn-bronze">
+        💾 Sync Master Schema
+      </button>
+    </div>
+  </div>
+</form>
+{% endblock %}

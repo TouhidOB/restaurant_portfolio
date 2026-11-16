@@ -1,0 +1,51 @@
+{% extends "cms/base.html" %}
+
+{% block title %}FAQ Manager | Charred & Prime CMS{% endblock %}
+
+{% block content %}
+<form method="POST" action="{% url 'cms_save_faqs' %}">
+  {% csrf_token %}
+  
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <div>
+        <div class="cms-card-title">❓ Frequently Asked Questions</div>
+        <div style="font-size: 12px; color: var(--taupe); margin-top: 4px;">
+          Dining policies, dress code, dry-aging standards, corkage, and private vault guidelines.
+        </div>
+      </div>
+      <button type="submit" class="btn btn-bronze">
+        💾 Save FAQ Entries
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">FAQs JSON Structure</label>
+      <textarea name="faqs_json" class="form-control" style="min-height: 380px; font-family: monospace; font-size: 13px; background: #0A0A0A; color: #EDE5D8;">[
+  {
+    "question": "What grades of beef do you serve at Charred & Prime?",
+    "answer": "We serve exclusively USDA Prime hand-selected loins and imported A5 Wagyu from Miyazaki Prefecture, Japan, dry-aged in our proprietary Himalayan salt chamber."
+  },
+  {
+    "question": "What is the dress code for dinner service?",
+    "answer": "Smart elegant. We kindly request collared shirts and tailored attire. Athletic apparel, beachwear, and baseball caps are not permitted."
+  },
+  {
+    "question": "Do you accept corkage for private cellar wines?",
+    "answer": "We welcome up to two 750ml bottles per party not represented on our active sommelier list, subject to a $65 corkage fee per bottle."
+  },
+  {
+    "question": "How far in advance can I book the Subterranean Wine Vault?",
+    "answer": "Private vault reservations open 60 days in advance and require a consultation with our wine director and executive pitmaster."
+  }
+]</textarea>
+    </div>
+
+    <div style="text-align: right;">
+      <button type="submit" class="btn btn-bronze">
+        💾 Save FAQ Entries
+      </button>
+    </div>
+  </div>
+</form>
+{% endblock %}

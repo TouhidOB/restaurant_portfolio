@@ -18,8 +18,26 @@ export default function S07_MenuExplorer() {
       if (res && res.length > 0) {
         setItems(res);
       } else {
-        // Fallback filter from featured_steaks if API call empty
-        let combined = [...(data.featured_steaks || [])];
+        // Collect all dishes from fallback categories and featured_steaks
+        let allDishes = [];
+        if (categories && categories.length > 0) {
+          categories.forEach((c) => {
+            if (c.items && c.items.length > 0) {
+              c.items.forEach((it) => {
+                allDishes.push({
+                  ...it,
+                  category_name: c.name,
+                  category_slug: c.slug
+                });
+              });
+            }
+          });
+        }
+        if (allDishes.length === 0 && data.featured_steaks) {
+          allDishes = [...data.featured_steaks];
+        }
+
+        let combined = allDishes;
         if (activeCat !== 'all') {
           combined = combined.filter((i) => i.category_slug === activeCat || i.category === activeCat);
         }
@@ -27,7 +45,7 @@ export default function S07_MenuExplorer() {
           const q = searchTerm.toLowerCase();
           combined = combined.filter((i) => i.name.toLowerCase().includes(q) || i.description?.toLowerCase().includes(q));
         }
-        setItems(combined);
+        setItems(combined.length > 0 ? combined : (data.featured_steaks || []));
       }
       setLoading(false);
     };

@@ -1,0 +1,88 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Guest Reviews & Praise | Charred & Prime CMS{% endblock %}
+
+{% block content %}
+<div class="grid-3" style="align-items: start;">
+  
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <div class="cms-card-title">⭐ Add Guest Review</div>
+    </div>
+    <form method="POST" action="{% url 'cms_save_review' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">Guest / Critic Name *</label>
+        <input type="text" name="guest_name" class="form-control" required placeholder="e.g. Julian Sterling">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Publication / Source</label>
+        <input type="text" name="source" class="form-control" placeholder="e.g. Michelin Guide / Private Member">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rating (1–5)</label>
+        <select name="rating" class="form-control">
+          <option value="5">★★★★★ (5 Stars)</option>
+          <option value="4">★★★★☆ (4 Stars)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Review Text *</label>
+        <textarea name="review_text" class="form-control" rows="4" required placeholder="Guest testimonial quote..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date String</label>
+        <input type="text" name="review_date" class="form-control" value="November 2026">
+      </div>
+      <button type="submit" class="btn btn-bronze" style="width: 100%; justify-content: center; margin-top: 14px;">
+        Save Review
+      </button>
+    </form>
+  </div>
+
+  <div class="cms-card" style="grid-column: span 2;">
+    <div class="cms-card-header">
+      <div class="cms-card-title">📝 Published Testimonials ({{ reviews|length }})</div>
+    </div>
+    <table class="cms-table">
+      <thead>
+        <tr>
+          <th>GUEST & SOURCE</th>
+          <th>RATING</th>
+          <th>TESTIMONIAL TEXT</th>
+          <th>ACTION</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for review in reviews %}
+        <tr>
+          <td>
+            <div style="font-weight: 600; color: var(--ivory);">{{ review.guest_name }}</div>
+            <div style="font-size: 11px; color: var(--champagne);">{{ review.source|default:"Verified Diner" }}</div>
+          </td>
+          <td>
+            <span style="color: var(--amber);">★ {{ review.rating }}/5</span>
+          </td>
+          <td style="color: var(--ivory); font-size: 12px; max-width: 300px;">
+            "{{ review.review_text }}"
+          </td>
+          <td>
+            <form method="POST" action="{% url 'cms_del_review' review.id %}" onsubmit="return confirm('Remove review?');">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 24px; color: var(--taupe);">
+            No reviews published yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

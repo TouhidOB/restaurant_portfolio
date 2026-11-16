@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Shield } from 'lucide-react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Navigation() {
-  const { data, openReservation } = useCMS();
+export default function Navigation({ currentPath = '/', onNavigate }) {
+  const { data, openReservation, openReservationModal } = useCMS();
+  const triggerReservation = openReservationModal || openReservation;
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -16,16 +17,31 @@ export default function Navigation() {
   }, []);
 
   const navLinks = [
-    { label: 'Story', href: '#story' },
-    { label: '3D Tour', href: '#tour' },
-    { label: 'Philosophy', href: '#philosophy' },
-    { label: 'Signature Steaks', href: '#signature-steaks' },
-    { label: 'Menu Explorer', href: '#menu' },
-    { label: 'The Hearth', href: '#hearth' },
-    { label: 'Private Salons', href: '#private-dining' },
-    { label: 'Gallery', href: '#gallery' },
-    { label: 'Location', href: '#location' },
+    { label: 'Story', path: '/story', hash: '#story' },
+    { label: '3D Tour', path: '/tour', hash: '#tour' },
+    { label: 'Philosophy', path: '/philosophy', hash: '#philosophy' },
+    { label: 'Signatures', path: '/signatures', hash: '#signature-steaks' },
+    { label: 'Menu Explorer', path: '/menu', hash: '#menu' },
+    { label: 'The Hearth', path: '/hearth', hash: '#hearth' },
+    { label: 'Private Salons', path: '/private-dining', hash: '#private-dining' },
+    { label: 'Gazette', path: '/blog', hash: '/blog' },
+    { label: 'Location', path: '/contact', hash: '#location' },
   ];
+
+  const handleLinkClick = (e, link) => {
+    if (onNavigate) {
+      e.preventDefault();
+      setMobileMenuOpen(false);
+      onNavigate(link.path);
+    }
+  };
+
+  const handleLogoClick = (e) => {
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate('/');
+    }
+  };
 
   return (
     <header
@@ -36,10 +52,10 @@ export default function Navigation() {
         right: 0,
         zIndex: 500,
         transition: 'all 0.35s ease',
-        backgroundColor: scrolled ? 'rgba(16, 16, 16, 0.94)' : 'transparent',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(148, 115, 79, 0.2)' : '1px solid transparent',
-        padding: scrolled ? '14px 32px' : '22px 32px'
+        backgroundColor: scrolled ? 'rgba(16, 16, 16, 0.94)' : 'rgba(16, 16, 16, 0.7)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: scrolled ? '1px solid rgba(148, 115, 79, 0.25)' : '1px solid rgba(148, 115, 79, 0.1)',
+        padding: scrolled ? '14px 32px' : '20px 32px'
       }}
     >
       <div style={{
@@ -50,7 +66,7 @@ export default function Navigation() {
         justifyContent: 'space-between'
       }}>
         {/* Brand Logo */}
-        <a href="#" style={{ display: 'flex', flexDirection: 'column' }}>
+        <a href="/" onClick={handleLogoClick} style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none' }}>
           <span style={{
             fontFamily: 'var(--font-display)',
             fontSize: '24px',
@@ -72,26 +88,33 @@ export default function Navigation() {
         </a>
 
         {/* Desktop Navigation Links */}
-        <nav style={{ display: 'none', gap: '24px', alignItems: 'center' }} className="desktop-nav">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              style={{
-                fontFamily: 'var(--font-heading)',
-                fontSize: '12px',
-                fontWeight: 500,
-                letterSpacing: '1.2px',
-                textTransform: 'uppercase',
-                color: 'var(--color-taupe)',
-                transition: 'color 0.2s'
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-champagne)')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-taupe)')}
-            >
-              {link.label}
-            </a>
-          ))}
+        <nav style={{ display: 'none', gap: '22px', alignItems: 'center' }} className="desktop-nav">
+          {navLinks.map((link) => {
+            const isActive = currentPath === link.path;
+            return (
+              <a
+                key={link.label}
+                href={link.path}
+                onClick={(e) => handleLinkClick(e, link)}
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  letterSpacing: '1.2px',
+                  textTransform: 'uppercase',
+                  color: isActive ? 'var(--color-champagne)' : 'var(--color-taupe)',
+                  transition: 'color 0.2s',
+                  textDecoration: 'none',
+                  borderBottom: isActive ? '1px solid var(--color-champagne)' : '1px solid transparent',
+                  paddingBottom: '2px'
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-champagne)')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = isActive ? 'var(--color-champagne)' : 'var(--color-taupe)')}
+              >
+                {link.label}
+              </a>
+            );
+          })}
         </nav>
 
         {/* Right Actions */}
@@ -111,7 +134,8 @@ export default function Navigation() {
               background: 'rgba(148, 115, 79, 0.12)',
               border: '1px solid var(--border-subtle)',
               padding: '8px 14px',
-              borderRadius: '2px'
+              borderRadius: '2px',
+              textDecoration: 'none'
             }}
           >
             <Shield size={13} />
@@ -119,9 +143,21 @@ export default function Navigation() {
           </a>
 
           <button
-            onClick={() => openReservation()}
-            className="btn-prime"
-            style={{ padding: '9px 20px', fontSize: '11px' }}
+            onClick={() => triggerReservation()}
+            className="btn-prime btn-reserve-nav"
+            style={{
+              padding: '9px 20px',
+              fontSize: '11px',
+              fontFamily: 'var(--font-heading)',
+              fontWeight: 700,
+              letterSpacing: '1.2px',
+              textTransform: 'uppercase',
+              background: 'var(--color-bronze)',
+              color: '#101010',
+              border: 'none',
+              borderRadius: '2px',
+              cursor: 'pointer'
+            }}
           >
             Reserve Table
           </button>
@@ -163,14 +199,15 @@ export default function Navigation() {
           {navLinks.map((link) => (
             <a
               key={link.label}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
+              href={link.path}
+              onClick={(e) => handleLinkClick(e, link)}
               style={{
                 fontFamily: 'var(--font-heading)',
                 fontSize: '14px',
                 letterSpacing: '1.5px',
                 textTransform: 'uppercase',
-                color: 'var(--color-ivory)'
+                color: currentPath === link.path ? 'var(--color-champagne)' : 'var(--color-ivory)',
+                textDecoration: 'none'
               }}
             >
               {link.label}
@@ -186,7 +223,8 @@ export default function Navigation() {
               textTransform: 'uppercase',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px'
+              gap: '6px',
+              textDecoration: 'none'
             }}
           >
             <Shield size={14} /> Open CMS Studio

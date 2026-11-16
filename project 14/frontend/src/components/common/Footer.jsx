@@ -2,10 +2,18 @@ import React from 'react';
 import { useCMS } from '../../context/CMSContext';
 import { Shield } from 'lucide-react';
 
-export default function Footer() {
-  const { data, openReservation } = useCMS();
+export default function Footer({ onNavigate }) {
+  const { data, openReservation, openReservationModal } = useCMS();
+  const triggerReservation = openReservationModal || openReservation;
   const site = data?.content?.site || {};
   const footer = data?.content?.footer || {};
+
+  const handleLink = (e, path) => {
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate(path);
+    }
+  };
 
   return (
     <footer style={{
@@ -57,7 +65,8 @@ export default function Footer() {
                   background: 'rgba(148, 115, 79, 0.1)',
                   border: '1px solid var(--border-subtle)',
                   padding: '6px 12px',
-                  borderRadius: '2px'
+                  borderRadius: '2px',
+                  textDecoration: 'none'
                 }}
               >
                 <Shield size={12} /> CMS Studio Desk
@@ -76,16 +85,17 @@ export default function Footer() {
               color: 'var(--color-champagne)',
               marginBottom: '18px'
             }}>
-              Editorial Sections
+              Standalone Pages & Gazette
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: 'var(--color-taupe)' }}>
-              <li><a href="#story" style={{ transition: 'color 0.2s' }}>Brand Story</a></li>
-              <li><a href="#tour" style={{ transition: 'color 0.2s' }}>5-Viewpoint 3D Tour</a></li>
-              <li><a href="#philosophy" style={{ transition: 'color 0.2s' }}>Culinary Provenance</a></li>
-              <li><a href="#signature-steaks" style={{ transition: 'color 0.2s' }}>Signature Steaks</a></li>
-              <li><a href="#menu" style={{ transition: 'color 0.2s' }}>Complete Menu Explorer</a></li>
-              <li><a href="#hearth" style={{ transition: 'color 0.2s' }}>The Open Hearth</a></li>
-              <li><a href="#private-dining" style={{ transition: 'color 0.2s' }}>Private Dining Salons</a></li>
+              <li><a href="/story" onClick={(e) => handleLink(e, '/story')} style={{ transition: 'color 0.2s' }}>Brand Story & Heritage</a></li>
+              <li><a href="/signatures" onClick={(e) => handleLink(e, '/signatures')} style={{ transition: 'color 0.2s' }}>Signature Dry-Aged Cuts</a></li>
+              <li><a href="/menu" onClick={(e) => handleLink(e, '/menu')} style={{ transition: 'color 0.2s' }}>Complete Menu Explorer</a></li>
+              <li><a href="/tour" onClick={(e) => handleLink(e, '/tour')} style={{ transition: 'color 0.2s' }}>5-Viewpoint 3D Tour</a></li>
+              <li><a href="/philosophy" onClick={(e) => handleLink(e, '/philosophy')} style={{ transition: 'color 0.2s' }}>Culinary Provenance & Sourcing</a></li>
+              <li><a href="/hearth" onClick={(e) => handleLink(e, '/hearth')} style={{ transition: 'color 0.2s' }}>The Open Hearth & Grillmasters</a></li>
+              <li><a href="/private-dining" onClick={(e) => handleLink(e, '/private-dining')} style={{ transition: 'color 0.2s' }}>Private Dining & Cellar Salons</a></li>
+              <li><a href="/blog" onClick={(e) => handleLink(e, '/blog')} style={{ transition: 'color 0.2s', color: 'var(--color-champagne)', fontWeight: 600 }}>Steakhouse Gazette & Journal</a></li>
             </ul>
           </div>
 
@@ -100,12 +110,13 @@ export default function Footer() {
               color: 'var(--color-champagne)',
               marginBottom: '18px'
             }}>
-              Service Hours
+              Service Shifts & Hours
             </h4>
             <div style={{ fontSize: '13px', color: 'var(--color-taupe)', lineHeight: '1.8' }}>
-              <div><strong style={{ color: 'var(--color-ivory)' }}>Tuesday – Thursday:</strong> 5:00 PM – 11:00 PM</div>
-              <div><strong style={{ color: 'var(--color-ivory)' }}>Friday – Saturday:</strong> 5:00 PM – 11:30 PM</div>
-              <div><strong style={{ color: 'var(--color-ivory)' }}>Sunday:</strong> 4:30 PM – 10:30 PM</div>
+              <div><strong style={{ color: 'var(--color-amber)' }}>Daylight Executive Lunch:</strong> Tuesday – Friday 11:30 AM – 2:30 PM</div>
+              <div><strong style={{ color: 'var(--color-champagne)' }}>Twilight Prime Dinner:</strong> Tuesday – Thursday: 5:00 PM – 11:00 PM</div>
+              <div><strong style={{ color: 'var(--color-ivory)' }}>Friday – Saturday Dinner:</strong> 5:00 PM – 11:30 PM</div>
+              <div><strong style={{ color: 'var(--color-ivory)' }}>Sunday Dinner:</strong> 4:30 PM – 10:30 PM</div>
               <div style={{ color: 'var(--color-bronze)', marginTop: '8px' }}>Monday: Closed for Dry-Age Cellar Maintenance</div>
             </div>
           </div>
@@ -128,8 +139,8 @@ export default function Footer() {
               <div>{site.phone || '+1 (212) 840-7832'}</div>
               <div>{site.email || 'concierge@charredandprime.com'}</div>
             </div>
-            <button onClick={() => openReservation()} className="btn-prime" style={{ padding: '10px 18px', fontSize: '11px' }}>
-              Request Seating
+            <button onClick={() => triggerReservation()} className="btn-prime" style={{ padding: '10px 18px', fontSize: '11px', background: 'var(--color-bronze)', color: '#101010', border: 'none', borderRadius: '2px', cursor: 'pointer', fontFamily: 'var(--font-heading)', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase' }}>
+              Request Table Seating
             </button>
           </div>
         </div>
@@ -150,8 +161,8 @@ export default function Footer() {
             {footer.copyright || '© 2026 Charred & Prime Steakhouse. All rights reserved.'}
           </div>
           <div style={{ display: 'flex', gap: '20px' }}>
-            <a href="#terms">Terms & Hospitality Guidelines</a>
-            <a href="#privacy">Privacy Policy</a>
+            <a href="/contact" onClick={(e) => handleLink(e, '/contact')}>Arrival & Directions</a>
+            <a href="/blog" onClick={(e) => handleLink(e, '/blog')}>Sommelier Journal</a>
             <a href="/cms/">Admin Login</a>
           </div>
         </div>

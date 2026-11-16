@@ -1,0 +1,79 @@
+{% extends "cms/base.html" %}
+
+{% block title %}{{ page_title }} | Charred & Prime CMS{% endblock %}
+
+{% block content %}
+<form method="POST" action="{% url 'cms_save_blog_post' %}">
+  {% csrf_token %}
+  {% if post %}
+    <input type="hidden" name="post_id" value="{{ post.id }}">
+  {% endif %}
+
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <div class="cms-card-title">
+        ✍️ Article Editorial Editor
+      </div>
+      <button type="submit" class="btn btn-bronze">
+        💾 Publish to Gazette
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Article Title *</label>
+      <input type="text" name="title" class="form-control" required value="{{ post.title|default:'' }}" placeholder="e.g. The Chemistry of 60-Day Himalayan Salt Dry-Aging">
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">URL Slug *</label>
+        <input type="text" name="slug" class="form-control" required value="{{ post.slug|default:'' }}" placeholder="e.g. the-chemistry-of-60-day-himalayan-salt-dry-aging">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category *</label>
+        <select name="category" class="form-control" required>
+          {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if post and post.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Author Byline</label>
+        <input type="text" name="author" class="form-control" value="{{ post.author|default:'Marcus Sterling — Master Butcher & Cave Curator' }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Reading Time</label>
+        <input type="text" name="reading_time" class="form-control" value="{{ post.reading_time|default:'5 min read' }}">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Lead Excerpt / Summary</label>
+      <textarea name="excerpt" class="form-control" rows="2" placeholder="Brief 1-2 sentence teaser for cards and social previews...">{{ post.excerpt|default:'' }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Featured Image URL</label>
+      <input type="url" name="featured_image" class="form-control" value="{{ post.featured_image|default:'https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80' }}">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Full Body Article Content (Markdown / Paragraphs) *</label>
+      <textarea name="content" class="form-control" style="min-height: 280px; font-family: var(--font-body); font-size: 14px; line-height: 1.8;" required placeholder="Write the full body narrative here. Double enter creates separate paragraphs...">{{ post.content|default:'' }}</textarea>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-dark);">
+      <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+        <input type="checkbox" name="is_published" {% if not post or post.is_published %}checked{% endif %}>
+        <span style="font-family: var(--font-heading); font-weight: 600; color: var(--ivory);">Live Public Visibility (Published on /blog)</span>
+      </label>
+      <button type="submit" class="btn btn-bronze" style="padding: 10px 28px;">
+        💾 Save & Publish Article
+      </button>
+    </div>
+  </div>
+</form>
+{% endblock %}

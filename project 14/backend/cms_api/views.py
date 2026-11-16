@@ -5,15 +5,18 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.shortcuts import get_object_or_404
 
 from .models import (
     SiteConfig, MenuCategory, MenuItem, TourViewpoint,
-    GalleryItem, DiningExperience, TeamMember, Testimonial, Reservation
+    GalleryItem, DiningExperience, TeamMember, Testimonial, Reservation,
+    CustomPage, BlogCategory, BlogPost
 )
 from .serializers import (
     SiteConfigSerializer, MenuCategorySerializer, MenuItemSerializer,
     TourViewpointSerializer, GalleryItemSerializer, DiningExperienceSerializer,
-    TeamMemberSerializer, TestimonialSerializer, ReservationSerializer
+    TeamMemberSerializer, TestimonialSerializer, ReservationSerializer,
+    CustomPageSerializer, BlogCategorySerializer, BlogPostSerializer
 )
 
 
@@ -31,20 +34,35 @@ class PublicContentView(APIView):
         team = TeamMember.objects.filter(is_active=True).order_by('sort_order')
         testimonials = Testimonial.objects.filter(is_active=True).order_by('sort_order')
 
+        custom_pages = CustomPage.objects.filter(is_published=True).order_by('-created_at')
+        blog_posts = BlogPost.objects.filter(is_published=True).order_by('-published_at')
+        blog_categories = BlogCategory.objects.all().order_by('name')
+
         content_json = config.content_json if config else {}
+        site_config_data = SiteConfigSerializer(config).data if config else {
+            "restaurant_name": "CHARRED & PRIME",
+            "content_json": content_json,
+            "is_published": True
+        }
 
         return Response({
             "exists": True,
             "restaurant_name": config.restaurant_name if config else "CHARRED & PRIME",
+            "site_config": site_config_data,
             "content": content_json,
+            "content_json": content_json,
             "categories": MenuCategorySerializer(categories, many=True).data,
+            "menu_categories": MenuCategorySerializer(categories, many=True).data,
             "featured_steaks": MenuItemSerializer(featured_steaks, many=True).data,
             "viewpoints": TourViewpointSerializer(viewpoints, many=True).data,
             "gallery": GalleryItemSerializer(gallery, many=True).data,
             "experiences": DiningExperienceSerializer(experiences, many=True).data,
             "team": TeamMemberSerializer(team, many=True).data,
             "testimonials": TestimonialSerializer(testimonials, many=True).data,
-            "updated_at": config.updated_at.isoformat() if config else None,
+            "custom_pages": CustomPageSerializer(custom_pages, many=True).data,
+            "blog_posts": BlogPostSerializer(blog_posts, many=True).data,
+            "blog_categories": BlogCategorySerializer(blog_categories, many=True).data,
+            "updated_at": config.updated_at.isoformat() if config and config.updated_at else None,
         })
 
     def post(self, request):
@@ -67,6 +85,91 @@ class PublicContentView(APIView):
             "restaurant_name": config.restaurant_name,
             "content": config.content_json,
             "updated_at": config.updated_at.isoformat()
+        })
+
+
+class CustomPageDetailView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        page = get_object_or_404(CustomPage, slug=slug, is_published=True)
+        return Response({
+            "status": "success",
+            "page": CustomPageSerializer(page).data,
+            "data": CustomPageSerializer(page).data
+        })
+
+
+class BlogPostListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        category_slug = request.query_params.get('category')
+        qs = BlogPost.objects.filter(is_published=True).order_by('-published_at')
+        if category_slug and category_slug != 'all':
+            qs = qs.filter(category__slug=category_slug)
+        categories = BlogCategory.objects.all().order_by('name')
+        return Response({
+            "posts": BlogPostSerializer(qs, many=True).data,
+            "results": BlogPostSerializer(qs, many=True).data,
+            "categories": BlogCategorySerializer(categories, many=True).data
+        })
+
+
+class BlogPostDetailView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, slug):
+        post = get_object_or_404(BlogPost, slug=slug, is_published=True)
+        return Response(BlogPostSerializer(post).data)
+
+
+class ReservationLookupView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        code = request.query_params.get('code', '').strip().upper()
+        if not code:
+            return Response({"error": "Reference code is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        res = Reservation.objects.filter(reference_code__iexact=code).first()
+        if not res:
+            return Response({"error": f"No reservation found with reference code {code}"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = ReservationSerializer(res)
+        return Response({
+            "status": "success",
+            "reservation": serializer.data,
+            "data": serializer.data,
+            **serializer.data
+        })
+
+
+class ReservationAvailabilityView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        shift = request.query_params.get('shift', 'dinner').lower()
+        date_str = request.query_params.get('date', '')
+
+        lunch_slots = ["12:00 PM", "12:30 PM", "1:00 PM", "1:30 PM", "2:00 PM"]
+        dinner_slots = ["5:00 PM", "5:30 PM", "6:00 PM", "6:30 PM", "7:00 PM", "7:30 PM", "8:00 PM", "8:30 PM", "9:00 PM", "9:30 PM"]
+
+        available_slots = lunch_slots if shift == 'lunch' else dinner_slots
+        max_covers = 40 if shift == 'lunch' else 90
+
+        return Response({
+            "status": "available",
+            "shift": shift,
+            "date": date_str,
+            "max_covers": max_covers,
+            "available_slots": available_slots,
+            "seating_zones": [
+                {"id": "main_hearth", "name": "Main Hearth & Grill Room", "min_party": 1, "max_party": 6},
+                {"id": "dry_aging_view", "name": "Dry-Aging Cave View Booth", "min_party": 2, "max_party": 4},
+                {"id": "wine_vault", "name": "Subterranean Wine Vault", "min_party": 4, "max_party": 14},
+                {"id": "bar_counter", "name": "Craft Bourbon & Cut Counter", "min_party": 1, "max_party": 2}
+            ]
         })
 
 
@@ -120,9 +223,17 @@ class ReservationViewSet(viewsets.ModelViewSet):
     serializer_class = ReservationSerializer
 
     def get_permissions(self):
-        if self.action == 'create':
-            return [AllowAny()]
-        return [AllowAny()]  # Permissive for local dev demo convenience
+        return [AllowAny()]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        shift = self.request.query_params.get('shift')
+        if shift:
+            qs = qs.filter(shift=shift)
+        status_param = self.request.query_params.get('status')
+        if status_param:
+            qs = qs.filter(status=status_param)
+        return qs
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -130,9 +241,11 @@ class ReservationViewSet(viewsets.ModelViewSet):
         reservation = serializer.save()
         return Response({
             "success": True,
-            "message": "Your reservation inquiry has been received. Our team will contact you to confirm table availability.",
+            "message": "Your reservation inquiry has been received. Our concierge team will contact you.",
             "reservation_id": reservation.id,
-            "status": reservation.status
+            "reference_code": reservation.reference_code,
+            "status": reservation.status,
+            "data": ReservationSerializer(reservation).data
         }, status=status.HTTP_201_CREATED)
 
 

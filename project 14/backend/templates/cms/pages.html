@@ -1,0 +1,79 @@
+{% extends "cms/base.html" %}
+
+{% block title %}Custom Page Builder | Charred & Prime CMS{% endblock %}
+
+{% block content %}
+<div class="cms-card">
+  <div class="cms-card-header">
+    <div class="cms-card-title">
+      📄 Standalone Routes & Custom Page Canvas
+    </div>
+    <a href="{% url 'cms_page_builder_new' %}" class="btn btn-bronze">
+      + Create Brand New Page
+    </a>
+  </div>
+
+  <p style="color: var(--taupe); font-size: 13px; margin-bottom: 20px;">
+    Construct standalone Elementor-style marketing landing pages, private dining showcases, wine tastings, and event microsites without altering core source code.
+  </p>
+
+  <table class="cms-table">
+    <thead>
+      <tr>
+        <th>PAGE TITLE</th>
+        <th>PUBLIC ROUTE SLUG</th>
+        <th>CANVAS BLOCKS</th>
+        <th>PUBLISHED</th>
+        <th>LAST UPDATED</th>
+        <th>ACTIONS</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for page in pages %}
+      <tr>
+        <td style="font-weight: 600; color: var(--ivory);">
+          {{ page.title }}
+        </td>
+        <td>
+          <a href="http://127.0.0.1:3000/page/{{ page.slug }}" target="_blank" style="font-family: monospace; color: var(--champagne);">
+            /page/{{ page.slug }} ↗
+          </a>
+        </td>
+        <td>
+          <span style="background: var(--graphite); padding: 3px 8px; border-radius: 2px; font-size: 11px; color: var(--ivory);">
+            {{ page.blocks|length }} Blocks
+          </span>
+        </td>
+        <td>
+          {% if page.is_published %}
+            <span class="badge-status status-confirmed">PUBLISHED</span>
+          {% else %}
+            <span class="badge-status status-pending">DRAFT</span>
+          {% endif %}
+        </td>
+        <td style="color: var(--taupe); font-size: 12px;">
+          {{ page.updated_at|date:"M d, Y H:i" }}
+        </td>
+        <td>
+          <div style="display: flex; gap: 8px;">
+            <a href="{% url 'cms_page_builder_edit' page.id %}" class="btn btn-outline btn-sm">
+              Visual Canvas
+            </a>
+            <form method="POST" action="{% url 'cms_delete_page' page.id %}" onsubmit="return confirm('Delete page: {{ page.title }}?');" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" style="text-align: center; padding: 32px; color: var(--taupe);">
+          No custom pages found. Click "+ Create Brand New Page" to launch the visual builder.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

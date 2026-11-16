@@ -1,0 +1,83 @@
+{% extends "cms/base.html" %}
+
+{% block title %}3D Spatial Tour Management | Charred & Prime CMS{% endblock %}
+
+{% block content %}
+<div class="grid-3" style="align-items: start;">
+  
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <div class="cms-card-title">🧭 Add Viewpoint</div>
+    </div>
+    <form method="POST" action="{% url 'cms_save_tour' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label class="form-label">Viewpoint Title *</label>
+        <input type="text" name="title" class="form-control" required placeholder="e.g. Subterranean Wine Vault">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Subtitle</label>
+        <input type="text" name="subtitle" class="form-control" placeholder="e.g. 3,000 Rare Library Vintages">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control" rows="3" placeholder="Atmosphere, temperature control, lighting notes..."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">High-Resolution Image URL</label>
+        <input type="url" name="image_url" class="form-control" placeholder="https://images.unsplash.com/photo-...">
+      </div>
+      <button type="submit" class="btn btn-bronze" style="width: 100%; justify-content: center; margin-top: 14px;">
+        Add Viewpoint
+      </button>
+    </form>
+  </div>
+
+  <div class="cms-card" style="grid-column: span 2;">
+    <div class="cms-card-header">
+      <div class="cms-card-title">🗺️ Active Tour Viewpoints ({{ viewpoints|length }})</div>
+    </div>
+    <table class="cms-table">
+      <thead>
+        <tr>
+          <th>PREVIEW</th>
+          <th>TITLE & SUBTITLE</th>
+          <th>DESCRIPTION</th>
+          <th>ACTION</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for vp in viewpoints %}
+        <tr>
+          <td style="width: 80px;">
+            <div style="width: 70px; height: 50px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-dark);">
+              <img src="{{ vp.display_image }}" alt="{{ vp.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+          </td>
+          <td>
+            <div style="font-weight: 600; color: var(--ivory);">{{ vp.title }}</div>
+            <div style="font-size: 11px; color: var(--champagne);">{{ vp.subtitle }}</div>
+          </td>
+          <td style="color: var(--taupe); font-size: 12px; max-width: 250px;">
+            {{ vp.description|truncatewords:12 }}
+          </td>
+          <td>
+            <form method="POST" action="{% url 'cms_del_tour' vp.id %}" onsubmit="return confirm('Remove viewpoint?');">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="4" style="text-align: center; padding: 24px; color: var(--taupe);">
+            No 3D viewpoints created yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

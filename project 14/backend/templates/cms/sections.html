@@ -1,0 +1,34 @@
+{% extends "cms/base.html" %}
+
+{% block title %}14-Section Content Editor | Charred & Prime CMS{% endblock %}
+
+{% block content %}
+<form method="POST" action="{% url 'cms_save_sections' %}">
+  {% csrf_token %}
+  
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <div>
+        <div class="cms-card-title">📑 14-Section Editorial Content Stream</div>
+        <div style="font-size: 12px; color: var(--taupe); margin-top: 4px;">
+          Direct editorial configuration for all 14 landing sections: Hero, Brand Story, Dry-Aging Cave, Cuts, Hearth, Sommelier, etc.
+        </div>
+      </div>
+      <button type="submit" class="btn btn-bronze">
+        💾 Save Editorial Content
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Full Content JSON Tree</label>
+      <textarea name="content_json" class="form-control" style="min-height: 480px; font-family: monospace; font-size: 12px; line-height: 1.5; background: #0A0A0A; color: #EDE5D8;">{{ content|safe }}</textarea>
+    </div>
+
+    <div style="text-align: right;">
+      <button type="submit" class="btn btn-bronze">
+        💾 Save Editorial Content
+      </button>
+    </div>
+  </div>
+</form>
+{% endblock %}
