@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { fetchPublicContent, fetchMenuCategories, fetchMenuItems } from '../services/api';
 import { FALLBACK_CONTENT } from '../data/fallbackContent';
 
@@ -8,6 +8,9 @@ export function CMSProvider({ children }) {
   const [content, setContent] = useState(FALLBACK_CONTENT);
   const [categories, setCategories] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
+  const [customPages, setCustomPages] = useState(FALLBACK_CONTENT.custom_pages || []);
+  const [blogPosts, setBlogPosts] = useState(FALLBACK_CONTENT.blog_posts || []);
+  const [blogCategories, setBlogCategories] = useState(FALLBACK_CONTENT.blog_categories || []);
   const [loading, setLoading] = useState(true);
 
   // Modals
@@ -25,7 +28,12 @@ export function CMSProvider({ children }) {
           fetchMenuItems(),
         ]);
 
-        if (liveContent) setContent(liveContent);
+        if (liveContent) {
+          setContent(liveContent);
+          if (liveContent.custom_pages) setCustomPages(liveContent.custom_pages);
+          if (liveContent.blog_posts) setBlogPosts(liveContent.blog_posts);
+          if (liveContent.blog_categories) setBlogCategories(liveContent.blog_categories);
+        }
         if (liveCategories && liveCategories.length > 0) setCategories(liveCategories);
         if (liveDishes && liveDishes.length > 0) setMenuItems(liveDishes);
       } catch (err) {
@@ -47,14 +55,28 @@ export function CMSProvider({ children }) {
     setInitialOccasion(null);
   };
 
+  const t = useCallback((obj) => {
+    if (!obj) return '';
+    if (typeof obj === 'string') return obj;
+    if (typeof obj === 'object') {
+      return obj['en'] || Object.values(obj)[0] || '';
+    }
+    return String(obj);
+  }, []);
+
   return (
     <CMSContext.Provider
       value={{
         content,
         categories,
         menuItems,
+        customPages,
+        blogPosts,
+        blogCategories,
         loading,
+        t,
         activeReservationModal,
+        isReservationOpen: activeReservationModal,
         initialOccasion,
         openReservation,
         closeReservation,

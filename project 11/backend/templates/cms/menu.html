@@ -1,0 +1,118 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--warm-cream);">
+        Botanical Menu &amp; Specialty Coffee Offerings
+      </h3>
+      <p style="color: var(--soft-stone); font-size: 0.85rem;">
+        Single-origin pour-overs, botanical cold brews, artisanal loose-leaf teas, and glasshouse brunch plates.
+      </p>
+    </div>
+    <span style="font-size: 0.82rem; color: var(--botanical-sage); font-family: var(--font-mono); font-weight: 700;">
+      {{ categories|length }} Categories Active
+    </span>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+    {% for cat in categories %}
+    <div style="background: var(--surface); border: 1px solid var(--card-border); border-radius: 4px; padding: 1.25rem;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <span style="font-size: 0.72rem; color: var(--muted-copper); font-weight: 700; text-transform: uppercase;">
+            Category 0{{ forloop.counter }}
+          </span>
+          <h4 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--warm-cream); margin: 0.2rem 0;">
+            {{ cat.name }}
+          </h4>
+          <p style="color: var(--soft-stone); font-size: 0.82rem;">{{ cat.description }}</p>
+        </div>
+        <span style="font-size: 0.75rem; background: rgba(38, 63, 53, 0.5); border: 1px solid var(--botanical-sage); color: var(--botanical-sage); padding: 2px 8px; border-radius: 2px; font-weight: 700;">
+          {{ cat.items.count }} items
+        </span>
+      </div>
+
+      <div style="margin-top: 1rem; border-top: 1px solid var(--card-border); padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
+        {% for item in cat.items.all|slice:":4" %}
+        <div style="display: flex; justify-content: space-between; font-size: 0.82rem;">
+          <span style="color: var(--warm-cream);">{{ item.name }}</span>
+          <span style="color: var(--botanical-sage); font-weight: 700;">{{ item.currency }}{{ item.price }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% empty %}
+    <div style="grid-column: 1 / -1; padding: 2rem; text-align: center; color: var(--soft-stone);">
+      No menu categories found. Add categories using the form below.
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Add Category & Add Item Section -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+    <!-- Add Category Form -->
+    <div style="background: var(--surface); border: 1px solid var(--card-border); border-radius: 4px; padding: 1.5rem;">
+      <h4 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--warm-cream); margin-bottom: 1rem;">
+        + Create Menu Category
+      </h4>
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_category">
+        <div class="form-group">
+          <label class="form-label">Category Name</label>
+          <input type="text" name="name" required placeholder="e.g. Cold Brew & Botanical Tonics" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea name="description" rows="2" class="form-control" placeholder="Infused with organic elderflower and garden botanicals."></textarea>
+        </div>
+        <button type="submit" class="btn-action btn-copper">Add Category ➔</button>
+      </form>
+    </div>
+
+    <!-- Add Item Form -->
+    <div style="background: var(--surface); border: 1px solid var(--card-border); border-radius: 4px; padding: 1.5rem;">
+      <h4 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--warm-cream); margin-bottom: 1rem;">
+        + Add Botanical Dish / Beverage
+      </h4>
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="add_item">
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select name="category_id" class="form-control" required>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+          <div class="form-group">
+            <label class="form-label">Item Name</label>
+            <input type="text" name="name" required placeholder="e.g. Cascara Elderflower Spritz" class="form-control">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Price ($)</label>
+            <input type="number" step="0.5" name="price" required placeholder="8.50" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Botanical Notes / Description</label>
+          <input type="text" name="botanical_notes" placeholder="Notes: wild elderflower mist & bergamot" class="form-control">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Meal Photo Image URL</label>
+          <input type="text" name="image" placeholder="https://images.unsplash.com/..." class="form-control">
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+          <input type="checkbox" name="is_signature" id="is_signature" style="accent-color: var(--muted-copper);">
+          <label for="is_signature" style="font-size: 0.85rem; color: var(--warm-cream);">Highlight as Signature Offering</label>
+        </div>
+        <button type="submit" class="btn-action">Add Item to Menu ➔</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

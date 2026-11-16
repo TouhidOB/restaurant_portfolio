@@ -1,10 +1,22 @@
 import React from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Footer() {
-  const { content } = useCMS();
+export default function Footer({ onNavigate }) {
+  const { content, openReservation } = useCMS();
   const f = content?.footer || {};
   const loc = content?.location || {};
+
+  const handleLinkClick = (e, path) => {
+    e.preventDefault();
+    if (onNavigate) {
+      onNavigate(path);
+    } else {
+      window.history.pushState({}, '', path);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  };
+
+  const hoursString = typeof loc.hours === 'object' ? loc.hours.en || Object.values(loc.hours)[0] : loc.hours;
 
   return (
     <footer
@@ -13,7 +25,7 @@ export default function Footer() {
         backgroundColor: '#1A2B24',
         color: '#F4F0E6',
         padding: '80px 0 36px 0',
-        borderTop: '2px solid var(--color-copper, #A87958)',
+        borderTop: '2px solid #A87958',
       }}
     >
       <div
@@ -36,7 +48,7 @@ export default function Footer() {
               <span style={{ fontSize: '24px' }}>🌿</span>
               <span
                 style={{
-                  fontFamily: 'var(--font-display)',
+                  fontFamily: 'var(--font-display, "Cormorant Garamond")',
                   fontSize: '22px',
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
@@ -58,11 +70,11 @@ export default function Footer() {
               A contemporary botanical glasshouse café where natural daylight, living tropical greenery, and artisanal coffee harmonize into restorative daily rituals.
             </p>
             <div style={{ display: 'flex', gap: '12px' }}>
-              <a href={f.social?.instagram || 'https://instagram.com'} target="_blank" rel="noreferrer" style={{ color: 'var(--color-sage)', fontSize: '13px', textDecoration: 'none' }}>Instagram ↗</a>
+              <a href={f.social?.instagram || 'https://instagram.com'} target="_blank" rel="noreferrer" style={{ color: '#A6B5A0', fontSize: '13px', textDecoration: 'none' }}>Instagram ↗</a>
               <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
-              <a href={f.social?.facebook || 'https://facebook.com'} target="_blank" rel="noreferrer" style={{ color: 'var(--color-sage)', fontSize: '13px', textDecoration: 'none' }}>Facebook ↗</a>
+              <a href={f.social?.facebook || 'https://facebook.com'} target="_blank" rel="noreferrer" style={{ color: '#A6B5A0', fontSize: '13px', textDecoration: 'none' }}>Facebook ↗</a>
               <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
-              <a href={f.social?.pinterest || 'https://pinterest.com'} target="_blank" rel="noreferrer" style={{ color: 'var(--color-sage)', fontSize: '13px', textDecoration: 'none' }}>Pinterest ↗</a>
+              <a href={f.social?.pinterest || 'https://pinterest.com'} target="_blank" rel="noreferrer" style={{ color: '#A6B5A0', fontSize: '13px', textDecoration: 'none' }}>Pinterest ↗</a>
             </div>
           </div>
 
@@ -73,19 +85,38 @@ export default function Footer() {
                 fontSize: '11.5px',
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: 'var(--color-copper, #A87958)',
+                color: '#A87958',
                 fontWeight: 600,
                 marginBottom: '12px',
               }}
             >
-              Hours & Service
+              Hours &amp; Service
             </div>
             <p style={{ fontSize: '13.5px', color: 'rgba(244, 240, 230, 0.85)', lineHeight: 1.6, margin: '0 0 10px 0' }}>
-              {loc.hours || 'Monday – Sunday: 7:30 AM – 8:00 PM'}
+              {hoursString}
             </p>
             <p style={{ fontSize: '12.5px', color: 'rgba(244, 240, 230, 0.65)', lineHeight: 1.5, margin: 0 }}>
               Kitchen closes daily at 6:30 PM. Pour-overs, cold brew, and pastries served until close.
             </p>
+            <div style={{ marginTop: '1.25rem' }}>
+              <button
+                onClick={() => openReservation()}
+                style={{
+                  backgroundColor: '#A87958',
+                  color: '#FAF7F0',
+                  border: 'none',
+                  padding: '7px 16px',
+                  borderRadius: '2px',
+                  fontSize: '11px',
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Table Reservation
+              </button>
+            </div>
           </div>
 
           {/* Col 3: Quick Navigation */}
@@ -95,7 +126,7 @@ export default function Footer() {
                 fontSize: '11.5px',
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: 'var(--color-copper, #A87958)',
+                color: '#A87958',
                 fontWeight: 600,
                 marginBottom: '12px',
               }}
@@ -103,12 +134,14 @@ export default function Footer() {
               Glasshouse Navigation
             </div>
             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <li><a href="#story" style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>The Greenhouse Ethos</a></li>
-              <li><a href="#tour" style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>3D Virtual Tour</a></li>
-              <li><a href="#drinks" style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>Signature Drinks</a></li>
-              <li><a href="#menu" style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>Seasonal Café Menu</a></li>
-              <li><a href="#architecture" style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>Conservatory Architecture</a></li>
-              <li><a href="#location" style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>Location & Directions</a></li>
+              <li><a href="/story" onClick={(e) => handleLinkClick(e, '/story')} style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>The Greenhouse Ethos</a></li>
+              <li><a href="/signatures" onClick={(e) => handleLinkClick(e, '/signatures')} style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>Signature Drinks</a></li>
+              <li><a href="/menu" onClick={(e) => handleLinkClick(e, '/menu')} style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>Seasonal Café Menu</a></li>
+              <li><a href="/tour" onClick={(e) => handleLinkClick(e, '/tour')} style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>3D Virtual Tour</a></li>
+              <li><a href="/space" onClick={(e) => handleLinkClick(e, '/space')} style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>Conservatory Architecture</a></li>
+              <li><a href="/experience" onClick={(e) => handleLinkClick(e, '/experience')} style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>Botanical Gatherings</a></li>
+              <li><a href="/blog" onClick={(e) => handleLinkClick(e, '/blog')} style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>Glasshouse Gazette</a></li>
+              <li><a href="/contact" onClick={(e) => handleLinkClick(e, '/contact')} style={{ color: 'rgba(244, 240, 230, 0.75)', textDecoration: 'none', fontSize: '13px' }}>Location &amp; Directions</a></li>
             </ul>
           </div>
 
@@ -119,7 +152,7 @@ export default function Footer() {
                 fontSize: '11.5px',
                 letterSpacing: '0.14em',
                 textTransform: 'uppercase',
-                color: 'var(--color-copper, #A87958)',
+                color: '#A87958',
                 fontWeight: 600,
                 marginBottom: '12px',
               }}
@@ -129,7 +162,7 @@ export default function Footer() {
             <p style={{ fontSize: '13.5px', color: 'rgba(244, 240, 230, 0.85)', lineHeight: 1.6, margin: '0 0 8px 0' }}>
               {loc.address || '42 Conservatory Lane, Botanical Arts District'}
             </p>
-            <p style={{ fontSize: '13px', color: 'var(--color-sage)', margin: '0 0 16px 0' }}>
+            <p style={{ fontSize: '13px', color: '#A6B5A0', margin: '0 0 16px 0' }}>
               {loc.phone || '+1 (415) 890-4321'}
             </p>
             <a
@@ -142,7 +175,7 @@ export default function Footer() {
                 gap: '6px',
                 padding: '6px 14px',
                 backgroundColor: 'rgba(168, 121, 88, 0.2)',
-                border: '1px solid var(--color-copper)',
+                border: '1px solid #A87958',
                 color: '#FFD2B8',
                 borderRadius: '2px',
                 fontSize: '11px',

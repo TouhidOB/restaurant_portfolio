@@ -1,0 +1,129 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--warm-cream);">
+        Botanical Glasshouse Gazette &amp; Roastery Chronicles
+      </h3>
+      <p style="color: var(--soft-stone); font-size: 0.85rem;">
+        Publish and manage editorial essays, micro-lot coffee origin profiles, and biophilic architectural guides.
+      </p>
+    </div>
+    <span style="font-size: 0.82rem; color: var(--botanical-sage); font-family: var(--font-mono); font-weight: 700;">
+      {{ posts|length }} Chronicles Published
+    </span>
+  </div>
+
+  <div style="overflow-x: auto; margin-bottom: 2.5rem;">
+    <table class="cms-table">
+      <thead>
+        <tr>
+          <th>Article Title</th>
+          <th>Category</th>
+          <th>Author</th>
+          <th>Published</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for post in posts %}
+        <tr>
+          <td style="font-weight: 700; color: var(--warm-cream);">
+            {{ post.title }}
+            <div style="color: var(--soft-stone); font-size: 0.75rem; font-weight: 400; margin-top: 0.2rem;">
+              <a href="http://127.0.0.1:3000/blog/{{ post.slug }}" target="_blank" style="color: var(--botanical-sage); font-family: var(--font-mono);">
+                /blog/{{ post.slug }} ↗
+              </a>
+            </div>
+          </td>
+          <td>
+            <span style="background: rgba(38, 63, 53, 0.5); border: 1px solid var(--card-border); color: var(--botanical-sage); padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; font-weight: 700;">
+              {{ post.category.name|default:"General" }}
+            </span>
+          </td>
+          <td>
+            {{ post.author_name }}
+          </td>
+          <td style="color: var(--soft-stone); font-size: 0.8rem;">
+            {{ post.published_at|date:"M d, Y" }}
+          </td>
+          <td style="text-align: right;">
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+              <a href="{% url 'cms_blog_edit' pk=post.pk %}" class="btn-action" style="padding: 0.4rem 0.85rem; font-size: 0.75rem;">
+                Edit ➔
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="padding: 2.5rem; text-align: center; color: var(--soft-stone);">
+            No articles published in the gazette yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Write New Chronicle Form -->
+<div class="cms-card">
+  <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.75rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--warm-cream);">
+      + Author Brand New Botanical Chronicle
+    </h3>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="create_post">
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+      <div class="form-group">
+        <label class="form-label">Article Title</label>
+        <input type="text" name="title" required placeholder="e.g. The Biophilic Coffee Pavilion: Sunlight & Terroir" class="form-control">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Editorial Category</label>
+        <select name="category_id" class="form-control">
+          {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 1.25rem;">
+      <label class="form-label">Excerpt / Standfirst</label>
+      <input type="text" name="excerpt" placeholder="A brief poetic synopsis for social previews and listing cards..." class="form-control">
+    </div>
+
+    <div class="form-group" style="margin-bottom: 1.25rem;">
+      <label class="form-label">Full Article Manuscript</label>
+      <textarea name="content" rows="8" required class="form-control" placeholder="Write the editorial chronicle body here..."></textarea>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+      <div class="form-group">
+        <label class="form-label">Featured Image URL</label>
+        <input type="text" name="featured_image" placeholder="https://images.unsplash.com/photo-..." class="form-control">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Author Name</label>
+        <input type="text" name="author_name" value="Elena Vance" class="form-control">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Estimated Reading Time</label>
+        <input type="text" name="reading_time" value="5 min read" class="form-control">
+      </div>
+    </div>
+
+    <button type="submit" class="btn-action btn-copper" style="padding: 0.85rem 2rem;">
+      Publish Chronicle to Gazette ➔
+    </button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--warm-cream);">
+        Edit Botanical Chronicle: {{ post.title }}
+      </h3>
+      <p style="color: var(--soft-stone); font-size: 0.85rem;">
+        Modify title, manuscript body, featured photography, and publication status.
+      </p>
+    </div>
+    <a href="{% url 'cms_blog' %}" class="btn-action" style="font-size: 0.78rem;">
+      &larr; Back to Gazette
+    </a>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+      <div class="form-group">
+        <label class="form-label">Article Title</label>
+        <input type="text" name="title" required value="{{ post.title }}" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Route Slug (/blog/:slug)</label>
+        <input type="text" name="slug" required value="{{ post.slug }}" class="form-control">
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.25rem;">
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select name="category_id" class="form-control">
+          {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if post.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Author Name</label>
+        <input type="text" name="author_name" value="{{ post.author_name }}" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Reading Time</label>
+        <input type="text" name="reading_time" value="{{ post.reading_time }}" class="form-control">
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 1.25rem;">
+      <label class="form-label">Excerpt / Standfirst</label>
+      <input type="text" name="excerpt" value="{{ post.excerpt }}" class="form-control">
+    </div>
+
+    <div class="form-group" style="margin-bottom: 1.25rem;">
+      <label class="form-label">Featured Image URL</label>
+      <input type="text" name="featured_image" value="{{ post.featured_image }}" class="form-control">
+    </div>
+
+    <div class="form-group" style="margin-bottom: 1.5rem;">
+      <label class="form-label">Full Article Manuscript</label>
+      <textarea name="content" rows="12" required class="form-control" style="line-height: 1.7;">{{ post.content }}</textarea>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 2rem;">
+      <input type="checkbox" id="is_published" name="is_published" {% if post.is_published %}checked{% endif %} style="accent-color: var(--muted-copper);">
+      <label for="is_published" style="color: var(--warm-cream); font-size: 0.88rem; font-weight: 600;">
+        Published &amp; Live on Frontend Gazette
+      </label>
+    </div>
+
+    <button type="submit" class="btn-action btn-copper" style="padding: 0.85rem 2rem;">
+      Save Chronicle Changes ➔
+    </button>
+  </form>
+</div>
+{% endblock %}

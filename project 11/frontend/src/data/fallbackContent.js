@@ -345,5 +345,107 @@ export const FALLBACK_CONTENT = {
       facebook: "https://facebook.com",
       pinterest: "https://pinterest.com"
     }
-  }
+  },
+  custom_pages: [
+    {
+      id: 1,
+      title: "Glasshouse Private Dining & Botanical Conservatory",
+      slug: "glasshouse-private-dining-conservatory",
+      meta_description: "Exclusive buyouts, bespoke botanical tea tastings, and twilight dinners surrounded by 140+ living species.",
+      is_published: true,
+      blocks: [
+        {
+          type: "hero",
+          title: "Glasshouse Private Dining & Conservatory Buyouts",
+          subtitle: "SANCTUARY FOR UNHURRIED CELEBRATIONS",
+          lead: "Double-height structural glass, living ficus trees, and custom botanical menus curated for intimate parties.",
+          cta_text: "Request Private Conservatory Buyout"
+        },
+        {
+          type: "split",
+          title: "An Architectural Oasis for Private Occasions",
+          lead: "Suspended between living flora and celestial daylight.",
+          body: "Whether hosting a daylight bridal brunch, an executive symposium, or an unhurried twilight dinner, our conservatory wing provides complete spatial exclusivity. Guests dine under vaulted glass ceilings amidst blooming jasmine and orchids.",
+          image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1200&q=85",
+          image_alt: "Private Glasshouse Conservatory"
+        },
+        {
+          type: "features",
+          title: "Conservatory Buyout Inclusions",
+          items: [
+            {
+              title: "Dedicated Master Barista & Sommelier",
+              desc: "Bespoke single-origin coffee tastings, botanical tea pairings, and organic biodynamic wines."
+            },
+            {
+              title: "Full Spatial Climate Control",
+              desc: "Automated solar shading, ambient acoustic tuning, and purified botanical airflow."
+            },
+            {
+              title: "Tailored Chef's Botanical Menu",
+              desc: "Multi-course daylight brunch or evening sharing plates featuring seasonal organic terroir."
+            }
+          ]
+        },
+        {
+          type: "cta",
+          title: "Reserve Your Glasshouse Gathering",
+          subtitle: "Private buyouts accepted up to 60 days in advance for parties of 10 to 45 guests.",
+          button_text: "Inquire with Concierge"
+        },
+        {
+          type: "reservation",
+          title: "Private Booking Inquiry",
+          subtitle: "Our event coordinator will curate your floral arrangements and culinary pairings."
+        },
+        {
+          type: "faq",
+          title: "Private Conservatory Guidelines",
+          items: [
+            {
+              q: "What is the guest capacity for the private conservatory?",
+              a: "Seated banquets accommodate up to 36 guests; standing botanical cocktail receptions accommodate up to 50 guests."
+            },
+            {
+              q: "Can custom floral decor be incorporated?",
+              a: "Our in-house resident botanist collaborates with your party to integrate sustainable living greenery and botanical accents."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  blog_categories: [
+    { id: 1, name: "Micro-Lot Coffee & Terroir", slug: "botanical-roastery", description: "Chronicles on ethical direct-trade origins and cupping." },
+    { id: 2, name: "Biophilic Architecture & Living Walls", slug: "biophilic-architecture", description: "Passive daylighting and indoor microclimates." },
+    { id: 3, name: "Rare Conservatory Flora", slug: "plant-care", description: "Caring for tropical palms, ferns, and orchids." }
+  ],
+  blog_posts: [
+    {
+      id: 1,
+      title: "Sunlight, Terroir & Specialty Micro-Lots in the Glasshouse",
+      slug: "sunlight-terroir-micro-lot-coffee-glasshouse",
+      category_name: "Micro-Lot Coffee & Terroir",
+      category_slug: "botanical-roastery",
+      excerpt: "How natural atmospheric daylight alters sensory perception and elevates Ethiopian and Colombian micro-lot coffee rituals.",
+      content: "Coffee tasting is fundamentally sensory, yet traditional cafés frequently bury patrons under dark brick, neon signage, and hurried fluorescent glare. At Verdant Atrium, we designed our cupping bar around an 18-meter vaulted glass prism that tracks the shifting daylight from dawn to dusk.\n\nUnder natural diffuse morning sunlight, the delicate bergamot and jasmine notes of our washed Ethiopian Yirgacheffe blossom on the palate with startling clarity. Natural light sharpens olfactory acuity, allowing subtle enzymatic aromatics—peach skin, wild honey, and citrus blossom—to shine without artificial interference.\n\nPaired with our living vertical fern walls that release calibrated humidity, every pour-over becomes an unhurried communion with botanical terroir.",
+      featured_image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1200&q=85",
+      author_name: "Elena Vance",
+      reading_time: "5 min read",
+      published_at: "2026-11-16"
+    },
+    {
+      id: 2,
+      title: "19th-Century Conservatory Elegance Meets Modern Biophilic Design",
+      slug: "biophilic-conservatory-architecture-portland",
+      category_name: "Biophilic Architecture & Living Walls",
+      category_slug: "biophilic-architecture",
+      excerpt: "A deep dive into our restoration of vintage steel trusses, double-glazed structural glass, and natural air purification.",
+      content: "Biophilia is the innate human affinity for the living world. In an era marked by rapid urban densification and screen fatigue, Verdant Atrium was conceived as a structural sanctuary that actively lowers cortisol levels through biophilic immersion.\n\nOur architectural brigade salvaged century-old industrial steel arches and paired them with cutting-edge thermal low-E double glazing. Over 140 varieties of tropical palms, fiddle-leaf figs, and rare climbing monsteras were strategically positioned along air-current circulation paths.\n\nThe result is an indoor microclimate that self-purifies, modulates relative humidity to a tranquil 55%, and provides restorative acoustic dampening through living foliage rather than synthetic foam.",
+      featured_image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=85",
+      author_name: "Julian Moreau",
+      reading_time: "6 min read",
+      published_at: "2026-11-15"
+    }
+  ]
 };

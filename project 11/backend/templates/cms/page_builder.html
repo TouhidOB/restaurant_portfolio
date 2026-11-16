@@ -1,0 +1,212 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 2rem; align-items: start;">
+    <!-- Left Column: Block Canvas & Palette -->
+    <div>
+      <!-- Block Palette -->
+      <div class="cms-card" style="border-color: var(--botanical-sage);">
+        <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--botanical-sage); font-weight: 800; margin-bottom: 0.85rem;">
+          Component Block Palette — Click to Append to Canvas
+        </div>
+        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+          <button type="button" onclick="insertBlock('hero')" class="btn-action" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Hero Banner
+          </button>
+          <button type="button" onclick="insertBlock('split')" class="btn-action" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Split Editorial
+          </button>
+          <button type="button" onclick="insertBlock('features')" class="btn-action" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Features Grid
+          </button>
+          <button type="button" onclick="insertBlock('cta')" class="btn-action" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Call-to-Action
+          </button>
+          <button type="button" onclick="insertBlock('reservation')" class="btn-action" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Table Reservation
+          </button>
+          <button type="button" onclick="insertBlock('faq')" class="btn-action" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + FAQ Accordion
+          </button>
+        </div>
+      </div>
+
+      <!-- JSON Canvas Editor -->
+      <div class="cms-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--warm-cream);">
+            Modular Block Canvas Hierarchy
+          </h3>
+          <button type="button" onclick="formatBlocksJSON()" class="btn-action btn-copper" style="font-size: 0.75rem; padding: 0.4rem 0.8rem;">
+            Format JSON
+          </button>
+        </div>
+
+        <textarea
+          id="blocksJsonArea"
+          name="blocks_json"
+          rows="18"
+          style="width: 100%; padding: 1rem; background: var(--surface); border: 1px solid var(--card-border); border-radius: 3px; color: var(--warm-cream); font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6; outline: none;"
+        >{{ blocks_json_pretty }}</textarea>
+      </div>
+    </div>
+
+    <!-- Right Column: Page Settings & Publish -->
+    <div>
+      <div class="cms-card" style="position: sticky; top: 90px;">
+        <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--warm-cream); margin-bottom: 1.25rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.75rem;">
+          Page Settings
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <div>
+            <label class="form-label">Page Title *</label>
+            <input
+              type="text"
+              name="title"
+              required
+              value="{{ page.title }}"
+              placeholder="e.g. Glasshouse Tea Pavilion"
+              class="form-control"
+            />
+          </div>
+
+          <div>
+            <label class="form-label">Route Slug (/page/:slug)</label>
+            <input
+              type="text"
+              name="slug"
+              required
+              value="{{ page.slug }}"
+              placeholder="e.g. glasshouse-tea-pavilion"
+              class="form-control"
+            />
+          </div>
+
+          <div>
+            <label class="form-label">Meta Description / Lead</label>
+            <textarea
+              name="meta_description"
+              rows="3"
+              class="form-control"
+              style="resize: vertical;"
+            >{{ page.meta_description }}</textarea>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 0; border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border);">
+            <input
+              type="checkbox"
+              id="is_published"
+              name="is_published"
+              {% if page.is_published %}checked{% endif %}
+              style="accent-color: var(--muted-copper); width: 16px; height: 16px;"
+            />
+            <label for="is_published" style="color: var(--warm-cream); font-size: 0.88rem; font-weight: 600; cursor: pointer;">
+              Publish to Live Frontend Route
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-action btn-copper"
+            style="width: 100%; padding: 0.95rem; font-size: 0.9rem; letter-spacing: 0.1em; justify-content: center;"
+          >
+            Save &amp; Deploy Page ➔
+          </button>
+
+          {% if page.slug %}
+          <div style="text-align: center;">
+            <a
+              href="http://127.0.0.1:3000/page/{{ page.slug }}"
+              target="_blank"
+              style="font-size: 0.8rem; color: var(--botanical-sage); text-decoration: underline;"
+            >
+              Preview Live Route /page/{{ page.slug }} ↗
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+  function formatBlocksJSON() {
+    const area = document.getElementById('blocksJsonArea');
+    try {
+      const parsed = JSON.parse(area.value);
+      area.value = JSON.stringify(parsed, null, 2);
+    } catch (e) {
+      alert("Invalid JSON format: " + e.message);
+    }
+  }
+
+  function insertBlock(type) {
+    const area = document.getElementById('blocksJsonArea');
+    let currentBlocks = [];
+    try {
+      currentBlocks = JSON.parse(area.value || '[]');
+    } catch (e) {
+      currentBlocks = [];
+    }
+
+    let newBlock = {};
+    if (type === 'hero') {
+      newBlock = {
+        type: "hero",
+        title: "Botanical Glasshouse Sanctuary",
+        subtitle: "Verdant Living Atrium",
+        lead: "Surrounded by 140+ living flora species and single-origin coffee rituals.",
+        cta_text: "Reserve an Atrium Table"
+      };
+    } else if (type === 'split') {
+      newBlock = {
+        type: "split",
+        title: "Biophilic Glass Architecture",
+        lead: "Double-height thermal glass framing lush botanical canopies.",
+        body: "Designed around passive daylighting principles, creating gentle leaf shadows throughout the day.",
+        image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=85",
+        image_alt: "Glasshouse Architecture"
+      };
+    } else if (type === 'features') {
+      newBlock = {
+        type: "features",
+        title: "Glasshouse Highlights & Amenities",
+        items: [
+          { title: "Living Air Purification", desc: "Monstera and fern living walls purifying indoor air naturally." },
+          { title: "Single-Origin Roastery", desc: "Micro-lots roasted weekly for peak floral and chocolate aromatics." },
+          { title: "Vaulted Daylight", desc: "18-meter high glass ceiling welcoming natural sunrise and twilight hues." }
+        ]
+      };
+    } else if (type === 'cta') {
+      newBlock = {
+        type: "cta",
+        title: "Host Your Private Conservatory Event",
+        subtitle: "Exclusive full glasshouse buyouts for private receptions and afternoon teas.",
+        button_text: "Contact Glasshouse Concierge"
+      };
+    } else if (type === 'reservation') {
+      newBlock = {
+        type: "reservation",
+        title: "Table Reservations & Guest Inquiries",
+        subtitle: "Daylight brunch or twilight lantern reservations accepted 14 days in advance."
+      };
+    } else if (type === 'faq') {
+      newBlock = {
+        type: "faq",
+        title: "Visiting The Glasshouse",
+        items: [
+          { q: "Is outdoor or indoor seating available?", a: "Our climate-controlled double-height atrium offers both indoor and sheltered garden terrace tables." },
+          { q: "Are vegan and gluten-free pastries offered?", a: "Yes, our daily botanical bakery prepares plant-based and gluten-free items baked at sunrise." }
+        ]
+      };
+    }
+
+    currentBlocks.push(newBlock);
+    area.value = JSON.stringify(currentBlocks, null, 2);
+  }
+</script>
+{% endblock %}

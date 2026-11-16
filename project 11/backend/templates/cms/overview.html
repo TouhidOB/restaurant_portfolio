@@ -1,0 +1,184 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<!-- KPI Metrics Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--botanical-sage);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--botanical-sage); font-weight: 800; margin-bottom: 0.35rem;">
+      Total Reservations
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.4rem; color: var(--warm-cream); font-weight: 700;">
+      {{ total_reservations }}
+    </div>
+    <div style="font-size: 0.75rem; color: #81c784; margin-top: 0.3rem;">
+      Botanical Table Inquiries
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--muted-copper);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--botanical-sage); font-weight: 800; margin-bottom: 0.35rem;">
+      Pending Approvals
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.4rem; color: var(--muted-copper); font-weight: 700;">
+      {{ pending_reservations }}
+    </div>
+    <div style="font-size: 0.75rem; color: var(--soft-stone); margin-top: 0.3rem;">
+      Awaiting Host Desk Review
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid #81c784;">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--botanical-sage); font-weight: 800; margin-bottom: 0.35rem;">
+      Confirmed Covers
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.4rem; color: #81c784; font-weight: 700;">
+      {{ confirmed_reservations }}
+    </div>
+    <div style="font-size: 0.75rem; color: var(--soft-stone); margin-top: 0.3rem;">
+      Assigned Glasshouse Tables
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--olive-leaf);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--botanical-sage); font-weight: 800; margin-bottom: 0.35rem;">
+      Brunch / Dinner Shift Split
+    </div>
+    <div style="font-family: var(--font-display); font-size: 1.8rem; color: var(--warm-cream); font-weight: 700; margin-top: 0.4rem;">
+      ☀️ {{ lunch_covers }} / 🌙 {{ dinner_covers }}
+    </div>
+    <div style="font-size: 0.75rem; color: var(--soft-stone); margin-top: 0.3rem;">
+      Live Shift Demand
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--forest-green);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--botanical-sage); font-weight: 800; margin-bottom: 0.35rem;">
+      Pages &amp; Editorial
+    </div>
+    <div style="font-family: var(--font-display); font-size: 1.8rem; color: #c8e6c9; font-weight: 700; margin-top: 0.4rem;">
+      {{ total_pages }} Pages &bull; {{ total_articles }} Articles
+    </div>
+    <div style="font-size: 0.75rem; color: var(--soft-stone); margin-top: 0.3rem;">
+      Active Content Assets
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions Banner -->
+<div class="cms-card" style="background: linear-gradient(135deg, rgba(38, 63, 53, 0.7) 0%, rgba(26, 43, 36, 0.9) 100%); border-left: 4px solid var(--muted-copper);">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+    <div>
+      <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--botanical-sage); font-weight: 800;">
+        Fast-Track Command
+      </span>
+      <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--warm-cream); margin: 0.2rem 0;">
+        Verdant Glasshouse Studio Shortcuts
+      </h3>
+      <p style="color: var(--soft-stone); font-size: 0.9rem;">
+        Launch visual page building canvas, review pending botanical reservations, or update micro-lot coffees.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+      <a href="{% url 'cms_pages' %}" class="btn-action">
+        <span>📑</span> Page Canvas
+      </a>
+      <a href="{% url 'cms_reservations' %}?shift=lunch" class="btn-action btn-copper">
+        <span>☀️</span> Brunch Shift
+      </a>
+      <a href="{% url 'cms_reservations' %}?shift=dinner" class="btn-action">
+        <span>🌙</span> Dinner Shift
+      </a>
+      <a href="{% url 'cms_blog' %}" class="btn-action btn-copper">
+        <span>✍️</span> New Gazette
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Reservations Preview Table -->
+<div class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2 class="cms-title">Recent Table Reservation Requests</h2>
+      <p style="color: var(--soft-stone); font-size: 0.85rem; margin-top: 0.2rem;">
+        Latest guests requesting daylight brunch, conservatory salon seats, or twilight dinners.
+      </p>
+    </div>
+    <a href="{% url 'cms_reservations' %}" class="btn-action" style="font-size: 0.78rem;">
+      View All Reservations &rarr;
+    </a>
+  </div>
+
+  <table class="cms-table">
+    <thead>
+      <tr>
+        <th>Ref Code</th>
+        <th>Guest Details</th>
+        <th>Date &amp; Shift</th>
+        <th>Guests &amp; Zone</th>
+        <th>Status</th>
+        <th>Staff Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for res in recent_reservations %}
+      <tr>
+        <td>
+          <span style="font-family: var(--font-mono); color: var(--botanical-sage); font-weight: 600;">
+            {{ res.reference_code|default:"VER-PENDING" }}
+          </span>
+        </td>
+        <td>
+          <div style="font-weight: 700; color: var(--warm-cream);">{{ res.full_name }}</div>
+          <div style="font-size: 0.78rem; color: var(--soft-stone);">{{ res.phone }} {% if res.email %}&bull; {{ res.email }}{% endif %}</div>
+        </td>
+        <td>
+          <div>{{ res.reservation_date }}</div>
+          <div style="margin-top: 2px;">
+            {% if res.shift == 'lunch' %}
+              <span class="badge badge-shift-lunch">☀️ Brunch Shift</span>
+            {% else %}
+              <span class="badge badge-shift-dinner">🌙 Dinner Shift</span>
+            {% endif %}
+            <span style="font-size: 0.75rem; color: var(--soft-stone); margin-left: 4px;">{{ res.reservation_time }}</span>
+          </div>
+        </td>
+        <td>
+          <div>{{ res.guests }} Guests</div>
+          <div style="font-size: 0.78rem; color: var(--botanical-sage);">{{ res.seating_zone|default:"Atrium Table" }}</div>
+        </td>
+        <td>
+          <span class="badge badge-{{ res.status }}">
+            {{ res.get_status_display }}
+          </span>
+        </td>
+        <td>
+          <form method="POST" action="{% url 'cms_reservation_status' res.id %}" style="display: flex; gap: 0.5rem; align-items: center;">
+            {% csrf_token %}
+            {% if res.status == 'pending' %}
+              <input type="hidden" name="status" value="confirmed">
+              <button type="submit" class="btn-action" style="padding: 0.35rem 0.75rem; font-size: 0.72rem;">
+                ✓ Approve
+              </button>
+            {% elif res.status == 'confirmed' %}
+              <input type="hidden" name="status" value="seated">
+              <button type="submit" class="btn-action btn-copper" style="padding: 0.35rem 0.75rem; font-size: 0.72rem;">
+                Seat Guest
+              </button>
+            {% else %}
+              <span style="color: var(--soft-stone); font-size: 0.78rem;">Completed</span>
+            {% endif %}
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="6" style="text-align: center; padding: 3rem; color: var(--soft-stone);">
+          No reservation requests logged yet. Use the public booking form to submit inquiries.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

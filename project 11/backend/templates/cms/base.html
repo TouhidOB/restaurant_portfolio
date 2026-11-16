@@ -1,223 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Botanical CMS Studio | Verdant Atrium{% endblock %}</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --forest-green: #263F35;
-            --forest-dark: #1A2B24;
-            --botanical-sage: #A6B5A0;
-            --warm-cream: #F4F0E6;
-            --cream-light: #FAF7F0;
-            --soft-stone: #D8D2C5;
-            --olive-leaf: #727C52;
-            --muted-copper: #A87958;
-            --charcoal: #292D29;
-            --glass-mist: #E7EDE7;
-            --pure-white: #FFFFFF;
-            --border-color: rgba(38, 63, 53, 0.2);
-            --font-display: 'Cormorant Garamond', Georgia, serif;
-            --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title|default:"CMS Studio" }} | VERDANT ATRIUM BOTANICAL GLASSHOUSE CAFÉ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest-green: #263F35;
+      --forest-dark: #1A2B24;
+      --botanical-sage: #A6B5A0;
+      --warm-cream: #F4F0E6;
+      --soft-stone: #D8D2C5;
+      --olive-leaf: #727C52;
+      --muted-copper: #A87958;
+      --charcoal: #292D29;
+      --surface: #1E332B;
+      --card: #253F35;
+      --card-border: rgba(166, 181, 160, 0.25);
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Manrope', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--forest-dark);
+      color: var(--warm-cream);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
 
-        body {
-            font-family: var(--font-body);
-            background-color: var(--warm-cream);
-            color: var(--charcoal);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+    a { color: var(--botanical-sage); text-decoration: none; transition: all 0.2s; }
+    a:hover { color: var(--warm-cream); }
 
-        /* Top Navigation Bar */
-        .cms-navbar {
-            background-color: var(--forest-green);
-            color: var(--warm-cream);
-            padding: 14px 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 2px solid var(--muted-copper);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 20px rgba(26, 43, 36, 0.25);
-        }
+    /* Layout */
+    .app-layout {
+      display: flex;
+      min-height: 100vh;
+    }
 
-        .cms-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: var(--warm-cream);
-        }
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 280px;
+      background-color: var(--surface);
+      border-right: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
 
-        .cms-brand-leaf {
-            font-size: 24px;
-            color: var(--botanical-sage);
-        }
+    .brand-header {
+      padding: 1.75rem 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
 
-        .cms-brand-text h1 {
-            font-family: var(--font-display);
-            font-size: 20px;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            font-weight: 600;
-        }
+    .brand-crest {
+      width: 40px;
+      height: 40px;
+      border-radius: 4px;
+      background: linear-gradient(135deg, var(--forest-green) 0%, var(--olive-leaf) 100%);
+      border: 1px solid var(--botanical-sage);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
 
-        .cms-brand-text span {
-            font-size: 11px;
-            letter-spacing: 0.14em;
-            text-transform: uppercase;
-            color: var(--botanical-sage);
-            display: block;
-        }
+    .nav-section-title {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--botanical-sage);
+      padding: 1.25rem 1.5rem 0.5rem;
+    }
 
-        .cms-nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      padding: 0 0.75rem;
+    }
 
-        .btn-live-site {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background-color: rgba(166, 181, 160, 0.2);
-            border: 1px solid var(--botanical-sage);
-            color: var(--warm-cream);
-            text-decoration: none;
-            font-size: 12px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            font-weight: 600;
-            border-radius: 3px;
-            transition: all 0.2s ease;
-        }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 4px;
+      color: var(--warm-cream);
+      font-size: 0.86rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
 
-        .btn-live-site:hover {
-            background-color: var(--botanical-sage);
-            color: var(--forest-green);
-        }
+    .nav-item:hover {
+      background-color: rgba(166, 181, 160, 0.15);
+      color: var(--botanical-sage);
+      transform: translateX(3px);
+    }
 
-        .btn-cms-logout {
-            padding: 8px 16px;
-            background-color: rgba(168, 121, 88, 0.25);
-            border: 1px solid var(--muted-copper);
-            color: #FFD2B8;
-            text-decoration: none;
-            font-size: 12px;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            font-weight: 600;
-            border-radius: 3px;
-            transition: all 0.2s ease;
-        }
+    .nav-item.active {
+      background: linear-gradient(90deg, rgba(38, 63, 53, 0.75) 0%, rgba(166, 181, 160, 0.2) 100%);
+      color: var(--botanical-sage);
+      border-left: 3px solid var(--muted-copper);
+      font-weight: 700;
+    }
 
-        .btn-cms-logout:hover {
-            background-color: var(--muted-copper);
-            color: #FFFFFF;
-        }
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background-color: var(--forest-dark);
+    }
 
-        /* Flash Highlight Effect on Target Card */
-        @keyframes flashHighlight {
-            0% {
-                outline: 3px solid var(--muted-copper);
-                box-shadow: 0 0 25px rgba(168, 121, 88, 0.6);
-            }
-            100% {
-                outline: 1px solid var(--border-color);
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            }
-        }
+    .top-header {
+      height: 70px;
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
 
-        .flash-card-target {
-            animation: flashHighlight 1.8s ease-out;
-        }
+    .content-area {
+      padding: 2.5rem;
+      flex: 1;
+      overflow-y: auto;
+    }
 
-        /* Messages */
-        .messages-container {
-            padding: 12px 24px;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
+    /* Cards & Containers */
+    .cms-card {
+      background-color: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
 
-        .alert {
-            padding: 12px 18px;
-            border-radius: 3px;
-            font-size: 13.5px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+    .cms-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1rem;
+    }
 
-        .alert-success {
-            background-color: #E2ECE4;
-            color: #1A3826;
-            border: 1px solid #9BC4A7;
-        }
+    .cms-title {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      color: var(--warm-cream);
+      font-weight: 600;
+    }
 
-        .alert-error {
-            background-color: #F8DFDC;
-            color: #5C1D18;
-            border: 1px solid #E4A29B;
-        }
+    .btn-action {
+      background-color: var(--forest-green);
+      color: var(--warm-cream);
+      border: 1px solid var(--botanical-sage);
+      padding: 0.65rem 1.4rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-radius: 2px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
 
-        .alert-info {
-            background-color: #E1EFF5;
-            color: #1B4556;
-            border: 1px solid #9CC2D4;
-        }
-    </style>
-    {% block extra_head %}{% endblock %}
+    .btn-action:hover {
+      background-color: var(--olive-leaf);
+      color: #fff;
+    }
+
+    .btn-copper {
+      background-color: var(--muted-copper);
+      color: var(--warm-cream);
+      border: none;
+    }
+    .btn-copper:hover {
+      background-color: #8f6445;
+    }
+
+    /* Badges */
+    .badge {
+      padding: 4px 8px;
+      border-radius: 2px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-pending { background-color: rgba(168, 121, 88, 0.25); color: #E8A87C; border: 1px solid #A87958; }
+    .badge-confirmed { background-color: rgba(114, 124, 82, 0.25); color: #C2D094; border: 1px solid #727C52; }
+    .badge-seated { background-color: rgba(38, 63, 53, 0.4); color: #A6B5A0; border: 1px solid #A6B5A0; }
+    .badge-cancelled { background-color: rgba(180, 50, 50, 0.2); color: #FF8888; border: 1px solid #883333; }
+    .badge-shift-lunch { background-color: rgba(114, 124, 82, 0.3); color: #C2D094; border: 1px solid #727C52; }
+    .badge-shift-dinner { background-color: rgba(168, 121, 88, 0.3); color: #E8A87C; border: 1px solid #A87958; }
+
+    /* Tables */
+    .cms-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .cms-table th {
+      background-color: rgba(26, 43, 36, 0.8);
+      color: var(--botanical-sage);
+      text-align: left;
+      padding: 0.85rem 1rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .cms-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(166, 181, 160, 0.12);
+      color: var(--warm-cream);
+    }
+
+    .cms-table tr:hover td {
+      background-color: rgba(166, 181, 160, 0.06);
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-label {
+      display: block;
+      color: var(--botanical-sage);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background-color: var(--forest-dark);
+      border: 1px solid var(--card-border);
+      border-radius: 2px;
+      color: var(--warm-cream);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      border-color: var(--botanical-sage);
+    }
+
+    /* Flash Alerts */
+    .alert-banner {
+      padding: 0.85rem 1.25rem;
+      border-radius: 3px;
+      margin-bottom: 1.5rem;
+      font-size: 0.88rem;
+    }
+    .alert-success { background-color: rgba(114, 124, 82, 0.25); border: 1px solid #727C52; color: #C2D094; }
+    .alert-error { background-color: rgba(180, 50, 50, 0.2); border: 1px solid #883333; color: #FF9999; }
+    .alert-info { background-color: rgba(38, 63, 53, 0.3); border: 1px solid #A6B5A0; color: #A6B5A0; }
+  </style>
+  {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <nav class="cms-navbar">
-        <a href="{% url 'cms_dashboard' %}" class="cms-brand">
-            <span class="cms-brand-leaf">🌿</span>
-            <div class="cms-brand-text">
-                <h1>Verdant Atrium</h1>
-                <span>Botanical Glasshouse CMS Studio</span>
-            </div>
-        </a>
-
-        <div class="cms-nav-actions">
-            <a href="http://127.0.0.1:3000/" target="_blank" class="btn-live-site">
-                ↗ View Live Website (Port 3000)
-            </a>
-            {% if user.is_authenticated %}
-                <span style="font-size: 12px; color: var(--botanical-sage);">
-                    Staff: <strong>{{ user.username }}</strong>
-                </span>
-                <a href="{% url 'cms_logout' %}" class="btn-cms-logout">Sign Out</a>
-            {% endif %}
+  {% block auth_content %}
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand-header">
+        <div class="brand-crest">🌿</div>
+        <div>
+          <div style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--warm-cream); line-height: 1;">VERDANT ATRIUM</div>
+          <div style="font-size: 0.68rem; color: var(--botanical-sage); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px;">GLASSHOUSE CMS STUDIO</div>
         </div>
-    </nav>
+      </div>
 
-    {% if messages %}
-        <div class="messages-container">
-            {% for msg in messages %}
-                <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
-            {% endfor %}
+      <nav style="flex: 1; overflow-y: auto; padding: 1rem 0;">
+        <div class="nav-section-title">Core Management</div>
+        <div class="nav-links">
+          <a href="{% url 'cms_overview' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_overview' %}active{% endif %}">
+            <span>📊</span> Overview &amp; KPIs
+          </a>
+          <a href="{% url 'cms_pages' %}" class="nav-item {% if 'pages' in request.path %}active{% endif %}">
+            <span>📑</span> Custom Page Builder
+          </a>
+          <a href="{% url 'cms_identity' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_identity' %}active{% endif %}">
+            <span>🌿</span> Identity &amp; Hours
+          </a>
+          <a href="{% url 'cms_reservations' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_reservations' %}active{% endif %}">
+            <span>📅</span> Live Reservations Desk
+          </a>
         </div>
-    {% endif %}
 
-    {% block content %}{% endblock %}
+        <div class="nav-section-title">Atmosphere &amp; Offerings</div>
+        <div class="nav-links">
+          <a href="{% url 'cms_menu' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_menu' %}active{% endif %}">
+            <span>☕</span> Botanical Menu &amp; Coffee
+          </a>
+          <a href="{% url 'cms_tour' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_tour' %}active{% endif %}">
+            <span>🏛️</span> 3D Glasshouse Tour
+          </a>
+          <a href="{% url 'cms_sections' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_sections' %}active{% endif %}">
+            <span>📐</span> 15-Section Editor
+          </a>
+          <a href="{% url 'cms_gallery' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_gallery' %}active{% endif %}">
+            <span>🖼️</span> Visual Archives
+          </a>
+          <a href="{% url 'cms_reviews' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_reviews' %}active{% endif %}">
+            <span>⭐</span> Guest Praise
+          </a>
+          <a href="{% url 'cms_faqs' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_faqs' %}active{% endif %}">
+            <span>❓</span> Botanical FAQs
+          </a>
+          <a href="{% url 'cms_schema' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_schema' %}active{% endif %}">
+            <span>🧩</span> Master JSON Schema
+          </a>
+        </div>
+
+        <div class="nav-section-title">Editorial Gazette</div>
+        <div class="nav-links">
+          <a href="{% url 'cms_blog' %}" class="nav-item {% if 'blog' in request.path %}active{% endif %}">
+            <span>📰</span> Glasshouse Gazette
+          </a>
+        </div>
+      </nav>
+
+      <div style="padding: 1.25rem; border-top: 1px solid var(--card-border); font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <div style="color: var(--botanical-sage); font-weight: 600;">{{ request.user.username|default:"Staff" }}</div>
+          <div style="color: var(--muted-copper); font-size: 0.7rem;">Verified Administrator</div>
+        </div>
+        <a href="{% url 'cms_logout' %}" style="color: #FF8888; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Logout &rarr;</a>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <header class="top-header">
+        <h1 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--warm-cream);">
+          {{ page_title|default:"Glasshouse CMS Studio" }}
+        </h1>
+        <div style="display: flex; align-items: center; gap: 1.25rem;">
+          <a href="http://127.0.0.1:3000/" target="_blank" class="btn-action" style="font-size: 0.75rem; padding: 0.5rem 1rem;">
+            <span>🌐</span> View Public Web
+          </a>
+          <a href="/api/content/" target="_blank" class="btn-action btn-copper" style="font-size: 0.75rem; padding: 0.5rem 1rem;">
+            <span>⚡</span> Public JSON
+          </a>
+        </div>
+      </header>
+
+      <main class="content-area">
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="alert-banner alert-{{ msg.tags }}">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+  {% endblock %}
+  {% block extra_scripts %}{% endblock %}
 </body>
 </html>

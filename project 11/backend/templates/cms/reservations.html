@@ -1,0 +1,168 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <!-- Header & Shift Tabs -->
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--warm-cream);">
+        Maitre D' Table Reservation &amp; Host Desk
+      </h3>
+      <p style="color: var(--soft-stone); font-size: 0.85rem;">
+        Manage table assignments, seating zones, guest shifts, and approval workflows.
+      </p>
+    </div>
+
+    <!-- Filter Pills -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <a href="{% url 'cms_reservations' %}" class="btn-action" style="font-size: 0.78rem; {% if current_shift == 'all' and current_filter == 'all' %}background-color: var(--olive-leaf);{% endif %}">
+        All Covers ({{ total_count }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?shift=lunch" class="btn-action" style="font-size: 0.78rem; {% if current_shift == 'lunch' %}background-color: var(--olive-leaf); border-color: var(--botanical-sage);{% endif %}">
+        ☀️ LUNCH ({{ lunch_count }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?shift=dinner" class="btn-action" style="font-size: 0.78rem; {% if current_shift == 'dinner' %}background-color: var(--olive-leaf); border-color: var(--botanical-sage);{% endif %}">
+        🌙 DINNER ({{ dinner_count }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?res_filter=pending" class="btn-action" style="font-size: 0.78rem; color: var(--muted-copper); {% if current_filter == 'pending' %}border-color: var(--muted-copper);{% endif %}">
+        Pending ({{ pending_count }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?res_filter=confirmed" class="btn-action" style="font-size: 0.78rem; color: #81c784; {% if current_filter == 'confirmed' %}border-color: #81c784;{% endif %}">
+        Confirmed ({{ confirmed_count }})
+      </a>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <form method="GET" style="margin-bottom: 2rem; display: flex; gap: 0.75rem;">
+    <input
+      type="text"
+      name="q"
+      value="{{ search_q }}"
+      placeholder="Search by reference code (VER-XXXXXX), guest name, phone, table #..."
+      class="form-control"
+      style="flex: 1;"
+    />
+    <button type="submit" class="btn-action btn-copper" style="padding: 0.75rem 1.5rem;">
+      Search Desk
+    </button>
+  </form>
+
+  <!-- Table -->
+  <div style="overflow-x: auto;">
+    <table class="cms-table">
+      <thead>
+        <tr>
+          <th>Ref Code</th>
+          <th>Guest Information</th>
+          <th>Date &amp; Shift</th>
+          <th>Party Size</th>
+          <th>Zone Preference</th>
+          <th>Assigned Table #</th>
+          <th>Status &amp; Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservations %}
+        <tr>
+          <td style="font-family: var(--font-mono); font-weight: 700; color: var(--botanical-sage);">
+            {{ r.reference_code|default:"-" }}
+          </td>
+          <td>
+            <div style="font-weight: 700; color: var(--warm-cream);">{{ r.full_name }}</div>
+            <div style="font-size: 0.78rem; color: var(--soft-stone);">
+              {{ r.phone }}{% if r.email %} &bull; {{ r.email }}{% endif %}
+            </div>
+            {% if r.dietary_notes %}
+              <div style="margin-top: 0.35rem; font-size: 0.75rem; color: #E8A87C;">
+                🥗 Dietary: {{ r.dietary_notes }}
+              </div>
+            {% endif %}
+            {% if r.special_requests %}
+              <div style="margin-top: 0.2rem; font-size: 0.75rem; color: var(--soft-stone); font-style: italic;">
+                "{{ r.special_requests }}"
+              </div>
+            {% endif %}
+          </td>
+          <td>
+            <div>{{ r.reservation_date }}</div>
+            <div style="margin-top: 2px;">
+              {% if r.shift == 'lunch' %}
+                <span class="badge badge-shift-lunch">☀️ Brunch</span>
+              {% else %}
+                <span class="badge badge-shift-dinner">🌙 Dinner</span>
+              {% endif %}
+              <span style="font-size: 0.75rem; color: var(--soft-stone); margin-left: 4px;">{{ r.reservation_time }}</span>
+            </div>
+          </td>
+          <td>
+            <div style="font-weight: 700;">{{ r.guests }} Guests</div>
+            <div style="font-size: 0.75rem; color: var(--soft-stone);">{{ r.occasion|default:"Botanical Dining" }}</div>
+          </td>
+          <td>
+            <span style="font-size: 0.85rem; color: var(--botanical-sage);">
+              {{ r.seating_zone|default:"Atrium Table" }}
+            </span>
+          </td>
+          <td>
+            <form method="POST" action="{% url 'cms_reservation_status' res_id=r.id %}" style="display: flex; gap: 0.35rem;">
+              {% csrf_token %}
+              <input
+                type="text"
+                name="table_number"
+                value="{{ r.table_number|default:'' }}"
+                placeholder="e.g. T-04"
+                style="width: 75px; padding: 0.35rem 0.5rem; background: var(--forest-dark); border: 1px solid var(--card-border); color: var(--warm-cream); font-size: 0.8rem; border-radius: 2px; text-align: center;"
+              />
+              <button type="submit" class="btn-action" style="padding: 0.35rem 0.5rem; font-size: 0.72rem;">
+                Set
+              </button>
+            </form>
+          </td>
+          <td>
+            <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+              <span class="badge badge-{{ r.status }}" style="display: inline-block; width: fit-content;">
+                {{ r.get_status_display }}
+              </span>
+
+              <div style="display: flex; gap: 0.35rem; align-items: center; margin-top: 0.3rem;">
+                {% if r.status == 'pending' %}
+                  <form method="POST" action="{% url 'cms_reservation_status' res_id=r.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="confirmed" />
+                    <button type="submit" class="btn-action" style="padding: 0.3rem 0.6rem; font-size: 0.72rem;">
+                      ✓ Approve
+                    </button>
+                  </form>
+                {% elif r.status == 'confirmed' %}
+                  <form method="POST" action="{% url 'cms_reservation_status' res_id=r.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="status" value="seated" />
+                    <button type="submit" class="btn-action btn-copper" style="padding: 0.3rem 0.6rem; font-size: 0.72rem;">
+                      Seat Guest
+                    </button>
+                  </form>
+                {% endif %}
+
+                <form method="POST" action="{% url 'cms_reservation_delete' res_id=r.id %}" onsubmit="return confirm('Delete reservation {{ r.reference_code }}?');">
+                  {% csrf_token %}
+                  <button type="submit" style="background: none; border: none; color: #ef5350; cursor: pointer; font-size: 0.85rem; padding: 0.3rem;" title="Delete">
+                    ✕
+                  </button>
+                </form>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="padding: 3rem; text-align: center; color: var(--soft-stone);">
+            No table reservations found matching the selected filter criteria.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

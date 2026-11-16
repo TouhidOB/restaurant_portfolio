@@ -1,0 +1,49 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--warm-cream);">
+      Master JSON Configuration Schema
+    </h3>
+    <p style="color: var(--soft-stone); font-size: 0.85rem;">
+      Full decoupled payload returned to the frontend via /api/content/. Contains all 15 homepage sections and metadata.
+    </p>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group" style="margin-bottom: 2rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+        <label class="form-label">Complete Site Configuration (JSON)</label>
+        <button type="button" onclick="formatSchema()" class="btn-action" style="font-size: 0.72rem; padding: 0.3rem 0.7rem;">
+          Format JSON
+        </button>
+      </div>
+      <textarea
+        id="schemaJsonArea"
+        name="raw_json"
+        rows="22"
+        class="form-control"
+        style="font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6;"
+      >{{ raw_json }}</textarea>
+    </div>
+
+    <button type="submit" class="btn-action btn-copper" style="padding: 0.85rem 2rem;">
+      Save Master Schema ➔
+    </button>
+  </form>
+</div>
+
+<script>
+  function formatSchema() {
+    const area = document.getElementById('schemaJsonArea');
+    try {
+      const parsed = JSON.parse(area.value);
+      area.value = JSON.stringify(parsed, null, 2);
+    } catch (e) {
+      alert("Invalid JSON: " + e.message);
+    }
+  }
+</script>
+{% endblock %}

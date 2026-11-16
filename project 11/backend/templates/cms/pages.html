@@ -1,0 +1,127 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--warm-cream);">
+        Deployed Custom Pages &amp; Standalone Routes
+      </h3>
+      <p style="color: var(--soft-stone); font-size: 0.85rem;">
+        Dynamic Elementor-style pages published to the frontend at /page/:slug.
+      </p>
+    </div>
+    <span style="font-size: 0.82rem; color: var(--botanical-sage); font-family: var(--font-mono); font-weight: 700;">
+      {{ pages|length }} Pages Active
+    </span>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--card-border); color: var(--botanical-sage); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.1em;">
+          <th style="padding: 0.75rem 1rem;">Page Title</th>
+          <th style="padding: 0.75rem 1rem;">Frontend Route</th>
+          <th style="padding: 0.75rem 1rem;">Block Count</th>
+          <th style="padding: 0.75rem 1rem;">Status</th>
+          <th style="padding: 0.75rem 1rem;">Last Modified</th>
+          <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in pages %}
+        <tr style="border-bottom: 1px solid rgba(166, 181, 160, 0.1);">
+          <td style="padding: 0.85rem 1rem; font-weight: 700; color: var(--warm-cream);">
+            {{ p.title }}
+            {% if p.meta_description %}
+              <div style="color: var(--soft-stone); font-size: 0.75rem; font-weight: 400; margin-top: 0.2rem;">
+                {{ p.meta_description|truncatechars:65 }}
+              </div>
+            {% endif %}
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            <a href="http://127.0.0.1:3000/page/{{ p.slug }}" target="_blank" style="color: var(--botanical-sage); font-family: var(--font-mono);">
+              /page/{{ p.slug }} ↗
+            </a>
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            <span style="background: rgba(38, 63, 53, 0.5); border: 1px solid var(--botanical-sage); color: var(--botanical-sage); padding: 2px 8px; border-radius: 3px; font-size: 0.75rem; font-weight: 700;">
+              {{ p.blocks|length }} blocks
+            </span>
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            {% if p.is_published %}
+              <span style="color: #81c784; font-size: 0.8rem; font-weight: 700;">● Published</span>
+            {% else %}
+              <span style="color: var(--soft-stone); font-size: 0.8rem; font-weight: 700;">○ Draft</span>
+            {% endif %}
+          </td>
+          <td style="padding: 0.85rem 1rem; color: var(--soft-stone); font-size: 0.8rem;">
+            {{ p.updated_at|date:"M d, Y H:i" }}
+          </td>
+          <td style="padding: 0.85rem 1rem; text-align: right;">
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+              <a href="{% url 'cms_page_builder_edit' pk=p.pk %}" class="btn-action" style="padding: 0.4rem 0.85rem; font-size: 0.75rem;">
+                Builder ➔
+              </a>
+              <form method="POST" style="display: inline;" onsubmit="return confirm('Delete page {{ p.title }}?');">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_page">
+                <input type="hidden" name="page_id" value="{{ p.id }}">
+                <button type="submit" class="btn-action" style="padding: 0.4rem 0.65rem; font-size: 0.75rem; color: #ef5350; border-color: #883333;">
+                  ✕
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="padding: 2.5rem; text-align: center; color: var(--soft-stone);">
+            No custom standalone pages created yet. Initialize one below.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Initialize New Custom Page -->
+<div class="cms-card">
+  <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.75rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.35rem; color: var(--warm-cream);">
+      Initialize Brand New Standalone Route
+    </h3>
+    <p style="color: var(--soft-stone); font-size: 0.85rem;">
+      Creates a new route entry and opens the visual block canvas with hero, split, features, and reservation sections.
+    </p>
+  </div>
+
+  <form method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) 180px; gap: 1rem; align-items: flex-end;">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="create_page">
+
+    <div>
+      <label class="form-label">Page Title</label>
+      <input type="text" name="title" required placeholder="e.g. Glasshouse Tea Pavilion" class="form-control">
+    </div>
+
+    <div>
+      <label class="form-label">Route Slug (/page/:slug)</label>
+      <input type="text" name="slug" placeholder="e.g. glasshouse-tea-pavilion (auto-generated if blank)" class="form-control">
+    </div>
+
+    <div>
+      <label class="form-label">Meta Description / Lead</label>
+      <input type="text" name="meta_description" placeholder="Brief summary for search and header" class="form-control">
+    </div>
+
+    <div>
+      <button type="submit" class="btn-action btn-copper" style="width: 100%; padding: 0.8rem; justify-content: center;">
+        + Create Page
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -2,42 +2,48 @@
 
 {% block title %}Sign In | Botanical Glasshouse CMS Studio{% endblock %}
 
-{% block content %}
-<div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px;">
-    <div style="background-color: var(--pure-white); max-width: 440px; width: 100%; padding: 40px 36px; border-radius: 4px; border: 1px solid var(--border-color); box-shadow: 0 15px 45px rgba(38, 63, 53, 0.1);">
+{% block auth_content %}
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background-color: var(--forest-dark); padding: 2rem;">
+    <div style="background-color: var(--surface); max-width: 440px; width: 100%; padding: 40px 36px; border-radius: 4px; border: 1px solid var(--card-border); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);">
         <div style="text-align: center; margin-bottom: 28px;">
             <div style="font-size: 38px; margin-bottom: 10px;">🌿</div>
-            <h2 style="font-family: var(--font-display); font-size: 28px; color: var(--forest-green); font-weight: 600; margin-bottom: 6px;">
+            <h2 style="font-family: var(--font-display); font-size: 28px; color: var(--warm-cream); font-weight: 600; margin-bottom: 6px;">
                 Botanical CMS Studio
             </h2>
-            <p style="font-size: 13px; color: var(--charcoal); opacity: 0.75;">
-                Authorized Staff Access Only
+            <p style="font-size: 13px; color: var(--botanical-sage);">
+                VERDANT ATRIUM &bull; Authorized Staff Access Only
             </p>
         </div>
 
+        {% if messages %}
+            {% for msg in messages %}
+                <div class="alert-banner alert-{{ msg.tags }}">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+
         <form method="POST">
             {% csrf_token %}
-            <div style="margin-bottom: 18px;">
-                <label style="display: block; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--forest-green); font-weight: 600; margin-bottom: 6px;">
+            <div class="form-group">
+                <label class="form-label">
                     Staff Username
                 </label>
-                <input type="text" name="username" required value="admin" style="width: 100%; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 3px; font-size: 14px; outline: none; background-color: var(--cream-light); color: var(--charcoal);">
+                <input type="text" name="username" required value="admin" class="form-control">
             </div>
 
-            <div style="margin-bottom: 24px;">
-                <label style="display: block; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--forest-green); font-weight: 600; margin-bottom: 6px;">
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label class="form-label">
                     Password
                 </label>
-                <input type="password" name="password" required value="adminpassword123" style="width: 100%; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 3px; font-size: 14px; outline: none; background-color: var(--cream-light); color: var(--charcoal);">
+                <input type="password" name="password" required value="adminpassword123" class="form-control">
             </div>
 
-            <button type="submit" style="width: 100%; padding: 13px; background-color: var(--forest-green); color: var(--warm-cream); border: none; border-radius: 3px; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease;">
-                Enter Botanical Studio
+            <button type="submit" class="btn-action btn-copper" style="width: 100%; padding: 13px; font-size: 13px; letter-spacing: 0.12em; justify-content: center;">
+                Enter Botanical Studio &rarr;
             </button>
         </form>
 
-        <div style="margin-top: 24px; padding: 12px; background-color: var(--cream-light); border-radius: 3px; border: 1px dashed var(--botanical-sage); text-align: center; font-size: 12px; color: var(--forest-green);">
-            Default Credentials: <strong>admin</strong> / <strong>adminpassword123</strong>
+        <div style="margin-top: 24px; padding: 12px; background-color: rgba(38, 63, 53, 0.5); border-radius: 3px; border: 1px dashed var(--botanical-sage); text-align: center; font-size: 12px; color: var(--botanical-sage);">
+            Default Credentials: <strong style="color: var(--warm-cream);">admin</strong> / <strong style="color: var(--warm-cream);">adminpassword123</strong>
         </div>
     </div>
 </div>

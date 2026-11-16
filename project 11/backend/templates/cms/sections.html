@@ -1,0 +1,42 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 1rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--warm-cream);">
+      15-Section Homepage Architectural Editor
+    </h3>
+    <p style="color: var(--soft-stone); font-size: 0.85rem;">
+      Direct granular editing of every homepage section JSON without affecting adjacent content blocks.
+    </p>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 2rem;">
+    {% for sec_key, sec_val in content.items %}
+    <div style="background: var(--surface); border: 1px solid var(--card-border); border-radius: 4px; padding: 1.5rem;">
+      <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="save_section">
+        <input type="hidden" name="section_key" value="{{ sec_key }}">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h4 style="font-family: var(--font-display); font-size: 1.3rem; color: var(--warm-cream);">
+            Section: <span style="color: var(--botanical-sage); font-family: var(--font-mono);">{{ sec_key }}</span>
+          </h4>
+          <button type="submit" class="btn-action btn-copper" style="padding: 0.4rem 1rem; font-size: 0.75rem;">
+            Save {{ sec_key }} ➔
+          </button>
+        </div>
+
+        <textarea
+          name="section_json"
+          rows="8"
+          class="form-control"
+          style="font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.6;"
+        >{{ sec_val|safe }}</textarea>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
