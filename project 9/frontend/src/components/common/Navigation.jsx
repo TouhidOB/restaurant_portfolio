@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Navigation() {
-  const { content, openReservation } = useCMS();
+export default function Navigation({ currentPath = '/', onNavigate }) {
+  const { content, openReservation, customPages } = useCMS();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [pagesDropdownOpen, setPagesDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,15 +16,35 @@ export default function Navigation() {
   }, []);
 
   const navLinks = [
-    { label: 'Philosophy', href: '#story' },
-    { label: '3D Rooftop Tour', href: '#tour' },
-    { label: 'Spaces', href: '#spaces' },
-    { label: 'Signature Dishes', href: '#dishes' },
-    { label: 'Menu', href: '#menu' },
-    { label: 'Architecture', href: '#architecture' },
-    { label: 'Experiences', href: '#experiences' },
-    { label: 'Coordinates', href: '#location' },
+    { label: 'Home', path: '/' },
+    { label: 'Story', path: '/story' },
+    { label: 'Signatures', path: '/signatures' },
+    { label: 'Menu', path: '/menu' },
+    { label: '3D Tour', path: '/tour' },
+    { label: 'Chef', path: '/chef' },
+    { label: 'Spaces', path: '/space' },
+    { label: 'Experience', path: '/experience' },
+    { label: 'Journal', path: '/blog' },
+    { label: 'Coordinates', path: '/contact' },
   ];
+
+  const handleNavClick = (e, path) => {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    setPagesDropdownOpen(false);
+    if (onNavigate) {
+      onNavigate(path);
+    } else {
+      window.history.pushState({}, '', path);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  };
+
+  const isCurrentActive = (path) => {
+    if (path === '/' && currentPath === '/') return true;
+    if (path !== '/' && currentPath.startsWith(path)) return true;
+    return false;
+  };
 
   return (
     <header
@@ -34,24 +55,28 @@ export default function Navigation() {
         right: 0,
         zIndex: 1000,
         transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-        backgroundColor: scrolled ? 'rgba(16, 28, 44, 0.94)' : 'rgba(10, 18, 29, 0.65)',
+        backgroundColor: scrolled ? 'rgba(16, 28, 44, 0.96)' : 'rgba(10, 18, 29, 0.8)',
         backdropFilter: 'blur(14px)',
-        borderBottom: scrolled ? '1px solid var(--color-border)' : '1px solid rgba(255, 255, 255, 0.05)',
-        height: 'var(--nav-height)',
+        borderBottom: scrolled ? '1px solid var(--color-champagne)' : '1px solid rgba(255, 255, 255, 0.08)',
+        height: 'var(--nav-height, 80px)',
         display: 'flex',
         alignItems: 'center',
       }}
     >
-      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2rem' }}>
+      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2rem', width: '100%' }}>
         {/* Brand Crest & Title */}
-        <a href="#hero" style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', textDecoration: 'none' }}>
+        <a
+          href="/"
+          onClick={(e) => handleNavClick(e, '/')}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', textDecoration: 'none' }}
+        >
           <div
             style={{
-              width: '38px',
-              height: '38px',
+              width: '40px',
+              height: '40px',
               background: 'linear-gradient(135deg, var(--color-skyline-blue) 0%, var(--color-midnight-card) 100%)',
-              border: '1px solid var(--color-border)',
-              borderRadius: '3px',
+              border: '1px solid var(--color-champagne)',
+              borderRadius: '4px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -67,7 +92,7 @@ export default function Navigation() {
             <div
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: '1.5rem',
+                fontSize: '1.45rem',
                 color: 'var(--color-cloud-ivory)',
                 letterSpacing: '0.12em',
                 fontWeight: 600,
@@ -83,8 +108,8 @@ export default function Navigation() {
                 color: 'var(--color-champagne)',
                 letterSpacing: '0.18em',
                 textTransform: 'uppercase',
-                fontWeight: 600,
-                marginTop: '2px',
+                fontWeight: 700,
+                marginTop: '3px',
               }}
             >
               LEVEL 54 &bull; 220M
@@ -93,27 +118,107 @@ export default function Navigation() {
         </a>
 
         {/* Desktop Navigation Links */}
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '1.8rem' }} className="desktop-nav">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              style={{
-                color: 'var(--color-cloud-ivory)',
-                textDecoration: 'none',
-                fontSize: '0.82rem',
-                fontFamily: 'var(--font-accent)',
-                fontWeight: 600,
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
-                transition: 'color 0.2s ease',
-              }}
-              onMouseEnter={(e) => (e.target.style.color = 'var(--color-champagne)')}
-              onMouseLeave={(e) => (e.target.style.color = 'var(--color-cloud-ivory)')}
-            >
-              {link.label}
-            </a>
-          ))}
+        <nav
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1.25rem',
+          }}
+          className="desktop-nav"
+        >
+          {navLinks.map((link) => {
+            const active = isCurrentActive(link.path);
+            return (
+              <a
+                key={link.label}
+                href={link.path}
+                onClick={(e) => handleNavClick(e, link.path)}
+                style={{
+                  color: active ? 'var(--color-champagne)' : 'var(--color-cloud-ivory)',
+                  textDecoration: 'none',
+                  fontSize: '0.8rem',
+                  fontFamily: 'var(--font-accent)',
+                  fontWeight: active ? 800 : 600,
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                  transition: 'color 0.2s ease',
+                  borderBottom: active ? '2px solid var(--color-champagne)' : '2px solid transparent',
+                  paddingBottom: '4px',
+                }}
+                onMouseEnter={(e) => (e.target.style.color = 'var(--color-champagne)')}
+                onMouseLeave={(e) => (e.target.style.color = active ? 'var(--color-champagne)' : 'var(--color-cloud-ivory)')}
+              >
+                {link.label}
+              </a>
+            );
+          })}
+
+          {/* Custom Pages Dropdown if any */}
+          {customPages && customPages.length > 0 && (
+            <div style={{ position: 'relative' }}>
+              <button
+                onClick={() => setPagesDropdownOpen(!pagesDropdownOpen)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--color-cloud-ivory)',
+                  fontSize: '0.8rem',
+                  fontFamily: 'var(--font-accent)',
+                  fontWeight: 600,
+                  letterSpacing: '0.06em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
+                }}
+              >
+                Pages ▾
+              </button>
+              {pagesDropdownOpen && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    backgroundColor: 'var(--color-midnight-card)',
+                    border: '1px solid var(--color-champagne)',
+                    borderRadius: '4px',
+                    padding: '0.5rem 0',
+                    minWidth: '220px',
+                    boxShadow: '0 15px 35px rgba(0,0,0,0.6)',
+                    zIndex: 100,
+                  }}
+                >
+                  {customPages.map((cp) => (
+                    <a
+                      key={cp.slug}
+                      href={`/page/${cp.slug}`}
+                      onClick={(e) => handleNavClick(e, `/page/${cp.slug}`)}
+                      style={{
+                        display: 'block',
+                        padding: '0.6rem 1rem',
+                        color: 'var(--color-cloud-ivory)',
+                        textDecoration: 'none',
+                        fontSize: '0.82rem',
+                        fontFamily: 'var(--font-accent)',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = 'rgba(38, 63, 90, 0.4)';
+                        e.target.style.color = 'var(--color-champagne)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = 'transparent';
+                        e.target.style.color = 'var(--color-cloud-ivory)';
+                      }}
+                    >
+                      {cp.title}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </nav>
 
         {/* CTAs: CMS Studio Quick Pill & Table Booking */}
@@ -129,7 +234,7 @@ export default function Navigation() {
               padding: '0.45rem 0.85rem',
               borderRadius: '999px',
               background: 'rgba(38, 63, 90, 0.45)',
-              border: '1px solid var(--color-border)',
+              border: '1px solid var(--color-champagne)',
               color: 'var(--color-champagne)',
               fontFamily: 'var(--font-accent)',
               fontSize: '0.74rem',
@@ -145,7 +250,7 @@ export default function Navigation() {
 
           <button
             onClick={() => openReservation()}
-            className="btn-skyline-primary"
+            className="btn-reserve-nav btn-skyline-primary"
             style={{ padding: '0.65rem 1.35rem', fontSize: '0.8rem' }}
           >
             Reserve Table

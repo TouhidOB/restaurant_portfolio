@@ -7,7 +7,7 @@ export default function S12Testimonials() {
   const reviews = test.reviews || [];
 
   return (
-    <section id="press" className="section-pad" style={{ backgroundColor: 'var(--color-midnight-dark)' }}>
+    <section id="testimonials" data-alias="press" className="section-pad" style={{ backgroundColor: 'var(--color-midnight-dark)' }}>
       <div className="container">
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
           <span className="section-label">{test.subtitle || 'Global Hospitality Recognition'}</span>

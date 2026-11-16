@@ -1,0 +1,170 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<!-- KPI Metrics Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--champagne);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--twilight-slate); font-weight: 800; margin-bottom: 0.35rem;">
+      Total Reservations
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.4rem; color: var(--champagne); font-weight: 700;">
+      {{ total_reservations }}
+    </div>
+    <div style="font-size: 0.75rem; color: #81c784; margin-top: 0.3rem;">
+      Level 54 Table Bookings
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--warm-amber);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--twilight-slate); font-weight: 800; margin-bottom: 0.35rem;">
+      Pending Approvals
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.4rem; color: var(--warm-amber); font-weight: 700;">
+      {{ pending_reservations }}
+    </div>
+    <div style="font-size: 0.75rem; color: var(--twilight-slate); margin-top: 0.3rem;">
+      Awaiting Maitre D' Review
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid #81c784;">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--twilight-slate); font-weight: 800; margin-bottom: 0.35rem;">
+      Confirmed Covers
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.4rem; color: #81c784; font-weight: 700;">
+      {{ confirmed_reservations }}
+    </div>
+    <div style="font-size: 0.75rem; color: var(--twilight-slate); margin-top: 0.3rem;">
+      Assigned Rooftop Tables
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--skyline-blue);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--twilight-slate); font-weight: 800; margin-bottom: 0.35rem;">
+      Lunch / Dinner Shift Split
+    </div>
+    <div style="font-family: var(--font-display); font-size: 1.8rem; color: var(--cloud-ivory); font-weight: 700; margin-top: 0.4rem;">
+      ☀️ {{ lunch_covers }} / 🌙 {{ dinner_covers }}
+    </div>
+    <div style="font-size: 0.75rem; color: var(--twilight-slate); margin-top: 0.3rem;">
+      Live Shift Demand
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--sunset-copper);">
+    <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--twilight-slate); font-weight: 800; margin-bottom: 0.35rem;">
+      Pages & Editorial
+    </div>
+    <div style="font-family: var(--font-display); font-size: 1.8rem; color: var(--sunset-copper); font-weight: 700; margin-top: 0.4rem;">
+      {{ total_pages }} Pages • {{ total_articles }} Articles
+    </div>
+    <div style="font-size: 0.75rem; color: var(--twilight-slate); margin-top: 0.3rem;">
+      Active Content Assets
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions Banner -->
+<div class="cms-card" style="background: linear-gradient(135deg, rgba(38, 63, 90, 0.4) 0%, rgba(23, 38, 56, 0.7) 100%); border-left: 4px solid var(--champagne);">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; gap: 1.5rem;">
+    <div>
+      <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--champagne); font-weight: 800;">
+        Fast-Track Command
+      </span>
+      <h3 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--cloud-ivory); margin: 0.2rem 0;">
+        Rooftop Management Shortcuts
+      </h3>
+      <p style="color: var(--twilight-slate); font-size: 0.9rem;">
+        Launch visual page building canvas, review pending sunset reservations, or edit Level 54 master menu.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.85rem; flex-wrap: wrap;">
+      <a href="{% url 'cms_page_builder_create' %}" class="btn-primary">
+        + Create Standalone Page
+      </a>
+      <a href="{% url 'cms_reservations' %}?status=pending" class="btn-secondary">
+        Review Pending ({{ pending_reservations }})
+      </a>
+      <a href="{% url 'cms_menu' %}" class="btn-secondary">
+        Edit Menu & Mixology
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Table Inquiries -->
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--cloud-ivory);">
+        Recent Table Inquiries & Live Covers
+      </h3>
+      <p style="color: var(--twilight-slate); font-size: 0.82rem;">
+        Incoming customer table requests from website reservation forms.
+      </p>
+    </div>
+    <a href="{% url 'cms_reservations' %}" style="font-weight: 700; font-size: 0.85rem;">
+      View All Reservations →
+    </a>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--border-color); color: var(--champagne); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.1em;">
+          <th style="padding: 0.75rem 1rem;">Ref Code</th>
+          <th style="padding: 0.75rem 1rem;">Guest Details</th>
+          <th style="padding: 0.75rem 1rem;">Date & Shift</th>
+          <th style="padding: 0.75rem 1rem;">Party Size</th>
+          <th style="padding: 0.75rem 1rem;">Seating Zone</th>
+          <th style="padding: 0.75rem 1rem;">Table #</th>
+          <th style="padding: 0.75rem 1rem;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in recent_reservations %}
+        <tr style="border-bottom: 1px solid rgba(216, 195, 160, 0.08);">
+          <td style="padding: 0.85rem 1rem; font-family: var(--font-mono); font-weight: 700; color: var(--cloud-ivory);">
+            {{ r.reference_code }}
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            <div style="font-weight: 700; color: var(--cloud-ivory);">{{ r.full_name }}</div>
+            <div style="color: var(--twilight-slate); font-size: 0.78rem;">{{ r.phone }}</div>
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            <div>{{ r.date }}</div>
+            <div style="color: var(--champagne); font-size: 0.78rem; text-transform: uppercase; font-weight: 700;">
+              {% if r.shift == 'lunch' %}☀️ Lunch{% else %}🌙 Dinner{% endif %} • {{ r.time }}
+            </div>
+          </td>
+          <td style="padding: 0.85rem 1rem; color: var(--cloud-ivory);">
+            {{ r.guests }}
+          </td>
+          <td style="padding: 0.85rem 1rem; color: var(--twilight-slate);">
+            {{ r.seating_area|default:r.seating_preference }}
+          </td>
+          <td style="padding: 0.85rem 1rem; font-family: var(--font-mono); font-weight: 700; color: var(--champagne);">
+            {{ r.table_number|default:"—" }}
+          </td>
+          <td style="padding: 0.85rem 1rem;">
+            <span style="display: inline-block; padding: 0.25rem 0.65rem; border-radius: 3px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em;
+              {% if r.status == 'confirmed' %}background: rgba(76, 175, 80, 0.2); color: #81c784; border: 1px solid #81c784;
+              {% elif r.status == 'seated' %}background: rgba(33, 150, 243, 0.2); color: #64b5f6; border: 1px solid #64b5f6;
+              {% elif r.status == 'cancelled' %}background: rgba(244, 67, 54, 0.2); color: #e57373; border: 1px solid #e57373;
+              {% else %}background: rgba(231, 167, 91, 0.2); color: #e7a75b; border: 1px solid #e7a75b;{% endif %}">
+              {{ r.status }}
+            </span>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="padding: 2rem; text-align: center; color: var(--twilight-slate);">
+            No reservations found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

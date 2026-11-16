@@ -1,0 +1,202 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  <div style="display: grid; grid-template-columns: 2.2fr 1fr; gap: 2rem; align-items: start;">
+    <!-- Left Column: Block Canvas & Palette -->
+    <div>
+      <!-- Block Palette -->
+      <div class="cms-card" style="border-color: var(--champagne);">
+        <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--champagne); font-weight: 800; margin-bottom: 0.85rem;">
+          Component Block Palette — Click to Append to Canvas
+        </div>
+        <div style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+          <button type="button" onclick="insertBlock('hero')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Hero Banner
+          </button>
+          <button type="button" onclick="insertBlock('split')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Split Editorial
+          </button>
+          <button type="button" onclick="insertBlock('features')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Features Grid
+          </button>
+          <button type="button" onclick="insertBlock('cta')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Call-to-Action
+          </button>
+          <button type="button" onclick="insertBlock('reservation')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + Table Reservation
+          </button>
+          <button type="button" onclick="insertBlock('faq')" class="btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.78rem;">
+            + FAQ Accordion
+          </button>
+        </div>
+      </div>
+
+      <!-- JSON Canvas Editor -->
+      <div class="cms-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--cloud-ivory);">
+            Modular Block Canvas Hierarchy
+          </h3>
+          <button type="button" onclick="formatBlocksJSON()" class="btn-secondary" style="font-size: 0.75rem;">
+            Format JSON
+          </button>
+        </div>
+
+        <textarea
+          id="blocksJsonArea"
+          name="blocks_json"
+          rows="18"
+          style="width: 100%; padding: 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6; outline: none;"
+        >{{ blocks_json }}</textarea>
+      </div>
+    </div>
+
+    <!-- Right Column: Page Settings & Publish -->
+    <div>
+      <div class="cms-card" style="position: sticky; top: 90px;">
+        <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--cloud-ivory); margin-bottom: 1.25rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+          Page Settings
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <div>
+            <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.35rem; font-weight: 700;">
+              Page Title *
+            </label>
+            <input
+              type="text"
+              name="title"
+              required
+              value="{{ custom_page.title }}"
+              placeholder="e.g. Exclusive Sky Terrace Buyouts"
+              style="width: 100%; padding: 0.75rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.88rem; outline: none;"
+            />
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.35rem; font-weight: 700;">
+              URL Slug *
+            </label>
+            <input
+              type="text"
+              name="slug"
+              required
+              value="{{ custom_page.slug }}"
+              placeholder="e.g. private-horizon-terrace-buyouts"
+              style="width: 100%; padding: 0.75rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.88rem; outline: none;"
+            />
+          </div>
+
+          <div>
+            <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.35rem; font-weight: 700;">
+              Meta Description (SEO)
+            </label>
+            <textarea
+              name="meta_description"
+              rows="3"
+              style="width: 100%; padding: 0.75rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.85rem; outline: none; resize: vertical;"
+            >{{ custom_page.meta_description }}</textarea>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0;">
+            <input
+              type="checkbox"
+              id="isPublishedCheck"
+              name="is_published"
+              {% if custom_page.is_published or not custom_page %}checked{% endif %}
+              style="width: 16px; height: 16px; accent-color: var(--champagne);"
+            />
+            <label for="isPublishedCheck" style="font-size: 0.88rem; font-weight: 700; color: var(--cloud-ivory);">
+              Publish To Frontend (/page/{{ custom_page.slug|default:'slug' }})
+            </label>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; padding: 0.9rem; justify-content: center;">
+            Save Canvas Changes ➔
+          </button>
+
+          {% if custom_page %}
+            <a href="http://127.0.0.1:3000/page/{{ custom_page.slug }}" target="_blank" class="btn-secondary" style="text-align: center; display: block;">
+              ↗ Preview Live Page
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+const templates = {
+  hero: {
+    type: "hero",
+    title: "Panoramic Horizon at 220 Meters",
+    subtitle: "Level 54 Rooftop Experience",
+    bg_image: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1600&q=85",
+    cta_text: "Reserve Window Table",
+    cta_link: "#contact"
+  },
+  split: {
+    type: "split",
+    title: "The Sunset Perimeter Lounge",
+    lead: "Experience twilight as golden amber rays wash across the 360-degree glass perimeter.",
+    body: "Suspended 54 stories above the city grid, our open-air terrace provides unmatched views and bespoke cocktail craftsmanship.",
+    image: "https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=900&q=85",
+    image_alt: "Skyline Sunset Terrace"
+  },
+  features: {
+    type: "features",
+    title: "Rooftop Event Privileges",
+    items: [
+      { title: "Curated Tasting Menu", desc: "Multi-course high-altitude culinary creations by Executive Chef Christian Laurent." },
+      { title: "Rare Cellar Vintages", desc: "Guided sommelier pairings from our 1,200-bottle temperature-controlled cellar." },
+      { title: "VIP Express Tower Access", desc: "Private express elevators with direct access to Level 54 and priority valet." }
+    ]
+  },
+  cta: {
+    type: "cta",
+    title: "Plan Your Sky Terrace Event",
+    subtitle: "Our private events director is standing by to coordinate your celebration.",
+    button_text: "Contact Rooftop Concierge",
+    button_link: "/contact"
+  },
+  reservation: {
+    type: "reservation",
+    title: "Reserve Your Horizon Table",
+    subtitle: "Open-air sunset terrace and window-side tables available."
+  },
+  faq: {
+    type: "faq",
+    title: "Rooftop Frequently Asked Questions",
+    items: [
+      { question: "What is the dress code at Level 54?", answer: "Smart elegant attire is required. Athletic wear and beachwear are not permitted in the evening." },
+      { question: "Is outdoor terrace seating weather dependent?", answer: "Our open-air terrace features retractable radiant pergolas and heated architectural flooring." }
+    ]
+  }
+};
+
+function insertBlock(type) {
+  const area = document.getElementById('blocksJsonArea');
+  try {
+    let current = JSON.parse(area.value || '[]');
+    if (!Array.isArray(current)) current = [];
+    current.push(templates[type]);
+    area.value = JSON.stringify(current, null, 2);
+  } catch (e) {
+    alert('Please ensure existing JSON in the canvas is valid before appending blocks.');
+  }
+}
+
+function formatBlocksJSON() {
+  const area = document.getElementById('blocksJsonArea');
+  try {
+    const parsed = JSON.parse(area.value || '[]');
+    area.value = JSON.stringify(parsed, null, 2);
+  } catch (e) {
+    alert('Invalid JSON syntax: ' + e.message);
+  }
+}
+</script>
+{% endblock %}

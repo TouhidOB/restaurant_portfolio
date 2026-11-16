@@ -210,46 +210,154 @@ export const FALLBACK_DATA = {
     categories: [
       {
         id: "tasting",
-        name: "Twilight Tasting (7 Courses)",
+        name: "Twilight Horizon Tasting (7 Courses)",
         price: "$195 per guest",
         pairing: "+$110 Grand Reserve Wine Pairing",
         items: [
-          { name: "Oscietra Caviar & Sea Scallop", desc: "Finger lime, dashi jelly, sea herbs" },
-          { name: "Caramelized Foie Gras Tartlet", desc: "Mission fig, spiced brioche, port reduction" },
-          { name: "Glazed Chilean Seabass", desc: "Saikyo miso, lemongrass broth, sea succulents" },
-          { name: "Kobe A5 Wagyu Tenderloin", desc: "Morel mushrooms, charred shallot, black truffle jus" },
-          { name: "Pre-Dessert Yuzu Sorbet", desc: "Champagne granite, shiso blossom" },
-          { name: "Skyline Golden Chocolate Orb", desc: "Valrhona 72%, smoked praline, gold leaf" }
+          {
+            id: "caviar-scallop",
+            name: "Oscietra Caviar & Hokkaido Scallop",
+            price: "$64",
+            desc: "Hand-dived Hokkaido scallop carpaccio, Royal Oscietra Caviar, finger lime pearls, sea buckthorn vinaigrette.",
+            description: "Hand-dived Hokkaido scallop carpaccio, Royal Oscietra Caviar, finger lime pearls, sea buckthorn vinaigrette.",
+            dietary: "Signature Raw",
+            pairing: "Dom Pérignon Vintage 2013",
+            category: "Twilight Horizon Tasting",
+            image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=85"
+          },
+          {
+            id: "foie-gras",
+            name: "Caramelized Foie Gras Tartlet",
+            price: "$48",
+            desc: "Mission fig compote, spiced brioche crisp, aged port reduction, toasted hazelnut.",
+            description: "Mission fig compote, spiced brioche crisp, aged port reduction, toasted hazelnut.",
+            dietary: "Chef Degustation",
+            pairing: "Château d'Yquem Sauternes",
+            category: "Twilight Horizon Tasting",
+            image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85"
+          },
+          {
+            id: "chilean-seabass",
+            name: "Glazed Chilean Glacier Seabass",
+            price: "$78",
+            desc: "Pan-seared Patagonian toothfish in aged saikyo sweet miso glaze, lemongrass dashi broth, baby bok choy.",
+            description: "Pan-seared Patagonian toothfish in aged saikyo sweet miso glaze, lemongrass dashi broth, baby bok choy.",
+            dietary: "Guest Favorite",
+            pairing: "Puligny-Montrachet Premier Cru",
+            category: "Twilight Horizon Tasting",
+            image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=800&q=85"
+          },
+          {
+            id: "wagyu-ribeye",
+            name: "Miyazaki A5 Wagyu Ribeye",
+            price: "$125",
+            desc: "Charred over Japanese Binchotan coals, smoked bone marrow jus, caramelized sunchoke purée, shaved black truffle.",
+            description: "Charred over Japanese Binchotan coals, smoked bone marrow jus, caramelized sunchoke purée, shaved black truffle.",
+            dietary: "Signature Cut",
+            pairing: "Château Margaux Grand Cru",
+            category: "Twilight Horizon Tasting",
+            image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85"
+          },
+          {
+            id: "golden-orb",
+            name: "Skyline Golden Chocolate Orb",
+            price: "$32",
+            desc: "Dark Valrhona 72% chocolate sphere adorned with 24k gold, smoked hazelnut ganache, tonka bean gelato.",
+            description: "Dark Valrhona 72% chocolate sphere adorned with 24k gold, smoked hazelnut ganache, tonka bean gelato.",
+            dietary: "Showstopper Dessert",
+            pairing: "20-Year Tawny Port",
+            category: "Twilight Horizon Tasting",
+            image: "https://images.unsplash.com/photo-1579372786545-d24232daf58c?auto=format&fit=crop&w=800&q=85"
+          }
         ]
       },
       {
         id: "alacarte",
         name: "Skyline À La Carte",
         items: [
-          { name: "Charred Octopus & Romesco", price: "$38", desc: "Spanish octopus, smoked almond romesco, fingerling chips" },
-          { name: "Black Truffle Tagliolini", price: "$52", desc: "Handmade pasta, 36-month Parmigiano Reggiano, fresh black truffle" },
-          { name: "Roasted Rack of Colorado Lamb", price: "$84", desc: "Herb crust, ratatouille tarte tatin, rosemary jus" },
-          { name: "Prime Dry-Aged Bone-In Ribeye (32oz)", price: "$175", desc: "Serves two, roasted garlic head, bordelaise sauce" }
+          {
+            id: "charred-octopus",
+            name: "Charred Spanish Octopus & Romesco",
+            price: "$38",
+            desc: "Tender grilled octopus tentacles, smoked almond romesco, fingerling potato crisps, caper chimichurri.",
+            description: "Tender grilled octopus tentacles, smoked almond romesco, fingerling potato crisps, caper chimichurri.",
+            dietary: "Gluten-Free",
+            pairing: "Albariño Rías Baixas",
+            category: "Skyline À La Carte",
+            image: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=800&q=85"
+          },
+          {
+            id: "truffle-tagliolini",
+            name: "Black Truffle Handmade Tagliolini",
+            price: "$52",
+            desc: "Hand-rolled egg pasta, 36-month Parmigiano Reggiano butter emulsion, fresh Umbrian black truffle shavings.",
+            description: "Hand-rolled egg pasta, 36-month Parmigiano Reggiano butter emulsion, fresh Umbrian black truffle shavings.",
+            dietary: "Vegetarian",
+            pairing: "Barolo DOCG",
+            category: "Skyline À La Carte",
+            image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=85"
+          },
+          {
+            id: "colorado-lamb",
+            name: "Roasted Rack of Colorado Lamb",
+            price: "$84",
+            desc: "Herb brioche crust, roasted baby ratatouille, garlic confit purée, rosemary roasting jus.",
+            description: "Herb brioche crust, roasted baby ratatouille, garlic confit purée, rosemary roasting jus.",
+            dietary: "High Altitude Prime",
+            pairing: "Syrah Hermitage",
+            category: "Skyline À La Carte",
+            image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85"
+          },
+          {
+            id: "dry-aged-ribeye",
+            name: "Prime Dry-Aged Bone-In Tomahawk (32oz)",
+            price: "$175",
+            desc: "Serves two. 45-day dry-aged prime beef seared over white oak, roasted garlic crown, black truffle bordelaise.",
+            description: "Serves two. 45-day dry-aged prime beef seared over white oak, roasted garlic crown, black truffle bordelaise.",
+            dietary: "Sharing Table Cut",
+            pairing: "Napa Valley Cabernet Sauvignon",
+            category: "Skyline À La Carte",
+            image: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=800&q=85"
+          }
         ]
       },
       {
         id: "cocktails",
         name: "Artisan Horizon Cocktails",
         items: [
-          { name: "The Cloud 54", price: "$26", desc: "Japanese Roku gin, lychee cordial, violet liqueur, sparkling champagne cloud foam" },
-          { name: "Sunset Solstice", price: "$28", desc: "Smoked mezcal, blood orange nectar, aperitivo bitter, rosemary smoke bubble" },
-          { name: "Twilight Sazerac", price: "$30", desc: "WhistlePig 10yr Rye, Peychaud bitters, absinthe rinse, gold dust atomizer" },
-          { name: "Horizon Highball", price: "$24", desc: "Hibiki Harmony whisky, hand-carved ice pillar, clarified grapefruit soda" }
-        ]
-      },
-      {
-        id: "cellar",
-        name: "Grand Reserve Sommelier Cellar",
-        items: [
-          { name: "Dom Pérignon Vintage Champagne 2013", price: "$480", desc: "Épernay, France • Crisp brioche, white peach, toasted almond" },
-          { name: "Château Margaux Premier Grand Cru 2010", price: "$1,450", desc: "Bordeaux, France • Velvety cassis, graphite, violet aromatics" },
-          { name: "Opus One Proprietary Red 2018", price: "$780", desc: "Napa Valley, USA • Black plum, dark cocoa, supple fine tannins" },
-          { name: "Sassicaia Tenuta San Guido 2016", price: "$620", desc: "Bolgheri, Italy • Wild blackberry, Mediterranean herbs, crushed stone" }
+          {
+            id: "cloud-54",
+            name: "The Cloud 54",
+            price: "$26",
+            desc: "Japanese Roku gin, lychee cordial, crème de violette, sparkling champagne cloud foam mist.",
+            description: "Japanese Roku gin, lychee cordial, crème de violette, sparkling champagne cloud foam mist.",
+            dietary: "Signature High Altitude",
+            pairing: "Sunset Horizon View",
+            category: "Artisan Horizon Cocktails",
+            image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=800&q=85"
+          },
+          {
+            id: "sunset-solstice",
+            name: "Sunset Solstice",
+            price: "$28",
+            desc: "Artisanal smoked mezcal, Sicilian blood orange nectar, aperitivo bitter, captured rosemary smoke bubble.",
+            description: "Artisanal smoked mezcal, Sicilian blood orange nectar, aperitivo bitter, captured rosemary smoke bubble.",
+            dietary: "Smoked Infusion",
+            pairing: "Level 54 Terrace Lounge",
+            category: "Artisan Horizon Cocktails",
+            image: "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=85"
+          },
+          {
+            id: "twilight-sazerac",
+            name: "Twilight Sazerac",
+            price: "$30",
+            desc: "WhistlePig 10yr Rye, Peychaud bitters, absinthe glass rinse, edible 24k gold dust atomizer.",
+            description: "WhistlePig 10yr Rye, Peychaud bitters, absinthe glass rinse, edible 24k gold dust atomizer.",
+            dietary: "Vintage Classic",
+            pairing: "Late Night Skyline View",
+            category: "Artisan Horizon Cocktails",
+            image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=85"
+          }
         ]
       }
     ]
@@ -412,5 +520,80 @@ export const FALLBACK_DATA = {
       facebook: "https://facebook.com",
       twitter: "https://twitter.com"
     }
-  }
+  },
+  custom_pages: [
+    {
+      id: 1,
+      slug: "private-horizon-terrace-buyouts",
+      title: "Exclusive Sky Terrace & Penthouse Lounge Buyouts",
+      meta_description: "Host breathtaking private galas, milestone celebrations, and high-altitude corporate events 220 meters above the skyline.",
+      blocks: [
+        {
+          type: "hero",
+          title: "Unrivaled Horizons for Monumental Celebrations",
+          subtitle: "Exclusive Penthouse Buyouts • Level 54",
+          bg_image: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1600&q=85",
+          cta_text: "Inquire About Full Buyout",
+          cta_link: "#contact"
+        },
+        {
+          type: "split",
+          title: "360 Degrees of Unobstructed Metropolis",
+          lead: "Suspended above the clouds, our entire 54th floor offers 8,000 square feet of column-free architectural splendor.",
+          body: "Accommodating up to 250 guests with exclusive access to the open-air sunset terrace, private VIP horizon suites, 360° perimeter window tables, and twin bespoke cocktail bars.",
+          image: "https://images.unsplash.com/photo-1578474846511-04ba529f0b88?auto=format&fit=crop&w=900&q=85",
+          image_alt: "Skyline Level 54 Horizon Terrace"
+        },
+        {
+          type: "features",
+          title: "Dedicated Penthouse Hospitality",
+          items: [
+            { title: "Bespoke Multi-Course Tasting", desc: "Curated tasting menus crafted specifically for your gathering by Executive Chef Christian Laurent." },
+            { title: "Master Sommelier Wine Pairings", desc: "Exclusive pours from our 1,200-bottle temperature-controlled cellar vault." },
+            { title: "Private High-Altitude Access", desc: "Dedicated express tower elevators with private security and priority valet service." }
+          ]
+        },
+        {
+          type: "cta",
+          title: "Design Your Rooftop Event",
+          subtitle: "Our private events director is standing by to coordinate every detail.",
+          button_text: "Contact Private Events Concierge",
+          button_link: "/contact"
+        }
+      ]
+    }
+  ],
+  blog_categories: [
+    { id: 1, name: "Rooftop Mixology", slug: "rooftop-mixology", description: "Artisanal high-altitude cocktails, aged barrel spirits, and celestial infusions." },
+    { id: 2, name: "Elevated Gastronomy", slug: "elevated-gastronomy", description: "Progressive tasting menus and culinary mastery above the clouds." },
+    { id: 3, name: "Horizon Chronicles", slug: "horizon-chronicles", description: "Atmospheric essays, architectural engineering, and skyline views from Level 54." }
+  ],
+  blog_posts: [
+    {
+      id: 1,
+      slug: "celestial-cocktails-level-54",
+      title: "Celestial Mixology: Crafting Smoked Spirits at 220 Meters Elevation",
+      category: { id: 1, name: "Rooftop Mixology", slug: "rooftop-mixology" },
+      cover_image: "https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&w=1200&q=85",
+      excerpt: "How barometric pressure, clarified botanical cordials, and liquid nitrogen redefine cocktails on the 54th floor.",
+      content: "At 220 meters above the asphalt, the behavior of aromatics transforms subtly under the ambient pressure of our cantilevered glass lounge. Our beverage laboratory at SKYLINE approaches each sunset concoction as both chemistry and poetry. Using cold-vacuum distillation, we extract ethereal terpenes from alpine juniper, smoked bergamot, and saffron threads without heat degradation. When the Golden Hour strikes the perimeter glass at 6:45 PM, our signature 'Aura 54'—featuring clarified Japanese whisky, smoked champagne syrup, and gold flake mist—captures the dying amber light with breathtaking precision.",
+      author_name: "Christian Laurent",
+      read_time: "6 min read",
+      views_count: 520,
+      published_at: "2026-11-12T17:00:00Z"
+    },
+    {
+      id: 2,
+      slug: "architectural-vision-glass-atrium",
+      title: "The Glass Crown: Engineering a 360° Horizon Over the Metropolis",
+      category: { id: 3, name: "Horizon Chronicles", slug: "horizon-chronicles" },
+      cover_image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85",
+      excerpt: "The structural audacity behind Level 54's column-free perimeter and floor-to-ceiling ultra-clear glass curtain.",
+      content: "Constructing a world-class dining sanctuary suspended 54 stories in the sky presented engineering challenges rarely contemplated in traditional hospitality design. The perimeter envelope utilizes triple-laminated low-iron crystal panels that eliminate color distortion, allowing the sprawling city grid to appear as an unobstructed living canvas. Acoustic baffles hidden within our champagne-gold metallic ceiling absorb the hum of conversation, creating an intimate, almost weightless atmosphere where guests feel both suspended above the world and wrapped in serene luxury.",
+      author_name: "Elena Sterling",
+      read_time: "5 min read",
+      views_count: 410,
+      published_at: "2026-11-08T15:30:00Z"
+    }
+  ]
 };

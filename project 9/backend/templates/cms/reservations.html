@@ -1,0 +1,152 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <!-- Header & Shift Tabs -->
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--cloud-ivory);">
+        Maitre D' Table Reservation & Host Desk
+      </h3>
+      <p style="color: var(--twilight-slate); font-size: 0.85rem;">
+        Manage table assignments, seating zones, guest shifts, and approval workflows.
+      </p>
+    </div>
+
+    <!-- Filter Pills -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <a href="{% url 'cms_reservations' %}" class="btn-secondary" style="font-size: 0.78rem; {% if not shift_filter and not status_filter %}border-color: var(--champagne); color: var(--champagne);{% endif %}">
+        All Covers ({{ total_count }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?shift=lunch" class="btn-secondary" style="font-size: 0.78rem; {% if shift_filter == 'lunch' %}border-color: var(--champagne); color: var(--champagne);{% endif %}">
+        ☀️ LUNCH ({{ lunch_count }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?shift=dinner" class="btn-secondary" style="font-size: 0.78rem; {% if shift_filter == 'dinner' %}border-color: var(--champagne); color: var(--champagne);{% endif %}">
+        🌙 DINNER ({{ dinner_count }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?status=pending" class="btn-secondary" style="font-size: 0.78rem; color: var(--warm-amber); {% if status_filter == 'pending' %}border-color: var(--warm-amber);{% endif %}">
+        Pending ({{ pending_count }})
+      </a>
+      <a href="{% url 'cms_reservations' %}?status=confirmed" class="btn-secondary" style="font-size: 0.78rem; color: #81c784; {% if status_filter == 'confirmed' %}border-color: #81c784;{% endif %}">
+        Confirmed ({{ confirmed_count }})
+      </a>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <form method="GET" style="margin-bottom: 2rem; display: flex; gap: 0.75rem;">
+    <input
+      type="text"
+      name="q"
+      value="{{ search_q }}"
+      placeholder="Search by reference code (SKY-XXXXXX), guest name, phone, table #..."
+      style="flex: 1; padding: 0.75rem 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.88rem; outline: none;"
+    />
+    <button type="submit" class="btn-primary" style="padding: 0.75rem 1.5rem;">
+      Search Desk
+    </button>
+  </form>
+
+  <!-- Table -->
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.88rem;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--border-color); color: var(--champagne); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.1em;">
+          <th style="padding: 0.75rem 1rem;">Ref Code</th>
+          <th style="padding: 0.75rem 1rem;">Guest Information</th>
+          <th style="padding: 0.75rem 1rem;">Date & Shift</th>
+          <th style="padding: 0.75rem 1rem;">Party Size</th>
+          <th style="padding: 0.75rem 1rem;">Zone Preference</th>
+          <th style="padding: 0.75rem 1rem;">Assigned Table #</th>
+          <th style="padding: 0.75rem 1rem;">Status & Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reservations %}
+        <tr style="border-bottom: 1px solid rgba(216, 195, 160, 0.08);">
+          <td style="padding: 1rem; font-family: var(--font-mono); font-weight: 700; color: var(--cloud-ivory);">
+            {{ r.reference_code }}
+          </td>
+          <td style="padding: 1rem;">
+            <div style="font-weight: 700; color: var(--cloud-ivory); font-size: 0.95rem;">{{ r.full_name }}</div>
+            <div style="color: var(--twilight-slate); font-size: 0.8rem;">{{ r.phone }}</div>
+            {% if r.email %}
+              <div style="color: var(--twilight-slate); font-size: 0.75rem;">{{ r.email }}</div>
+            {% endif %}
+            {% if r.dietary_notes %}
+              <div style="color: var(--champagne); font-size: 0.75rem; margin-top: 0.25rem;">
+                ✦ {{ r.dietary_notes }}
+              </div>
+            {% endif %}
+          </td>
+          <td style="padding: 1rem;">
+            <div style="font-weight: 600;">{{ r.date }}</div>
+            <div style="color: var(--champagne); font-size: 0.78rem; font-weight: 700; text-transform: uppercase;">
+              {% if r.shift == 'lunch' %}☀️ Lunch{% else %}🌙 Dinner{% endif %} • {{ r.time }}
+            </div>
+          </td>
+          <td style="padding: 1rem; color: var(--cloud-ivory); font-weight: 600;">
+            {{ r.guests }}
+          </td>
+          <td style="padding: 1rem; color: var(--twilight-slate); font-size: 0.85rem;">
+            {{ r.seating_area|default:r.seating_preference }}
+          </td>
+          <td style="padding: 1rem;">
+            <form method="POST" action="{% url 'cms_reservation_status' res_id=r.id %}" style="display: flex; gap: 0.4rem; align-items: center;">
+              {% csrf_token %}
+              <input type="hidden" name="status" value="{{ r.status }}">
+              <input
+                type="text"
+                name="table_number"
+                value="{{ r.table_number }}"
+                placeholder="Table #"
+                style="width: 75px; padding: 0.35rem 0.5rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 2px; color: var(--champagne); font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700;"
+              />
+              <button type="submit" class="btn-secondary" style="padding: 0.3rem 0.5rem; font-size: 0.72rem;">
+                Save
+              </button>
+            </form>
+          </td>
+          <td style="padding: 1rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <form method="POST" action="{% url 'cms_reservation_status' res_id=r.id %}" style="display: flex; gap: 0.4rem; align-items: center;">
+                {% csrf_token %}
+                <select
+                  name="status"
+                  onchange="this.form.submit()"
+                  style="padding: 0.35rem 0.6rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 2px; color: var(--cloud-ivory); font-size: 0.78rem; font-weight: 700;"
+                >
+                  <option value="pending" {% if r.status == 'pending' %}selected{% endif %}>Pending</option>
+                  <option value="confirmed" {% if r.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                  <option value="seated" {% if r.status == 'seated' %}selected{% endif %}>Seated</option>
+                  <option value="cancelled" {% if r.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+
+                {% if r.status == 'pending' %}
+                  <button type="submit" name="status" value="confirmed" class="btn-primary" style="padding: 0.35rem 0.65rem; font-size: 0.72rem;">
+                    Confirm
+                  </button>
+                {% endif %}
+              </form>
+
+              <form method="POST" action="{% url 'cms_reservation_delete' res_id=r.id %}" onsubmit="return confirm('Remove reservation {{ r.reference_code }}?');">
+                {% csrf_token %}
+                <button type="submit" style="background: none; border: none; color: #e57373; font-size: 0.72rem; cursor: pointer; text-decoration: underline;">
+                  Delete Record
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="padding: 3rem; text-align: center; color: var(--twilight-slate);">
+            No reservation requests match your filter.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

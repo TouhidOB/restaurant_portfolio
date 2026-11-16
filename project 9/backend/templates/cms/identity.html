@@ -1,0 +1,144 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="margin-bottom: 2rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--cloud-ivory);">
+      Rooftop Identity, Elevation & Logistics
+    </h3>
+    <p style="color: var(--twilight-slate); font-size: 0.85rem;">
+      Manage brand title, elevation badge, contact coordinates, transit info, and rooftop hours.
+    </p>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+      <div>
+        <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.4rem; font-weight: 700;">
+          Restaurant Name *
+        </label>
+        <input
+          type="text"
+          name="restaurant_name"
+          value="{{ config.restaurant_name }}"
+          required
+          style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.9rem; outline: none;"
+        />
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.4rem; font-weight: 700;">
+          Elevation & Tower Badge
+        </label>
+        <input
+          type="text"
+          name="elevation_badge"
+          value="{{ content.hero.elevation_badge|default:'Level 54 • 220m Above The City' }}"
+          style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.9rem; outline: none;"
+        />
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+      <div>
+        <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.4rem; font-weight: 700;">
+          Hero Eyebrow Subtitle
+        </label>
+        <input
+          type="text"
+          name="eyebrow"
+          value="{{ content.hero.eyebrow|default:'ELEVATED ROOFTOP DINING & HORIZON LOUNGE' }}"
+          style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.9rem; outline: none;"
+        />
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.4rem; font-weight: 700;">
+          Hero Headline Title
+        </label>
+        <input
+          type="text"
+          name="title"
+          value="{{ content.hero.title|default:'WHERE THE CITY TOUCHES THE SKY' }}"
+          style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.9rem; outline: none;"
+        />
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1.5rem;">
+      <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.4rem; font-weight: 700;">
+        Tagline & Essence
+      </label>
+      <input
+        type="text"
+        name="tagline"
+        value="{{ content.hero.tagline|default:'Elevated Urban Dining • Panoramic Rooftop Terrace • Sunset Cocktails' }}"
+        style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.9rem; outline: none;"
+      />
+    </div>
+
+    <div style="border-top: 1px solid var(--border-color); margin: 2rem 0; padding-top: 1.5rem;">
+      <h4 style="font-family: var(--font-display); font-size: 1.3rem; color: var(--champagne); margin-bottom: 1.25rem;">
+        Tower Location & Concierge Coordinates
+      </h4>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.4rem; font-weight: 700;">
+            Tower Street Address
+          </label>
+          <input
+            type="text"
+            name="address"
+            value="{{ content.location.address|default:'One Horizon Plaza, 54th Floor Sky Atrium, Financial District' }}"
+            style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.9rem; outline: none;"
+          />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.4rem; font-weight: 700;">
+            Host Desk Telephone
+          </label>
+          <input
+            type="text"
+            name="phone"
+            value="{{ content.location.phone|default:'+1 (212) 555-0954' }}"
+            style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.9rem; outline: none;"
+          />
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.4rem; font-weight: 700;">
+            Concierge Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            value="{{ content.location.email|default:'concierge@skyline-rooftop.com' }}"
+            style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.9rem; outline: none;"
+          />
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.4rem; font-weight: 700;">
+            Elevator & Transit Access
+          </label>
+          <input
+            type="text"
+            name="transit"
+            value="{{ content.location.transit|default:'Dedicated Express Tower Elevators • Valet Parking At Grand Portal' }}"
+            style="width: 100%; padding: 0.75rem 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-size: 0.9rem; outline: none;"
+          />
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-primary" style="padding: 0.85rem 2rem;">
+      Save Identity & Tower Coordinates
+    </button>
+  </form>
+</div>
+{% endblock %}

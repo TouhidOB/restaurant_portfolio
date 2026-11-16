@@ -1,11 +1,21 @@
 import React from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Footer() {
+export default function Footer({ onNavigate }) {
   const { content, openReservation } = useCMS();
   const hero = content?.hero || {};
   const loc = content?.location || {};
   const currentYear = new Date().getFullYear();
+
+  const handleLinkClick = (e, path) => {
+    e.preventDefault();
+    if (onNavigate) {
+      onNavigate(path);
+    } else {
+      window.history.pushState({}, '', path);
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  };
 
   return (
     <footer
@@ -17,7 +27,7 @@ export default function Footer() {
         position: 'relative',
       }}
     >
-      <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '3rem', marginBottom: '4rem' }}>
+      <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '3rem', marginBottom: '4rem' }}>
         {/* Brand Column */}
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginBottom: '1.25rem' }}>
@@ -26,7 +36,7 @@ export default function Footer() {
                 width: '36px',
                 height: '36px',
                 background: 'linear-gradient(135deg, var(--color-skyline-blue) 0%, var(--color-midnight-card) 100%)',
-                border: '1px solid var(--color-border)',
+                border: '1px solid var(--color-champagne)',
                 borderRadius: '3px',
                 display: 'flex',
                 alignItems: 'center',
@@ -54,6 +64,24 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Dedicated Pages Navigation */}
+        <div>
+          <h4 style={{ fontFamily: 'var(--font-accent)', fontSize: '0.82rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-champagne)', marginBottom: '1.25rem', fontWeight: 700 }}>
+            Curated Directory
+          </h4>
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.55rem', fontSize: '0.86rem' }}>
+            <li><a href="/story" onClick={(e) => handleLinkClick(e, '/story')} style={{ color: 'var(--color-cloud-ivory)', textDecoration: 'none' }}>&bull; Brand Philosophy</a></li>
+            <li><a href="/signatures" onClick={(e) => handleLinkClick(e, '/signatures')} style={{ color: 'var(--color-cloud-ivory)', textDecoration: 'none' }}>&bull; Skyline Signatures</a></li>
+            <li><a href="/menu" onClick={(e) => handleLinkClick(e, '/menu')} style={{ color: 'var(--color-cloud-ivory)', textDecoration: 'none' }}>&bull; Full Tasting &amp; Cellar Menu</a></li>
+            <li><a href="/tour" onClick={(e) => handleLinkClick(e, '/tour')} style={{ color: 'var(--color-cloud-ivory)', textDecoration: 'none' }}>&bull; 3D Rooftop WebGL Tour</a></li>
+            <li><a href="/chef" onClick={(e) => handleLinkClick(e, '/chef')} style={{ color: 'var(--color-cloud-ivory)', textDecoration: 'none' }}>&bull; Chef Julian Moreau</a></li>
+            <li><a href="/space" onClick={(e) => handleLinkClick(e, '/space')} style={{ color: 'var(--color-cloud-ivory)', textDecoration: 'none' }}>&bull; Sunset Terrace &amp; Glass Atrium</a></li>
+            <li><a href="/experience" onClick={(e) => handleLinkClick(e, '/experience')} style={{ color: 'var(--color-cloud-ivory)', textDecoration: 'none' }}>&bull; Horizon Celebrations &amp; Buyouts</a></li>
+            <li><a href="/blog" onClick={(e) => handleLinkClick(e, '/blog')} style={{ color: 'var(--color-cloud-ivory)', textDecoration: 'none' }}>&bull; The Horizon Journal</a></li>
+            <li><a href="/contact" onClick={(e) => handleLinkClick(e, '/contact')} style={{ color: 'var(--color-cloud-ivory)', textDecoration: 'none' }}>&bull; Arrival Coordinates &amp; Valet</a></li>
+          </ul>
+        </div>
+
         {/* Location & Hours Column */}
         <div>
           <h4 style={{ fontFamily: 'var(--font-accent)', fontSize: '0.82rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-champagne)', marginBottom: '1.25rem', fontWeight: 700 }}>
@@ -63,33 +91,20 @@ export default function Footer() {
             {loc.address || 'Level 54, Horizon Tower, 800 Skyline Boulevard'}
           </p>
           <p style={{ fontSize: '0.84rem', color: 'var(--color-twilight-slate)', marginBottom: '1rem' }}>
-            {loc.coordinates || '40.7580° N, 73.9855° W'}
+            {loc.coordinates || '40.7580° N, 73.9855° W • Elevation 220m'}
           </p>
           <div style={{ fontSize: '0.86rem', color: 'var(--color-champagne)' }}>
             <strong>Inquiries:</strong> {loc.phone || '+1 (555) 890-7599'}
           </div>
-          <div style={{ fontSize: '0.86rem', color: 'var(--color-twilight-slate)', marginTop: '0.25rem' }}>
+          <div style={{ fontSize: '0.86rem', color: 'var(--color-twilight-slate)', marginTop: '0.25rem', marginBottom: '1.5rem' }}>
             {loc.email || 'concierge@skyline-rooftop.com'}
           </div>
-        </div>
-
-        {/* Operating Hours Column */}
-        <div>
-          <h4 style={{ fontFamily: 'var(--font-accent)', fontSize: '0.82rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: 'var(--color-champagne)', marginBottom: '1.25rem', fontWeight: 700 }}>
-            Service Hours
-          </h4>
-          <p style={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--color-cloud-ivory)', marginBottom: '0.5rem' }}>
-            {loc.hours || 'Tuesday - Sunday: 5:00 PM - 1:00 AM'}
-          </p>
-          <p style={{ fontSize: '0.82rem', color: 'var(--color-twilight-slate)', marginBottom: '1.5rem' }}>
-            Sunset Service begins daily at 5:30 PM. Twilight Tasting seatings at 6:30 PM &amp; 8:45 PM.
-          </p>
           <button
             onClick={() => openReservation()}
             className="btn-skyline-primary"
             style={{ padding: '0.65rem 1.4rem', fontSize: '0.78rem' }}
           >
-            Table Reservation
+            Reserve Table on Level 54
           </button>
         </div>
 
@@ -100,18 +115,28 @@ export default function Footer() {
           </h4>
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.65rem', fontSize: '0.86rem' }}>
             <li>
-              <a href="http://127.0.0.1:8001/cms/" target="_blank" rel="noreferrer" style={{ color: 'var(--color-champagne)', textDecoration: 'none' }}>
+              <a href="http://127.0.0.1:8001/cms/" target="_blank" rel="noreferrer" style={{ color: 'var(--color-champagne)', textDecoration: 'none', fontWeight: 700 }}>
                 &rarr; Skyline CMS Studio (Admin Portal)
+              </a>
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8001/cms/reservations/" target="_blank" rel="noreferrer" style={{ color: 'var(--color-twilight-slate)', textDecoration: 'none' }}>
+                &bull; Live Host Desk &amp; Reservation Shifts
+              </a>
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8001/cms/pages/" target="_blank" rel="noreferrer" style={{ color: 'var(--color-twilight-slate)', textDecoration: 'none' }}>
+                &bull; Elementor-Style Page Builder
+              </a>
+            </li>
+            <li>
+              <a href="http://127.0.0.1:8001/cms/blog/" target="_blank" rel="noreferrer" style={{ color: 'var(--color-twilight-slate)', textDecoration: 'none' }}>
+                &bull; Horizon Editorial Gazette Manager
               </a>
             </li>
             <li>
               <a href="http://127.0.0.1:8001/api/content/" target="_blank" rel="noreferrer" style={{ color: 'var(--color-twilight-slate)', textDecoration: 'none' }}>
                 &bull; Public Headless Content API (JSON)
-              </a>
-            </li>
-            <li>
-              <a href="#tour" style={{ color: 'var(--color-twilight-slate)', textDecoration: 'none' }}>
-                &bull; 3D Rooftop WebGL Virtual Tour
               </a>
             </li>
           </ul>

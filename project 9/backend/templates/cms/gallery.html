@@ -1,0 +1,37 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+    <div>
+      <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--cloud-ivory);">
+        Rooftop Photo Gallery & Visual Assets
+      </h3>
+      <p style="color: var(--twilight-slate); font-size: 0.85rem;">
+        Atmospheric sunset captures, high-altitude plates, and spatial architecture.
+      </p>
+    </div>
+    <span style="font-size: 0.82rem; color: var(--champagne); font-family: var(--font-mono); font-weight: 700;">
+      {{ gallery.images|length }} Images In Gallery
+    </span>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div style="margin-bottom: 1.5rem;">
+      <label style="display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--champagne); margin-bottom: 0.5rem; font-weight: 700;">
+        Gallery JSON Definition (URLs, Captions, Categories)
+      </label>
+      <textarea
+        name="gallery_json"
+        rows="20"
+        style="width: 100%; padding: 1rem; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 3px; color: var(--cloud-ivory); font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6; outline: none;"
+      >{{ gallery_json }}</textarea>
+    </div>
+
+    <button type="submit" class="btn-primary" style="padding: 0.85rem 2rem;">
+      Save Photo Gallery Assets
+    </button>
+  </form>
+</div>
+{% endblock %}
