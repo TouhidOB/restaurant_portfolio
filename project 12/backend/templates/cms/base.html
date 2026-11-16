@@ -3,25 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Villa Riviera CMS Studio{% endblock %}</title>
+  <title>{% block title %}{{ page_title|default:"Villa Riviera CMS Studio" }} | Villa Riviera{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --c-limestone: #E9DFCF;
-      --c-ivory: #F7F3EA;
-      --c-navy: #263A48;
-      --c-terracotta: #B96F4F;
-      --c-olive: #596448;
-      --c-seaglass: #A9BDB5;
-      --c-travertine: #C9B99F;
-      --c-charcoal: #302F2B;
-      --c-bronze: #94734F;
-      --c-card-bg: #FFFFFF;
-      --c-border: rgba(48, 47, 43, 0.12);
+      --riviera-navy-dark: #18252E;
+      --riviera-navy: #263A48;
+      --riviera-limestone: #E9DFCF;
+      --riviera-ivory: #F7F3EA;
+      --riviera-terracotta: #B96F4F;
+      --riviera-terracotta-hover: #9E5B3D;
+      --riviera-olive: #596448;
+      --riviera-seaglass: #A9BDB5;
+      --riviera-travertine: #C9B99F;
+      --riviera-charcoal: #302F2B;
+      --card-bg: #1F303C;
+      --card-border: rgba(233, 223, 207, 0.2);
       --font-display: 'Cormorant Garamond', Georgia, serif;
-      --font-sans: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-body: 'Manrope', -apple-system, sans-serif;
     }
 
     * {
@@ -31,447 +32,367 @@
     }
 
     body {
-      font-family: var(--font-sans);
-      background-color: var(--c-ivory);
-      color: var(--c-charcoal);
-      line-height: 1.6;
+      background-color: var(--riviera-navy-dark);
+      color: var(--riviera-ivory);
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
 
-    h1, h2, h3, h4, .font-serif {
-      font-family: var(--font-display);
-      font-weight: 600;
-      letter-spacing: -0.01em;
-    }
-
-    /* Studio Header */
-    .studio-header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: var(--c-navy);
-      color: var(--c-ivory);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 28px;
-      border-bottom: 2px solid var(--c-terracotta);
-    }
-    .studio-brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .studio-logo {
-      font-family: var(--font-display);
-      font-size: 24px;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--c-ivory);
-      font-weight: 700;
+    a {
+      color: inherit;
       text-decoration: none;
     }
-    .studio-badge {
-      background: rgba(185, 111, 79, 0.35);
-      color: #FFD2B8;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      font-weight: 600;
-      border: 1px solid rgba(185, 111, 79, 0.5);
-    }
-    .header-links {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .btn-header {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--c-ivory);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 7px 16px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-header:hover {
-      background: var(--c-terracotta);
-      border-color: var(--c-terracotta);
-      color: #fff;
-    }
 
-    /* Layout */
     .app-layout {
       display: flex;
-      min-height: calc(100vh - 61px);
+      min-height: 100vh;
     }
 
-    /* Fixed Sidebar */
-    .cms-sidebar {
-      width: 290px;
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background-color: var(--riviera-navy);
+      border-right: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
       flex-shrink: 0;
-      background: #FFFFFF;
-      border-right: 1px solid var(--c-border);
-      position: sticky;
-      top: 61px;
-      height: calc(100vh - 61px);
-      overflow-y: auto;
-      padding: 20px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
     }
-    .sidebar-search {
-      position: relative;
-    }
-    .sidebar-search input {
-      width: 100%;
-      padding: 10px 12px 10px 34px;
-      border: 1px solid var(--c-border);
-      border-radius: 8px;
-      font-size: 13px;
-      background: var(--c-ivory);
-      color: var(--c-charcoal);
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-    .sidebar-search input:focus {
-      border-color: var(--c-terracotta);
-      background: #fff;
-    }
-    .sidebar-search::before {
-      content: "🔍";
-      position: absolute;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 13px;
-      opacity: 0.5;
-    }
-    .sidebar-group-title {
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #8C847B;
-      padding: 6px 10px 4px;
-    }
-    .nav-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-    .nav-item a {
+
+    .brand-header {
+      padding: 1.5rem 1.25rem;
+      border-bottom: 1px solid var(--card-border);
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 9px 12px;
-      border-radius: 6px;
-      color: var(--c-charcoal);
-      text-decoration: none;
-      font-size: 13.5px;
+      gap: 0.75rem;
+    }
+
+    .brand-crest {
+      width: 42px;
+      height: 42px;
+      background-color: rgba(185, 111, 79, 0.25);
+      border: 1px solid var(--riviera-terracotta);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--riviera-terracotta);
+    }
+
+    .nav-section-title {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--riviera-seaglass);
+      padding: 1rem 1.25rem 0.4rem;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 0 0.75rem;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.7rem 0.85rem;
+      border-radius: 3px;
+      font-size: 0.84rem;
       font-weight: 500;
-      transition: all 0.15s ease;
+      color: var(--riviera-limestone);
+      transition: all 0.2s ease;
     }
-    .nav-item a:hover {
-      background: var(--c-limestone);
-      color: var(--c-navy);
+
+    .nav-item:hover {
+      background-color: rgba(233, 223, 207, 0.08);
+      color: #FFFFFF;
     }
-    .nav-item.active a {
-      background: var(--c-navy);
-      color: var(--c-ivory);
-      font-weight: 600;
-    }
-    .nav-badge {
-      margin-left: auto;
-      font-size: 11px;
-      padding: 2px 7px;
-      border-radius: 999px;
-      background: rgba(185, 111, 79, 0.15);
-      color: var(--c-terracotta);
+
+    .nav-item.active {
+      background-color: var(--riviera-terracotta);
+      color: #FFFFFF;
       font-weight: 600;
     }
 
-    /* Main Content Area */
-    .cms-content {
+    /* Main Area */
+    .main-wrapper {
       flex: 1;
-      padding: 32px 40px;
-      max-width: 1300px;
-      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background-color: var(--riviera-navy-dark);
     }
 
-    /* Cards & Form Styles */
-    .cms-card {
-      background: #FFFFFF;
-      border: 1px solid var(--c-border);
-      border-radius: 12px;
-      padding: 28px;
-      margin-bottom: 28px;
-      box-shadow: 0 4px 20px rgba(38, 58, 72, 0.04);
-      transition: outline 0.3s ease, transform 0.2s ease;
-      scroll-margin-top: 80px;
-    }
-    .cms-card.flash-highlight {
-      outline: 3px solid var(--c-terracotta);
-      box-shadow: 0 0 25px rgba(185, 111, 79, 0.35);
-    }
-    .card-header {
+    .top-header {
+      background-color: var(--riviera-navy);
+      border-bottom: 1px solid var(--card-border);
+      padding: 1.25rem 2rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--c-border);
-    }
-    .card-title {
-      font-size: 22px;
-      color: var(--c-navy);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .card-desc {
-      font-size: 13.5px;
-      color: #6C6863;
-      margin-top: 3px;
     }
 
-    /* Forms */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+    .content-area {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
     }
-    .form-group {
+
+    /* Cards & Containers */
+    .cms-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 4px;
+      padding: 1.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .cms-card-header {
       display: flex;
-      flex-direction: column;
-      gap: 6px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--card-border);
     }
-    .form-group.full-width {
-      grid-column: 1 / -1;
-    }
-    label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--c-navy);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    input[type="text"], input[type="email"], input[type="number"], select, textarea {
-      padding: 10px 14px;
-      border: 1px solid var(--c-border);
-      border-radius: 7px;
-      font-family: var(--font-sans);
-      font-size: 14px;
-      background: var(--c-ivory);
-      color: var(--c-charcoal);
-      transition: all 0.2s ease;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--c-terracotta);
-      background: #FFFFFF;
-      box-shadow: 0 0 0 3px rgba(185, 111, 79, 0.15);
-    }
-    textarea {
-      min-height: 90px;
-      resize: vertical;
+
+    .cms-card-title {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      color: var(--riviera-ivory);
     }
 
     /* Buttons */
-    .btn {
-      padding: 10px 22px;
-      border-radius: 7px;
-      font-size: 13.5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
+    .btn-action {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      background-color: var(--riviera-terracotta);
+      color: #FFFFFF;
       border: none;
-      text-decoration: none;
-    }
-    .btn-primary {
-      background: var(--c-terracotta);
-      color: #fff;
-    }
-    .btn-primary:hover {
-      background: #9D5B3E;
-    }
-    .btn-navy {
-      background: var(--c-navy);
-      color: #fff;
-    }
-    .btn-navy:hover {
-      background: #182630;
-    }
-    .btn-danger {
-      background: #E5484D;
-      color: #fff;
-    }
-    .btn-danger:hover {
-      background: #C93237;
-    }
-    .btn-sm {
-      padding: 5px 12px;
-      font-size: 12px;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background-color 0.2s;
     }
 
-    /* Tables */
-    .table-container {
-      overflow-x: auto;
-      border-radius: 8px;
-      border: 1px solid var(--c-border);
+    .btn-action:hover {
+      background-color: var(--riviera-terracotta-hover);
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 13.5px;
+
+    .btn-secondary {
+      background-color: rgba(233, 223, 207, 0.15);
+      border: 1px solid var(--card-border);
+      color: var(--riviera-limestone);
     }
-    th {
-      background: var(--c-limestone);
-      padding: 12px 16px;
-      font-weight: 600;
-      color: var(--c-navy);
-      text-transform: uppercase;
-      font-size: 11.5px;
-      letter-spacing: 0.05em;
+
+    .btn-secondary:hover {
+      background-color: rgba(233, 223, 207, 0.25);
+      color: #FFFFFF;
     }
-    td {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--c-border);
-      vertical-align: middle;
-    }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    tr:hover td {
-      background: rgba(233, 223, 207, 0.25);
+
+    .btn-navy {
+      background-color: var(--riviera-navy);
+      color: #FFFFFF;
     }
 
     /* Badges */
-    .status-badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 11.5px;
-      font-weight: 600;
+    .badge {
+      padding: 4px 8px;
+      border-radius: 2px;
+      font-size: 0.72rem;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
-    .status-Pending {
-      background: #FEF3C7;
-      color: #92400E;
-    }
-    .status-Confirmed {
-      background: #D1FAE5;
-      color: #065F46;
-    }
-    .status-Cancelled {
-      background: #FEE2E2;
-      color: #991B1B;
+    .badge-pending { background-color: rgba(185, 111, 79, 0.25); color: #FFB793; border: 1px solid #B96F4F; }
+    .badge-confirmed { background-color: rgba(89, 100, 72, 0.3); color: #C5D6AB; border: 1px solid #596448; }
+    .badge-seated { background-color: rgba(169, 189, 181, 0.2); color: #A9BDB5; border: 1px solid #A9BDB5; }
+    .badge-cancelled { background-color: rgba(180, 50, 50, 0.2); color: #FF8888; border: 1px solid #883333; }
+    .badge-shift-lunch { background-color: rgba(89, 100, 72, 0.35); color: #C5D6AB; border: 1px solid #596448; }
+    .badge-shift-dinner { background-color: rgba(185, 111, 79, 0.35); color: #FFB793; border: 1px solid #B96F4F; }
+
+    /* Tables */
+    .cms-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
     }
 
-    /* Flash Messages */
-    .messages-container {
-      margin-bottom: 24px;
+    .cms-table th {
+      background-color: rgba(24, 37, 46, 0.8);
+      color: var(--riviera-seaglass);
+      text-align: left;
+      padding: 0.85rem 1rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border-bottom: 1px solid var(--card-border);
     }
-    .alert {
-      padding: 14px 18px;
-      border-radius: 8px;
-      margin-bottom: 12px;
-      font-size: 14px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+
+    .cms-table td {
+      padding: 1rem;
+      border-bottom: 1px solid rgba(233, 223, 207, 0.12);
+      color: var(--riviera-ivory);
     }
-    .alert-success {
-      background: #ECFDF5;
-      color: #065F46;
-      border: 1px solid #A7F3D0;
+
+    .cms-table tr:hover td {
+      background-color: rgba(233, 223, 207, 0.05);
     }
-    .alert-error {
-      background: #FEF2F2;
-      color: #991B1B;
-      border: 1px solid #FECACA;
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 1.25rem;
     }
-    .alert-info {
-      background: #EFF6FF;
-      color: #1E40AF;
-      border: 1px solid #BFDBFE;
+    .form-label {
+      display: block;
+      color: var(--riviera-seaglass);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
     }
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background-color: var(--riviera-navy-dark);
+      border: 1px solid var(--card-border);
+      border-radius: 2px;
+      color: var(--riviera-ivory);
+      font-family: inherit;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-control:focus {
+      border-color: var(--riviera-terracotta);
+    }
+
+    /* Flash Alerts */
+    .alert-banner {
+      padding: 0.85rem 1.25rem;
+      border-radius: 3px;
+      margin-bottom: 1.5rem;
+      font-size: 0.88rem;
+    }
+    .alert-success { background-color: rgba(89, 100, 72, 0.3); border: 1px solid #596448; color: #C5D6AB; }
+    .alert-error { background-color: rgba(180, 50, 50, 0.25); border: 1px solid #883333; color: #FF9999; }
+    .alert-info { background-color: rgba(38, 58, 72, 0.4); border: 1px solid #A9BDB5; color: #A9BDB5; }
   </style>
   {% block extra_head %}{% endblock %}
 </head>
 <body>
-
-  <!-- Studio Header -->
-  <header class="studio-header">
-    <div class="studio-brand">
-      <a href="{% url 'cms_dashboard' %}" class="studio-logo">Villa Riviera</a>
-      <span class="studio-badge">CMS Studio 2.0</span>
-    </div>
-    <div class="header-links">
-      <a href="http://127.0.0.1:3000" target="_blank" class="btn-header" title="Open Public Website">
-        <span>🌐</span> View Public Site
-      </a>
-      <a href="{% url 'cms_logout' %}" class="btn-header" style="background: rgba(229, 72, 77, 0.2); border-color: rgba(229, 72, 77, 0.4);">
-        <span>🚪</span> Log Out
-      </a>
-    </div>
-  </header>
-
+  {% block auth_content %}
   <div class="app-layout">
-    {% block layout %}{% endblock %}
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand-header">
+        <div class="brand-crest">🏛️</div>
+        <div>
+          <div style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--riviera-ivory); line-height: 1;">VILLA RIVIERA</div>
+          <div style="font-size: 0.68rem; color: var(--riviera-seaglass); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px;">CAP-FERRAT CMS STUDIO</div>
+        </div>
+      </div>
+
+      <nav style="flex: 1; overflow-y: auto; padding: 1rem 0;">
+        <div class="nav-section-title">Core Management</div>
+        <div class="nav-links">
+          <a href="{% url 'cms_overview' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_overview' %}active{% endif %}">
+            <span>📊</span> Overview &amp; KPIs
+          </a>
+          <a href="{% url 'cms_pages' %}" class="nav-item {% if 'pages' in request.path %}active{% endif %}">
+            <span>📑</span> Custom Page Builder
+          </a>
+          <a href="{% url 'cms_identity' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_identity' %}active{% endif %}">
+            <span>🏛️</span> Identity &amp; Hours
+          </a>
+          <a href="{% url 'cms_reservations' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_reservations' %}active{% endif %}">
+            <span>📅</span> Live Reservations Desk
+          </a>
+        </div>
+
+        <div class="nav-section-title">Gastronomy &amp; Villa Spaces</div>
+        <div class="nav-links">
+          <a href="{% url 'cms_menu' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_menu' %}active{% endif %}">
+            <span>🍽️</span> Gastronomic Repertoire
+          </a>
+          <a href="{% url 'cms_tour' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_tour' %}active{% endif %}">
+            <span>🏛️</span> 3D Virtual Villa Tour
+          </a>
+          <a href="{% url 'cms_sections' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_sections' %}active{% endif %}">
+            <span>📐</span> 15-Section Editor
+          </a>
+          <a href="{% url 'cms_gallery' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_gallery' %}active{% endif %}">
+            <span>🖼️</span> Visual Retrospective
+          </a>
+          <a href="{% url 'cms_reviews' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_reviews' %}active{% endif %}">
+            <span>⭐</span> Guest Praise
+          </a>
+          <a href="{% url 'cms_faqs' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_faqs' %}active{% endif %}">
+            <span>❓</span> Concierge FAQs
+          </a>
+          <a href="{% url 'cms_schema' %}" class="nav-item {% if request.resolver_match.url_name == 'cms_schema' %}active{% endif %}">
+            <span>🧩</span> Master JSON Schema
+          </a>
+        </div>
+
+        <div class="nav-section-title">Editorial Gazette</div>
+        <div class="nav-links">
+          <a href="{% url 'cms_blog' %}" class="nav-item {% if 'blog' in request.path %}active{% endif %}">
+            <span>📰</span> Riviera Gazette
+          </a>
+        </div>
+      </nav>
+
+      <div style="padding: 1.25rem; border-top: 1px solid var(--card-border); font-size: 0.8rem; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <div style="color: var(--riviera-seaglass); font-weight: 600;">{{ request.user.username|default:"Staff" }}</div>
+          <div style="color: var(--riviera-terracotta); font-size: 0.7rem;">Verified Administrator</div>
+        </div>
+        <a href="{% url 'cms_logout' %}" style="color: #FF8888; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Logout &rarr;</a>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+      <header class="top-header">
+        <h1 style="font-family: var(--font-display); font-size: 1.6rem; color: var(--riviera-ivory);">
+          {{ page_title|default:"Villa Riviera CMS Studio" }}
+        </h1>
+        <div style="display: flex; align-items: center; gap: 1.25rem;">
+          <a href="http://127.0.0.1:3000/" target="_blank" class="btn-action btn-secondary" style="font-size: 0.75rem; padding: 0.5rem 1rem;">
+            <span>🌐</span> View Public Web
+          </a>
+          <a href="/api/content/" target="_blank" class="btn-action" style="font-size: 0.75rem; padding: 0.5rem 1rem;">
+            <span>⚡</span> Public JSON
+          </a>
+        </div>
+      </header>
+
+      <main class="content-area">
+        {% if messages %}
+          {% for msg in messages %}
+            <div class="alert-banner alert-{{ msg.tags }}">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+
+        {% block content %}{% endblock %}
+      </main>
+    </div>
   </div>
-
-  <script>
-    // Live Sidebar Search & Section Highlighting
-    document.addEventListener('DOMContentLoaded', () => {
-      const searchInput = document.getElementById('sidebarFilter');
-      if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-          const query = e.target.value.toLowerCase();
-          const items = document.querySelectorAll('.nav-item');
-          items.forEach(item => {
-            const text = item.textContent.toLowerCase();
-            if (text.includes(query)) {
-              item.style.display = 'block';
-            } else {
-              item.style.display = 'none';
-            }
-          });
-        });
-      }
-
-      // Smooth scroll & flash highlight on click
-      const navLinks = document.querySelectorAll('.nav-item a');
-      navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-          const targetId = link.getAttribute('href');
-          if (targetId && targetId.startsWith('#')) {
-            const targetEl = document.querySelector(targetId);
-            if (targetEl) {
-              targetEl.classList.add('flash-highlight');
-              setTimeout(() => {
-                targetEl.classList.remove('flash-highlight');
-              }, 1600);
-            }
-          }
-        });
-      });
-    });
-  </script>
+  {% endblock %}
+  {% block extra_scripts %}{% endblock %}
 </body>
 </html>

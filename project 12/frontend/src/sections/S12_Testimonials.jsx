@@ -12,7 +12,7 @@ export default function S12_Testimonials() {
   const testimonials = content.testimonials || [];
 
   return (
-    <section className="editorial-section" style={{ backgroundColor: 'var(--c-limestone-light)' }}>
+    <section id="testimonials" className="editorial-section" style={{ backgroundColor: 'var(--c-limestone-light)' }}>
       <div className="container">
         
         {/* Header */}

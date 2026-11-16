@@ -61,20 +61,20 @@ export const fallbackContent = {
         },
         {
           number: "02",
-          title: "The Art of Leisurely Dining",
-          desc: "A meal at Villa Riviera cannot be hurried. We invite guests into the Mediterranean cadence of slow dining, where conversations linger beneath scented pine branches."
+          title: "The Architecture of Flavour",
+          desc: "We balance the minerality of limestone herbs with the rich depth of cold-pressed estate olive oil, treating each ingredient as an architectural cornerstone."
         },
         {
           number: "03",
-          title: "Pure Architectural Balance",
-          desc: "Food and atmosphere must resonate with identical grace. From custom hand-turned terracotta plates to linen woven in Lombardy, each detail mirrors our limestone architecture."
+          title: "Unrushed Coastal Hospitality",
+          desc: "Time expands at Villa Riviera. Courses arrive with deliberate cadence, accompanied by maritime breezes, candlelight, and tailored wine cellar pairings."
         }
       ]
     },
-    s06_signature: {
-      badge: "CHEF'S MASTERPIECES",
-      title: "Signature Culinary Creations",
-      description: "Iconic dishes conceived by Executive Chef Marco Valenti, embodying the raw essence and modern refinement of the Mediterranean."
+    s06_signatures: {
+      badge: "CULINARY SELECTIONS",
+      title: "Signature Compositions of the Riviera",
+      description: "A preview of our most celebrated dishes, where coastal tradition meets modern gastronomic precision."
     },
     s07_menu: {
       badge: "A LA CARTE & TASTING",
@@ -122,90 +122,78 @@ export const fallbackContent = {
     s12_testimonials: {
       badge: "CRITICAL RECOGNITION",
       title: "Words from Critics & Patrons",
-      description: "Honoring the artistry and tranquility experienced at our Cap-Ferrat estate."
+      description: "Reflections from international culinary guides, esteemed guests, and coastal travelers."
     },
     s13_reservation: {
-      badge: "CONCIERGE DESK",
-      title: "Reserve Your Riviera Experience",
-      description: "Table reservations open 60 days in advance. For parties exceeding 8 guests or private villa buyouts, our concierge is at your service.",
-      notice: "Smart elegant attire requested. Children welcome from age 8."
+      badge: "TABLE INQUIRIES & VISIT",
+      title: "Secure Your Place at Villa Riviera",
+      description: "Due to our intimate scale and daily sea harvest limits, advance reservations are strongly advised."
     },
     s14_location: {
-      badge: "HOW TO REACH US",
-      title: "Arrival at Saint-Jean-Cap-Ferrat",
-      address: "14 Chemin des Calanques, 06230 Saint-Jean-Cap-Ferrat, Côte d'Azur, France",
-      phone: "+33 4 93 01 88 00",
-      email: "concierge@villariviera.com",
-      tender_access: "Private tender dock coordinates: 43°41'22.4\"N 7°20'08.2\"E (VHF Channel 72)",
-      valet: "Complimentary valet parking & secure vehicle storage on arrival.",
-      helicopter: "Private helipad transfers available via Monaco Heliport (12 min flight)."
+      badge: "VISIT & CONTACT",
+      title: "Coordinates & Arrival by Sea or Land",
+      description: "Perched discreetly on the eastern cliffs of Saint-Jean-Cap-Ferrat, accessible via coastal road or private yacht tender."
     },
     s15_footer: {
-      copyright: "© 2026 Villa Riviera SAS. All rights reserved.",
-      heritage: "Historic Estate Established 1928 — Saint-Jean-Cap-Ferrat",
-      tagline: "Coastal Villa Architecture Meets Contemporary Fine Dining"
+      copyright: "© 2026 Villa Riviera Fine Dining. All rights reserved.",
+      legal_note: "Member of Relais & Châteaux & Les Grandes Tables du Monde."
     }
   },
   tour_viewpoints: [
     {
       id: 1,
-      title: "Riviera Exterior Villa",
+      title: "Villa Exterior & Limestone Facade",
       slug: "exterior",
-      subtitle: "Arched limestone façade overlooking the Cap-Ferrat coastline",
-      description: "A 1928 coastal villa constructed from hand-chiseled limestone with panoramic vistas over the Mediterranean horizon.",
-      camera_position: "[0, 2.8, 7.5]",
-      camera_target: "[0, 1.2, 0]",
-      atmosphere: "Golden afternoon sunlight, warm sea breeze, horizon reflections",
-      highlights: ["Limestone Archway", "Aged Terracotta Cornices", "Ocean Overlook"],
-      order: 1
+      subtitle: "The 1928 cliffside estate viewed from the Mediterranean approach",
+      description: "Hand-hewn Provençal limestone and ancient terracotta roof tiles rise above the azure sea, surrounded by towering cypress and umbrella pines.",
+      camera_position: "[0, 3.5, 9.5]",
+      camera_target: "[0, 1.5, 0]",
+      atmosphere: "Morning Light • Crisp Sea Salt Breeze",
+      highlights: ["Century-old olive grove", "Natural sea-cliff foundations", "Grand arched portico"]
     },
     {
       id: 2,
-      title: "Courtyard & Arrival",
+      title: "Sunlit Terracotta Courtyard",
       slug: "courtyard",
-      subtitle: "Warm terracotta pavers, ancient clay urns, and scented olive trees",
-      description: "Guests enter through an intimate cloistered courtyard where water gently trickles into a carved marble basin.",
-      camera_position: "[-2.8, 2.2, 4.8]",
-      camera_target: "[0, 1.0, 0]",
-      atmosphere: "Dappled shadows under olive canopies, soothing fountain acoustics",
-      highlights: ["Tuscan Clay Amphorae", "Centuries-Old Olive Grove", "Handmade Pavers"],
-      order: 2
+      subtitle: "The serene heart of arrival with bubbling marble fountain",
+      description: "Shaded by climbing bougainvillea and mature citrus trees, this quiet sanctuary transitions guests from the bustle of the world into coastal stillness.",
+      camera_position: "[-2.5, 2.0, 3.5]",
+      camera_target: "[0, 1.2, 0]",
+      atmosphere: "Dappled Sunlight • Fragrant Jasmine & Rosemary",
+      highlights: ["Hand-carved marble fountain", "Tuscan terracotta pavers", "Heirloom citrus trees"]
     },
     {
       id: 3,
-      title: "Main Dining Salon",
+      title: "Grand Dining Salon & Colonnade",
       slug: "salon",
-      subtitle: "Double-height limestone vaults and hand-loomed linen tables",
-      description: "The central salon frames the sea through soaring glazed arches, illuminated by custom sculpted bronze pendants.",
-      camera_position: "[0.2, 1.8, 3.6]",
-      camera_target: "[0, 1.3, -2]",
-      atmosphere: "Intimate luxury, soft bronze luminescence, crisp acoustic serenity",
-      highlights: ["Double-Height Arches", "Lombardy Linen Linens", "Bronze Chandeliers"],
-      order: 3
+      subtitle: "Double-height stone vaults framing panoramic azure water",
+      description: "Restored French limestone arches and patinated bronze fixtures frame floor-to-ceiling sea views, offering climate-perfect dining across all seasons.",
+      camera_position: "[0, 2.2, 4.0]",
+      camera_target: "[0, 1.0, -1.0]",
+      atmosphere: "Gentle Coastal Breeze • Acoustically Softened Stone",
+      highlights: ["Historic barrel vaults", "Custom olive wood tables", "Acoustic limestone treatment"]
     },
     {
       id: 4,
-      title: "Terrace & Outdoor Dining",
+      title: "Panoramic Cliffside Terrace",
       slug: "terrace",
-      subtitle: "Cliffside open-air tables suspended above the turquoise sea",
-      description: "Dine under coastal twilight with panoramic sea views from Monaco to the Esterel mountains.",
-      camera_position: "[2.6, 2.0, 4.5]",
-      camera_target: "[0.5, 1.0, 0]",
-      atmosphere: "Sunset amber glow, gentle wave rhythm, candlelight glow",
-      highlights: ["Cliffside Pergola", "Unobstructed Sea Vistas", "Candlelit Marble Tables"],
-      order: 4
+      subtitle: "Al fresco dining suspended between sky, rock, and waves",
+      description: "Our signature dining platform overlooks the bay toward Monaco, where guests dine beneath canopy awnings as the sun sets over the Cap.",
+      camera_position: "[3.0, 2.5, 5.0]",
+      camera_target: "[0, 0.8, -2.0]",
+      atmosphere: "Golden Hour Glow • Sound of Crashing Waves",
+      highlights: ["Unobstructed 270° sea horizon", "Candlelit evening service", "Direct sea breeze"]
     },
     {
       id: 5,
-      title: "Culinary & Wine Cellar",
+      title: "Subterranean Rock Wine Vault",
       slug: "cellar",
-      subtitle: "Vaulted subterranean cellar housing 480+ coastal vintages",
-      description: "Carved straight into the cliff rock, maintaining natural humidity and ideal conditions for rare Mediterranean vintages.",
-      camera_position: "[0, 1.5, 3.2]",
-      camera_target: "[0, 1.2, -1]",
-      atmosphere: "Cool limestone tranquility, sommelier tasting station",
-      highlights: ["Chalk Cave Humidity", "Rare Provençal & Ligurian Vintages", "Olive Wood Tasting Table"],
-      order: 5
+      subtitle: "480+ historic vintages carved directly into coastal limestone",
+      description: "Dating back to the villa's 1928 foundation, this naturally humid, temperature-stable cellar holds rare Provençal, Bordeaux, and Piedmont treasures.",
+      camera_position: "[0, 1.8, 3.0]",
+      camera_target: "[0, 1.0, 0]",
+      atmosphere: "Cool Cave Air • Faint Aroma of French Oak",
+      highlights: ["Natural limestone insulation", "Private sommelier tasting table", "Rare vertical collections"]
     }
   ],
   menu_categories: [
@@ -221,6 +209,7 @@ export const fallbackContent = {
           subtitle: "Yellowtail Amberjack Crudo",
           description: "Thinly shaved wild yellowtail amberjack dressed with fermented bergamot citrus, coastal sea purslane, and single-estate Riviera olive oil.",
           price: "€38",
+          image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=800&q=85",
           is_signature: true,
           dietary_tags: "Wild Caught, Gluten-Free",
           pairing_notes: "Bellet Blanc, Château de Crémat 2022"
@@ -231,6 +220,7 @@ export const fallbackContent = {
           subtitle: "Sanremo Red Prawn Carpaccio",
           description: "Pounded sweet red prawns from the Ligurian trench, crisp fennel pollen, finger lime pearls, and sea salt crystals.",
           price: "€42",
+          image: "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=85",
           is_signature: true,
           dietary_tags: "Raw Specialty, Gluten-Free",
           pairing_notes: "Vermentino Colli di Luni DOC 2023"
@@ -241,6 +231,7 @@ export const fallbackContent = {
           subtitle: "Crispy Zucchini Blossoms",
           description: "Organic zucchini flowers filled with creamy Pugliese burrata and Cantabrian anchovies, fried in tempura of coastal herbs.",
           price: "€32",
+          image: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=800&q=85",
           is_signature: false,
           dietary_tags: "Artisanal Dairy, Pescatarian",
           pairing_notes: "Cassis Blanc, Domaine du Paternel 2023"
@@ -259,6 +250,7 @@ export const fallbackContent = {
           subtitle: "Summer Black Truffle Tagliolini",
           description: "36-egg-yolk pasta emulsified with Alpine mountain butter, 30-month Parmigiano Vacche Rosse, and shaved black summer truffle.",
           price: "€48",
+          image: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=800&q=85",
           is_signature: true,
           dietary_tags: "Vegetarian, Hand-Rolled Daily",
           pairing_notes: "Chardonnay Langhe DOC, Aldo Conterno"
@@ -269,6 +261,7 @@ export const fallbackContent = {
           subtitle: "Carnaroli Seafood & Saffron Risotto",
           description: "7-year aged Acquerello rice simmered in concentrated rockfish broth, roasted langoustines, baby squid, and Sardinian saffron.",
           price: "€46",
+          image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=85",
           is_signature: true,
           dietary_tags: "Gluten-Free, Shellfish",
           pairing_notes: "Bandol Rosé, Domaine Tempier 2022"
@@ -279,6 +272,7 @@ export const fallbackContent = {
           subtitle: "Sea Bass Stuffed Ravioli",
           description: "Delicate handmade ravioli stuffed with wild sea bass and lemon thyme, served in an emulsion of sea water, datterini tomatoes, and capers.",
           price: "€39",
+          image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=800&q=85",
           is_signature: false,
           dietary_tags: "Pescatarian",
           pairing_notes: "Gavi dei Gavi La Scolca Black Label"
@@ -297,6 +291,7 @@ export const fallbackContent = {
           subtitle: "Wild Sea Bass Baked in Salt Crust",
           description: "Line-caught Cap-Ferrat sea bass baked in Camargue sea salt and wild rosemary, filleted tableside with braised baby artichokes and salsa verde.",
           price: "€58",
+          image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85",
           is_signature: true,
           dietary_tags: "Wild Catch, Tableside Service",
           pairing_notes: "Meursault Premier Cru, Domaine Bouchard"
@@ -307,6 +302,7 @@ export const fallbackContent = {
           subtitle: "Red Mullet with Bouillabaisse Glaze",
           description: "Pan-roasted rock red mullet served over crisp saffron potato scales and a velvet reduction of rockfish bouillabaisse and rouille.",
           price: "€52",
+          image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=85",
           is_signature: false,
           dietary_tags: "Gluten-Free, Pescatarian",
           pairing_notes: "Palette Blanc, Château Simone 2020"
@@ -317,6 +313,7 @@ export const fallbackContent = {
           subtitle: "Roasted Provençal Lamb Rack",
           description: "Heritage Sisteron lamb crusted with wild marjoram, roasted garlic purée, confit shallots, and lamb jus scented with lavender honey.",
           price: "€54",
+          image: "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?auto=format&fit=crop&w=800&q=85",
           is_signature: false,
           dietary_tags: "Pasture-Raised Provençal",
           pairing_notes: "Châteauneuf-du-Pape, Château de Beaucastel"
@@ -335,6 +332,7 @@ export const fallbackContent = {
           subtitle: "Warm Menton Lemon Soufflé",
           description: "Light-as-air soufflé made with fragrant Menton IGP lemons, molten center of white chocolate and limoncello, served with rosemary ice cream.",
           price: "€24",
+          image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=85",
           is_signature: true,
           dietary_tags: "Signature Dessert, Vegetarian",
           pairing_notes: "Moscato d'Asti DOCG, Vietti 2023"
@@ -345,6 +343,7 @@ export const fallbackContent = {
           subtitle: "Bronte Pistachio & Caramelized Fig Millefeuille",
           description: "Caramelized puff pastry layers filled with Sicilian pistachio mousseline, roasted coastal black figs, and aged balsamic droplets.",
           price: "€22",
+          image: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=85",
           is_signature: false,
           dietary_tags: "Vegetarian",
           pairing_notes: "Sauternes, Château d'Yquem 2017"
@@ -355,6 +354,7 @@ export const fallbackContent = {
           subtitle: "Estate Olive Oil Cake",
           description: "Warm moist olive oil sponge with thyme infused gelato and candied Sorrento lemon peel.",
           price: "€20",
+          image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=85",
           is_signature: false,
           dietary_tags: "Vegetarian, Estate Harvest",
           pairing_notes: "Vin Santo del Chianti Classico"
@@ -364,89 +364,94 @@ export const fallbackContent = {
   ],
   signature_dishes: [
     {
-      id: 101,
+      id: 1,
       name: "Crudo di Ricciola al Bergamotto",
       subtitle: "Yellowtail Amberjack Crudo",
-      description: "Thinly shaved wild yellowtail amberjack dressed with fermented bergamot citrus, coastal sea purslane, and single-estate Riviera olive oil.",
+      description: "Thinly shaved wild amberjack dressed with fermented bergamot citrus, coastal sea purslane, and single-estate Riviera olive oil.",
       price: "€38",
+      image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=800&q=85",
       is_signature: true,
       dietary_tags: "Wild Caught, Gluten-Free",
-      pairing_notes: "Bellet Blanc, Château de Crémat 2022"
+      pairing_notes: "Bellet Blanc 2022"
     },
     {
-      id: 104,
+      id: 2,
       name: "Tagliolini al Tartufo Estivo della Riviera",
       subtitle: "Summer Black Truffle Tagliolini",
       description: "36-egg-yolk pasta emulsified with Alpine mountain butter, 30-month Parmigiano Vacche Rosse, and shaved black summer truffle.",
       price: "€48",
+      image: "https://images.unsplash.com/photo-1551218808-94e220e084d2?auto=format&fit=crop&w=800&q=85",
       is_signature: true,
-      dietary_tags: "Vegetarian, Hand-Rolled Daily",
-      pairing_notes: "Chardonnay Langhe DOC, Aldo Conterno"
+      dietary_tags: "Vegetarian",
+      pairing_notes: "Chardonnay Langhe DOC"
     },
     {
-      id: 107,
+      id: 3,
       name: "Branzino Selvaggio in Crosta di Sale Marino",
       subtitle: "Wild Sea Bass Baked in Salt Crust",
-      description: "Line-caught Cap-Ferrat sea bass baked in Camargue sea salt and wild rosemary, filleted tableside with braised baby artichokes and salsa verde.",
+      description: "Line-caught Cap-Ferrat sea bass baked in Camargue sea salt and wild rosemary, filleted tableside with braised baby artichokes.",
       price: "€58",
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85",
       is_signature: true,
-      dietary_tags: "Wild Catch, Tableside Service",
-      pairing_notes: "Meursault Premier Cru, Domaine Bouchard"
-    },
-    {
-      id: 110,
-      name: "Soufflé ai Limoni di Mentone",
-      subtitle: "Warm Menton Lemon Soufflé",
-      description: "Light-as-air soufflé made with fragrant Menton IGP lemons, molten center of white chocolate and limoncello, served with rosemary ice cream.",
-      price: "€24",
-      is_signature: true,
-      dietary_tags: "Signature Dessert, Vegetarian",
-      pairing_notes: "Moscato d'Asti DOCG, Vietti 2023"
+      dietary_tags: "Wild Catch",
+      pairing_notes: "Meursault Premier Cru"
     }
   ],
   dining_experiences: [
     {
       id: 1,
-      title: "Sunset Terrace Cliffside Dining",
-      subtitle: "Unobstructed views over Cap-Ferrat twilight",
-      description: "A 7-course seasonal tasting menu served at the edge of the Mediterranean cliff as the sun turns the limestone gold and twilight descends.",
+      title: "Chef's Sunset Tasting at Cliff's Edge",
+      subtitle: "Exclusive Cliffside Balcony Seclusion",
+      description: "A nine-course blind culinary odyssey presented as the sunset bathes the Cap in amber and rose light.",
       capacity: "2 to 6 Guests",
-      timing: "Daily | 19:30 seating",
-      price: "€240 per guest",
-      features: ["7-Course Tasting Menu", "Champagne Welcome on Arrival", "Prime Cliffside Table"]
+      timing: "Twilight | 19:30 Departure",
+      price: "€280 per guest",
+      features: [
+        "Nine blind tasting courses by Chef Antoine Laurent",
+        "Exclusive corner balcony reservation",
+        "Pairing of rare Provençal and Ligurian Grand Crus"
+      ]
     },
     {
       id: 2,
-      title: "The Olive Grove Pergola",
-      subtitle: "Private shaded dining in century-old olive gardens",
-      description: "Surrounded by centuries-old olive trees and wild lavender bushes, an intimate sanctuary ideal for celebrations and family gatherings.",
-      capacity: "6 to 12 Guests",
-      timing: "Lunch & Dinner",
-      price: "€280 per guest",
-      features: ["Dedicated Waitstaff & Chef Tableside", "Custom Menu Curation", "Acoustic Privacy"]
+      title: "The Subterranean Vault & Sommelier Table",
+      subtitle: "Surrounded by 1928 Coastal Limestone",
+      description: "An intimate dinner hosted inside our subterranean rock cellar, surrounded by over 480 historic vintage bottles.",
+      capacity: "4 to 10 Guests",
+      timing: "Evening | 20:00",
+      price: "€340 per guest",
+      features: [
+        "Seven-course heritage menu featuring aged wild cheeses",
+        "Vertical tasting of historic Côte d'Azur vintages",
+        "Dedicated head sommelier narration throughout"
+      ]
     },
     {
       id: 3,
-      title: "Sommelier Vault & Wine Cellar Journey",
-      subtitle: "Private cave tasting accompanied by rare coastal pairings",
-      description: "Head Sommelier Eléonore Mercier guides you through historic vintages followed by a 5-course tailored pairing dinner.",
-      capacity: "Up to 8 Guests",
-      timing: "Evening by advance reservation",
-      price: "€320 per guest",
-      features: ["Cellar Tour & Rare Bottle Degustation", "Private Vault Seating", "Sommelier Masterclass"]
+      title: "Private Sea Pier Sunset Aperitivo",
+      subtitle: "Arriving by Private Yacht Tender",
+      description: "Private reception on our natural stone pier with vintage Champagne, chilled oysters, and caviar before dinner.",
+      capacity: "Up to 12 Guests",
+      timing: "Sunset | 18:30",
+      price: "€190 per guest",
+      features: [
+        "Direct yacht tender mooring and concierge reception",
+        "Dom Pérignon vintage Champagne service",
+        "Fresh Belon oysters and Oscietra caviar service"
+      ]
     }
   ],
   team_members: [
     {
       id: 1,
-      name: "Marco Valenti",
-      role: "Executive Chef",
-      bio: "Raised between the Ligurian coast and Nice, Chef Marco brings 22 years of fine dining mastery, having trained under Alain Ducasse before joining Villa Riviera in 2018.",
-      credentials: "3 Michelin Stars, Meilleur Ouvrier de France Guest Master"
+      name: "Antoine Laurent",
+      role: "Chef Patron & Culinary Director",
+      bio: "Trained under French and Italian masters before returning to his native Côte d'Azur. Antoine champions radical ingredient honesty and maritime purity.",
+      credentials: "Three Michelin Stars • Grand Chef Relais & Châteaux"
     },
     {
       id: 2,
-      name: "Eléonore Mercier",
+      name: "Eléonore de Saint-Roch",
       role: "Head Sommelier",
       bio: "Guardian of our 480-label subterranean cellar. Eléonore focuses passionately on biodynamic coastal vineyards from Bandol to Santorini.",
       credentials: "Best Sommelier Côte d'Azur 2021"
@@ -462,7 +467,7 @@ export const fallbackContent = {
   testimonials: [
     {
       id: 1,
-      quote: "A breathtaking tribute to Mediterranean light and sea-harvest purity. The villa's stone terraces and Valenti's amberjack crudo are unforgettable.",
+      quote: "A breathtaking tribute to Mediterranean light and sea-harvest purity. The villa's stone terraces and amberjack crudo are unforgettable.",
       author: "Michelin Guide France 2025",
       source_title: "Three Stars & Sommelier Special Prize",
       rating: 5
@@ -487,7 +492,7 @@ export const fallbackContent = {
       id: 1,
       title: "Villa Riviera Limestone Arches",
       category: "Architecture",
-      image_url: "https://images.unsplash.com/photo-1544984243-ec57ea16fe25?auto=format&fit=crop&w=1200&q=80",
+      image_url: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=80",
       caption: "Hand-chiseled Provençal limestone framing the Mediterranean"
     },
     {
@@ -522,8 +527,107 @@ export const fallbackContent = {
       id: 6,
       title: "Sanremo Red Prawn Carpaccio",
       category: "Culinary",
-      image_url: "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=1200&q=80",
+      image_url: "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=1200&q=80",
       caption: "Delicately pounded prawns with wild fennel pollen"
+    }
+  ],
+  custom_pages: [
+    {
+      id: 1,
+      title: "Private Cliffside Villa Dining & Colonnade Receptions",
+      slug: "private-cliffside-villa-dining-cap-ferrat",
+      meta_description: "Exclusive buyouts, yacht tender arrivals, and bespoke Mediterranean tasting banquets at Villa Riviera, Saint-Jean-Cap-Ferrat.",
+      is_published: true,
+      blocks: [
+        {
+          type: "hero",
+          title: "Private Cliffside Villa Dining & Colonnade Receptions",
+          subtitle: "EXCLUSIVE CAP-FERRAT SECLUSION",
+          lead: "Command the entire sea terrace, private wine vault, and historic colonnade for monumental celebrations overlooking the Mediterranean.",
+          cta_text: "Inquire for Private Estate Buyout"
+        },
+        {
+          type: "split",
+          title: "Unrivaled Privacy Above the Azure Mediterranean",
+          subtitle: "CAP-FERRAT PROMONTORY",
+          body_left: "Villa Riviera offers an incomparable setting for intimate private banquets, milestone anniversaries, and discreet diplomatic dinners. With private yacht tender access directly from our stone sea dock, your guests arrive with serene exclusivity.",
+          body_right: "Every gathering features a bespoke tasting menu composed that morning by Chef Antoine Laurent, complemented by rare Grand Cru vintages retrieved from our 1928 subterranean rock cellar.",
+          image: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=85"
+        },
+        {
+          type: "features",
+          title: "Bespoke Villa Hospitality Inclusions",
+          items: [
+            {
+              title: "Direct Sea Pier & Tender Service",
+              desc: "Patrons arriving via private yacht are greeted at our private stone dock with Champagne and transported up our terraced gardens."
+            },
+            {
+              title: "Dedicated Master Sommelier",
+              desc: "Exclusive access to our vault of over 480 historic Riviera, Bordeaux, and Tuscan vintages, paired dish-by-dish."
+            },
+            {
+              title: "Private Colonnade & Terrace",
+              desc: "Uninterrupted 270-degree panorama of the Cap-Ferrat cliffs, illuminated by antique hurricane lanterns and twilight sea glow."
+            }
+          ]
+        },
+        {
+          type: "reservation",
+          title: "Request Exclusive Villa Dining Seclusion",
+          subtitle: "CONCIERGE INQUIRY",
+          lead: "Connect with our private events director to tailor menus, yacht arrivals, and private musical accompaniment.",
+          button_text: "Request Private Villa Reservation"
+        }
+      ]
+    }
+  ],
+  blog_categories: [
+    {
+      id: 1,
+      name: "Mediterranean Gastronomy & Wild Sea Harvest",
+      slug: "coastal-terroir",
+      description: "Stories from the dawn catch, crag herb foraging, and single-estate Riviera olive oils."
+    },
+    {
+      id: 2,
+      name: "Limestone Architecture & Riviera Chronicles",
+      slug: "villa-heritage",
+      description: "The architectural conservation of our 1928 cliffside estate and Mediterranean stonework."
+    },
+    {
+      id: 3,
+      name: "Côte d'Azur Cellars & Historic Vintages",
+      slug: "wine-cellar",
+      description: "Explorations into rare Provençal and Ligurian vintages preserved in our coastal vault."
+    }
+  ],
+  blog_posts: [
+    {
+      id: 1,
+      title: "Wild Mediterranean Turbot, Sea Purslane & Crag Thyme",
+      slug: "wild-mediterranean-turbot-crag-herbs-cap-ferrat",
+      category_name: "Mediterranean Gastronomy & Wild Sea Harvest",
+      category_slug: "coastal-terroir",
+      excerpt: "How the rugged limestone cliffs of Cap-Ferrat yield wild botanicals that transform pristine morning sea harvests into refined coastal gastronomy.",
+      content: "Cooking on the Côte d'Azur requires total obedience to the maritime elements. Each dawn at 05:30, our culinary team descends to the fishing harbor where small wooden pointus return with line-caught turbot, red mullet, and Sanremo red prawns still glistening with sea spray.\n\nThe secret to our roasted wild turbot lies not in heavy sauces, but in the micro-flora that clings tenaciously to the seaside limestone crags. Wild sea purslane provides a bright saline crunch, while wild winter savory and mountain thyme infuse a delicate resinous perfume into cold-pressed estate olive oil.\n\nWhen roasted gently over gentle olive-wood embers, the pearlescent flesh retains all its natural gelatin and sweet sea salinity, evoking the very breath of the Mediterranean.",
+      featured_image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1200&q=85",
+      author_name: "Chef Antoine Laurent",
+      reading_time: "5 min read",
+      published_at: "2026-11-16"
+    },
+    {
+      id: 2,
+      title: "Restoring the 1928 Limestone Colonnade Above the Waves",
+      slug: "restoring-1928-limestone-arches-villa-riviera",
+      category_name: "Limestone Architecture & Riviera Chronicles",
+      category_slug: "villa-heritage",
+      excerpt: "A master architectural chronicle of preserving hand-chiseled Provençal limestone and classical arches against salty coastal breezes.",
+      content: "Erected in 1928 by a visionary Parisian patron of the arts, Villa Riviera's colonnade was sculpted from dense stone extracted from quarries near La Turbie. These porous yet durable stones have absorbed ninety-eight years of maritime sun and mist.\n\nDuring our recent architectural restoration, master stonemasons utilized traditional lime-based mortars mixed with crushed sea shell to repoint the grand arches without compromising their breathability.\n\nThe result is a rhythmic play of shadow and golden light that frames the azure expanse, allowing our diners to experience the villa exactly as intended nearly a century ago.",
+      featured_image: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=85",
+      author_name: "Claire de Saint-Amand",
+      reading_time: "6 min read",
+      published_at: "2026-11-15"
     }
   ]
 };

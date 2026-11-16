@@ -1,0 +1,78 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}Visual Retrospective & Archives | Villa Riviera CMS Studio{% endblock %}
+
+{% block content %}
+<div class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2 class="cms-card-title">Visual Retrospective &amp; Image Archives</h2>
+      <p style="font-size: 0.85rem; color: var(--riviera-seaglass);">
+        High-resolution imagery of limestone architecture, coastal dining terraces, and culinary craft.
+      </p>
+    </div>
+  </div>
+
+  <!-- Add Image Form -->
+  <div style="background-color: var(--riviera-navy-dark); border: 1px solid var(--card-border); border-radius: 4px; padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--riviera-ivory); margin-bottom: 1rem;">
+      Add Image to Retrospective
+    </h3>
+    <form method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="add_image">
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Image Title</label>
+        <input type="text" name="title" class="form-control" placeholder="e.g. Arched Colonnade at Dusk" required>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Category</label>
+        <select name="category" class="form-control">
+          <option value="Architecture">Architecture &amp; Colonnade</option>
+          <option value="Gastronomy">Gastronomy &amp; Crudo</option>
+          <option value="Atmosphere">Atmosphere &amp; Sea Views</option>
+          <option value="Cellar">Subterranean Cellar</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="grid-column: 1 / -1; margin-bottom: 0;">
+        <label class="form-label">Direct Image URL</label>
+        <input type="text" name="image_url" class="form-control" placeholder="https://images.unsplash.com/photo-..." required>
+      </div>
+
+      <div class="form-group" style="grid-column: 1 / -1; margin-bottom: 0;">
+        <label class="form-label">Caption</label>
+        <input type="text" name="caption" class="form-control" placeholder="Brief visual caption...">
+      </div>
+
+      <div style="grid-column: 1 / -1; text-align: right;">
+        <button type="submit" class="btn-action">Upload &amp; Add Image</button>
+      </div>
+    </form>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem;">
+    {% for img in images %}
+      <div style="background-color: var(--riviera-navy-dark); border: 1px solid var(--card-border); border-radius: 4px; overflow: hidden;">
+        <div style="height: 180px; overflow: hidden; position: relative;">
+          <img src="{{ img.image_url }}" alt="{{ img.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+          <span style="position: absolute; bottom: 8px; left: 8px; background: rgba(24,37,46,0.85); padding: 2px 6px; border-radius: 2px; font-size: 0.7rem; color: #fff;">
+            {{ img.category }}
+          </span>
+        </div>
+        <div style="padding: 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <strong style="font-size: 0.85rem; color: var(--riviera-ivory);">{{ img.title }}</strong>
+          <form method="POST" onsubmit="return confirm('Remove image?');">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete_image">
+            <input type="hidden" name="image_id" value="{{ img.id }}">
+            <button type="submit" style="background: none; border: none; color: #FF8888; cursor: pointer; font-size: 0.75rem;">✕</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

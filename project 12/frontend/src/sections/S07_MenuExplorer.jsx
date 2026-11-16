@@ -158,7 +158,7 @@ export default function S07_MenuExplorer() {
               style={{
                 backgroundColor: '#FFFFFF',
                 borderRadius: '10px',
-                padding: '24px 22px',
+                overflow: 'hidden',
                 border: '1px solid var(--c-border)',
                 cursor: 'pointer',
                 display: 'flex',
@@ -175,51 +175,83 @@ export default function S07_MenuExplorer() {
                 e.currentTarget.style.boxShadow = 'none';
               }}
             >
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
-                  <h4
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      fontSize: '1.35rem',
-                      color: 'var(--c-navy)',
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    {dish.name}
-                  </h4>
-                  <span
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      fontSize: '1.35rem',
-                      fontWeight: 700,
-                      color: 'var(--c-terracotta)',
-                      marginLeft: '14px',
-                    }}
-                  >
-                    {dish.price}
-                  </span>
+              {dish.image && (
+                <div style={{ height: '190px', width: '100%', overflow: 'hidden', position: 'relative' }}>
+                  <img
+                    src={dish.image}
+                    alt={dish.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.3s ease' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+                  />
+                  {dish.is_signature && (
+                    <span
+                      style={{
+                        position: 'absolute',
+                        top: '12px',
+                        left: '12px',
+                        backgroundColor: 'var(--c-terracotta)',
+                        color: '#FFFFFF',
+                        padding: '3px 8px',
+                        borderRadius: '3px',
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.08em',
+                      }}
+                    >
+                      ★ Signature
+                    </span>
+                  )}
+                </div>
+              )}
+              <div style={{ padding: '24px 22px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
+                    <h4
+                      style={{
+                        fontFamily: "'Cormorant Garamond', serif",
+                        fontSize: '1.35rem',
+                        color: 'var(--c-navy)',
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {dish.name}
+                    </h4>
+                    <span
+                      style={{
+                        fontFamily: "'Cormorant Garamond', serif",
+                        fontSize: '1.35rem',
+                        fontWeight: 700,
+                        color: 'var(--c-terracotta)',
+                        marginLeft: '14px',
+                      }}
+                    >
+                      {dish.price}
+                    </span>
+                  </div>
+
+                  {dish.subtitle && (
+                    <div style={{ fontSize: '0.8rem', color: '#8C847B', marginBottom: '8px' }}>
+                      {dish.subtitle}
+                    </div>
+                  )}
+
+                  <p style={{ color: '#595752', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '14px' }}>
+                    {dish.description}
+                  </p>
                 </div>
 
-                {dish.subtitle && (
-                  <div style={{ fontSize: '0.8rem', color: '#8C847B', marginBottom: '8px' }}>
-                    {dish.subtitle}
-                  </div>
-                )}
-
-                <p style={{ color: '#595752', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '14px' }}>
-                  {dish.description}
-                </p>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--c-border-light)', paddingTop: '10px' }}>
-                <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#596448', fontWeight: 600 }}>
-                  {dish.categoryName}
-                </span>
-                {dish.is_signature && (
-                  <span style={{ fontSize: '0.75rem', color: 'var(--c-terracotta)', fontWeight: 700 }}>
-                    ★ Signature
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--c-border-light)', paddingTop: '10px' }}>
+                  <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#596448', fontWeight: 600 }}>
+                    {dish.categoryName}
                   </span>
-                )}
+                  {dish.dietary_tags && (
+                    <span style={{ fontSize: '0.72rem', color: '#8C847B' }}>
+                      {dish.dietary_tags}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}

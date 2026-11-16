@@ -1,0 +1,26 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}Master JSON Schema | Villa Riviera CMS Studio{% endblock %}
+
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <div>
+        <h2 class="cms-card-title">Master Content JSON Schema</h2>
+        <p style="font-size: 0.85rem; color: var(--riviera-seaglass);">
+          Direct access to the underlying restaurant JSON schema powering the public API at <code>/api/content/</code>.
+        </p>
+      </div>
+      <button type="submit" class="btn-action">
+        Save Master Schema
+      </button>
+    </div>
+
+    <div class="form-group">
+      <textarea name="schema_json" class="form-control" rows="22" style="font-family: monospace; font-size: 0.85rem; line-height: 1.5;">{{ schema_json_formatted }}</textarea>
+    </div>
+  </div>
+</form>
+{% endblock %}

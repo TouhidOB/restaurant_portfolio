@@ -31,7 +31,7 @@ export default function DishDetailModal() {
           boxShadow: '0 24px 60px rgba(0,0,0,0.35)',
           border: '1px solid #DECDB8',
           position: 'relative',
-          padding: '36px',
+          overflow: 'hidden',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -39,20 +39,38 @@ export default function DishDetailModal() {
           onClick={closeDishModal}
           style={{
             position: 'absolute',
-            top: 20,
-            right: 20,
-            background: 'none',
+            top: 16,
+            right: 16,
+            background: 'rgba(255, 255, 255, 0.85)',
             border: 'none',
-            fontSize: '22px',
+            borderRadius: '50%',
+            width: '32px',
+            height: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '18px',
             cursor: 'pointer',
-            color: '#8C847B',
+            color: '#302F2B',
+            zIndex: 10,
           }}
           aria-label="Close modal"
         >
           ✕
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+        {selectedDish.image && (
+          <div style={{ height: '220px', width: '100%', overflow: 'hidden' }}>
+            <img
+              src={selectedDish.image}
+              alt={selectedDish.name}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          </div>
+        )}
+
+        <div style={{ padding: '28px 32px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
           {selectedDish.is_signature && (
             <span className="badge-tag" style={{ background: '#FDE8CD', color: '#9D5B3E', borderColor: '#DECDB8' }}>
               ⭐ Chef's Signature
@@ -132,6 +150,7 @@ export default function DishDetailModal() {
           <button onClick={closeDishModal} className="btn-secondary">
             Close
           </button>
+        </div>
         </div>
       </div>
     </div>

@@ -12,7 +12,7 @@ export default function S09_ChefTeam() {
   const teamMembers = content.team_members || [];
 
   return (
-    <section className="editorial-section" style={{ backgroundColor: 'var(--c-ivory)' }}>
+    <section id="chef" className="editorial-section" style={{ backgroundColor: 'var(--c-ivory)' }}>
       <div className="container">
         
         {/* Header */}

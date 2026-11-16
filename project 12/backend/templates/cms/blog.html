@@ -1,0 +1,92 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}Riviera Gazette & Editorial Chronicles | Villa Riviera CMS Studio{% endblock %}
+
+{% block content %}
+<div class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2 class="cms-card-title">Riviera Gazette &amp; Editorial Chronicles</h2>
+      <p style="font-size: 0.85rem; color: var(--riviera-seaglass);">
+        Compose, curate, and publish long-form culinary essays, wine cellar discoveries, and architectural dispatches.
+      </p>
+    </div>
+    <a href="{% url 'cms_blog_new' %}" class="btn-action">
+      <span>✍️</span> Compose New Article
+    </a>
+  </div>
+
+  <!-- Categories Bar -->
+  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--card-border);">
+    <span style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--riviera-seaglass); padding: 0.35rem 0; font-weight: 700;">
+      CATEGORIES:
+    </span>
+    {% for cat in categories %}
+      <span class="badge" style="background-color: rgba(233, 223, 207, 0.15); color: var(--riviera-ivory);">
+        {{ cat.name }} ({{ cat.posts.count }})
+      </span>
+    {% endfor %}
+  </div>
+
+  {% if posts %}
+    <div style="overflow-x: auto;">
+      <table class="cms-table">
+        <thead>
+          <tr>
+            <th>Article</th>
+            <th>Category</th>
+            <th>Author</th>
+            <th>Reading Time</th>
+            <th>Status</th>
+            <th>Published</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for post in posts %}
+            <tr>
+              <td>
+                <strong style="color: var(--riviera-ivory); font-size: 0.95rem;">{{ post.title }}</strong>
+                <div style="font-size: 0.78rem; color: var(--riviera-seaglass); max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  {{ post.excerpt }}
+                </div>
+              </td>
+              <td>
+                <span class="badge" style="background-color: rgba(185, 111, 79, 0.25); color: var(--riviera-terracotta); border: 1px solid var(--riviera-terracotta);">
+                  {{ post.category.name }}
+                </span>
+              </td>
+              <td>{{ post.author_name }}</td>
+              <td>{{ post.reading_time }}</td>
+              <td>
+                {% if post.is_published %}
+                  <span class="badge badge-confirmed">Live</span>
+                {% else %}
+                  <span class="badge badge-pending">Draft</span>
+                {% endif %}
+              </td>
+              <td style="font-size: 0.8rem; color: var(--riviera-seaglass);">
+                {{ post.published_at|date:"M d, Y" }}
+              </td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 0.5rem;">
+                  <a href="{% url 'cms_blog_edit' post.id %}" class="btn-action btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                    Edit
+                  </a>
+                  <a href="{% url 'cms_blog_delete' post.id %}" onclick="return confirm('Delete this article?');" class="btn-action" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; background-color: rgba(180, 50, 50, 0.3); border: 1px solid #883333; color: #FF8888;">
+                    Delete
+                  </a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 3rem 1rem; color: var(--riviera-seaglass);">
+      No articles published in the Riviera Gazette yet.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

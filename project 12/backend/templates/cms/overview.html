@@ -1,0 +1,143 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}Overview & Key Metrics | Villa Riviera CMS Studio{% endblock %}
+
+{% block content %}
+<!-- KPI Metrics Row -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+  <div class="cms-card" style="margin-bottom: 0;">
+    <div style="font-size: 0.72rem; color: var(--riviera-seaglass); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
+      TOTAL GUEST INQUIRIES
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.5rem; color: var(--riviera-ivory); margin: 0.25rem 0;">
+      {{ total_reservations }}
+    </div>
+    <div style="font-size: 0.78rem; color: var(--riviera-terracotta);">
+      Pending: {{ pending_reservations }} | Confirmed: {{ confirmed_reservations }}
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0;">
+    <div style="font-size: 0.72rem; color: var(--riviera-seaglass); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
+      DAYLIGHT LUNCH COVERS
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.5rem; color: #C5D6AB; margin: 0.25rem 0;">
+      {{ lunch_covers }}
+    </div>
+    <div style="font-size: 0.78rem; color: var(--riviera-seaglass);">
+      12:00 – 15:00 Service Shift
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0;">
+    <div style="font-size: 0.72rem; color: var(--riviera-seaglass); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
+      TWILIGHT DINNER COVERS
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.5rem; color: #FFB793; margin: 0.25rem 0;">
+      {{ dinner_covers }}
+    </div>
+    <div style="font-size: 0.78rem; color: var(--riviera-seaglass);">
+      19:30 – 23:30 Coastal Service
+    </div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0;">
+    <div style="font-size: 0.72rem; color: var(--riviera-seaglass); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">
+      PUBLISHED CONTENT
+    </div>
+    <div style="font-family: var(--font-display); font-size: 2.5rem; color: var(--riviera-limestone); margin: 0.25rem 0;">
+      {{ total_pages }} / {{ total_articles }}
+    </div>
+    <div style="font-size: 0.78rem; color: var(--riviera-seaglass);">
+      Custom Pages &amp; Gazette Articles
+    </div>
+  </div>
+</div>
+
+<!-- Quick Navigation & Recent Inquiries -->
+<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.75rem;">
+  <!-- Recent Inquiries Table -->
+  <div class="cms-card" style="margin-bottom: 0;">
+    <div class="cms-card-header">
+      <h2 class="cms-card-title">Recent Table Reservation Requests</h2>
+      <a href="{% url 'cms_reservations' %}" class="btn-action btn-secondary" style="font-size: 0.75rem; padding: 0.4rem 0.85rem;">
+        View All Host Desk &rarr;
+      </a>
+    </div>
+
+    {% if recent_reservations %}
+      <div style="overflow-x: auto;">
+        <table class="cms-table">
+          <thead>
+            <tr>
+              <th>Ref Code</th>
+              <th>Guest Details</th>
+              <th>Shift &amp; Time</th>
+              <th>Party</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for res in recent_reservations %}
+              <tr>
+                <td style="font-family: monospace; font-weight: 700; color: var(--riviera-terracotta);">
+                  {{ res.reference_code }}
+                </td>
+                <td>
+                  <strong>{{ res.full_name }}</strong>
+                  <div style="font-size: 0.78rem; color: var(--riviera-seaglass);">{{ res.phone }}</div>
+                </td>
+                <td>
+                  <span class="badge {% if res.shift == 'lunch' %}badge-shift-lunch{% else %}badge-shift-dinner{% endif %}">
+                    {{ res.shift|upper }}
+                  </span>
+                  <div style="font-size: 0.78rem; margin-top: 2px;">{{ res.date }} &bull; {{ res.time }}</div>
+                </td>
+                <td>{{ res.guests }} Guests</td>
+                <td>
+                  <span class="badge badge-{{ res.status|lower }}">{{ res.status }}</span>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div style="text-align: center; padding: 2.5rem; color: var(--riviera-seaglass);">
+        No recent reservations recorded.
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Quick Studio Actions -->
+  <div class="cms-card" style="margin-bottom: 0;">
+    <div class="cms-card-header">
+      <h2 class="cms-card-title">Studio Actions</h2>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+      <a href="{% url 'cms_page_builder_new' %}" class="btn-action" style="justify-content: center;">
+        <span>➕</span> Create Standalone Page
+      </a>
+      <a href="{% url 'cms_blog_new' %}" class="btn-action btn-secondary" style="justify-content: center;">
+        <span>✍️</span> Compose Gazette Article
+      </a>
+      <a href="{% url 'cms_menu' %}" class="btn-action btn-secondary" style="justify-content: center;">
+        <span>🍽️</span> Update Menu &amp; Vintages
+      </a>
+      <a href="{% url 'cms_identity' %}" class="btn-action btn-secondary" style="justify-content: center;">
+        <span>🏛️</span> Manage Logistics &amp; Hours
+      </a>
+    </div>
+
+    <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid var(--card-border);">
+      <div style="font-size: 0.75rem; color: var(--riviera-seaglass); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; margin-bottom: 0.5rem;">
+        ESTATE ARCHITECTURE
+      </div>
+      <p style="font-size: 0.85rem; color: var(--riviera-limestone); line-height: 1.6;">
+        Villa Riviera Fine Dining &bull; Saint-Jean-Cap-Ferrat, Côte d'Azur &bull; Decoupled Headless CMS Engine with Two-Way Shift Reservation Flow.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

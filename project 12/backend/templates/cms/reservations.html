@@ -1,0 +1,172 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}Maitre D' Table Reservation & Host Desk | Villa Riviera CMS Studio{% endblock %}
+
+{% block content %}
+<div class="cms-card">
+  <div class="cms-card-header" style="flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2 class="cms-card-title">Maitre D' Table Reservation &amp; Host Desk</h2>
+      <p style="font-size: 0.85rem; color: var(--riviera-seaglass); margin-top: 0.25rem;">
+        Manage guest arrivals, approve seating requests, assign villa tables, and track Daylight Lunch vs. Twilight Dinner shifts.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+      <span class="badge badge-shift-lunch">{{ lunch_count }} Lunch Bookings</span>
+      <span class="badge badge-shift-dinner">{{ dinner_count }} Dinner Bookings</span>
+      <span class="badge badge-pending">{{ pending_count }} Pending Approval</span>
+    </div>
+  </div>
+
+  <!-- Filters Row -->
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--card-border);">
+    <!-- Shift Selector Pills -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <a href="?shift=all{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}" class="btn-action {% if shift_filter == 'all' %}btn-action{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 0.85rem; font-size: 0.75rem;">
+        All Shifts
+      </a>
+      <a href="?shift=lunch{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}" class="btn-action {% if shift_filter == 'lunch' %}btn-action{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 0.85rem; font-size: 0.75rem;">
+        ☀️ Daylight Lunch (12:00 – 15:00)
+      </a>
+      <a href="?shift=dinner{% if status_filter != 'all' %}&status={{ status_filter }}{% endif %}" class="btn-action {% if shift_filter == 'dinner' %}btn-action{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 0.85rem; font-size: 0.75rem;">
+        🌙 Twilight Dinner (19:30 – 23:30)
+      </a>
+    </div>
+
+    <!-- Status Selector Pills -->
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <a href="?status=pending{% if shift_filter != 'all' %}&shift={{ shift_filter }}{% endif %}" class="btn-action {% if status_filter == 'pending' %}btn-action{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 0.85rem; font-size: 0.75rem;">
+        Pending ({{ pending_count }})
+      </a>
+      <a href="?status=confirmed{% if shift_filter != 'all' %}&shift={{ shift_filter }}{% endif %}" class="btn-action {% if status_filter == 'confirmed' %}btn-action{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 0.85rem; font-size: 0.75rem;">
+        Confirmed ({{ confirmed_count }})
+      </a>
+      <a href="?status=seated{% if shift_filter != 'all' %}&shift={{ shift_filter }}{% endif %}" class="btn-action {% if status_filter == 'seated' %}btn-action{% else %}btn-secondary{% endif %}" style="padding: 0.4rem 0.85rem; font-size: 0.75rem;">
+        Seated ({{ seated_count }})
+      </a>
+    </div>
+
+    <!-- Search Box -->
+    <form method="GET" style="display: flex; gap: 0.5rem;">
+      {% if shift_filter != 'all' %}<input type="hidden" name="shift" value="{{ shift_filter }}">{% endif %}
+      {% if status_filter != 'all' %}<input type="hidden" name="status" value="{{ status_filter }}">{% endif %}
+      <input type="text" name="q" value="{{ search_q }}" placeholder="Search ref, guest, phone..." class="form-control" style="width: 200px; padding: 0.4rem 0.75rem; font-size: 0.8rem;">
+      <button type="submit" class="btn-action" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;">Search</button>
+    </form>
+  </div>
+
+  <!-- Reservations Table -->
+  {% if reservations %}
+    <div style="overflow-x: auto;">
+      <table class="cms-table">
+        <thead>
+          <tr>
+            <th>Ref Code</th>
+            <th>Guest Details</th>
+            <th>Date &amp; Shift</th>
+            <th>Party</th>
+            <th>Zone Preference</th>
+            <th>Dietary / Notes</th>
+            <th>Table Assigned</th>
+            <th>Status &amp; Staff Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in reservations %}
+            <tr>
+              <td style="font-family: monospace; font-weight: 800; color: var(--riviera-terracotta); font-size: 0.95rem;">
+                {{ r.reference_code }}
+              </td>
+              <td>
+                <strong style="color: var(--riviera-ivory); font-size: 0.95rem;">{{ r.full_name }}</strong>
+                <div style="font-size: 0.78rem; color: var(--riviera-seaglass);">📞 {{ r.phone }}</div>
+                <div style="font-size: 0.78rem; color: var(--riviera-seaglass);">✉️ {{ r.email }}</div>
+              </td>
+              <td>
+                <span class="badge {% if r.shift == 'lunch' %}badge-shift-lunch{% else %}badge-shift-dinner{% endif %}">
+                  {{ r.shift|upper }}
+                </span>
+                <div style="font-weight: 600; margin-top: 4px;">{{ r.date }}</div>
+                <div style="font-size: 0.78rem; color: var(--riviera-seaglass);">{{ r.time }}</div>
+              </td>
+              <td>
+                <strong style="font-size: 1rem;">{{ r.guests }}</strong> PAX
+              </td>
+              <td>
+                <span style="font-size: 0.85rem; color: var(--riviera-limestone);">
+                  {{ r.seating_area|default:"Terrace & Sea View" }}
+                </span>
+              </td>
+              <td style="max-width: 220px;">
+                {% if r.dietary_notes %}
+                  <div style="color: #FFB793; font-size: 0.8rem; font-weight: 600; margin-bottom: 2px;">
+                    🌿 {{ r.dietary_notes }}
+                  </div>
+                {% endif %}
+                {% if r.special_requests %}
+                  <div style="color: var(--riviera-seaglass); font-size: 0.78rem;">
+                    {{ r.special_requests }}
+                  </div>
+                {% endif %}
+                {% if not r.dietary_notes and not r.special_requests %}
+                  <span style="color: rgba(233, 223, 207, 0.4); font-size: 0.78rem;">No special notes</span>
+                {% endif %}
+              </td>
+              <td>
+                <form method="POST" style="display: flex; gap: 4px;">
+                  {% csrf_token %}
+                  <input type="hidden" name="reservation_id" value="{{ r.id }}">
+                  <input type="hidden" name="action" value="update_table">
+                  <input type="text" name="table_number" value="{{ r.table_number }}" placeholder="e.g. Table 04" style="width: 100px; padding: 4px 6px; font-size: 0.75rem; background: var(--riviera-navy-dark); border: 1px solid var(--card-border); color: #fff; border-radius: 2px;">
+                  <button type="submit" class="btn-action" style="padding: 4px 8px; font-size: 0.7rem;">Set</button>
+                </form>
+              </td>
+              <td>
+                <div style="margin-bottom: 6px;">
+                  <span class="badge badge-{{ r.status|lower }}">{{ r.status }}</span>
+                </div>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                  {% if r.status != 'confirmed' %}
+                    <form method="POST" style="display: inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="reservation_id" value="{{ r.id }}">
+                      <input type="hidden" name="action" value="confirm">
+                      <button type="submit" class="btn-action" style="padding: 3px 8px; font-size: 0.7rem; background-color: #596448;">
+                        Approve
+                      </button>
+                    </form>
+                  {% endif %}
+                  {% if r.status != 'seated' %}
+                    <form method="POST" style="display: inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="reservation_id" value="{{ r.id }}">
+                      <input type="hidden" name="action" value="seat">
+                      <button type="submit" class="btn-action btn-secondary" style="padding: 3px 8px; font-size: 0.7rem;">
+                        Seat
+                      </button>
+                    </form>
+                  {% endif %}
+                  {% if r.status != 'cancelled' %}
+                    <form method="POST" style="display: inline;" onsubmit="return confirm('Cancel this reservation?');">
+                      {% csrf_token %}
+                      <input type="hidden" name="reservation_id" value="{{ r.id }}">
+                      <input type="hidden" name="action" value="cancel">
+                      <button type="submit" class="btn-action" style="padding: 3px 8px; font-size: 0.7rem; background-color: rgba(180, 50, 50, 0.3); border: 1px solid #883333; color: #FF8888;">
+                        Cancel
+                      </button>
+                    </form>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 3rem 1rem; color: var(--riviera-seaglass);">
+      No reservations matching current shift or search criteria.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

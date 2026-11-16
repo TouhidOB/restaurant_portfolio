@@ -1,0 +1,84 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}{{ page_title }} | Villa Riviera CMS Studio{% endblock %}
+
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <div>
+        <h2 class="cms-card-title">{{ page_title }}</h2>
+        <p style="font-size: 0.85rem; color: var(--riviera-seaglass);">
+          Author essays on coastal terroir, limestone restoration, and Riviera cellar vintages.
+        </p>
+      </div>
+      <div style="display: flex; gap: 0.5rem;">
+        <a href="{% url 'cms_blog' %}" class="btn-action btn-secondary">Cancel</a>
+        <button type="submit" class="btn-action">
+          Publish Article
+        </button>
+      </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.75rem;">
+      <div>
+        <div class="form-group">
+          <label class="form-label">Article Headline / Title</label>
+          <input type="text" name="title" class="form-control" value="{{ post_obj.title|default:'' }}" required placeholder="e.g. Wild Mediterranean Turbot, Sea Purslane & Crag Thyme">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Lead Excerpt / Abstract</label>
+          <textarea name="excerpt" class="form-control" rows="3" required placeholder="A brief teaser for the gazette listing...">{{ post_obj.excerpt|default:'' }}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Article Body Content (Markdown / Paragraphs)</label>
+          <textarea name="content" class="form-control" rows="14" required placeholder="Write the complete editorial essay...">{{ post_obj.content|default:'' }}</textarea>
+        </div>
+      </div>
+
+      <div>
+        <div class="form-group">
+          <label class="form-label">Editorial Category</label>
+          <select name="category_id" class="form-control" required>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}" {% if post_obj and post_obj.category.id == cat.id %}selected{% endif %}>
+                {{ cat.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">URL Slug</label>
+          <input type="text" name="slug" class="form-control" value="{{ post_obj.slug|default:'' }}" placeholder="e.g. wild-mediterranean-turbot-crag-herbs">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Featured Image URL</label>
+          <input type="text" name="featured_image" class="form-control" value="{{ post_obj.featured_image|default:'' }}" placeholder="https://images.unsplash.com/photo-...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Author Name &amp; Title</label>
+          <input type="text" name="author_name" class="form-control" value="{{ post_obj.author_name|default:'Chef Antoine Laurent' }}">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Reading Time</label>
+          <input type="text" name="reading_time" class="form-control" value="{{ post_obj.reading_time|default:'5 min read' }}">
+        </div>
+
+        <div class="form-group" style="margin-top: 1.5rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" name="is_published" {% if post_obj.is_published or not post_obj %}checked{% endif %}>
+            <span style="font-size: 0.85rem; color: var(--riviera-ivory); font-weight: 600;">Published &amp; Live in Gazette</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}

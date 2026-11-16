@@ -1,0 +1,93 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}Custom Standalone Pages | Villa Riviera CMS Studio{% endblock %}
+
+{% block content %}
+<div class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2 class="cms-card-title">Standalone Custom Pages</h2>
+      <p style="font-size: 0.85rem; color: var(--riviera-seaglass); margin-top: 0.25rem;">
+        Build and manage Elementor-style dedicated landing pages rendered live at <code>/page/:slug</code>.
+      </p>
+    </div>
+    <a href="{% url 'cms_page_builder_new' %}" class="btn-action">
+      <span>➕</span> Create New Page
+    </a>
+  </div>
+
+  {% if pages %}
+    <div style="overflow-x: auto;">
+      <table class="cms-table">
+        <thead>
+          <tr>
+            <th>Page Title</th>
+            <th>Public URL Slug</th>
+            <th>Blocks</th>
+            <th>Status</th>
+            <th>Created</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in pages %}
+            <tr>
+              <td>
+                <strong style="color: var(--riviera-ivory);">{{ p.title }}</strong>
+                {% if p.meta_description %}
+                  <div style="font-size: 0.78rem; color: var(--riviera-seaglass); max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    {{ p.meta_description }}
+                  </div>
+                {% endif %}
+              </td>
+              <td>
+                <a href="http://127.0.0.1:3000/page/{{ p.slug }}" target="_blank" style="font-family: monospace; color: var(--riviera-terracotta);">
+                  /page/{{ p.slug }} ↗
+                </a>
+              </td>
+              <td>
+                <span class="badge" style="background-color: rgba(233, 223, 207, 0.15); color: var(--riviera-ivory);">
+                  {{ p.blocks|length }} Blocks
+                </span>
+              </td>
+              <td>
+                {% if p.is_published %}
+                  <span class="badge badge-confirmed">Published</span>
+                {% else %}
+                  <span class="badge badge-pending">Draft</span>
+                {% endif %}
+              </td>
+              <td style="font-size: 0.8rem; color: var(--riviera-seaglass);">
+                {{ p.created_at|date:"M d, Y" }}
+              </td>
+              <td style="text-align: right;">
+                <div style="display: inline-flex; gap: 0.5rem;">
+                  <a href="{% url 'cms_page_builder_edit' p.id %}" class="btn-action btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                    Edit Canvas
+                  </a>
+                  <a href="{% url 'cms_page_delete' p.id %}" onclick="return confirm('Delete this page permanently?');" class="btn-action" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; background-color: rgba(180, 50, 50, 0.3); border: 1px solid #883333; color: #FF8888;">
+                    Delete
+                  </a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div style="text-align: center; padding: 3rem 1rem;">
+      <div style="font-size: 2rem; margin-bottom: 0.5rem;">📑</div>
+      <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--riviera-ivory); margin-bottom: 0.5rem;">
+        No Custom Standalone Pages Yet
+      </h3>
+      <p style="color: var(--riviera-seaglass); font-size: 0.9rem; margin-bottom: 1.5rem;">
+        Create bespoke visual landing pages for estate buyouts, wine harvest masterclasses, or VIP receptions.
+      </p>
+      <a href="{% url 'cms_page_builder_new' %}" class="btn-action">
+        Launch Visual Page Builder &rarr;
+      </a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

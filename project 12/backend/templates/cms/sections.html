@@ -1,0 +1,27 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}15-Section Editor | Villa Riviera CMS Studio{% endblock %}
+
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  <div class="cms-card">
+    <div class="cms-card-header">
+      <div>
+        <h2 class="cms-card-title">15-Section Content &amp; Copywriting Editor</h2>
+        <p style="font-size: 0.85rem; color: var(--riviera-seaglass);">
+          Modify raw editorial JSON payloads for all fifteen sections (S01_Preloader through S15_Footer).
+        </p>
+      </div>
+      <button type="submit" class="btn-action">
+        Save Section Changes
+      </button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Master Editorial JSON Payload</label>
+      <textarea name="raw_content_json" class="form-control" rows="22" style="font-family: monospace; font-size: 0.85rem; line-height: 1.5;">{{ sections_json_formatted }}</textarea>
+    </div>
+  </div>
+</form>
+{% endblock %}

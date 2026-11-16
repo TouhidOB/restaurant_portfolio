@@ -20,7 +20,7 @@ export default function S11_Gallery() {
   });
 
   return (
-    <section className="editorial-section" style={{ backgroundColor: 'var(--c-ivory)' }}>
+    <section id="gallery" className="editorial-section" style={{ backgroundColor: 'var(--c-ivory)' }}>
       <div className="container">
         
         {/* Header */}

@@ -1,0 +1,41 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}3D Virtual Tour & Spatial Viewpoints | Villa Riviera CMS Studio{% endblock %}
+
+{% block content %}
+<div class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2 class="cms-card-title">3D Virtual Villa Tour &amp; Spatial Viewpoints</h2>
+      <p style="font-size: 0.85rem; color: var(--riviera-seaglass);">
+        Manage the interactive 3D WebGL camera orbits, limestone colonnade coordinates, and atmosphere highlights.
+      </p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+    {% for vp in viewpoints %}
+      <div style="background-color: var(--riviera-navy-dark); border: 1px solid var(--card-border); border-radius: 4px; padding: 1.5rem;">
+        <span class="badge" style="background-color: rgba(185, 111, 79, 0.25); color: var(--riviera-terracotta); border: 1px solid var(--riviera-terracotta);">
+          VIEWPOINT 0{{ forloop.counter }}
+        </span>
+        <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: var(--riviera-ivory); margin: 0.5rem 0;">
+          {{ vp.title }}
+        </h3>
+        {% if vp.subtitle %}
+          <div style="font-size: 0.8rem; color: var(--riviera-seaglass); margin-bottom: 0.75rem;">{{ vp.subtitle }}</div>
+        {% endif %}
+        <p style="font-size: 0.85rem; color: var(--riviera-limestone); line-height: 1.6; margin-bottom: 1rem;">
+          {{ vp.description }}
+        </p>
+
+        <div style="font-size: 0.75rem; color: var(--riviera-seaglass); border-top: 1px solid rgba(233, 223, 207, 0.1); padding-top: 0.75rem;">
+          <div><strong>Slug:</strong> <code>{{ vp.slug }}</code></div>
+          <div><strong>Camera Coordinates:</strong> <code>{{ vp.camera_position }}</code></div>
+          <div><strong>Atmosphere:</strong> {{ vp.atmosphere|default:"Golden Mediterranean Daylight" }}</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

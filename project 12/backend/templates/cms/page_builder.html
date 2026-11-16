@@ -1,0 +1,284 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}{{ page_title }} | Villa Riviera CMS Studio{% endblock %}
+
+{% block extra_head %}
+<style>
+  .block-item {
+    background-color: var(--riviera-navy-dark);
+    border: 1px solid var(--card-border);
+    border-radius: 4px;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(233, 223, 207, 0.1);
+  }
+  .block-badge {
+    background-color: rgba(185, 111, 79, 0.25);
+    color: var(--riviera-terracotta);
+    border: 1px solid var(--riviera-terracotta);
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<form method="POST" id="builderForm">
+  {% csrf_token %}
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+      <h2 style="font-family: var(--font-display); font-size: 1.8rem; color: var(--riviera-ivory);">
+        {{ page_obj.title|default:"Create Brand New Standalone Page" }}
+      </h2>
+      <p style="font-size: 0.85rem; color: var(--riviera-seaglass);">
+        Drag, drop, and configure modular sections like WordPress Elementor or Webflow.
+      </p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="{% url 'cms_pages' %}" class="btn-action btn-secondary">Cancel</a>
+      <button type="submit" class="btn-action">
+        Save &amp; Publish Page
+      </button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.75rem;">
+    <!-- Visual Canvas Column -->
+    <div>
+      <div class="cms-card">
+        <div class="cms-card-header">
+          <h3 class="cms-card-title">Visual Canvas Sections</h3>
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" onclick="addBlock('hero')" class="btn-action btn-secondary" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">+ Hero</button>
+            <button type="button" onclick="addBlock('split')" class="btn-action btn-secondary" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">+ Split</button>
+            <button type="button" onclick="addBlock('features')" class="btn-action btn-secondary" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">+ Features</button>
+            <button type="button" onclick="addBlock('reservation')" class="btn-action btn-secondary" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;">+ Booking</button>
+          </div>
+        </div>
+
+        <div id="blocksContainer">
+          <!-- Dynamically populated from JS -->
+        </div>
+
+        <input type="hidden" name="blocks_json" id="blocksJsonInput" value="{{ blocks_json }}">
+      </div>
+    </div>
+
+    <!-- Page Metadata Column -->
+    <div>
+      <div class="cms-card">
+        <h3 class="cms-card-title" style="margin-bottom: 1.25rem;">Page Metadata &amp; SEO</h3>
+
+        <div class="form-group">
+          <label class="form-label" for="pageTitle">Page Title</label>
+          <input type="text" id="pageTitle" name="title" class="form-control" value="{{ page_obj.title|default:'' }}" required placeholder="e.g. Private Cliffside Villa Dining">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="pageSlug">Public Route Slug</label>
+          <input type="text" id="pageSlug" name="slug" class="form-control" value="{{ page_obj.slug|default:'' }}" placeholder="e.g. private-cliffside-villa-dining">
+          <small style="color: var(--riviera-seaglass); font-size: 0.72rem; display: block; margin-top: 0.25rem;">
+            Renders at <code>/page/:slug</code>
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="metaDesc">Meta Description</label>
+          <textarea id="metaDesc" name="meta_description" class="form-control" rows="3" placeholder="Summary for SEO and search engines">{{ page_obj.meta_description|default:'' }}</textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="checkbox" name="is_published" {% if page_obj.is_published or not page_obj %}checked{% endif %}>
+            <span style="font-size: 0.85rem; color: var(--riviera-ivory); font-weight: 600;">Published &amp; Live on Frontend</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let blocks = [];
+  try {
+    blocks = JSON.parse(document.getElementById('blocksJsonInput').value || '[]');
+  } catch(e) {
+    blocks = [];
+  }
+
+  function renderBlocks() {
+    const container = document.getElementById('blocksContainer');
+    container.innerHTML = '';
+
+    if (blocks.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 2.5rem; color: var(--riviera-seaglass);">
+          No content blocks added yet. Click "+ Hero", "+ Split", or "+ Features" above.
+        </div>
+      `;
+      return;
+    }
+
+    blocks.forEach((block, idx) => {
+      const el = document.createElement('div');
+      el.className = 'block-item';
+
+      let inner = `
+        <div class="block-header">
+          <span class="block-badge">${block.type.toUpperCase()} BLOCK</span>
+          <div style="display: flex; gap: 6px;">
+            <button type="button" onclick="moveBlock(${idx}, -1)" class="btn-action btn-secondary" style="padding: 2px 8px; font-size: 0.7rem;">▲</button>
+            <button type="button" onclick="moveBlock(${idx}, 1)" class="btn-action btn-secondary" style="padding: 2px 8px; font-size: 0.7rem;">▼</button>
+            <button type="button" onclick="deleteBlock(${idx})" class="btn-action" style="padding: 2px 8px; font-size: 0.7rem; background-color: rgba(180, 50, 50, 0.3); border: 1px solid #883333; color: #FF8888;">✕</button>
+          </div>
+        </div>
+      `;
+
+      if (block.type === 'hero') {
+        inner += `
+          <div class="form-group">
+            <label class="form-label">Hero Title</label>
+            <input type="text" class="form-control" value="${block.title || ''}" onchange="updateBlockField(${idx}, 'title', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Hero Eyebrow / Subtitle</label>
+            <input type="text" class="form-control" value="${block.subtitle || ''}" onchange="updateBlockField(${idx}, 'subtitle', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lead Paragraph</label>
+            <textarea class="form-control" rows="2" onchange="updateBlockField(${idx}, 'lead', this.value)">${block.lead || ''}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Button CTA Text</label>
+            <input type="text" class="form-control" value="${block.cta_text || ''}" onchange="updateBlockField(${idx}, 'cta_text', this.value)">
+          </div>
+        `;
+      } else if (block.type === 'split') {
+        inner += `
+          <div class="form-group">
+            <label class="form-label">Section Title</label>
+            <input type="text" class="form-control" value="${block.title || ''}" onchange="updateBlockField(${idx}, 'title', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Body Text (Left / Main)</label>
+            <textarea class="form-control" rows="2" onchange="updateBlockField(${idx}, 'body_left', this.value)">${block.body_left || ''}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Body Text (Right / Secondary)</label>
+            <textarea class="form-control" rows="2" onchange="updateBlockField(${idx}, 'body_right', this.value)">${block.body_right || ''}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Image URL</label>
+            <input type="text" class="form-control" value="${block.image || ''}" onchange="updateBlockField(${idx}, 'image', this.value)">
+          </div>
+        `;
+      } else if (block.type === 'features') {
+        inner += `
+          <div class="form-group">
+            <label class="form-label">Features Header Title</label>
+            <input type="text" class="form-control" value="${block.title || ''}" onchange="updateBlockField(${idx}, 'title', this.value)">
+          </div>
+          <p style="font-size: 0.8rem; color: var(--riviera-seaglass);">3 Highlighting Pillars Included</p>
+        `;
+      } else if (block.type === 'reservation') {
+        inner += `
+          <div class="form-group">
+            <label class="form-label">Booking Section Title</label>
+            <input type="text" class="form-control" value="${block.title || ''}" onchange="updateBlockField(${idx}, 'title', this.value)">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Lead Subtitle</label>
+            <textarea class="form-control" rows="2" onchange="updateBlockField(${idx}, 'lead', this.value)">${block.lead || ''}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Button Text</label>
+            <input type="text" class="form-control" value="${block.button_text || ''}" onchange="updateBlockField(${idx}, 'button_text', this.value)">
+          </div>
+        `;
+      }
+
+      el.innerHTML = inner;
+      container.appendChild(el);
+    });
+
+    document.getElementById('blocksJsonInput').value = JSON.stringify(blocks);
+  }
+
+  function addBlock(type) {
+    if (type === 'hero') {
+      blocks.push({
+        type: 'hero',
+        title: 'Bespoke Coastal Villa Gathering',
+        subtitle: 'CAP-FERRAT MONUMENTAL OCCASION',
+        lead: 'Experience the Mediterranean horizon from the private colonnade and olive groves of Villa Riviera.',
+        cta_text: 'Inquire for Private Buyout'
+      });
+    } else if (type === 'split') {
+      blocks.push({
+        type: 'split',
+        title: 'An Architectural Oasis Above the Waves',
+        body_left: 'Commanding uninterrupted views of the Cap-Ferrat peninsula, our private dining terrace pairs century-old limestone with Michelin-starred culinary artistry.',
+        body_right: 'Every detail is coordinated by our master concierge, from helicopter or yacht tender arrival to bespoke Grand Cru pairings.',
+        image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=85'
+      });
+    } else if (type === 'features') {
+      blocks.push({
+        type: 'features',
+        title: 'Bespoke Architectural Hospitality',
+        items: [
+          { title: 'Direct Sea Dock Access', desc: 'Arrive in discretion via private tender.' },
+          { title: 'Subterranean Wine Vault', desc: 'Over 480 vintages preserved in coastal rock.' },
+          { title: 'Dedicated Brigade', desc: 'Full culinary and sommelier team exclusively for your party.' }
+        ]
+      });
+    } else if (type === 'reservation') {
+      blocks.push({
+        type: 'reservation',
+        title: 'Reserve Your Private Villa Seclusion',
+        lead: 'Connect with our Maitre D\' and concierge desk for personalized shift arrangements and custom tasting menus.',
+        button_text: 'Open Reservation Desk'
+      });
+    }
+    renderBlocks();
+  }
+
+  function updateBlockField(idx, field, val) {
+    if (blocks[idx]) {
+      blocks[idx][field] = val;
+      document.getElementById('blocksJsonInput').value = JSON.stringify(blocks);
+    }
+  }
+
+  function deleteBlock(idx) {
+    blocks.splice(idx, 1);
+    renderBlocks();
+  }
+
+  function moveBlock(idx, dir) {
+    const target = idx + dir;
+    if (target >= 0 && target < blocks.length) {
+      const temp = blocks[idx];
+      blocks[idx] = blocks[target];
+      blocks[target] = temp;
+      renderBlocks();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderBlocks();
+  });
+</script>
+{% endblock %}

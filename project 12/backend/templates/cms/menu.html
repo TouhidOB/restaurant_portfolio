@@ -1,0 +1,150 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}A La Carte & Gastronomic Repertoire | Villa Riviera CMS Studio{% endblock %}
+
+{% block content %}
+<div class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2 class="cms-card-title">Gastronomic Repertoire &amp; Meal Photography</h2>
+      <p style="font-size: 0.85rem; color: var(--riviera-seaglass);">
+        Manage Mediterranean seafood delicacies, handmade pastas, pricing, wine pairings, and high-resolution food photography.
+      </p>
+    </div>
+  </div>
+
+  <!-- Add New Item Form -->
+  <div style="background-color: var(--riviera-navy-dark); border: 1px solid var(--card-border); border-radius: 4px; padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--riviera-ivory); margin-bottom: 1rem;">
+      Add New Dish to Repertoire
+    </h3>
+    <form method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="add_item">
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Category</label>
+        <select name="category_id" class="form-control" required>
+          {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Dish Name</label>
+        <input type="text" name="name" class="form-control" placeholder="e.g. Crudo di Ricciola" required>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Subtitle / Translation</label>
+        <input type="text" name="subtitle" class="form-control" placeholder="e.g. Yellowtail Amberjack Crudo">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Price</label>
+        <input type="text" name="price" class="form-control" placeholder="e.g. €38" required>
+      </div>
+
+      <div class="form-group" style="grid-column: 1 / -1; margin-bottom: 0;">
+        <label class="form-label">High-Resolution Meal Photography URL</label>
+        <input type="text" name="image" class="form-control" placeholder="https://images.unsplash.com/photo-..." required>
+      </div>
+
+      <div class="form-group" style="grid-column: 1 / -1; margin-bottom: 0;">
+        <label class="form-label">Culinary Description</label>
+        <textarea name="description" class="form-control" rows="2" placeholder="Ingredients, olive oil estate, and preparation technique..." required></textarea>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Dietary Tags</label>
+        <input type="text" name="dietary_tags" class="form-control" placeholder="e.g. Wild Caught, Gluten-Free">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Sommelier Wine Pairing</label>
+        <input type="text" name="pairing_notes" class="form-control" placeholder="e.g. Bellet Blanc 2022">
+      </div>
+
+      <div style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+          <input type="checkbox" name="is_signature">
+          <span style="font-size: 0.85rem; color: var(--riviera-ivory);">Feature as Riviera Signature Dish</span>
+        </label>
+        <button type="submit" class="btn-action">Add Dish to Menu</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Existing Menu List by Category -->
+  {% for cat in categories %}
+    <div style="margin-bottom: 2.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid rgba(233, 223, 207, 0.15);">
+        <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--riviera-ivory);">
+          {{ cat.name }}
+        </h3>
+        <span class="badge" style="background-color: rgba(233, 223, 207, 0.15); color: var(--riviera-ivory);">
+          {{ cat.items.count }} Dishes
+        </span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+        {% for item in cat.items.all %}
+          <div style="background-color: var(--riviera-navy-dark); border: 1px solid var(--card-border); border-radius: 4px; overflow: hidden; display: flex; flex-direction: column;">
+            <div style="height: 180px; position: relative; overflow: hidden; background-color: #121c22;">
+              {% if item.image %}
+                <img src="{{ item.image }}" alt="{{ item.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+              {% else %}
+                <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--riviera-seaglass);">
+                  No Photo Attached
+                </div>
+              {% endif %}
+              <div style="position: absolute; top: 10px; right: 10px; background: rgba(24, 37, 46, 0.85); backdrop-filter: blur(4px); padding: 3px 8px; border-radius: 2px; font-weight: 700; color: #fff; border: 1px solid var(--card-border);">
+                {{ item.price }}
+              </div>
+              {% if item.is_signature %}
+                <div style="position: absolute; top: 10px; left: 10px; background: var(--riviera-terracotta); padding: 2px 8px; border-radius: 2px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">
+                  Signature
+                </div>
+              {% endif %}
+            </div>
+
+            <div style="padding: 1.25rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <h4 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--riviera-ivory); margin-bottom: 2px;">
+                  {{ item.name }}
+                </h4>
+                {% if item.subtitle %}
+                  <div style="font-size: 0.78rem; color: var(--riviera-seaglass); margin-bottom: 8px;">{{ item.subtitle }}</div>
+                {% endif %}
+                <p style="font-size: 0.85rem; color: var(--riviera-limestone); line-height: 1.6; margin-bottom: 10px;">
+                  {{ item.description }}
+                </p>
+                {% if item.pairing_notes %}
+                  <div style="font-size: 0.78rem; color: var(--riviera-terracotta);">
+                    🍷 {{ item.pairing_notes }}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div style="margin-top: 1rem; pt: 0.75rem; border-top: 1px solid rgba(233, 223, 207, 0.1); display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.75rem; color: var(--riviera-seaglass);">
+                  {{ item.dietary_tags|default:"Mediterranean" }}
+                </span>
+                <form method="POST" onsubmit="return confirm('Remove this dish?');">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="delete_item">
+                  <input type="hidden" name="item_id" value="{{ item.id }}">
+                  <button type="submit" style="background: none; border: none; color: #FF8888; cursor: pointer; font-size: 0.75rem;">
+                    Delete
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

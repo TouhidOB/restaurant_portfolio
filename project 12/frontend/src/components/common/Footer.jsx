@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Footer() {
-  const { content, openReservationModal } = useCMS();
+export default function Footer({ onNavigate }) {
+  const { content, openReservationModal, openReservation } = useCMS();
+  const triggerReservation = openReservation || openReservationModal;
+
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -10,6 +12,25 @@ export default function Footer() {
     copyright: "© 2026 Villa Riviera SAS. All rights reserved.",
     heritage: "Historic Estate Established 1928 — Saint-Jean-Cap-Ferrat",
     tagline: "Coastal Villa Architecture Meets Contemporary Fine Dining"
+  };
+
+  const navLinks = [
+    { name: 'Heritage Story', path: '/story' },
+    { name: 'Signatures Repertoire', path: '/signatures' },
+    { name: 'Menu & Vintages', path: '/menu' },
+    { name: '3D Villa Tour', path: '/tour' },
+    { name: 'Architecture & Stone', path: '/architecture' },
+    { name: 'Chef & Artisans', path: '/chef' },
+    { name: 'Curated Experiences', path: '/experiences' },
+    { name: 'Riviera Gazette', path: '/blog' },
+    { name: 'Location & Arrival', path: '/contact' },
+  ];
+
+  const handleLinkClick = (e, path) => {
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate(path);
+    }
   };
 
   const handleSubscribe = (e) => {
@@ -23,14 +44,14 @@ export default function Footer() {
   return (
     <footer
       style={{
-        backgroundColor: 'var(--c-navy-dark)',
-        color: 'var(--c-ivory)',
+        backgroundColor: '#18252E',
+        color: '#F7F3EA',
         padding: '5rem 0 3rem',
-        borderTop: '2px solid var(--c-terracotta)',
+        borderTop: '2px solid #B96F4F',
         position: 'relative',
       }}
     >
-      <div className="container">
+      <div className="container" style={{ maxWidth: '1240px', margin: '0 auto', padding: '0 24px' }}>
         <div
           style={{
             display: 'grid',
@@ -44,39 +65,41 @@ export default function Footer() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
               <div
                 style={{
-                  width: 36,
-                  height: 36,
+                  width: 38,
+                  height: 38,
                   borderRadius: '50%',
                   border: '1px solid #E9DFCF',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontFamily: "'Cormorant Garamond', serif",
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
                   fontSize: '16px',
                   fontWeight: 700,
                   color: '#F7F3EA',
+                  backgroundColor: 'rgba(185, 111, 79, 0.25)',
                 }}
               >
                 VR
               </div>
               <h3
                 style={{
-                  fontFamily: "'Cormorant Garamond', serif",
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
                   fontSize: '1.6rem',
                   letterSpacing: '0.15em',
                   color: '#F7F3EA',
                   textTransform: 'uppercase',
                   fontWeight: 700,
+                  margin: 0,
                 }}
               >
                 {content?.site_config?.site_title || 'VILLA RIVIERA'}
               </h3>
             </div>
             <p style={{ color: '#A9BDB5', fontSize: '0.88rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-              {footerData.tagline}
+              {footerData.tagline || 'Coastal Villa Architecture Meets Contemporary Fine Dining'}
             </p>
             <div style={{ fontSize: '0.78rem', color: '#DECDB8', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              📍 {content?.site_config?.address || "Saint-Jean-Cap-Ferrat, Côte d'Azur"}
+              📍 {content?.site_config?.address || "14 Chemin des Calanques, 06230 Saint-Jean-Cap-Ferrat, Côte d'Azur"}
             </div>
           </div>
 
@@ -84,7 +107,7 @@ export default function Footer() {
           <div>
             <h4
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: '1.25rem',
                 color: '#FFD2B8',
                 marginBottom: '1.25rem',
@@ -96,11 +119,11 @@ export default function Footer() {
             </h4>
             <div style={{ color: '#E9DFCF', fontSize: '0.88rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <div>
-                <strong style={{ color: '#FFFFFF', display: 'block' }}>Lunch Service</strong>
+                <strong style={{ color: '#FFFFFF', display: 'block' }}>Daylight Lunch Service</strong>
                 12:00 – 15:00 (Wednesday to Monday)
               </div>
               <div>
-                <strong style={{ color: '#FFFFFF', display: 'block' }}>Dinner Service</strong>
+                <strong style={{ color: '#FFFFFF', display: 'block' }}>Twilight Dinner Service</strong>
                 19:30 – 23:30 (Wednesday to Monday)
               </div>
               <div style={{ color: '#B96F4F', fontSize: '0.82rem', marginTop: '4px' }}>
@@ -113,7 +136,7 @@ export default function Footer() {
           <div>
             <h4
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: '1.25rem',
                 color: '#FFD2B8',
                 marginBottom: '1.25rem',
@@ -121,20 +144,14 @@ export default function Footer() {
                 textTransform: 'uppercase',
               }}
             >
-              Navigation
+              Villa Navigation
             </h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-              {[
-                { name: 'Heritage Story', href: '#story' },
-                { name: '3D Villa Tour', href: '#tour' },
-                { name: 'Menu Repertoire', href: '#menu' },
-                { name: 'Architecture & Stone', href: '#architecture' },
-                { name: 'Curated Experiences', href: '#experiences' },
-                { name: 'Location & Arrival', href: '#location' },
-              ].map((item) => (
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', padding: 0, margin: 0 }}>
+              {navLinks.map((item) => (
                 <li key={item.name}>
                   <a
-                    href={item.href}
+                    href={item.path}
+                    onClick={(e) => handleLinkClick(e, item.path)}
                     style={{
                       color: '#E9DFCF',
                       textDecoration: 'none',
@@ -155,7 +172,7 @@ export default function Footer() {
           <div>
             <h4
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontSize: '1.25rem',
                 color: '#FFD2B8',
                 marginBottom: '1.25rem',
@@ -194,7 +211,7 @@ export default function Footer() {
                 <button
                   type="submit"
                   style={{
-                    backgroundColor: 'var(--c-terracotta)',
+                    backgroundColor: '#B96F4F',
                     color: '#FFFFFF',
                     border: 'none',
                     padding: '0 16px',
@@ -225,8 +242,8 @@ export default function Footer() {
             color: '#8C847B',
           }}
         >
-          <div>{footerData.copyright}</div>
-          <div>{footerData.heritage}</div>
+          <div>{footerData.copyright || "© 2026 Villa Riviera SAS. All rights reserved."}</div>
+          <div>{footerData.heritage || "Historic Estate Established 1928 — Saint-Jean-Cap-Ferrat"}</div>
           <div>
             <a
               href="/cms/"

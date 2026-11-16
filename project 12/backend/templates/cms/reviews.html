@@ -1,0 +1,81 @@
+{% extends 'cms/base.html' %}
+
+{% block title %}Critical Recognition & Guest Praise | Villa Riviera CMS Studio{% endblock %}
+
+{% block content %}
+<div class="cms-card">
+  <div class="cms-card-header">
+    <div>
+      <h2 class="cms-card-title">Critical Recognition &amp; Guest Praise</h2>
+      <p style="font-size: 0.85rem; color: var(--riviera-seaglass);">
+        Curate Michelin testimonials, international gastronomic guide reviews, and patron testimonials.
+      </p>
+    </div>
+  </div>
+
+  <!-- Add Review Form -->
+  <div style="background-color: var(--riviera-navy-dark); border: 1px solid var(--card-border); border-radius: 4px; padding: 1.5rem; margin-bottom: 2rem;">
+    <h3 style="font-family: var(--font-display); font-size: 1.25rem; color: var(--riviera-ivory); margin-bottom: 1rem;">
+      Add Critic Review or Guest Reflection
+    </h3>
+    <form method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="add_review">
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Critic / Patron Name</label>
+        <input type="text" name="author" class="form-control" placeholder="e.g. Le Guide Gastronomique" required>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Publication / Source Title</label>
+        <input type="text" name="source_title" class="form-control" placeholder="e.g. Michelin Inspection Guide" required>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 0;">
+        <label class="form-label">Rating (Stars)</label>
+        <select name="rating" class="form-control">
+          <option value="5">★★★★★ (5 Stars)</option>
+          <option value="4">★★★★☆ (4 Stars)</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="grid-column: 1 / -1; margin-bottom: 0;">
+        <label class="form-label">Quote &amp; Reflection</label>
+        <textarea name="quote" class="form-control" rows="3" placeholder="Critical assessment of Mediterranean terroir..." required></textarea>
+      </div>
+
+      <div style="grid-column: 1 / -1; text-align: right;">
+        <button type="submit" class="btn-action">Publish Review</button>
+      </div>
+    </form>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem;">
+    {% for r in reviews %}
+      <div style="background-color: var(--riviera-navy-dark); border: 1px solid var(--card-border); border-radius: 4px; padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="color: var(--riviera-terracotta); margin-bottom: 0.5rem; font-size: 0.9rem;">
+            ★★★★★
+          </div>
+          <p style="font-family: var(--font-display); font-style: italic; font-size: 1.15rem; color: var(--riviera-ivory); line-height: 1.6; margin-bottom: 1rem;">
+            "{{ r.quote }}"
+          </p>
+        </div>
+        <div style="border-top: 1px solid rgba(233, 223, 207, 0.1); padding-top: 0.75rem; display: flex; justify-content: space-between; align-items: baseline;">
+          <div>
+            <strong style="color: var(--riviera-limestone);">{{ r.author }}</strong>
+            <div style="font-size: 0.75rem; color: var(--riviera-seaglass);">{{ r.source_title }}</div>
+          </div>
+          <form method="POST" onsubmit="return confirm('Remove review?');">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="delete_review">
+            <input type="hidden" name="review_id" value="{{ r.id }}">
+            <button type="submit" style="background: none; border: none; color: #FF8888; cursor: pointer; font-size: 0.75rem;">Delete</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

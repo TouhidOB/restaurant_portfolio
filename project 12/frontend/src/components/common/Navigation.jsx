@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Navigation() {
-  const { content, openReservationModal } = useCMS();
+export default function Navigation({ currentPath = '/', onNavigate }) {
+  const { content, openReservationModal, openReservation } = useCMS();
+  const triggerReservation = openReservation || openReservationModal;
+
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -15,15 +17,31 @@ export default function Navigation() {
   }, []);
 
   const navLinks = [
-    { label: 'Story', href: '#story' },
-    { label: '3D Villa Tour', href: '#tour' },
-    { label: 'Philosophy', href: '#philosophy' },
-    { label: 'Signatures', href: '#signatures' },
-    { label: 'Menu', href: '#menu' },
-    { label: 'Architecture', href: '#architecture' },
-    { label: 'Experiences', href: '#experiences' },
-    { label: 'Location', href: '#location' },
+    { label: 'Story', path: '/story', hash: '#story' },
+    { label: 'Signatures', path: '/signatures', hash: '#signatures' },
+    { label: 'Menu', path: '/menu', hash: '#menu' },
+    { label: '3D Villa Tour', path: '/tour', hash: '#tour' },
+    { label: 'Architecture', path: '/architecture', hash: '#architecture' },
+    { label: 'Chef & Artisans', path: '/chef', hash: '#chef' },
+    { label: 'Experiences', path: '/experiences', hash: '#experiences' },
+    { label: 'Gazette', path: '/blog', hash: '/blog' },
+    { label: 'Contact', path: '/contact', hash: '#location' },
   ];
+
+  const handleLinkClick = (e, link) => {
+    if (onNavigate) {
+      e.preventDefault();
+      setMobileMenuOpen(false);
+      onNavigate(link.path);
+    }
+  };
+
+  const handleLogoClick = (e) => {
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate('/');
+    }
+  };
 
   return (
     <header
@@ -34,37 +52,39 @@ export default function Navigation() {
         right: 0,
         zIndex: 50,
         transition: 'all 0.3s ease',
-        backgroundColor: scrolled ? 'rgba(38, 58, 72, 0.94)' : 'rgba(38, 58, 72, 0.45)',
+        backgroundColor: scrolled ? 'rgba(24, 37, 46, 0.95)' : 'rgba(38, 58, 72, 0.65)',
         backdropFilter: 'blur(12px)',
-        borderBottom: scrolled ? '1px solid rgba(185, 111, 79, 0.3)' : '1px solid rgba(255, 255, 255, 0.08)',
-        padding: scrolled ? '14px 0' : '20px 0',
+        borderBottom: scrolled ? '1px solid rgba(185, 111, 79, 0.35)' : '1px solid rgba(233, 223, 207, 0.15)',
+        padding: scrolled ? '12px 0' : '18px 0',
       }}
     >
-      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', maxWidth: '1240px', margin: '0 auto', padding: '0 24px' }}>
         
         {/* Brand Logo */}
         <a
-          href="#"
+          href="/"
+          onClick={handleLogoClick}
           style={{
             textDecoration: 'none',
             display: 'flex',
             alignItems: 'center',
-            gap: '10px',
+            gap: '12px',
           }}
         >
           <div
             style={{
-              width: 32,
-              height: 32,
+              width: 36,
+              height: 36,
               borderRadius: '50%',
               border: '1px solid #E9DFCF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#F7F3EA',
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: '14px',
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontSize: '15px',
               fontWeight: 700,
+              backgroundColor: 'rgba(185, 111, 79, 0.2)',
             }}
           >
             VR
@@ -72,8 +92,8 @@ export default function Navigation() {
           <div>
             <span
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: '1.35rem',
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontSize: '1.4rem',
                 letterSpacing: '0.18em',
                 fontWeight: 700,
                 color: '#F7F3EA',
@@ -87,44 +107,50 @@ export default function Navigation() {
             <span
               style={{
                 fontSize: '9.5px',
-                letterSpacing: '0.18em',
+                letterSpacing: '0.2em',
                 color: '#A9BDB5',
                 textTransform: 'uppercase',
                 display: 'block',
                 marginTop: '3px',
               }}
             >
-              Cap-Ferrat
+              Saint-Jean-Cap-Ferrat
             </span>
           </div>
         </a>
 
         {/* Desktop Links */}
-        <nav style={{ display: 'none', gap: '24px', alignItems: 'center' }} className="desktop-nav">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              style={{
-                color: '#F7F3EA',
-                textDecoration: 'none',
-                fontSize: '0.8rem',
-                fontWeight: 500,
-                letterSpacing: '0.12em',
-                textTransform: 'uppercase',
-                transition: 'color 0.2s ease',
-              }}
-              onMouseEnter={(e) => (e.target.style.color = '#B96F4F')}
-              onMouseLeave={(e) => (e.target.style.color = '#F7F3EA')}
-            >
-              {link.label}
-            </a>
-          ))}
+        <nav style={{ display: 'flex', gap: '20px', alignItems: 'center' }} className="desktop-nav">
+          {navLinks.map((link) => {
+            const isActive = currentPath === link.path;
+            return (
+              <a
+                key={link.label}
+                href={link.path}
+                onClick={(e) => handleLinkClick(e, link)}
+                style={{
+                  color: isActive ? '#B96F4F' : '#F7F3EA',
+                  textDecoration: 'none',
+                  fontSize: '0.78rem',
+                  fontWeight: isActive ? 700 : 500,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  transition: 'color 0.2s ease',
+                  borderBottom: isActive ? '1px solid #B96F4F' : '1px solid transparent',
+                  paddingBottom: '2px',
+                }}
+                onMouseEnter={(e) => (e.target.style.color = '#B96F4F')}
+                onMouseLeave={(e) => (e.target.style.color = isActive ? '#B96F4F' : '#F7F3EA')}
+              >
+                {link.label}
+              </a>
+            );
+          })}
         </nav>
 
         {/* Action Buttons */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          {/* CMS Studio Pill Shortcut */}
+          {/* CMS Studio Shortcut */}
           <a
             href="/cms/"
             target="_blank"
@@ -134,10 +160,10 @@ export default function Navigation() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              padding: '6px 12px',
+              padding: '6px 14px',
               borderRadius: '999px',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(233, 223, 207, 0.3)',
+              backgroundColor: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(233, 223, 207, 0.25)',
               color: '#F7F3EA',
               textDecoration: 'none',
               fontSize: '0.72rem',
@@ -147,12 +173,12 @@ export default function Navigation() {
               transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--c-terracotta)';
-              e.currentTarget.style.borderColor = 'var(--c-terracotta)';
+              e.currentTarget.style.backgroundColor = '#B96F4F';
+              e.currentTarget.style.borderColor = '#B96F4F';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-              e.currentTarget.style.borderColor = 'rgba(233, 223, 207, 0.3)';
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)';
+              e.currentTarget.style.borderColor = 'rgba(233, 223, 207, 0.25)';
             }}
           >
             <span style={{ width: 7, height: 7, borderRadius: '50%', backgroundColor: '#10B981', display: 'inline-block' }} />
@@ -161,9 +187,23 @@ export default function Navigation() {
 
           {/* Reserve Table CTA */}
           <button
-            onClick={openReservationModal}
-            className="btn-primary"
-            style={{ padding: '0.65rem 1.4rem', fontSize: '0.75rem' }}
+            onClick={() => triggerReservation && triggerReservation()}
+            className="btn-reserve-nav"
+            style={{
+              padding: '0.65rem 1.4rem',
+              fontSize: '0.75rem',
+              backgroundColor: '#B96F4F',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: '3px',
+              fontWeight: 700,
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              cursor: 'pointer',
+              transition: 'background-color 0.2s',
+            }}
+            onMouseEnter={(e) => (e.target.style.backgroundColor = '#9E5B3D')}
+            onMouseLeave={(e) => (e.target.style.backgroundColor = '#B96F4F')}
           >
             Reserve Table
           </button>
@@ -172,7 +212,7 @@ export default function Navigation() {
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             style={{
-              display: 'flex',
+              display: 'none',
               background: 'none',
               border: 'none',
               color: '#F7F3EA',
@@ -201,61 +241,68 @@ export default function Navigation() {
             top: '100%',
             left: 0,
             right: 0,
-            backgroundColor: '#263A48',
-            borderBottom: '2px solid #B96F4F',
-            padding: '24px',
+            backgroundColor: '#18252E',
+            borderBottom: '1px solid rgba(185, 111, 79, 0.3)',
+            padding: '20px 24px',
             display: 'flex',
             flexDirection: 'column',
-            gap: '16px',
+            gap: '14px',
           }}
         >
           {navLinks.map((link) => (
             <a
               key={link.label}
-              href={link.href}
-              onClick={() => setMobileMenuOpen(false)}
+              href={link.path}
+              onClick={(e) => handleLinkClick(e, link)}
               style={{
                 color: '#F7F3EA',
                 textDecoration: 'none',
-                fontSize: '0.9rem',
-                fontWeight: 600,
-                letterSpacing: '0.1em',
+                fontSize: '0.85rem',
+                letterSpacing: '0.12em',
                 textTransform: 'uppercase',
               }}
             >
               {link.label}
             </a>
           ))}
-          <a
-            href="/cms/"
-            target="_blank"
-            style={{
-              color: '#FFD2B8',
-              textDecoration: 'none',
-              fontSize: '0.9rem',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#10B981' }} />
-            Open CMS Studio
-          </a>
+          <div style={{ marginTop: '10px', paddingTop: '14px', borderTop: '1px solid rgba(233, 223, 207, 0.15)', display: 'flex', gap: '10px' }}>
+            <button
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (triggerReservation) triggerReservation();
+              }}
+              style={{
+                flex: 1,
+                padding: '10px',
+                backgroundColor: '#B96F4F',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: '3px',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                fontSize: '0.8rem',
+              }}
+            >
+              Reserve Table
+            </button>
+            <a
+              href="/cms/"
+              target="_blank"
+              style={{
+                padding: '10px 16px',
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: '#F7F3EA',
+                borderRadius: '3px',
+                fontSize: '0.8rem',
+                textDecoration: 'none',
+                fontWeight: 600,
+              }}
+            >
+              CMS
+            </a>
+          </div>
         </div>
       )}
-
-      <style>{`
-        @media (min-width: 1024px) {
-          .desktop-nav {
-            display: flex !important;
-          }
-          .mobile-toggle {
-            display: none !important;
-          }
-        }
-      `}</style>
     </header>
   );
 }

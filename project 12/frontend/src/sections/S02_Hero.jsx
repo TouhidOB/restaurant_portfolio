@@ -20,6 +20,7 @@ export default function S02_Hero() {
 
   return (
     <section
+      id="hero"
       style={{
         position: 'relative',
         minHeight: '100vh',
