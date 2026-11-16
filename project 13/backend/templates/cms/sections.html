@@ -1,0 +1,24 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+      <h2 class="card-title" style="margin-bottom: 0.25rem;">📐 15-Section Landing Page JSON Editor</h2>
+      <p style="color: var(--color-silver); font-size: 0.85rem;">Modify marketing headers, storytelling chapters, Korean phrases, and interactive badge copy.</p>
+    </div>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label class="form-label">Raw Section Content JSON (S01 - S15)</label>
+      <textarea name="raw_json" rows="22" class="form-control" style="font-family: monospace; font-size: 0.85rem; line-height: 1.5;">{{ content_json_str }}</textarea>
+    </div>
+
+    <button type="submit" class="btn-action">
+      Save Landing Section Changes
+    </button>
+  </form>
+</div>
+{% endblock %}

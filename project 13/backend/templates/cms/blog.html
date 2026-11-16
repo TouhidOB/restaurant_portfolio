@@ -1,0 +1,85 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2 class="card-title" style="margin-bottom: 0.25rem;">📰 Seoul Street Gazette &amp; Pocha Stories</h2>
+      <p style="color: var(--color-silver); font-size: 0.85rem;">Manage editorial dispatches, night market stories, fermentation guides, and late-night food culture.</p>
+    </div>
+    <a href="{% url 'cms_blog_new' %}" class="btn-action">
+      <span>+</span> Publish New Story
+    </a>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table class="cms-table">
+      <thead>
+        <tr>
+          <th style="width: 70px;">Cover</th>
+          <th>Article Title</th>
+          <th>Category</th>
+          <th>Author</th>
+          <th>Status</th>
+          <th>Published</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for post in posts %}
+        <tr>
+          <td>
+            <div style="width: 52px; height: 52px; border-radius: 4px; overflow: hidden; background: #000;">
+              {% if post.image %}
+                <img src="{{ post.image }}" alt="{{ post.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+              {% else %}
+                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--color-silver);">📰</div>
+              {% endif %}
+            </div>
+          </td>
+          <td>
+            <strong style="color: #FFFFFF;">{{ post.title }}</strong><br>
+            <a href="http://127.0.0.1:3000/blog/{{ post.slug }}" target="_blank" style="color: var(--color-cyan); font-size: 0.78rem; font-family: monospace;">
+              /blog/{{ post.slug }} ↗
+            </a>
+          </td>
+          <td>
+            <span class="badge" style="background: rgba(255, 46, 136, 0.2); color: var(--color-magenta); border: 1px solid var(--color-magenta);">
+              {{ post.category.name|default:"Street Culture" }}
+            </span>
+          </td>
+          <td style="color: var(--color-silver); font-size: 0.85rem;">{{ post.author_name }}</td>
+          <td>
+            {% if post.is_published %}
+              <span class="badge badge-confirmed">Published</span>
+            {% else %}
+              <span class="badge badge-pending">Draft</span>
+            {% endif %}
+          </td>
+          <td style="color: var(--color-silver); font-size: 0.82rem;">{{ post.published_at|date:"M d, Y" }}</td>
+          <td>
+            <div style="display: flex; gap: 0.5rem;">
+              <a href="{% url 'cms_blog_edit' post.id %}" class="btn-action" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                Edit
+              </a>
+              <a href="{% url 'cms_blog_delete' post.id %}" onclick="return confirm('Are you sure you want to delete this story?');" class="btn-action btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; color: var(--color-coral); border-color: rgba(255, 89, 77, 0.4);">
+                Delete
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align: center; color: var(--color-silver); padding: 3rem 1rem;">
+            <div style="font-size: 1.1rem; margin-bottom: 0.5rem;">No gazette articles published yet.</div>
+            <a href="{% url 'cms_blog_new' %}" class="btn-action">
+              + Publish Your First Story
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

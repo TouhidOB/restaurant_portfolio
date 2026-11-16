@@ -42,6 +42,7 @@ class MenuItem(models.Model):
     price = models.CharField(max_length=50, default="₩14,000")
     currency = models.CharField(max_length=10, default="KRW")
     image_url = models.CharField(max_length=500, blank=True)
+    image = models.CharField(max_length=500, blank=True)
     dietary_tags = models.CharField(max_length=200, blank=True, help_text="e.g. Spicy, Halal Friendly, Vegetarian")
     spicy_level = models.PositiveSmallIntegerField(default=1, help_text="0: Mild, 1: Medium, 2: Hot, 3: Fire")
     is_available = models.BooleanField(default=True)
@@ -146,19 +147,28 @@ class Testimonial(models.Model):
 
 class Reservation(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Pending Inquiry'),
+        ('pending', 'Pending Approval'),
         ('confirmed', 'Confirmed'),
+        ('seated', 'Seated'),
         ('cancelled', 'Cancelled'),
     ]
+    SHIFT_CHOICES = [
+        ('lunch', 'Daylight Lunch Shift'),
+        ('dinner', 'Twilight Pocha Shift'),
+    ]
 
+    reference_code = models.CharField(max_length=32, unique=True, null=True, blank=True)
     full_name = models.CharField(max_length=200)
     phone = models.CharField(max_length=50)
     email = models.EmailField(blank=True, null=True)
     preferred_date = models.CharField(max_length=50)
     preferred_time = models.CharField(max_length=50)
+    shift = models.CharField(max_length=20, choices=SHIFT_CHOICES, default='dinner')
     guests = models.PositiveIntegerField(default=2)
     occasion = models.CharField(max_length=100, blank=True)
     selected_experience = models.CharField(max_length=150, blank=True, default="Street Pocha Table")
+    table_number = models.CharField(max_length=50, blank=True, default='')
+    dietary_notes = models.TextField(blank=True, default='')
     special_requests = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -166,5 +176,63 @@ class Reservation(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+    def save(self, *args, **kwargs):
+        if not self.reference_code:
+            import uuid
+            self.reference_code = f"SEO-{uuid.uuid4().hex[:6].upper()}"
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"{self.full_name} ({self.guests}p) - {self.preferred_date} {self.preferred_time} [{self.status}]"
+        return f"[{self.reference_code}] {self.full_name} ({self.guests}p) - {self.preferred_date} {self.preferred_time} [{self.status}]"
+
+
+class CustomPage(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+    meta_description = models.TextField(blank=True)
+    is_published = models.BooleanField(default=True)
+    blocks = models.JSONField(default=list, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.title
+
+
+class BlogCategory(models.Model):
+    name = models.CharField(max_length=120)
+    slug = models.SlugField(max_length=120, unique=True)
+    description = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = 'Blog Categories'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
+    category = models.ForeignKey(BlogCategory, related_name='posts', on_delete=models.SET_NULL, null=True, blank=True)
+    excerpt = models.TextField(blank=True)
+    content = models.TextField(blank=True)
+    image = models.CharField(max_length=500, blank=True)
+    author_name = models.CharField(max_length=120, default='Seoul Street Team')
+    published_at = models.DateField(auto_now_add=True)
+    read_time = models.CharField(max_length=50, default='5 min read')
+    is_published = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-published_at', '-created_at']
+
+    def __str__(self):
+        return self.title
+

@@ -1,0 +1,160 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+      <h2 class="card-title" style="margin-bottom: 0.25rem;">📅 Maitre D’ Table Reservation &amp; Host Desk</h2>
+      <p style="color: var(--color-silver); font-size: 0.85rem;">Manage table assignments, shift capacity (Daylight Lunch vs Twilight Pocha), dietary notes, and live guest arrivals.</p>
+    </div>
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <span class="badge badge-pending">{{ counts.pending }} Pending</span>
+      <span class="badge badge-confirmed">{{ counts.confirmed }} Confirmed</span>
+      <span class="badge badge-seated">{{ counts.seated }} Seated</span>
+      <button onclick="window.print()" class="btn-action btn-secondary" style="font-size: 0.75rem; padding: 0.4rem 0.8rem;">
+        🖨️ Print Shift Run-Sheet
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Toolbar -->
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; background: var(--color-midnight); padding: 1rem; border-radius: 6px; border: 1px solid var(--color-border);">
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+      <span style="font-size: 0.75rem; color: var(--color-silver); text-transform: uppercase; font-family: var(--font-condensed); font-weight: 700; margin-right: 0.25rem;">Shift:</span>
+      <a href="?{% if current_status %}status={{ current_status }}&{% endif %}" class="btn-action btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; {% if not current_shift %}border-color: var(--color-magenta); background: rgba(255, 46, 136, 0.15); color: #fff;{% endif %}">
+        All Shifts
+      </a>
+      <a href="?shift=lunch{% if current_status %}&status={{ current_status }}{% endif %}" class="btn-action btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; {% if current_shift == 'lunch' %}border-color: var(--color-cyan); background: rgba(33, 212, 232, 0.15); color: #fff;{% endif %}">
+        ☀️ LUNCH ({{ counts.lunch }})
+      </a>
+      <a href="?shift=dinner{% if current_status %}&status={{ current_status }}{% endif %}" class="btn-action btn-secondary" style="padding: 0.35rem 0.75rem; font-size: 0.75rem; {% if current_shift == 'dinner' %}border-color: var(--color-magenta); background: rgba(255, 46, 136, 0.15); color: #fff;{% endif %}">
+        🌙 DINNER / POCHA ({{ counts.dinner }})
+      </a>
+    </div>
+
+    <form method="GET" style="display: flex; gap: 0.5rem;">
+      {% if current_shift %}<input type="hidden" name="shift" value="{{ current_shift }}">{% endif %}
+      {% if current_status %}<input type="hidden" name="status" value="{{ current_status }}">{% endif %}
+      <input type="text" name="q" value="{{ q }}" placeholder="Search ref, guest, phone..." class="form-control" style="width: 200px; padding: 0.4rem 0.75rem; font-size: 0.8rem;">
+      <button type="submit" class="btn-action" style="padding: 0.4rem 0.85rem; font-size: 0.8rem;">Search</button>
+    </form>
+  </div>
+
+  <!-- Reservations Table -->
+  <div style="overflow-x: auto;">
+    <table class="cms-table">
+      <thead>
+        <tr>
+          <th>Ref Code</th>
+          <th>Guest Details</th>
+          <th>Date &amp; Shift</th>
+          <th>Party &amp; Zone</th>
+          <th>Dietary / Notes</th>
+          <th>Table #</th>
+          <th>Status &amp; Staff Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for res in reservations %}
+        <tr>
+          <td>
+            <strong style="color: var(--color-cyan); font-family: monospace; font-size: 0.95rem;">
+              {{ res.reference_code }}
+            </strong><br>
+            <span style="font-size: 0.72rem; color: var(--color-silver);">{{ res.created_at|date:"M d, H:i" }}</span>
+          </td>
+          <td>
+            <strong style="color: #FFFFFF;">{{ res.full_name }}</strong><br>
+            <span style="font-size: 0.78rem; color: var(--color-silver);">📞 {{ res.phone }}</span><br>
+            {% if res.email %}<span style="font-size: 0.75rem; color: var(--color-silver);">✉️ {{ res.email }}</span>{% endif %}
+          </td>
+          <td>
+            <strong>{{ res.preferred_date }}</strong><br>
+            <span class="badge {% if res.shift == 'lunch' %}badge-shift-lunch{% else %}badge-shift-dinner{% endif %}">
+              {{ res.get_shift_display }}
+            </span><br>
+            <span style="font-size: 0.78rem; color: var(--color-silver);">Time: {{ res.preferred_time }}</span>
+          </td>
+          <td>
+            <strong style="color: #FFFFFF;">{{ res.guests }} PAX</strong><br>
+            <span style="font-size: 0.78rem; color: var(--color-silver);">{{ res.selected_experience|default:"Pocha Table" }}</span>
+          </td>
+          <td style="max-width: 180px;">
+            {% if res.dietary_notes %}
+              <div style="font-size: 0.78rem; color: #FFA1C9; margin-bottom: 0.25rem;">
+                ⚠️ {{ res.dietary_notes }}
+              </div>
+            {% endif %}
+            {% if res.special_requests %}
+              <div style="font-size: 0.75rem; color: var(--color-silver); font-style: italic;">
+                "{{ res.special_requests|truncatechars:70 }}"
+              </div>
+            {% endif %}
+            {% if not res.dietary_notes and not res.special_requests %}
+              <span style="color: var(--color-silver); font-size: 0.78rem;">—</span>
+            {% endif %}
+          </td>
+          <td>
+            <form method="POST" style="display: flex; gap: 0.35rem; align-items: center;">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="update_status">
+              <input type="hidden" name="reservation_id" value="{{ res.id }}">
+              <input type="text" name="table_number" value="{{ res.table_number }}" placeholder="e.g. T-12" class="form-control" style="width: 75px; padding: 0.25rem 0.5rem; font-size: 0.75rem;">
+              <button type="submit" class="btn-action btn-secondary" style="padding: 0.25rem 0.45rem; font-size: 0.7rem;">Save</button>
+            </form>
+          </td>
+          <td>
+            <div style="margin-bottom: 0.5rem;">
+              <span class="badge badge-{{ res.status|lower }}">{{ res.status }}</span>
+            </div>
+            <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+              {% if res.status == 'pending' %}
+                <form method="POST" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="approve">
+                  <input type="hidden" name="reservation_id" value="{{ res.id }}">
+                  <button type="submit" class="btn-action" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; background: var(--color-cyan); color: #000;">
+                    ✓ Approve
+                  </button>
+                </form>
+                <form method="POST" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="cancel">
+                  <input type="hidden" name="reservation_id" value="{{ res.id }}">
+                  <button type="submit" class="btn-action btn-secondary" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; color: var(--color-coral); border-color: rgba(255, 89, 77, 0.4);">
+                    ✕
+                  </button>
+                </form>
+              {% elif res.status == 'confirmed' %}
+                <form method="POST" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="seat">
+                  <input type="hidden" name="reservation_id" value="{{ res.id }}">
+                  <button type="submit" class="btn-action" style="padding: 0.25rem 0.55rem; font-size: 0.72rem;">
+                    Seated
+                  </button>
+                </form>
+                <form method="POST" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="cancel">
+                  <input type="hidden" name="reservation_id" value="{{ res.id }}">
+                  <button type="submit" class="btn-action btn-secondary" style="padding: 0.25rem 0.55rem; font-size: 0.72rem; color: var(--color-coral); border-color: rgba(255, 89, 77, 0.4);">
+                    Cancel
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align: center; color: var(--color-silver); padding: 3rem 1rem;">
+            No table reservations matching your shift or status filters.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

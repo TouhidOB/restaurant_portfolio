@@ -4,13 +4,15 @@ from rest_framework.response import Response
 from django.contrib.auth import authenticate, login, logout
 from .models import (
     SiteConfig, MenuCategory, MenuItem, TourViewpoint,
-    DiningExperience, GalleryItem, TeamMember, Testimonial, Reservation
+    DiningExperience, GalleryItem, TeamMember, Testimonial, Reservation,
+    CustomPage, BlogCategory, BlogPost
 )
 from .serializers import (
     SiteConfigSerializer, MenuCategorySerializer, MenuItemSerializer,
     TourViewpointSerializer, DiningExperienceSerializer,
     GalleryItemSerializer, TeamMemberSerializer,
-    TestimonialSerializer, ReservationSerializer
+    TestimonialSerializer, ReservationSerializer,
+    CustomPageSerializer, BlogCategorySerializer, BlogPostSerializer
 )
 
 class PublicContentView(APIView):
@@ -23,6 +25,9 @@ class PublicContentView(APIView):
         gallery = GalleryItem.objects.filter(is_active=True)
         team = TeamMember.objects.all()
         testimonials = Testimonial.objects.all()
+        custom_pages = CustomPage.objects.filter(is_published=True)
+        blog_posts = BlogPost.objects.filter(is_published=True).select_related('category')
+        blog_categories = BlogCategory.objects.all()
 
         config_data = SiteConfigSerializer(config).data if config else {}
         sections_data = config.content_json if config and config.content_json else {}
@@ -30,7 +35,7 @@ class PublicContentView(APIView):
         return Response({
             "status": "success",
             "exists": True,
-            "restaurant_name": config.restaurant_name if config else "SEOUL STREET",
+            "restaurant_name": config.restaurant_name if config else "SEOUL STREET (서울포차)",
             "site_config": config_data,
             "editorial_sections": sections_data,
             "menu_categories": MenuCategorySerializer(categories, many=True).data,
@@ -40,6 +45,86 @@ class PublicContentView(APIView):
             "gallery_items": GalleryItemSerializer(gallery, many=True).data,
             "team_members": TeamMemberSerializer(team, many=True).data,
             "testimonials": TestimonialSerializer(testimonials, many=True).data,
+            "custom_pages": CustomPageSerializer(custom_pages, many=True).data,
+            "blog_posts": BlogPostSerializer(blog_posts, many=True).data,
+            "blog_categories": BlogCategorySerializer(blog_categories, many=True).data,
+        })
+
+
+class CustomPageDetailView(APIView):
+    def get(self, request, slug):
+        page = CustomPage.objects.filter(slug=slug, is_published=True).first()
+        if not page:
+            return Response({"status": "error", "message": "Custom page not found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({
+            "status": "success",
+            "page": CustomPageSerializer(page).data,
+            "data": CustomPageSerializer(page).data,
+        })
+
+
+class BlogPostListView(APIView):
+    def get(self, request):
+        category_slug = request.query_params.get('category')
+        posts = BlogPost.objects.filter(is_published=True).select_related('category')
+        if category_slug:
+            posts = posts.filter(category__slug=category_slug)
+        serializer = BlogPostSerializer(posts, many=True)
+        return Response({
+            "status": "success",
+            "count": posts.count(),
+            "posts": serializer.data,
+            "results": serializer.data,
+        })
+
+
+class BlogPostDetailView(APIView):
+    def get(self, request, slug):
+        post = BlogPost.objects.filter(slug=slug, is_published=True).select_related('category').first()
+        if not post:
+            return Response({"status": "error", "message": "Blog post not found."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({
+            "status": "success",
+            "post": BlogPostSerializer(post).data,
+            "data": BlogPostSerializer(post).data,
+        })
+
+
+class ReservationLookupView(APIView):
+    def get(self, request):
+        code = request.query_params.get('code', '').strip().upper()
+        if not code:
+            return Response({"error": "Reference code is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        reservation = Reservation.objects.filter(reference_code__iexact=code).first()
+        if not reservation:
+            return Response({"error": f"No reservation found with reference code {code}."}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response({
+            "status": "success",
+            "reservation": ReservationSerializer(reservation).data
+        })
+
+
+class ReservationAvailabilityView(APIView):
+    def get(self, request):
+        date = request.query_params.get('date', '')
+        shift = request.query_params.get('shift', 'dinner').lower()
+
+        max_covers = 40
+        existing_covers = Reservation.objects.filter(
+            preferred_date=date,
+            shift=shift
+        ).exclude(status='cancelled').count()
+
+        remaining = max(0, max_covers - existing_covers)
+
+        return Response({
+            "date": date,
+            "shift": shift,
+            "is_available": remaining > 0,
+            "remaining_covers": remaining,
+            "max_covers": max_covers,
         })
 
 
@@ -73,8 +158,9 @@ class ReservationViewSet(viewsets.ModelViewSet):
             instance = serializer.save()
             return Response({
                 "success": True,
-                "message": "Your inquiry has been received. The restaurant will contact you to confirm availability.",
+                "message": "Your table inquiry has been submitted. Our pocha host will confirm your seating.",
                 "reservation_id": instance.id,
+                "reference_code": instance.reference_code,
                 "status": instance.status,
                 "reservation": ReservationSerializer(instance).data
             }, status=status.HTTP_201_CREATED)

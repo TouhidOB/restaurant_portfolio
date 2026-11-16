@@ -1,0 +1,83 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+      <h2 class="card-title" style="margin-bottom: 0.25rem;">
+        {% if post_obj %}Edit Gazette Article: {{ post_obj.title }}{% else %}Publish New Gazette Article{% endif %}
+      </h2>
+      <p style="color: var(--color-silver); font-size: 0.85rem;">Author culinary dispatches, night market recipes, and fermentation guides.</p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="{% url 'cms_blog' %}" class="btn-action btn-secondary">Cancel</a>
+      <button type="submit" class="btn-action">
+        💾 Save Article
+      </button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.75rem;">
+    <div class="cms-card">
+      <div class="form-group">
+        <label class="form-label">Article Headline</label>
+        <input type="text" name="title" class="form-control" required value="{{ post_obj.title|default:'' }}" placeholder="e.g. The Secret of Double-Fried Korean Fried Chicken">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">URL Slug (/blog/:slug)</label>
+        <input type="text" name="slug" class="form-control" value="{{ post_obj.slug|default:'' }}" placeholder="e.g. the-secret-of-double-fried-korean-chicken">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Short Summary / Excerpt</label>
+        <textarea name="excerpt" rows="3" class="form-control" placeholder="A compelling 1-2 sentence preview for the gazette index...">{{ post_obj.excerpt|default:'' }}</textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Full Article Content (HTML / Text)</label>
+        <textarea name="content" rows="14" class="form-control" placeholder="<p>Inside the neon-lit backstreets of Hongdae, the woks sizzle non-stop...</p>">{{ post_obj.content|default:'' }}</textarea>
+      </div>
+    </div>
+
+    <div>
+      <div class="cms-card">
+        <h3 class="card-title" style="font-size: 1.05rem;">⚙️ Publishing Metadata</h3>
+
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select name="category_id" class="form-control">
+            <option value="">-- Select Category --</option>
+            {% for cat in categories %}
+              <option value="{{ cat.id }}" {% if post_obj and post_obj.category_id == cat.id %}selected{% endif %}>
+                {{ cat.name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Author Name</label>
+          <input type="text" name="author_name" class="form-control" value="{{ post_obj.author_name|default:'Seoul Street Team' }}">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Estimated Reading Time</label>
+          <input type="text" name="read_time" class="form-control" value="{{ post_obj.read_time|default:'5 min read' }}">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Featured Image URL</label>
+          <input type="text" name="image" class="form-control" value="{{ post_obj.image|default:'' }}" placeholder="https://images.unsplash.com/...">
+        </div>
+
+        <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem; margin-top: 1.5rem;">
+          <input type="checkbox" name="is_published" id="isPublished" {% if not post_obj or post_obj.is_published %}checked{% endif %} style="accent-color: var(--color-magenta); width: 18px; height: 18px;">
+          <label for="isPublished" style="font-size: 0.85rem; color: #FFFFFF; cursor: pointer;">Publish Immediately</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}

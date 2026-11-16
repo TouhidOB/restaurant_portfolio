@@ -1,0 +1,115 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem; margin-bottom: 2rem;">
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--color-cyan);">
+    <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-silver); font-family: var(--font-condensed); letter-spacing: 0.08em;">Total Reservations</div>
+    <div style="font-size: 2.2rem; font-weight: 700; color: #FFFFFF; font-family: var(--font-display); margin: 0.25rem 0;">{{ total_reservations }}</div>
+    <div style="font-size: 0.78rem; color: var(--color-cyan);">All-time table bookings</div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--color-amber);">
+    <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-silver); font-family: var(--font-condensed); letter-spacing: 0.08em;">Pending Approval</div>
+    <div style="font-size: 2.2rem; font-weight: 700; color: var(--color-amber); font-family: var(--font-display); margin: 0.25rem 0;">{{ pending_reservations }}</div>
+    <div style="font-size: 0.78rem; color: var(--color-silver);">Awaiting host action</div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--color-magenta);">
+    <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-silver); font-family: var(--font-condensed); letter-spacing: 0.08em;">Twilight Pocha Shifts</div>
+    <div style="font-size: 2.2rem; font-weight: 700; color: var(--color-magenta); font-family: var(--font-display); margin: 0.25rem 0;">{{ dinner_covers }}</div>
+    <div style="font-size: 0.78rem; color: var(--color-silver);">Evening &amp; late night covers</div>
+  </div>
+
+  <div class="cms-card" style="margin-bottom: 0; border-top: 3px solid var(--color-cyan);">
+    <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-silver); font-family: var(--font-condensed); letter-spacing: 0.08em;">Custom Standalone Pages</div>
+    <div style="font-size: 2.2rem; font-weight: 700; color: #FFFFFF; font-family: var(--font-display); margin: 0.25rem 0;">{{ total_pages }}</div>
+    <div style="font-size: 0.78rem; color: var(--color-silver);">Visual Elementor builds</div>
+  </div>
+</div>
+
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+    <h2 class="card-title" style="margin-bottom: 0;">📅 Recent Pocha Reservations &amp; Table Requests</h2>
+    <a href="{% url 'cms_reservations' %}" class="btn-action btn-secondary" style="font-size: 0.78rem; padding: 0.45rem 0.9rem;">
+      Open Host Desk &rarr;
+    </a>
+  </div>
+
+  <div style="overflow-x: auto;">
+    <table class="cms-table">
+      <thead>
+        <tr>
+          <th>Ref Code</th>
+          <th>Guest Details</th>
+          <th>Date &amp; Shift</th>
+          <th>Party &amp; Zone</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for res in recent_reservations %}
+        <tr>
+          <td><strong style="color: var(--color-cyan); font-family: monospace;">{{ res.reference_code }}</strong></td>
+          <td>
+            <strong>{{ res.full_name }}</strong><br>
+            <span style="font-size: 0.78rem; color: var(--color-silver);">{{ res.phone }}</span>
+          </td>
+          <td>
+            {{ res.preferred_date }}<br>
+            <span class="badge {% if res.shift == 'lunch' %}badge-shift-lunch{% else %}badge-shift-dinner{% endif %}">
+              {{ res.get_shift_display }}
+            </span>
+          </td>
+          <td>
+            {{ res.guests }} PAX<br>
+            <span style="font-size: 0.78rem; color: var(--color-silver);">{{ res.selected_experience|default:"Pocha Table" }}</span>
+          </td>
+          <td>
+            <span class="badge badge-{{ res.status|lower }}">{{ res.status }}</span>
+          </td>
+          <td>
+            <a href="{% url 'cms_reservations' %}?q={{ res.reference_code }}" class="btn-action" style="padding: 0.35rem 0.75rem; font-size: 0.72rem;">
+              Manage &rarr;
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="text-align: center; color: var(--color-silver); padding: 2rem;">No reservation requests yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+  <div class="cms-card">
+    <h3 class="card-title">⚡ Quick Management Shortcuts</h3>
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+      <a href="{% url 'cms_page_builder_new' %}" class="btn-action" style="width: 100%; justify-content: center;">
+        + Create New Standalone Page
+      </a>
+      <a href="{% url 'cms_blog_new' %}" class="btn-action btn-secondary" style="width: 100%; justify-content: center;">
+        + Publish New Gazette Story
+      </a>
+      <a href="{% url 'cms_menu' %}" class="btn-action btn-secondary" style="width: 100%; justify-content: center;">
+        🍗 Update Menu Items &amp; Prices
+      </a>
+    </div>
+  </div>
+
+  <div class="cms-card">
+    <h3 class="card-title">🏮 Pocha Identity &amp; System Health</h3>
+    <p style="font-size: 0.88rem; color: var(--color-silver); margin-bottom: 0.85rem;">
+      <strong>Restaurant:</strong> {{ config.restaurant_name }}<br>
+      <strong>Address:</strong> {{ config.address }}<br>
+      <strong>Late-Night Service:</strong> {{ config.opening_hours }}
+    </p>
+    <a href="{% url 'cms_identity' %}" class="btn-action btn-secondary" style="font-size: 0.78rem; padding: 0.45rem 0.9rem;">
+      Edit Pocha Logistics &rarr;
+    </a>
+  </div>
+</div>
+{% endblock %}

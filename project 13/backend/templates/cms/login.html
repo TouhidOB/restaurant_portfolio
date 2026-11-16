@@ -2,21 +2,21 @@
 
 {% block title %}Sign In — SEOUL STREET CMS Studio{% endblock %}
 
-{% block layout %}
-<div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; min-height: 80vh;">
-  <div style="max-width: 440px; width: 100%; background: var(--color-charcoal); border-radius: 14px; border: 1px solid var(--color-border); box-shadow: 0 10px 40px rgba(0,0,0,0.5); padding: 40px 36px; text-align: center; position: relative;">
-    
-    <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(255, 46, 136, 0.15); border: 2px solid var(--color-magenta); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 26px; box-shadow: 0 0 20px rgba(255, 46, 136, 0.3);">
+{% block auth_content %}
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background: radial-gradient(circle at center, rgba(37, 40, 48, 0.9) 0%, #111316 100%);">
+  <div style="max-width: 440px; width: 100%; background: var(--color-charcoal); border-radius: 8px; border: 1px solid var(--color-border); box-shadow: 0 14px 40px rgba(0,0,0,0.6); padding: 40px 36px; text-align: center;">
+
+    <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255, 46, 136, 0.15); border: 2px solid var(--color-magenta); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; font-size: 28px; box-shadow: 0 0 20px rgba(255, 46, 136, 0.35);">
       🏮
     </div>
 
     <h2 style="font-size: 26px; color: var(--color-white); margin-bottom: 4px;">SEOUL STREET</h2>
     <div style="font-family: var(--font-korean); font-size: 15px; color: var(--color-magenta); margin-bottom: 6px;">서울포차 스튜디오</div>
-    <p style="font-size: 13.5px; color: var(--color-silver); margin-bottom: 26px;">Decoupled CMS Studio & Street Dining Desk</p>
+    <p style="font-size: 13.5px; color: var(--color-silver); margin-bottom: 26px;">Decoupled CMS Studio &amp; Street Dining Desk</p>
 
     {% if messages %}
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}" style="text-align: left; margin-bottom: 20px;">
+        <div class="alert-banner alert-{{ message.tags }}" style="text-align: left; margin-bottom: 20px;">
           {{ message }}
         </div>
       {% endfor %}
@@ -24,22 +24,22 @@
 
     <form method="POST" style="text-align: left; display: flex; flex-direction: column; gap: 18px;">
       {% csrf_token %}
-      
+
       <div class="form-group">
-        <label for="username">Administrator ID</label>
-        <input type="text" id="username" name="username" placeholder="admin" required autofocus value="admin">
+        <label class="form-label" for="username">Administrator Username</label>
+        <input class="form-control" type="text" id="username" name="username" placeholder="admin" required autofocus value="admin">
       </div>
 
       <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="••••••••••••" required value="adminpassword123">
+        <label class="form-label" for="password">Password</label>
+        <input class="form-control" type="password" id="password" name="password" placeholder="••••••••••••" required value="adminpassword123">
       </div>
 
-      <button type="submit" class="btn btn-magenta" style="padding: 12px; margin-top: 6px; font-size: 14px; width: 100%;">
+      <button type="submit" class="btn-action" style="padding: 12px; margin-top: 6px; font-size: 14px; width: 100%; justify-content: center;">
         Access CMS Studio &rarr;
       </button>
 
-      <div style="margin-top: 10px; font-size: 12px; color: var(--color-silver); text-align: center; background: var(--color-midnight); padding: 8px; border-radius: 6px; border: 1px dashed var(--color-border);">
+      <div style="margin-top: 10px; font-size: 12px; color: var(--color-silver); text-align: center; background: var(--color-midnight); padding: 8px; border-radius: 4px; border: 1px dashed var(--color-border);">
         Default Credentials: <strong style="color: var(--color-cyan);">admin</strong> / <strong style="color: var(--color-cyan);">adminpassword123</strong>
       </div>
     </form>

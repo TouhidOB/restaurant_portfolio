@@ -1,0 +1,49 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card" style="max-width: 800px;">
+  <h2 class="card-title">🏮 Pocha Brand Identity &amp; Operating Logistics</h2>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label class="form-label">Restaurant Brand Name</label>
+      <input type="text" name="restaurant_name" class="form-control" value="{{ config.restaurant_name }}">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Brand Tagline</label>
+      <input type="text" name="tagline" class="form-control" value="{{ config.tagline }}">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Hero Subtitle</label>
+      <textarea name="hero_subtitle" rows="3" class="form-control">{{ config.hero_subtitle }}</textarea>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div class="form-group">
+        <label class="form-label">Contact Email</label>
+        <input type="email" name="contact_email" class="form-control" value="{{ config.contact_email }}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contact Phone</label>
+        <input type="text" name="contact_phone" class="form-control" value="{{ config.contact_phone }}">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Physical Address</label>
+      <input type="text" name="address" class="form-control" value="{{ config.address }}">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Late Night Service Hours</label>
+      <input type="text" name="opening_hours" class="form-control" value="{{ config.opening_hours }}">
+    </div>
+
+    <button type="submit" class="btn-action">
+      Save Logistics Settings
+    </button>
+  </form>
+</div>
+{% endblock %}

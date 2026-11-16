@@ -1,0 +1,17 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+      <h2 class="card-title" style="margin-bottom: 0.25rem;">🧩 Master Headless JSON Schema</h2>
+      <p style="color: var(--color-silver); font-size: 0.85rem;">Read-only inspection of the unified payload served by <code>/api/content/</code> to the decoupled React frontend.</p>
+    </div>
+    <a href="/api/content/" target="_blank" class="btn-action">
+      <span>⚡</span> Open Raw REST API ↗
+    </a>
+  </div>
+
+  <textarea readonly rows="22" class="form-control" style="font-family: monospace; font-size: 0.85rem; line-height: 1.5; background: #0c0d10;">{{ schema_json }}</textarea>
+</div>
+{% endblock %}

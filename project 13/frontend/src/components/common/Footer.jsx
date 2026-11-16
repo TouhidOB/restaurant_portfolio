@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useCMS } from '../../context/CMSContext';
 
-export default function Footer() {
-  const { content, openReservationModal } = useCMS();
+export default function Footer({ onNavigate }) {
+  const { content, openReservationModal, openReservation } = useCMS();
+  const triggerReservation = openReservation || openReservationModal;
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
@@ -20,17 +21,24 @@ export default function Footer() {
     }
   };
 
+  const handleLink = (e, path) => {
+    if (onNavigate) {
+      e.preventDefault();
+      onNavigate(path);
+    }
+  };
+
   return (
     <footer
       style={{
-        backgroundColor: 'var(--color-midnight)',
-        color: 'var(--color-white)',
+        backgroundColor: '#111316',
+        color: '#F6F4F0',
         padding: '5rem 0 3rem',
-        borderTop: '2px solid var(--color-magenta)',
+        borderTop: '2px solid #FF2E88',
         position: 'relative',
       }}
     >
-      <div className="container">
+      <div className="container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 1.5rem' }}>
         <div
           style={{
             display: 'grid',
@@ -56,7 +64,7 @@ export default function Footer() {
                   fontFamily: "'Noto Sans KR', sans-serif",
                   fontSize: '15px',
                   fontWeight: 800,
-                  color: 'var(--color-cyan)',
+                  color: '#21D4E8',
                 }}
               >
                 포차
@@ -74,11 +82,11 @@ export default function Footer() {
                 {content?.restaurant_name || 'SEOUL STREET'}
               </h3>
             </div>
-            <p style={{ color: 'var(--color-silver)', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
+            <p style={{ color: '#B6BAC2', fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>
               {footerData.tagline}
             </p>
-            <div style={{ fontSize: '0.82rem', color: 'var(--color-cyan)', letterSpacing: '0.08em' }}>
-              📍 {content?.site_config?.address || "Hongdae Night Market, Seoul, Korea"}
+            <div style={{ fontSize: '0.82rem', color: '#21D4E8', letterSpacing: '0.08em' }}>
+              📍 {content?.site_config?.address || "28 Wausan-ro 21-gil, Mapo-gu, Seoul, Korea"}
             </div>
           </div>
 
@@ -88,63 +96,67 @@ export default function Footer() {
               style={{
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: '1.2rem',
-                color: 'var(--color-magenta)',
+                color: '#FF2E88',
                 marginBottom: '1.25rem',
                 textTransform: 'uppercase',
                 letterSpacing: '0.06em',
               }}
             >
-              Pocha Hours
+              Pocha Shifts &amp; Hours
             </h4>
-            <div style={{ color: 'var(--color-silver)', fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            <div style={{ color: '#B6BAC2', fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <div>
-                <strong style={{ color: '#FFFFFF', display: 'block' }}>Every Night (Mon – Sun)</strong>
-                17:00 – 04:00 (Next Morning)
+                <strong style={{ color: '#FFFFFF', display: 'block' }}>Daylight Lunch:</strong>
+                11:30 – 15:30 (Daily)
               </div>
               <div>
-                <strong style={{ color: '#FFFFFF', display: 'block' }}>Kitchen Last Call</strong>
-                03:15 AM
+                <strong style={{ color: '#FFFFFF', display: 'block' }}>Twilight Pocha &amp; Late Night:</strong>
+                17:00 – 04:00 (Every Single Night)
               </div>
-              <div style={{ color: 'var(--color-coral)', fontSize: '0.82rem', marginTop: '4px' }}>
+              <div style={{ color: '#21D4E8', fontSize: '0.82rem', marginTop: '4px' }}>
                 Walk-ins welcomed all night long!
               </div>
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Dedicated Navigation Pages */}
           <div>
             <h4
               style={{
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: '1.2rem',
-                color: 'var(--color-magenta)',
+                color: '#FF2E88',
                 marginBottom: '1.25rem',
                 textTransform: 'uppercase',
                 letterSpacing: '0.06em',
               }}
             >
-              Navigation
+              Standalone Routes
             </h4>
-            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.65rem', padding: 0 }}>
               {[
-                { name: 'Street Culture Story', href: '#story' },
-                { name: '3D Virtual Tour', href: '#tour' },
-                { name: 'Full Pocha Menu', href: '#menu' },
-                { name: 'Open Kitchen Fire', href: '#kitchen' },
-                { name: 'Group Dining Experiences', href: '#experiences' },
-                { name: 'Location & Subway Directions', href: '#location' },
+                { name: 'Street Culture Story', path: '/story' },
+                { name: 'Korean Fried Chicken & Wok', path: '/signatures' },
+                { name: 'Full Gastronomic Menu', path: '/menu' },
+                { name: '3D WebGL Virtual Tour', path: '/tour' },
+                { name: 'Atmosphere & Materials', path: '/culture' },
+                { name: 'Culinary Artisans & Brigade', path: '/chef' },
+                { name: 'Private Pocha Experiences', path: '/experiences' },
+                { name: 'Seoul Street Gazette', path: '/blog' },
+                { name: 'Arrival & Map Coordinates', path: '/contact' },
               ].map((item) => (
                 <li key={item.name}>
                   <a
-                    href={item.href}
+                    href={item.path}
+                    onClick={(e) => handleLink(e, item.path)}
                     style={{
-                      color: 'var(--color-silver)',
+                      color: '#B6BAC2',
                       textDecoration: 'none',
                       fontSize: '0.88rem',
                       transition: 'color 0.2s ease',
                     }}
-                    onMouseEnter={(e) => (e.target.style.color = 'var(--color-cyan)')}
-                    onMouseLeave={(e) => (e.target.style.color = 'var(--color-silver)')}
+                    onMouseEnter={(e) => (e.target.style.color = '#21D4E8')}
+                    onMouseLeave={(e) => (e.target.style.color = '#B6BAC2')}
                   >
                     {item.name}
                   </a>
@@ -159,7 +171,7 @@ export default function Footer() {
               style={{
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: '1.2rem',
-                color: 'var(--color-magenta)',
+                color: '#FF2E88',
                 marginBottom: '1.25rem',
                 textTransform: 'uppercase',
                 letterSpacing: '0.06em',
@@ -167,7 +179,7 @@ export default function Footer() {
             >
               Seoul Night Gazette
             </h4>
-            <p style={{ color: 'var(--color-silver)', fontSize: '0.86rem', marginBottom: '1.25rem' }}>
+            <p style={{ color: '#B6BAC2', fontSize: '0.86rem', marginBottom: '1.25rem' }}>
               Get secret midnight menu releases, DJ sets, and exclusive soju tasting invites.
             </p>
             {subscribed ? (
@@ -186,8 +198,8 @@ export default function Footer() {
                     flex: 1,
                     padding: '10px 14px',
                     borderRadius: '4px',
-                    border: '1px solid var(--color-border)',
-                    backgroundColor: 'var(--color-charcoal)',
+                    border: '1px solid rgba(246, 244, 240, 0.15)',
+                    backgroundColor: '#1B1D22',
                     color: '#FFFFFF',
                     fontSize: '0.85rem',
                     outline: 'none',
@@ -196,7 +208,7 @@ export default function Footer() {
                 <button
                   type="submit"
                   style={{
-                    backgroundColor: 'var(--color-magenta)',
+                    backgroundColor: '#FF2E88',
                     color: '#FFFFFF',
                     border: 'none',
                     padding: '0 16px',
@@ -216,7 +228,7 @@ export default function Footer() {
         {/* Bottom Credits & CMS Shortcut */}
         <div
           style={{
-            borderTop: '1px solid var(--color-border)',
+            borderTop: '1px solid rgba(246, 244, 240, 0.12)',
             paddingTop: '2rem',
             display: 'flex',
             justifyContent: 'space-between',
@@ -224,7 +236,7 @@ export default function Footer() {
             flexWrap: 'wrap',
             gap: '1rem',
             fontSize: '0.82rem',
-            color: 'var(--color-concrete)',
+            color: '#777B83',
           }}
         >
           <div>{footerData.copyright}</div>
@@ -234,7 +246,7 @@ export default function Footer() {
               href="/cms/"
               target="_blank"
               style={{
-                color: 'var(--color-cyan)',
+                color: '#21D4E8',
                 textDecoration: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -243,7 +255,7 @@ export default function Footer() {
               }}
             >
               <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#21D4E8' }} />
-              Open CMS Studio &rarr;
+              Open Decoupled CMS Studio &rarr;
             </a>
           </div>
         </div>

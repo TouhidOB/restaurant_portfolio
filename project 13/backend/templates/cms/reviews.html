@@ -1,0 +1,29 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<div class="cms-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+      <h2 class="card-title" style="margin-bottom: 0.25rem;">⭐ Foodie Reviews &amp; Street Accolades</h2>
+      <p style="color: var(--color-silver); font-size: 0.85rem;">Authentic praise from late-night foodies, international culinary travelers, and Korean street food lovers.</p>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem;">
+    {% for rev in reviews %}
+    <div style="background: var(--color-midnight); padding: 1.5rem; border-radius: 6px; border: 1px solid var(--color-border);">
+      <div style="color: var(--color-amber); margin-bottom: 0.5rem;">★★★★★</div>
+      <p style="color: #FFFFFF; font-size: 0.95rem; font-style: italic; margin-bottom: 1rem; line-height: 1.6;">
+        "{{ rev.quote }}"
+      </p>
+      <div style="border-top: 1px solid var(--color-border); padding-top: 0.75rem;">
+        <strong style="color: var(--color-cyan); font-size: 0.9rem;">{{ rev.author }}</strong><br>
+        <span style="font-size: 0.78rem; color: var(--color-silver);">{{ rev.source }}</span>
+      </div>
+    </div>
+    {% empty %}
+    <p style="color: var(--color-silver); padding: 2rem;">No reviews registered.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

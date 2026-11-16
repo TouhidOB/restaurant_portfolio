@@ -214,6 +214,8 @@ export const fallbackData = {
       description: "Traditional chewy cylindrical rice cakes and fish cakes simmered in our signature rich gochujang broth, smoothed with heavy cream, garlic, and melted mozzarella cheese.",
       price: "₩15,000",
       currency: "KRW",
+      image: "https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?auto=format&fit=crop&w=800&q=85",
+      image_url: "https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?auto=format&fit=crop&w=800&q=85",
       dietary_tags: "Spicy, Vegetarian Optional",
       spicy_level: 2,
       is_featured: true
@@ -227,6 +229,8 @@ export const fallbackData = {
       description: "Fresh whole chicken marinated in ginger and sea salt, coated in light starch, double-fried to golden shatter, and tossed in house gochujang garlic reduction with crushed peanuts.",
       price: "₩21,000",
       currency: "KRW",
+      image: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=85",
+      image_url: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=85",
       dietary_tags: "Signature Item, Double-Fried",
       spicy_level: 2,
       is_featured: true
@@ -240,6 +244,8 @@ export const fallbackData = {
       description: "Served piping hot in a heavy volcanic stone bowl where the bottom layer crisps into golden nurungji. Topped with seasoned beef, zucchini, shiitake, fernbrake, and spicy chili sauce.",
       price: "₩16,000",
       currency: "KRW",
+      image: "https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=800&q=85",
+      image_url: "https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=800&q=85",
       dietary_tags: "Vegetarian Optional, Gluten-Free",
       spicy_level: 1,
       is_featured: true
@@ -253,6 +259,8 @@ export const fallbackData = {
       description: "The legendary post-war fusion stew bubbling tableside. Rich spicy anchovy-beef broth loaded with spam, sausages, rice cakes, enoki mushrooms, ramen noodles, and melted cheddar.",
       price: "₩26,000",
       currency: "KRW",
+      image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85",
+      image_url: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85",
       dietary_tags: "Sharable for 2-3, Pork",
       spicy_level: 2,
       is_featured: true
@@ -273,6 +281,8 @@ export const fallbackData = {
           short_description: "Chewy rice cakes in creamy spicy gochujang cream sauce with fish cakes & mozzarella.",
           description: "Traditional chewy cylindrical rice cakes and fish cakes simmered in our signature rich gochujang broth, smoothed with heavy cream, garlic, and melted mozzarella cheese.",
           spicy_level: 2,
+          image: "https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1625944525533-473f1a3d54e7?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Spicy, Vegetarian Optional",
           is_featured: true
         },
@@ -284,6 +294,8 @@ export const fallbackData = {
           short_description: "Pan-fried handmade dumplings stuffed with aged kimchi, minced pork & glass noodles.",
           description: "6 large handmade dumplings pan-seared until bottom is golden crisp, filled with 6-month fermented spicy kimchi, minced pork shoulder, scallions, and vermicelli.",
           spicy_level: 1,
+          image: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Pan-Fried, Pork",
           is_featured: true
         },
@@ -295,6 +307,8 @@ export const fallbackData = {
           short_description: "Seaweed rice roll with seasoned beef, yellow radish, spinach & toasted sesame oil.",
           description: "Warm short-grain rice brushed with pure toasted sesame oil, rolled in toasted nori seaweed with bulgogi beef, pickled yellow radish, braised burdock root, and eggs.",
           spicy_level: 0,
+          image: "https://images.unsplash.com/photo-1553163147-622ab57be1c7?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1553163147-622ab57be1c7?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Halal Friendly, Beef",
           is_featured: true
         }
@@ -314,6 +328,8 @@ export const fallbackData = {
           short_description: "Crispy double-fried bone-in chicken tossed in sweet, sticky & garlicky red chili glaze.",
           description: "Fresh whole chicken marinated in ginger and sea salt, coated in light starch, double-fried to golden shatter, and tossed in house gochujang garlic reduction with crushed peanuts.",
           spicy_level: 2,
+          image: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Signature Item, Double-Fried",
           is_featured: true
         },
@@ -325,6 +341,8 @@ export const fallbackData = {
           short_description: "Boneless crispy tenders dusted with sweet honey, roasted garlic butter & savory parmesan.",
           description: "Juicy boneless thigh pieces fried extra crispy and tossed in velvety melted honey butter glaze with toasted garlic chips and fine savory cheese powder.",
           spicy_level: 0,
+          image: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Crowd Favorite, Sweet & Savory",
           is_featured: true
         },
@@ -336,6 +354,8 @@ export const fallbackData = {
           short_description: "Extreme spicy glazed wings topped with charred jalapeño and sesame seeds.",
           description: "For serious spice lovers. Double-fried chicken wings drenched in fiery ghost pepper and gochujang paste, caramelized over open flame.",
           spicy_level: 3,
+          image: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Ultra Spicy Challenge",
           is_featured: false
         }
@@ -355,6 +375,8 @@ export const fallbackData = {
           short_description: "Hot stone pot rice with marinated ribeye beef, 6 mountain vegetables & raw egg yolk.",
           description: "Served piping hot in a heavy volcanic stone bowl where the bottom layer crisps into golden nurungji. Topped with seasoned beef, zucchini, shiitake, fernbrake, and spicy chili sauce.",
           spicy_level: 1,
+          image: "https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Vegetarian Optional, Gluten-Free",
           is_featured: true
         },
@@ -366,6 +388,8 @@ export const fallbackData = {
           short_description: "Wok-fried rice with aged sour kimchi, pork belly, melted cheese & fried egg.",
           description: "Smoky wok-charred rice tossed with aged kimchi, thick pork belly cubes, scallion oil, and wrapped in a ring of melted mozzarella.",
           spicy_level: 2,
+          image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Pork, Sizzling Plate",
           is_featured: false
         }
@@ -385,6 +409,8 @@ export const fallbackData = {
           short_description: "Spicy bubbling stew with ramen noodles, spam, sausage, kimchi & American cheese.",
           description: "The legendary post-war fusion stew bubbling tableside. Rich spicy anchovy-beef broth loaded with spam, sausages, rice cakes, enoki mushrooms, ramen noodles, and melted cheddar.",
           spicy_level: 2,
+          image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Sharable for 2-3, Pork",
           is_featured: true
         },
@@ -396,6 +422,8 @@ export const fallbackData = {
           short_description: "Fiery wok-smoked red soup with fresh squid, mussels, prawns & chewy wheat noodles.",
           description: "Deep wok hei red broth infused with chili oil, garlic, and fresh sea harvest from the coast, served over handmade bouncy noodles.",
           spicy_level: 2,
+          image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Seafood, Spicy Wok",
           is_featured: false
         }
@@ -415,6 +443,8 @@ export const fallbackData = {
           short_description: "Freshly squeezed ruby grapefruit, iced green tea & Chamisul soju.",
           description: "Crisp, tart, and refreshing street pocha cocktail served in frosted carafes with mint sprigs.",
           spicy_level: 0,
+          image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Cocktail, 12% ABV",
           is_featured: true
         },
@@ -426,6 +456,8 @@ export const fallbackData = {
           short_description: "Ice-cold 500ml draft lager with dense white foam collar.",
           description: "Ultra-crisp Korean lager poured straight from the frozen tap—the indispensable partner for fried chicken.",
           spicy_level: 0,
+          image: "https://images.unsplash.com/photo-1538488881523-2947190013f9?auto=format&fit=crop&w=800&q=85",
+          image_url: "https://images.unsplash.com/photo-1538488881523-2947190013f9?auto=format&fit=crop&w=800&q=85",
           dietary_tags: "Cold Draft, 4.5% ABV",
           is_featured: false
         }
@@ -555,6 +587,79 @@ export const fallbackData = {
       category: "events",
       image_url: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=1200&q=80",
       caption: "Midnight toast with friends over bubbling stews and cold drinks"
+    }
+  ],
+  custom_pages: [
+    {
+      id: 1,
+      title: "Hongdae Private Pocha Experience",
+      slug: "hongdae-private-pocha-experience",
+      meta_description: "Exclusive late-night Korean street food dining room for group gatherings, team celebrations, and soju tasting flights.",
+      is_published: true,
+      blocks: [
+        {
+          type: "hero",
+          subtitle: "PRIVATE STREET DINING",
+          title: "Hongdae Neon Pocha Private Room",
+          content: "Step off the vibrant street into your private neon haven. Sizzling custom wok courses, dedicated craft soju service, and late-night party vibes until 04:00 AM.",
+          cta_text: "Reserve Private Room"
+        },
+        {
+          type: "split",
+          title: "Sizzling Woks & Artisanal Fermentations",
+          content: "Every course is prepared fresh in front of your crew using age-old fermentation traditions and flash wok heat.",
+          image: "https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=800&q=85"
+        },
+        {
+          type: "features",
+          title: "Exclusive Pocha Amenities",
+          items: [
+            { title: "Custom Anju Platters", desc: "Crispy fried chicken towers, spicy braised octopus, and kimchi pancakes." },
+            { title: "Soju & Makgeolli Sommelier", desc: "Curated tasting flights of artisanal Korean fruit sojus and cloudy rice wines." },
+            { title: "Late Night Until 4 AM", desc: "No rush dining cadence with private sound system and neon lighting controls." }
+          ]
+        },
+        {
+          type: "reservation",
+          title: "Book Your Group at Seoul Street",
+          content: "Advance reservations for private pocha rooms are released 30 days in advance."
+        }
+      ]
+    }
+  ],
+  blog_categories: [
+    { id: 1, name: "Street Food Culture", slug: "street-food-culture", description: "The history and living pulse of Korean street food tents." },
+    { id: 2, name: "Night Pocha Stories", slug: "night-pocha-stories", description: "Late-night conversations, camaraderie, and Hongdae nightlife." },
+    { id: 3, name: "Fermentation & Sauces", slug: "fermentation-craft", description: "The secret depth of Sunchang gochujang, doendjang, and kimchi." }
+  ],
+  blog_posts: [
+    {
+      id: 1,
+      title: "The Science & Soul of Double-Fried Korean Chicken",
+      slug: "the-secret-of-double-fried-korean-chicken",
+      category_name: "Street Food Culture",
+      category_slug: "street-food-culture",
+      author_name: "Chef Park Jin-woo",
+      read_time: "5 min read",
+      published_at: "2026-11-15",
+      image: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=85",
+      excerpt: "Why does Korean fried chicken retain its audible glass-like crunch even when drenched in sticky sweet-spicy garlic glaze?",
+      content: "<p>Walk down any alleyway in Hongdae after sunset, and the hypnotic symphony begins: sizzling peanut oil, the rhythmic toss of heavy carbon steel woks, and the crackle of double-fried chicken hitting cooling racks.</p><p>Unlike Western buttermilk-battered fried chicken, Korean fried chicken relies on a whisper-thin batter composed primarily of potato starch, cornstarch, and cold sparkling water. The initial fry cooks the chicken through gently at 160°C. After resting, the pieces are plunged into a screaming-hot 190°C bath for ninety seconds.</p><p>This second flash-fry obliterates surface moisture, rendering the skin paper-thin and permanently crisp—a culinary canvas ready to drink in our house gochujang glaze without softening.</p>",
+      is_published: true
+    },
+    {
+      id: 2,
+      title: "Late-Night Pocha Culture: Where Seoul Never Sleeps",
+      slug: "late-night-pocha-culture-hongdae-neon-nights",
+      category_name: "Night Pocha Stories",
+      category_slug: "night-pocha-stories",
+      author_name: "Kim Min-seo",
+      read_time: "6 min read",
+      published_at: "2026-11-10",
+      image: "https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=800&q=85",
+      excerpt: "A love letter to orange plastic tarp tents, steaming metal bowls of odeng broth, and strangers clinking soju glasses at 3 AM.",
+      content: "<p>In Seoul, the boundary between stranger and confidant dissolves inside the pojangmacha. Under the glow of magenta neons and warm halogen bulbs, high-powered executives, university students, and musicians share cramped plastic tables.</p><p>Here at Seoul Street, we honor this egalitarian spirit: steaming bowls of spicy tteokbokki, ice-cold Chamisul soju, and sizzling army stew brought straight from the wok to your table.</p>",
+      is_published: true
     }
   ]
 };

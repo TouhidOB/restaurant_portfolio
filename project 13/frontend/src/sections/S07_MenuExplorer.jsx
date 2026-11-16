@@ -185,86 +185,120 @@ export default function S07_MenuExplorer() {
             gap: '24px',
           }}
         >
-          {filteredDishes.map((dish) => (
-            <div
-              key={dish.id}
-              onClick={() => openDishModal(dish)}
-              style={{
-                backgroundColor: 'var(--color-charcoal)',
-                borderRadius: '10px',
-                padding: '24px 22px',
-                border: '1px solid var(--color-border)',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'var(--color-cyan)';
-                e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--color-border)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
-                  <div>
-                    <h4
-                      style={{
-                        fontFamily: "'Space Grotesk', sans-serif",
-                        fontSize: '1.3rem',
-                        color: '#FFFFFF',
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {dish.name}
-                    </h4>
-                    {dish.korean_name && (
-                      <span style={{ fontSize: '0.85rem', color: 'var(--color-cyan)', fontFamily: "'Noto Sans KR', sans-serif", fontWeight: 700 }}>
-                        {dish.korean_name}
-                      </span>
+          {filteredDishes.map((dish) => {
+            const photo = dish.image || dish.image_url;
+            return (
+              <div
+                key={dish.id}
+                onClick={() => openDishModal(dish)}
+                style={{
+                  backgroundColor: 'var(--color-charcoal)',
+                  borderRadius: '10px',
+                  overflow: 'hidden',
+                  border: '1px solid var(--color-border)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  transition: 'all 0.2s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--color-cyan)';
+                  e.currentTarget.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.4)';
+                  e.currentTarget.style.transform = 'translateY(-3px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--color-border)';
+                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                {photo && (
+                  <div style={{ position: 'relative', height: '180px', overflow: 'hidden' }}>
+                    <img
+                      src={photo}
+                      alt={dish.name}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.4s ease' }}
+                      onMouseEnter={(e) => (e.target.style.transform = 'scale(1.05)')}
+                      onMouseLeave={(e) => (e.target.style.transform = 'scale(1)')}
+                    />
+                    {dish.is_featured && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: '10px',
+                          left: '10px',
+                          backgroundColor: 'var(--color-magenta)',
+                          color: '#FFFFFF',
+                          padding: '3px 8px',
+                          borderRadius: '3px',
+                          fontSize: '0.7rem',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          fontFamily: 'var(--font-condensed)',
+                          letterSpacing: '0.06em',
+                        }}
+                      >
+                        ★ Street Icon
+                      </div>
                     )}
                   </div>
-                  <span
-                    style={{
-                      fontFamily: "'Space Grotesk', sans-serif",
-                      fontSize: '1.35rem',
-                      fontWeight: 800,
-                      color: 'var(--color-amber)',
-                      marginLeft: '14px',
-                    }}
-                  >
-                    {dish.price}
-                  </span>
-                </div>
+                )}
 
-                <p style={{ color: 'var(--color-silver)', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '14px' }}>
-                  {dish.short_description || dish.description}
-                </p>
-              </div>
+                <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                  <div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
+                      <div>
+                        <h4
+                          style={{
+                            fontFamily: "'Space Grotesk', sans-serif",
+                            fontSize: '1.25rem',
+                            color: '#FFFFFF',
+                            lineHeight: 1.2,
+                          }}
+                        >
+                          {dish.name}
+                        </h4>
+                        {dish.korean_name && (
+                          <span style={{ fontSize: '0.85rem', color: 'var(--color-cyan)', fontFamily: "'Noto Sans KR', sans-serif", fontWeight: 700 }}>
+                            {dish.korean_name}
+                          </span>
+                        )}
+                      </div>
+                      <span
+                        style={{
+                          fontFamily: "'Space Grotesk', sans-serif",
+                          fontSize: '1.3rem',
+                          fontWeight: 800,
+                          color: 'var(--color-amber)',
+                          marginLeft: '14px',
+                        }}
+                      >
+                        {dish.price}
+                      </span>
+                    </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--color-border)', paddingTop: '10px' }}>
-                <span style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-concrete)', fontWeight: 700, fontFamily: 'var(--font-condensed)' }}>
-                  {dish.categoryName}
-                </span>
-                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                  {dish.spicy_level > 0 && (
-                    <span style={{ fontSize: '0.75rem', color: 'var(--color-coral)', fontWeight: 700 }}>
-                      {dish.spicy_level === 3 ? '🔥🔥🔥 Fire' : dish.spicy_level === 2 ? '🌶️🌶️ Hot' : '🌶️ Mild'}
+                    <p style={{ color: 'var(--color-silver)', fontSize: '0.88rem', lineHeight: 1.6, marginBottom: '14px' }}>
+                      {dish.short_description || dish.description}
+                    </p>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--color-border)', paddingTop: '10px' }}>
+                    <span style={{ fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-concrete)', fontWeight: 700, fontFamily: 'var(--font-condensed)' }}>
+                      {dish.categoryName}
                     </span>
-                  )}
-                  {dish.is_featured && (
-                    <span style={{ fontSize: '0.75rem', color: 'var(--color-magenta)', fontWeight: 700 }}>
-                      ★ Icon
-                    </span>
-                  )}
+                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                      {dish.spicy_level > 0 && (
+                        <span style={{ fontSize: '0.75rem', color: 'var(--color-coral)', fontWeight: 700 }}>
+                          {dish.spicy_level === 3 ? '🔥🔥🔥 Fire' : dish.spicy_level === 2 ? '🌶️🌶️ Hot' : '🌶️ Mild'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {filteredDishes.length === 0 && (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', color: 'var(--color-silver)' }}>

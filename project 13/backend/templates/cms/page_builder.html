@@ -1,0 +1,267 @@
+{% extends 'cms/base.html' %}
+
+{% block content %}
+<form method="POST" id="builderForm">
+  {% csrf_token %}
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <div>
+      <h2 class="card-title" style="margin-bottom: 0.25rem;">
+        {% if page_obj %}Edit Page: {{ page_obj.title }}{% else %}New Standalone Page Builder{% endif %}
+      </h2>
+      <p style="color: var(--color-silver); font-size: 0.85rem;">Elementor-style modular block composition canvas with live JSON serialization.</p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+      <a href="{% url 'cms_pages' %}" class="btn-action btn-secondary">Cancel</a>
+      <button type="submit" class="btn-action">
+        💾 Save Standalone Page
+      </button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 320px 1fr; gap: 1.75rem;">
+    <!-- Page Settings Panel -->
+    <div class="cms-card" style="height: fit-content;">
+      <h3 class="card-title" style="font-size: 1.05rem;">⚙️ Page Meta Settings</h3>
+
+      <div class="form-group">
+        <label class="form-label">Page Title</label>
+        <input type="text" name="title" id="pageTitle" class="form-control" required value="{{ page_obj.title|default:'' }}" placeholder="e.g. Hongdae Late-Night Private Pocha">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">URL Slug (/page/:slug)</label>
+        <input type="text" name="slug" id="pageSlug" class="form-control" value="{{ page_obj.slug|default:'' }}" placeholder="e.g. hongdae-private-pocha">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Meta Description</label>
+        <textarea name="meta_description" rows="3" class="form-control" placeholder="SEO description for search engines and social shares...">{{ page_obj.meta_description|default:'' }}</textarea>
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem;">
+        <input type="checkbox" name="is_published" id="isPublished" {% if not page_obj or page_obj.is_published %}checked{% endif %} style="accent-color: var(--color-magenta); width: 18px; height: 18px;">
+        <label for="isPublished" style="font-size: 0.85rem; color: #FFFFFF; cursor: pointer;">Publish Immediately</label>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid var(--color-border); margin: 1.5rem 0;">
+
+      <h4 style="font-size: 0.9rem; color: var(--color-cyan); margin-bottom: 0.85rem; text-transform: uppercase; font-family: var(--font-condensed); letter-spacing: 0.08em;">
+        + Add Modular Block
+      </h4>
+      <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <button type="button" onclick="addBlock('hero')" class="btn-action btn-secondary" style="font-size: 0.8rem; justify-content: flex-start; padding: 0.6rem 0.85rem;">
+          <span>🏮</span> Hero Banner Block
+        </button>
+        <button type="button" onclick="addBlock('split')" class="btn-action btn-secondary" style="font-size: 0.8rem; justify-content: flex-start; padding: 0.6rem 0.85rem;">
+          <span>⚖️</span> 50/50 Story &amp; Image Block
+        </button>
+        <button type="button" onclick="addBlock('features')" class="btn-action btn-secondary" style="font-size: 0.8rem; justify-content: flex-start; padding: 0.6rem 0.85rem;">
+          <span>✨</span> 3-Column Features Grid
+        </button>
+        <button type="button" onclick="addBlock('cta')" class="btn-action btn-secondary" style="font-size: 0.8rem; justify-content: flex-start; padding: 0.6rem 0.85rem;">
+          <span>📢</span> Call to Action Banner
+        </button>
+        <button type="button" onclick="addBlock('reservation')" class="btn-action btn-secondary" style="font-size: 0.8rem; justify-content: flex-start; padding: 0.6rem 0.85rem;">
+          <span>📅</span> Live Table Booking Desk
+        </button>
+      </div>
+    </div>
+
+    <!-- Visual Canvas Area -->
+    <div>
+      <div class="cms-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+          <h3 class="card-title" style="margin-bottom: 0;">🧱 Visual Block Canvas</h3>
+          <span style="font-size: 0.78rem; color: var(--color-silver);" id="blockCountLabel">0 Blocks</span>
+        </div>
+
+        <div id="canvasBlocksContainer" style="display: flex; flex-direction: column; gap: 1.25rem;">
+          <!-- Dynamically populated blocks -->
+        </div>
+
+        <input type="hidden" name="blocks_json" id="blocksJsonInput">
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  let blocks = {{ blocks_json_string|safe }};
+
+  function renderBlocks() {
+    const container = document.getElementById('canvasBlocksContainer');
+    const countLabel = document.getElementById('blockCountLabel');
+    const jsonInput = document.getElementById('blocksJsonInput');
+
+    container.innerHTML = '';
+    countLabel.innerText = `${blocks.length} Block${blocks.length === 1 ? '' : 's'}`;
+    jsonInput.value = JSON.stringify(blocks, null, 2);
+
+    if (blocks.length === 0) {
+      container.innerHTML = `
+        <div style="padding: 3rem 1.5rem; text-align: center; border: 2px dashed var(--color-border); border-radius: 6px;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🧱</div>
+          <div style="color: #FFFFFF; font-weight: 600; margin-bottom: 0.35rem;">Canvas is Empty</div>
+          <p style="color: var(--color-silver); font-size: 0.85rem;">Use the left panel to insert Hero, Split Story, Features Grid, or Table Booking blocks.</p>
+        </div>
+      `;
+      return;
+    }
+
+    blocks.forEach((block, idx) => {
+      const card = document.createElement('div');
+      card.style.backgroundColor = 'var(--color-midnight)';
+      card.style.border = '1px solid var(--color-border)';
+      card.style.borderRadius = '6px';
+      card.style.padding = '1.25rem';
+      card.style.position = 'relative';
+
+      let innerHtml = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.6rem;">
+          <span style="color: var(--color-cyan); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; font-family: var(--font-condensed);">
+            #${idx + 1} • ${block.type.toUpperCase()} BLOCK
+          </span>
+          <div style="display: flex; gap: 0.4rem;">
+            ${idx > 0 ? `<button type="button" onclick="moveBlock(${idx}, -1)" class="btn-action btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">▲</button>` : ''}
+            ${idx < blocks.length - 1 ? `<button type="button" onclick="moveBlock(${idx}, 1)" class="btn-action btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">▼</button>` : ''}
+            <button type="button" onclick="deleteBlock(${idx})" class="btn-action btn-secondary" style="padding: 0.2rem 0.5rem; font-size: 0.7rem; color: var(--color-coral); border-color: rgba(255, 89, 77, 0.4);">✕</button>
+          </div>
+        </div>
+      `;
+
+      if (block.type === 'hero') {
+        innerHtml += `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.85rem;">
+            <div>
+              <label class="form-label" style="font-size: 0.72rem;">Subtitle Eyebrow</label>
+              <input type="text" class="form-control" value="${block.subtitle || ''}" oninput="updateBlockProp(${idx}, 'subtitle', this.value)">
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 0.72rem;">Hero Headline</label>
+              <input type="text" class="form-control" value="${block.title || ''}" oninput="updateBlockProp(${idx}, 'title', this.value)">
+            </div>
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 0.72rem;">Paragraph Narrative</label>
+            <textarea rows="2" class="form-control" oninput="updateBlockProp(${idx}, 'content', this.value)">${block.content || ''}</textarea>
+          </div>
+        `;
+      } else if (block.type === 'split') {
+        innerHtml += `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.85rem;">
+            <div>
+              <label class="form-label" style="font-size: 0.72rem;">Section Title</label>
+              <input type="text" class="form-control" value="${block.title || ''}" oninput="updateBlockProp(${idx}, 'title', this.value)">
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 0.72rem;">Image URL</label>
+              <input type="text" class="form-control" value="${block.image || ''}" oninput="updateBlockProp(${idx}, 'image', this.value)">
+            </div>
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 0.72rem;">Narrative Content</label>
+            <textarea rows="2" class="form-control" oninput="updateBlockProp(${idx}, 'content', this.value)">${block.content || ''}</textarea>
+          </div>
+        `;
+      } else if (block.type === 'cta') {
+        innerHtml += `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.85rem;">
+            <div>
+              <label class="form-label" style="font-size: 0.72rem;">CTA Title</label>
+              <input type="text" class="form-control" value="${block.title || ''}" oninput="updateBlockProp(${idx}, 'title', this.value)">
+            </div>
+            <div>
+              <label class="form-label" style="font-size: 0.72rem;">Button Text</label>
+              <input type="text" class="form-control" value="${block.button_text || ''}" oninput="updateBlockProp(${idx}, 'button_text', this.value)">
+            </div>
+          </div>
+          <div>
+            <label class="form-label" style="font-size: 0.72rem;">CTA Pitch</label>
+            <input type="text" class="form-control" value="${block.content || ''}" oninput="updateBlockProp(${idx}, 'content', this.value)">
+          </div>
+        `;
+      } else {
+        innerHtml += `
+          <div>
+            <label class="form-label" style="font-size: 0.72rem;">Block Title</label>
+            <input type="text" class="form-control" value="${block.title || ''}" oninput="updateBlockProp(${idx}, 'title', this.value)">
+          </div>
+        `;
+      }
+
+      card.innerHTML = innerHtml;
+      container.appendChild(card);
+    });
+  }
+
+  function addBlock(type) {
+    if (type === 'hero') {
+      blocks.push({
+        type: 'hero',
+        subtitle: 'LATE NIGHT POCHA EXPERIENCE',
+        title: 'Hongdae Private Street Dining Room',
+        content: 'Enjoy bespoke soju pairings, sizzling street woks, and neon night market energy in our dedicated private pocha space.'
+      });
+    } else if (type === 'split') {
+      blocks.push({
+        type: 'split',
+        title: 'Authentic Street Wok Craft',
+        content: 'Our brigade cooks with high-fire wok techniques, sun-dried Sunchang gochujang, and fresh double-fried crunch.',
+        image: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=800&q=85'
+      });
+    } else if (type === 'features') {
+      blocks.push({
+        type: 'features',
+        title: 'Private Pocha Perks',
+        items: [
+          { title: 'Dedicated Soju Sommelier', desc: 'Craft makgeolli and artisanal premium sojus.' },
+          { title: 'Custom Wok Menus', desc: 'Sizzling tteokbokki, army stew, and crispy chicken towers.' },
+          { title: 'Hongdae Neon Ambience', desc: 'Atmospheric late-night soundtrack and glowing neon signs.' }
+        ]
+      });
+    } else if (type === 'cta') {
+      blocks.push({
+        type: 'cta',
+        title: 'Reserve the Entire Pocha for Your Crew',
+        content: 'Accommodating groups from 8 to 35 guests with bespoke street banquet courses until 4:00 AM.',
+        button_text: 'Inquire for Private Booking'
+      });
+    } else if (type === 'reservation') {
+      blocks.push({
+        type: 'reservation',
+        title: 'Book a Table at Seoul Street',
+        content: 'Select between our Daylight Lunch or Twilight Pocha service shifts.'
+      });
+    }
+    renderBlocks();
+  }
+
+  function updateBlockProp(idx, prop, value) {
+    if (blocks[idx]) {
+      blocks[idx][prop] = value;
+      document.getElementById('blocksJsonInput').value = JSON.stringify(blocks, null, 2);
+    }
+  }
+
+  function moveBlock(idx, dir) {
+    const targetIdx = idx + dir;
+    if (targetIdx >= 0 && targetIdx < blocks.length) {
+      const temp = blocks[idx];
+      blocks[idx] = blocks[targetIdx];
+      blocks[targetIdx] = temp;
+      renderBlocks();
+    }
+  }
+
+  function deleteBlock(idx) {
+    blocks.splice(idx, 1);
+    renderBlocks();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    renderBlocks();
+  });
+</script>
+{% endblock %}
